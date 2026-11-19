@@ -5,6 +5,7 @@ import {
   formatDateWIB,
   formatPhoneDisplay,
   formatRupiah,
+  formatRupiahRange,
   formatTimeWIB,
   isIndonesianMobile,
   normalizePhoneID,
@@ -12,6 +13,28 @@ import {
   toJakartaDateString,
   toWhatsAppNumber,
 } from "./index";
+
+describe("formatRupiahRange", () => {
+  it("membulatkan ke bawah ke ratusan juta", () => {
+    expect(formatRupiahRange(571_250_000)).toBe("Rp 500 jutaan");
+    expect(formatRupiahRange(899_999_999n)).toBe("Rp 800 jutaan");
+    expect(formatRupiahRange(100_000_000)).toBe("Rp 100 jutaan");
+  });
+
+  it("memakai miliar mulai 1 miliar", () => {
+    expect(formatRupiahRange(1_000_000_000)).toBe("Rp 1 miliaran");
+    expect(formatRupiahRange(1_250_000_000n)).toBe("Rp 1,2 miliaran");
+  });
+
+  it("harga di bawah 100 juta ditulis lengkap", () => {
+    expect(formatRupiahRange(85_000_000)).toBe("Rp 85.000.000");
+  });
+
+  it("menolak nilai negatif atau tak berhingga", () => {
+    expect(() => formatRupiahRange(-1)).toThrow(RangeError);
+    expect(() => formatRupiahRange(Number.NaN)).toThrow(RangeError);
+  });
+});
 
 describe("formatRupiah", () => {
   it("memformat bigint dan number tanpa desimal", () => {

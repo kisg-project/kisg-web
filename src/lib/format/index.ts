@@ -1,4 +1,4 @@
-export { formatRupiah, parseRupiah } from "./currency";
+export { formatRupiah, formatRupiahRange, parseRupiah } from "./currency";
 export { formatDateWIB, formatTimeWIB, formatDateTimeWIB, toJakartaDateString } from "./date";
 export {
   normalizePhoneID,
