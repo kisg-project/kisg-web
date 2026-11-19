@@ -1,0 +1,9 @@
+# Semua file teks memakai LF, termasuk di Windows, supaya skrip bash dan hook tetap jalan.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff2 binary
