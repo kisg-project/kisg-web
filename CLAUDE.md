@@ -6,14 +6,11 @@ File ini dibaca otomatis oleh Claude Code di setiap sesi. Semua aturan di sini w
 
 ## 1. Konteks bisnis
 
-KIS Group adalah developer perumahan di Bekasi dan Depok.
+KIS Group adalah developer perumahan.
 
 | Proyek | Status |
 |---|---|
-| Sejahtera Residence Sumberjaya | Sold out |
-| Sejahtera Residence Tapos | Sold out |
-| Sejahtera Residence Mangunjaya | Sold out |
-| Sejahtera Green Village Tambun Selatan | Tersedia (proyek aktif, fokus penjualan) |
+| Sejahtera Green Village, Tambun Selatan | Tersedia (satu-satunya proyek yang ditampilkan, fokus penjualan) |
 
 - Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
@@ -22,7 +19,7 @@ KIS Group adalah developer perumahan di Bekasi dan Depok.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
-Proyek sold out tetap tampil sebagai portofolio dan bukti rekam jejak. Setiap halaman proyek sold out mengarahkan minat pengunjung ke proyek yang masih tersedia.
+Website, landing page, chat, dan konten seed hanya menampilkan Sejahtera Green Village (keputusan owner, Fase 1). Proyek lama tidak ditampilkan dan tidak disebut. Model data tetap mendukung banyak proyek, supaya proyek berikutnya tinggal ditambah dari admin.
 
 Data, nomor, kontak, dan tautan di atas adalah satu-satunya sumber kebenaran. Simpan di satu tempat (`src/config/site.ts` lalu dapat di-override dari tabel `site_settings` lewat admin). Jangan hardcode di komponen.
 
@@ -291,7 +288,7 @@ Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Su
 | Batasan | Pengganti |
 |---|---|
 | GitHub Free private: tanpa branch protection, rulesets, dan GitHub Environments | Pengaman berlapis: aturan `deny` di `.claude/settings.json`, hook Husky `pre-push` menolak push ke `main`/`staging`, merge hanya lewat `bash scripts/merge-pr.sh <nomor>` yang memeriksa semua check hijau lalu squash merge. Secret CI disimpan sebagai repository secret dengan awalan `STAGING_` dan `PRODUCTION_` |
-| GitHub Free private: CodeQL dan dependency review butuh Advanced Security | Keamanan dependency lewat Dependabot alerts (gratis), `pnpm audit`, gitleaks, dan `eslint` aturan keamanan |
+| GitHub Free private: CodeQL dan dependency review butuh Advanced Security | Keamanan dependency lewat Dependabot alerts (gratis), `pnpm audit`, gitleaks, dan aturan typescript-eslint strict |
 | GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
 | Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
 | Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |

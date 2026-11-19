@@ -57,7 +57,7 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 | Semua halaman publik render, link internal tidak ada yang 404 | D, MC, MS | 3 | Belum |
 | Navigasi header, menu mobile (buka, tutup, fokus terjebak di menu), footer | D, MC | 3 | Belum |
 | Hero carousel: autoplay, jeda, navigasi keyboard, `prefers-reduced-motion` menghentikan autoplay | D, MC | 3 | Belum |
-| Detail proyek tersedia menampilkan tipe unit, siteplan, form. Detail sold out menampilkan blok portofolio dan arahan ke proyek tersedia | D, MC | 3 | Belum |
+| Detail Sejahtera Green Village menampilkan tipe unit, siteplan, form. Hanya proyek terbit yang tampil di menu dan sitemap. Menu "Proyek" langsung ke detail selama hanya ada satu proyek | D, MC | 3 | Belum |
 | Slug proyek, berita, promo yang tidak ada menampilkan 404 | D | 3 | Belum |
 | Siteplan: klik kavling menampilkan status sesuai database. Perubahan status di DB muncul tanpa reload (Realtime) | D, MC | 3 | Belum |
 | Simulasi KPR: hasil cicilan sama dengan perhitungan anuitas yang di-assert. Input tidak valid ditolak dengan pesan per field | D, MC | 3 | Belum |

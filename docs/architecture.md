@@ -56,9 +56,9 @@ Prinsip:
 
 | Route | Isi | Rendering |
 |---|---|---|
-| `/` | Hero carousel, strip statistik, sorotan proyek aktif, portofolio, berita, promo, CTA | Static, revalidate by tag |
-| `/proyek` | Daftar proyek, filter status dan lokasi (query string) | Static + filter di client |
-| `/proyek/[slug]` | Galeri, tipe unit, siteplan, fasilitas, lokasi, progres, form minat. Sold out: blok portofolio + arahkan ke proyek tersedia | Static per slug (`generateStaticParams`), revalidate by tag. Status kavling siteplan di-hydrate dari Realtime |
+| `/` | Hero carousel, strip statistik, sorotan Sejahtera Green Village, progres pembangunan, berita, promo, CTA | Static, revalidate by tag |
+| `/proyek` | Daftar proyek terbit, tanpa filter. Selama hanya ada satu proyek terbit, menu "Proyek" langsung menuju halaman detailnya | Static, revalidate by tag |
+| `/proyek/[slug]` | Galeri, tipe unit, siteplan, fasilitas, lokasi, progres, form minat | Static per slug (`generateStaticParams`), revalidate by tag. Status kavling siteplan di-hydrate dari Realtime |
 | `/proyek/[slug]/progres` | Progres pembangunan yang disetujui | Static, revalidate by tag |
 | `/simulasi-kpr` | Kalkulator KPR | Static, hitung di client |
 | `/tentang` | Profil, visi misi, legalitas, perjalanan proyek | Static |

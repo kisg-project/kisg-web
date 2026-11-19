@@ -35,16 +35,16 @@ Sumber: NIB yang diterbitkan OSS, 16 Januari 2023. Atas keputusan owner, NIB, te
 
 ## 3. Data per proyek
 
-Diisi untuk keempat proyek. Proyek sold out cukup bagian yang ditandai "semua", karena tampil sebagai portofolio.
+Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase 1).
 
 | Data | Proyek | Dibutuhkan di |
 |---|---|---|
-| Alamat lengkap dan titik Google Maps | Semua | Fase 3 |
-| Tahun mulai dan tahun sold out | Semua | Fase 3 |
-| Jumlah unit total | Semua | Fase 3 |
-| Foto proyek asli (fasad, jalan lingkungan, gerbang, fasilitas). Minimal 6 per proyek | Semua | Fase 3 |
-| Deskripsi singkat (2 sampai 3 kalimat fakta) | Semua | Fase 3 |
-| Testimoni penghuni dengan izin tertulis (nama, foto, kutipan) | Semua, opsional | Fase 3 |
+| Alamat lengkap dan titik Google Maps | Sejahtera Green Village | Fase 3 |
+| Tahun mulai pembangunan dan target serah terima | Sejahtera Green Village | Fase 3 |
+| Jumlah unit total | Sejahtera Green Village | Fase 3 |
+| Foto proyek asli (fasad, jalan lingkungan, gerbang, fasilitas). Minimal 6 per proyek | Sejahtera Green Village | Fase 3 |
+| Deskripsi singkat (2 sampai 3 kalimat fakta) | Sejahtera Green Village | Fase 3 |
+| Testimoni penghuni atau pembeli dengan izin tertulis (nama, foto, kutipan) | Sejahtera Green Village, opsional | Fase 3 |
 | Siteplan dalam bentuk SVG, atau PDF/gambar resolusi tinggi untuk digambar ulang | Sejahtera Green Village | Fase 4 |
 | Daftar kavling: blok, nomor, luas tanah, tipe, posisi hook atau tidak, status saat ini | Sejahtera Green Village | Fase 4 |
 | Tipe unit: nama, luas tanah, luas bangunan, jumlah kamar tidur dan mandi, lantai, spesifikasi teknis (pondasi, dinding, atap, lantai, kusen, listrik, air) | Sejahtera Green Village | Fase 3 |
@@ -52,8 +52,8 @@ Diisi untuk keempat proyek. Proyek sold out cukup bagian yang ditandai "semua", 
 | Harga per tipe atau per kavling (owner sudah memutuskan harga ditampilkan, angka menyusul) | Sejahtera Green Village | Fase 3 |
 | Skema pembayaran: tunai keras, tunai bertahap, KPR (bank rekanan, DP minimal, tenor) | Sejahtera Green Village | Fase 3 |
 | Legalitas proyek: status SHM/SHGB, PBG, nomor izin yang boleh ditampilkan | Sejahtera Green Village | Fase 3 |
-| Fasilitas lingkungan (taman, musala, keamanan, dsb) | Semua | Fase 3 |
-| Tempat terdekat dengan jarak dan waktu tempuh asli (stasiun, gerbang tol, sekolah, rumah sakit, pasar, mal) | Semua | Fase 3 |
+| Fasilitas lingkungan (taman, musala, keamanan, dsb) | Sejahtera Green Village | Fase 3 |
+| Tempat terdekat dengan jarak dan waktu tempuh asli (stasiun, gerbang tol, sekolah, rumah sakit, pasar, mal) | Sejahtera Green Village | Fase 3 |
 | Brosur PDF | Sejahtera Green Village | Fase 3 |
 | Radius geofence absensi (meter) dan titik pusat lokasi proyek | Proyek yang sedang dibangun | Fase 8 |
 | Radius geofence absensi kantor (titik kantor diambil dari Google Maps kantor) | Kantor | Fase 8 |
