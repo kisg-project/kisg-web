@@ -6,6 +6,9 @@ test.describe("Halaman review UI", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Review UI" })).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.getByRole("heading", { name: "Skala warna" })).toBeVisible();
+    await expect(
+      page.getByRole("tabpanel", { name: "KPR konvensional" }).getByLabel("Harga rumah"),
+    ).toBeEnabled();
     await expectNoA11yViolations(page);
     await expectResponsive(page);
   });

@@ -50,6 +50,10 @@ test.describe("Beranda", () => {
 
   test("lolos aksesibilitas dan responsif di semua lebar", async ({ page }) => {
     await page.goto("/");
+    // Field KPR nonaktif sampai halaman siap. Axe memeriksa keadaan akhir yang dipakai pengunjung.
+    await expect(
+      page.getByRole("tabpanel", { name: "KPR konvensional" }).getByLabel("Harga rumah"),
+    ).toBeEnabled();
     await expectNoA11yViolations(page);
     await expectResponsive(page);
   });

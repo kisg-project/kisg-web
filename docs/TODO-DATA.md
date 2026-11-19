@@ -75,7 +75,7 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 
 | Data | Dibutuhkan di |
 |---|---|
-| Konfirmasi bank rekanan KPR yang resmi bekerja sama: BTN, BTN Syariah (cek nama terbarunya), BSI, Mandiri. Logo hanya ditampilkan untuk bank yang benar-benar bekerja sama | Fase 3 |
+| Konfirmasi bank rekanan KPR yang resmi bekerja sama: BTN, Mandiri, BSI, dan BTN Syariah. BTN Syariah sudah menjadi Bank Syariah Nasional (BSN) sejak Desember 2025. Logo BTN, Mandiri, dan BSI sudah tampil. Logo BSN belum bisa diunduh dari Wikimedia (diblokir sementara), jadi menyusul, atau owner mengirim file logo resmi dari bank | Fase 3 |
 | Acuan simulasi KPR konvensional dari bank rekanan: DP minimal, tenor maksimal, bunga fixed dan lama masa fixed, perkiraan bunga floating. Sekarang terisi contoh: DP 10%, 15 tahun, fixed 7,5% selama 3 tahun, floating 11% | Fase 3 |
 | Acuan simulasi KPR syariah: margin per tahun dan tenor. Sekarang terisi contoh margin flat 5% per tahun, 15 tahun | Fase 3 |
 

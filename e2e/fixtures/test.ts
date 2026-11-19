@@ -68,10 +68,27 @@ export async function expectResponsive(page: Page, mainLocator = page.locator("m
   const original = page.viewportSize();
   for (const width of RESPONSIVE_WIDTHS) {
     await page.setViewportSize({ width, height: 800 });
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    );
-    expect(overflow, `Scroll horizontal di lebar ${width}px`).toBeLessThanOrEqual(0);
+    const { overflow, offenders } = await page.evaluate(() => {
+      const limit = document.documentElement.clientWidth;
+      const describe = (element: Element) =>
+        `${element.tagName.toLowerCase()}.${[...element.classList].slice(0, 4).join(".")} "${element.textContent
+          .trim()
+          .slice(0, 30)}" (${Math.round(element.getBoundingClientRect().right)}px)`;
+      // Elemen terdalam yang melewati lebar layar, supaya penyebab overflow langsung terlihat.
+      const wide = [...document.querySelectorAll("body *")].filter(
+        (element) =>
+          element.getBoundingClientRect().right > limit + 1 &&
+          ![...element.children].some((child) => child.getBoundingClientRect().right > limit + 1),
+      );
+      return {
+        overflow: document.documentElement.scrollWidth - limit,
+        offenders: wide.slice(0, 5).map(describe),
+      };
+    });
+    expect(
+      overflow,
+      `Scroll horizontal di lebar ${width}px. Elemen terlalu lebar: ${offenders.join(" | ")}`,
+    ).toBeLessThanOrEqual(0);
     await expect(mainLocator, `Konten utama terlihat di lebar ${width}px`).toBeVisible();
   }
   if (original) await page.setViewportSize(original);
