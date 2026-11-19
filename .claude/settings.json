@@ -9,7 +9,6 @@
       "Grep",
       "WebSearch",
       "WebFetch",
-
       "Bash(pnpm *)",
       "Bash(pnpx *)",
       "Bash(npx *)",
@@ -24,7 +23,6 @@
       "Bash(bash scripts/*)",
       "Bash(./scripts/*)",
       "Bash(ssh -T git@*)",
-
       "Bash(ls *)",
       "Bash(cat *)",
       "Bash(head *)",
@@ -70,7 +68,9 @@
       "Edit(~/.ssh/config)",
       "Bash(ssh-keygen *)",
       "Bash(gh pr merge *)",
-      "Bash(gh release create *)"
+      "Bash(gh release create *)",
+      "Bash(bash scripts/merge-pr.sh*)",
+      "Bash(./scripts/merge-pr.sh*)"
     ],
     "deny": [
       "Bash(sudo *)",
@@ -78,7 +78,6 @@
       "Bash(rm -rf ~*)",
       "Bash(rm -rf $HOME*)",
       "Bash(printenv*)",
-
       "Bash(git config --global *)",
       "Bash(git config --system *)",
       "Bash(git push --force*)",
@@ -89,14 +88,12 @@
       "Bash(git push origin staging*)",
       "Bash(git push * HEAD:main*)",
       "Bash(git push * HEAD:staging*)",
-
       "Bash(gh auth switch*)",
       "Bash(gh auth login*)",
       "Bash(gh auth logout*)",
       "Bash(gh auth refresh*)",
       "Bash(gh auth token*)",
       "Bash(gh repo delete*)",
-
       "Bash(supabase login*)",
       "Bash(supabase logout*)",
       "Bash(supabase db push*)",
@@ -104,7 +101,6 @@
       "Bash(supabase db reset --db-url*)",
       "Bash(supabase projects delete*)",
       "Bash(supabase branches delete*)",
-
       "Bash(vercel login*)",
       "Bash(vercel logout*)",
       "Bash(vercel switch*)",
@@ -117,7 +113,6 @@
       "Bash(vercel env rm*)",
       "Bash(vercel project rm*)",
       "Bash(vercel domains rm*)",
-
       "Read(./.env.production*)",
       "Read(./.env.staging*)",
       "Read(~/.config/kis/**)",

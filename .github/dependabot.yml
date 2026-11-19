@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Jakarta
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    # Versi major diperbarui manual setelah membaca catatan rilis (tanpa automerge).
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Asia/Jakarta
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]

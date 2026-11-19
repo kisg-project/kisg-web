@@ -1,0 +1,2 @@
+bash scripts/check-accounts.sh --quick || exit 1
+pnpm exec lint-staged

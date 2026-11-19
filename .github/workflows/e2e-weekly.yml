@@ -1,0 +1,67 @@
+name: E2E mingguan
+
+# Suite penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky.
+# Mingguan (bukan tiap malam) karena kuota menit Actions GitHub Free (CLAUDE.md bagian 10).
+on:
+  schedule:
+    - cron: "0 15 * * 0" # Minggu 22.00 WIB
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-weekly
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+  ENABLE_DEV_UI: "1"
+
+jobs:
+  flaky-check:
+    name: flaky-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: staging
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - name: Suite penuh 3 kali
+        run: |
+          for run in 1 2 3; do
+            echo "::group::Putaran $run"
+            pnpm exec playwright test --retries=0 || exit 1
+            echo "::endgroup::"
+          done
+      - name: Unggah laporan
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-weekly
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+      - name: Buka issue kalau gagal
+        if: failure()
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `E2E mingguan gagal (${new Date().toISOString().slice(0, 10)})`,
+              body: `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\nCari penyebab test yang gagal. Jangan ditutupi dengan retry atau skip.`,
+              labels: ["e2e-flaky"],
+            });

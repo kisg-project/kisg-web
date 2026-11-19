@@ -1,0 +1,329 @@
+@import "tailwindcss";
+/* Utilitas animasi dan varian data-state untuk komponen shadcn (dibaca saat build). */
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Token desain KIS Group. Sumber: docs/brand.md (dikunci di Fase 0).
+   Tidak ada warna hardcode di komponen. Palet bawaan Tailwind dimatikan supaya hanya warna brand yang tersedia. */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme static {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Skala dibuat di OKLCH (lihat docs/brand.md). Nilai hex dipakai supaya warna logo tepat:
+     primary-700 = #0F6D5F (hijau logo), gold-400 = #D7AE5F (emas logo). */
+  --color-primary-50: #ebfbf7; /* oklch(0.975 0.018 179.3) */
+  --color-primary-100: #def2ed; /* oklch(0.945 0.022 179.3) */
+  --color-primary-200: #c5e0d9; /* oklch(0.885 0.030 179.3) */
+  --color-primary-300: #a8cbc3; /* oklch(0.815 0.039 179.3) */
+  --color-primary-400: #88b4aa; /* oklch(0.735 0.050 179.3) */
+  --color-primary-500: #679d92; /* oklch(0.655 0.060 179.3) */
+  --color-primary-600: #408477; /* oklch(0.565 0.072 179.3) */
+  --color-primary-700: #0f6d5f; /* oklch(0.481 0.084 179.3) */
+  --color-primary-800: #015449; /* oklch(0.400 0.073 179.3) */
+  --color-primary-900: #013c34; /* oklch(0.320 0.058 179.3) */
+  --color-primary-950: #002922; /* oklch(0.250 0.045 179.3) */
+  --color-gold-50: #fff6e6; /* oklch(0.975 0.023 82.3) */
+  --color-gold-100: #ffeac5; /* oklch(0.945 0.054 82.3) */
+  --color-gold-200: #f6d495; /* oklch(0.885 0.089 82.3) */
+  --color-gold-300: #e3bd74; /* oklch(0.815 0.101 82.3) */
+  --color-gold-400: #d7ae5f; /* oklch(0.772 0.109 82.3) */
+  --color-gold-500: #b08a46; /* oklch(0.655 0.097 79.5) */
+  --color-gold-600: #936f34; /* oklch(0.565 0.089 77.4) */
+  --color-gold-700: #785724; /* oklch(0.480 0.080 75.3) */
+  --color-gold-800: #5f4114; /* oklch(0.400 0.072 73.4) */
+  --color-gold-900: #472c05; /* oklch(0.320 0.065 71.5) */
+  --color-gold-950: #321c00; /* oklch(0.250 0.054 69.8) */
+  --color-neutral-50: #f1f9f7; /* oklch(0.975 0.008 179.3) */
+  --color-neutral-100: #e7efed; /* oklch(0.945 0.008 179.3) */
+  --color-neutral-200: #d4dbd9; /* oklch(0.885 0.008 179.3) */
+  --color-neutral-300: #bdc4c2; /* oklch(0.815 0.008 179.3) */
+  --color-neutral-400: #a4aba9; /* oklch(0.735 0.008 179.3) */
+  --color-neutral-500: #8c9291; /* oklch(0.655 0.008 179.3) */
+  --color-neutral-600: #717776; /* oklch(0.565 0.008 179.3) */
+  --color-neutral-700: #57605e; /* oklch(0.480 0.012 179.3) */
+  --color-neutral-800: #414a48; /* oklch(0.400 0.012 179.3) */
+  --color-neutral-900: #2d3533; /* oklch(0.320 0.012 179.3) */
+  --color-neutral-950: #1c2422; /* oklch(0.250 0.012 179.3) */
+  --color-success-50: #e7feeb; /* oklch(0.975 0.035 150.0) */
+  --color-success-100: #ddf4e1; /* oklch(0.945 0.035 150.0) */
+  --color-success-200: #b2e9bc; /* oklch(0.885 0.084 150.0) */
+  --color-success-300: #9cd2a6; /* oklch(0.815 0.084 150.0) */
+  --color-success-400: #60c279; /* oklch(0.735 0.140 150.0) */
+  --color-success-500: #45a861; /* oklch(0.655 0.140 150.0) */
+  --color-success-600: #238c47; /* oklch(0.565 0.140 150.0) */
+  --color-success-700: #007132; /* oklch(0.480 0.132 150.0) */
+  --color-success-800: #005725; /* oklch(0.400 0.110 150.0) */
+  --color-success-900: #003f18; /* oklch(0.320 0.088 150.0) */
+  --color-success-950: #012a0e; /* oklch(0.250 0.068 150.0) */
+  --color-warning-50: #fff5ec; /* oklch(0.975 0.016 65.0) */
+  --color-warning-100: #ffe8d4; /* oklch(0.945 0.036 65.0) */
+  --color-warning-200: #ffcfa2; /* oklch(0.885 0.080 65.0) */
+  --color-warning-300: #ebb784; /* oklch(0.815 0.090 65.0) */
+  --color-warning-400: #e9932d; /* oklch(0.735 0.150 65.0) */
+  --color-warning-500: #cc7b04; /* oklch(0.655 0.146 65.0) */
+  --color-warning-600: #a76402; /* oklch(0.565 0.126 65.0) */
+  --color-warning-700: #864f02; /* oklch(0.480 0.107 65.0) */
+  --color-warning-800: #683c01; /* oklch(0.400 0.089 65.0) */
+  --color-warning-900: #4b2a01; /* oklch(0.320 0.071 65.0) */
+  --color-warning-950: #341b00; /* oklch(0.250 0.056 65.0) */
+  --color-danger-50: #fff4f3; /* oklch(0.975 0.011 27.0) */
+  --color-danger-100: #ffe6e3; /* oklch(0.945 0.027 27.0) */
+  --color-danger-200: #ffcbc4; /* oklch(0.885 0.060 27.0) */
+  --color-danger-300: #ffa89e; /* oklch(0.815 0.104 27.0) */
+  --color-danger-400: #ff7c70; /* oklch(0.735 0.162 27.0) */
+  --color-danger-500: #ee554c; /* oklch(0.655 0.190 27.0) */
+  --color-danger-600: #ce3631; /* oklch(0.565 0.190 27.0) */
+  --color-danger-700: #b00c15; /* oklch(0.480 0.190 27.0) */
+  --color-danger-800: #8b000b; /* oklch(0.400 0.163 27.0) */
+  --color-danger-900: #650006; /* oklch(0.320 0.130 27.0) */
+  --color-danger-950: #470103; /* oklch(0.250 0.101 27.0) */
+  --color-info-50: #f1f8fe; /* oklch(0.975 0.011 250.0) */
+  --color-info-100: #e0effe; /* oklch(0.945 0.026 250.0) */
+  --color-info-200: #bdddff; /* oklch(0.885 0.058 250.0) */
+  --color-info-300: #9cc7f4; /* oklch(0.815 0.078 250.0) */
+  --color-info-400: #65aef8; /* oklch(0.735 0.130 250.0) */
+  --color-info-500: #4c95dd; /* oklch(0.655 0.130 250.0) */
+  --color-info-600: #2f79bf; /* oklch(0.565 0.130 250.0) */
+  --color-info-700: #0c60a3; /* oklch(0.480 0.130 250.0) */
+  --color-info-800: #004981; /* oklch(0.400 0.113 250.0) */
+  --color-info-900: #01345e; /* oklch(0.320 0.090 250.0) */
+  --color-info-950: #002241; /* oklch(0.250 0.070 250.0) */
+
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  /* Radius maksimal 8px (CLAUDE.md bagian 6). Ukuran besar dari komponen shadcn dibatasi ke 8px. */
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
+  --radius-3xl: 8px;
+  --radius-4xl: 8px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(28 36 34 / 0.06);
+  --shadow-sm: 0 1px 3px 0 rgb(28 36 34 / 0.08), 0 1px 2px -1px rgb(28 36 34 / 0.06);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Token semantik. Komponen memakai ini, bukan step skala langsung (kecuali badge status). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  /* "accent" mengikuti konvensi shadcn: latar hover netral. Emas brand memakai "highlight". */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-highlight-hover: var(--highlight-hover);
+  --color-highlight-text: var(--highlight-text);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-footer: var(--footer);
+  --color-footer-foreground: var(--footer-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --font-heading: var(--font-sans);
+  --radius: var(--radius-lg);
+}
+
+:root {
+  --background: var(--color-white);
+  --foreground: var(--color-neutral-900);
+  --surface: var(--color-neutral-50);
+  --surface-foreground: var(--color-neutral-900);
+  --card: var(--color-white);
+  --card-foreground: var(--color-neutral-900);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-neutral-900);
+  --muted: var(--color-neutral-100);
+  /* neutral-600 lolos di putih (4.56:1). Di atas surface pakai subtle-foreground (neutral-700). */
+  --muted-foreground: var(--color-neutral-600);
+  --subtle-foreground: var(--color-neutral-700);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-500);
+  --ring: var(--color-primary-700);
+  --primary: var(--color-primary-700);
+  --primary-foreground: var(--color-white);
+  /* Hover lebih gelap: putih di primary-600 gagal kontras (4.39:1). */
+  --primary-hover: var(--color-primary-800);
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--color-neutral-900);
+  --accent: var(--color-neutral-100);
+  --accent-foreground: var(--color-neutral-900);
+  --highlight: var(--color-gold-400);
+  --highlight-foreground: var(--color-primary-950);
+  --highlight-hover: var(--color-gold-300);
+  /* Emas logo hanya 2.08:1 di putih. Teks emas memakai gold-700 (6.59:1). */
+  --highlight-text: var(--color-gold-700);
+  --destructive: var(--color-danger-600);
+  --destructive-foreground: var(--color-white);
+  /* Putih di success-600 gagal (4.27:1), jadi solid success memakai 700. */
+  --success: var(--color-success-700);
+  --success-foreground: var(--color-white);
+  --warning: var(--color-warning-600);
+  --warning-foreground: var(--color-white);
+  --info: var(--color-info-600);
+  --info-foreground: var(--color-white);
+  --footer: var(--color-primary-950);
+  --footer-foreground: var(--color-white);
+  --sidebar: var(--color-neutral-50);
+  --sidebar-foreground: var(--color-neutral-900);
+  --sidebar-primary: var(--color-primary-700);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-neutral-100);
+  --sidebar-accent-foreground: var(--color-neutral-900);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--color-primary-700);
+  /* Grafik dashboard (Fase 8). Diperiksa ulang dengan skill dataviz saat grafik dibuat. */
+  --chart-1: var(--color-primary-700);
+  --chart-2: var(--color-gold-500);
+  --chart-3: var(--color-info-600);
+  --chart-4: var(--color-success-600);
+  --chart-5: var(--color-danger-500);
+  --header-height: 4rem;
+}
+
+/* Mode gelap hanya dipakai portal (class "dark" di elemen root portal). */
+.dark {
+  --background: var(--color-neutral-950);
+  --foreground: var(--color-neutral-50);
+  --surface: var(--color-neutral-900);
+  --surface-foreground: var(--color-neutral-50);
+  --card: var(--color-neutral-900);
+  --card-foreground: var(--color-neutral-50);
+  --popover: var(--color-neutral-900);
+  --popover-foreground: var(--color-neutral-50);
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --subtle-foreground: var(--color-neutral-400);
+  --border: var(--color-neutral-800);
+  --input: var(--color-neutral-500);
+  --ring: var(--color-primary-300);
+  --primary: var(--color-primary-400);
+  --primary-foreground: var(--color-neutral-950);
+  --primary-hover: var(--color-primary-300);
+  --secondary: var(--color-neutral-800);
+  --secondary-foreground: var(--color-neutral-50);
+  --accent: var(--color-neutral-800);
+  --accent-foreground: var(--color-neutral-50);
+  --highlight: var(--color-gold-400);
+  --highlight-foreground: var(--color-neutral-950);
+  --highlight-hover: var(--color-gold-300);
+  --highlight-text: var(--color-gold-400);
+  --destructive: var(--color-danger-400);
+  --destructive-foreground: var(--color-neutral-950);
+  --success: var(--color-success-400);
+  --success-foreground: var(--color-neutral-950);
+  --warning: var(--color-warning-400);
+  --warning-foreground: var(--color-neutral-950);
+  --info: var(--color-info-400);
+  --info-foreground: var(--color-neutral-950);
+  --sidebar: var(--color-neutral-900);
+  --sidebar-foreground: var(--color-neutral-50);
+  --sidebar-primary: var(--color-primary-400);
+  --sidebar-primary-foreground: var(--color-neutral-950);
+  --sidebar-accent: var(--color-neutral-800);
+  --sidebar-accent-foreground: var(--color-neutral-50);
+  --sidebar-border: var(--color-neutral-800);
+  --sidebar-ring: var(--color-primary-300);
+  --chart-1: var(--color-primary-400);
+  --chart-2: var(--color-gold-400);
+  --chart-3: var(--color-info-400);
+  --chart-4: var(--color-success-400);
+  --chart-5: var(--color-danger-400);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::after,
+    ::before {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Tinggi Hero Banner beranda: satu layar penuh di bawah navbar (svh mengikuti bilah alamat HP). */
+@utility h-hero {
+  height: calc(100svh - var(--header-height));
+}

@@ -6,7 +6,10 @@ Status: `Belum` (belum ditulis), `Ditulis` (ada spec, belum hijau di CI), `Lolos
 
 Profil browser: Chromium desktop (D), Mobile Chrome Pixel (MC), Mobile Safari iPhone (MS). Kolom "Profil" menyebut profil wajib. Portal wajib lolos di MC dan MS.
 
-Berlaku untuk setiap halaman, tidak ditulis ulang per baris: tanpa error console, tanpa pelanggaran axe, punya state loading, error, dan kosong.
+Berlaku untuk setiap halaman, tidak ditulis ulang per baris:
+- tanpa error console dan tanpa pelanggaran axe
+- punya state loading, error, dan kosong
+- responsif: tanpa scroll horizontal di lebar 320, 375, 768, 1024, dan 1440px, dan elemen utama terlihat (helper `expectResponsive()`, CLAUDE.md bagian 6)
 
 ## 1. Matriks akses per role
 
@@ -29,14 +32,29 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 
 ## 2. Skenario per area
 
-### Fondasi (`e2e/site/`, Fase 1)
+### Fondasi dan beranda (`e2e/site/`, Fase 1)
 
-| Skenario | Profil | Fase | Status |
+Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
+
+| Skenario | Spec | Fase | Status |
 |---|---|---|---|
-| `/dev/ui` render semua token dan komponen tanpa error console dan tanpa pelanggaran axe (hanya aktif di development/test) | D | 1 | Belum |
-| Beranda placeholder render tanpa error dan tanpa pelanggaran axe | D, MC, MS | 1 | Belum |
-| Security headers ada di response (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) | D | 1 | Belum |
-| Modul kompresi gambar: file 6 MB dari kamera menjadi WebP di bawah target, orientasi benar, EXIF hilang (dijalankan di halaman uji `/dev/ui`) | D, MC, MS | 1 | Belum |
+| Hero Banner penuh satu layar tepat di bawah navbar, foto tampil, CTA WhatsApp menuju `wa.me/6289673296881` dengan pesan menyebut proyek | `home.spec.ts` | 1 | Lolos |
+| Ringkasan Tipe 36/60: harga Rp 571.250.000, spesifikasi dengan ikon, fasilitas, tempat sekitar, rincian biaya termasuk dan belum termasuk | `home.spec.ts` | 1 | Lolos |
+| Beranda tanpa pelanggaran axe dan tanpa scroll horizontal di lebar 320, 375, 768, 1024, 1440 px | `home.spec.ts` | 1 | Lolos |
+| Menu HP (sheet) membuka navigasi dan menuju Simulasi KPR (MC, MS). Navigasi desktop tampil, tombol menu tersembunyi (D) | `home.spec.ts` | 1 | Lolos |
+| Simulasi KPR konvensional: harga terisi dari data proyek, cicilan fixed dan floating sesuai nilai acuan, DP persen mengisi DP rupiah | `home.spec.ts` | 1 | Lolos |
+| Simulasi KPR syariah: angsuran tetap murabahah sesuai nilai acuan | `home.spec.ts` | 1 | Lolos |
+| Logo bank rekanan KPR (BTN, Mandiri, BSI) tampil dan termuat | `home.spec.ts` | 1 | Lolos |
+| Simulasi KPR: tenor di luar batas dan masa fixed melebihi tenor ditolak dengan pesan per field, hasil disembunyikan | `home.spec.ts` | 1 | Lolos |
+| SEO: judul, `lang="id"`, canonical, meta description, Open Graph, satu `h1`, JSON-LD `RealEstateAgent` dan `RealEstateListing` dengan harga IDR | `home.spec.ts` | 1 | Lolos |
+| `robots.txt` menutup `/portal` dan `/dev`, `sitemap.xml` tersedia | `home.spec.ts` | 1 | Lolos |
+| Security headers (CSP, HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy), tanpa `x-powered-by` | `headers-and-errors.spec.ts` | 1 | Lolos |
+| Halaman yang tidak ada: status 404, `h1`, tautan ke beranda | `headers-and-errors.spec.ts` | 1 | Lolos |
+| `/dev/ui`: token dan komponen tampil, `noindex`, tanpa pelanggaran axe, responsif | `dev-ui.spec.ts` | 1 | Lolos |
+| `/dev/ui`: dialog tertutup dengan Escape, toast tampil | `dev-ui.spec.ts` | 1 | Lolos |
+| Kompresi gambar: foto JPEG besar (4000 x 3000) menjadi di bawah 500 KB, sisi terpanjang maksimal 2048 px, WebP (atau JPEG di browser tanpa encoder WebP) | `image-compress.spec.ts` | 1 | Lolos |
+| Kompresi gambar: orientasi EXIF diterapkan, EXIF dan GPS dibuang | `image-compress.spec.ts` | 1 | Lolos |
+| Kompresi gambar: file bukan gambar ditolak dengan pesan jelas | `image-compress.spec.ts` | 1 | Lolos |
 
 ### Auth (`e2e/admin/auth`, Fase 2)
 
@@ -57,7 +75,7 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 | Semua halaman publik render, link internal tidak ada yang 404 | D, MC, MS | 3 | Belum |
 | Navigasi header, menu mobile (buka, tutup, fokus terjebak di menu), footer | D, MC | 3 | Belum |
 | Hero carousel: autoplay, jeda, navigasi keyboard, `prefers-reduced-motion` menghentikan autoplay | D, MC | 3 | Belum |
-| Detail proyek tersedia menampilkan tipe unit, siteplan, form. Detail sold out menampilkan blok portofolio dan arahan ke proyek tersedia | D, MC | 3 | Belum |
+| Detail Sejahtera Green Village menampilkan tipe unit, siteplan, form. Hanya proyek terbit yang tampil di menu dan sitemap. Menu "Proyek" langsung ke detail selama hanya ada satu proyek | D, MC | 3 | Belum |
 | Slug proyek, berita, promo yang tidak ada menampilkan 404 | D | 3 | Belum |
 | Siteplan: klik kavling menampilkan status sesuai database. Perubahan status di DB muncul tanpa reload (Realtime) | D, MC | 3 | Belum |
 | Simulasi KPR: hasil cicilan sama dengan perhitungan anuitas yang di-assert. Input tidak valid ditolak dengan pesan per field | D, MC | 3 | Belum |
