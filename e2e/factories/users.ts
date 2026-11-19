@@ -28,14 +28,7 @@ export async function createPortalUser(
   const fullName = `Uji ${role ?? "tanpa role"} ${email.slice(-28, -20)}`;
   const admin = adminClient();
 
-  const { data, error } = await admin.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: true,
-    user_metadata: { full_name: fullName },
-  });
-  if (error) throw new Error(`Gagal membuat user test: ${error.message}`);
-  const id = data.user.id;
+  const id = await createAuthUser({ email, password, fullName });
 
   if (role) {
     const { error: roleError } = await admin.from("user_roles").insert({ user_id: id, role });
@@ -43,6 +36,25 @@ export async function createPortalUser(
   }
   if (options.active === false) await setUserActive(id, false);
   return { id, email, password, fullName, role };
+}
+
+/**
+ * Membuat user di Supabase Auth lokal. Hanya galat batas waktu dari server Auth (runner CI sedang
+ * sibuk) yang diulang, maksimal 3 kali. Galat lain langsung menggagalkan test.
+ */
+async function createAuthUser(input: { email: string; password: string; fullName: string }) {
+  for (let attempt = 1; ; attempt += 1) {
+    const { data, error } = await adminClient().auth.admin.createUser({
+      email: input.email,
+      password: input.password,
+      email_confirm: true,
+      user_metadata: { full_name: input.fullName },
+    });
+    if (!error) return data.user.id;
+    const timedOut = /timed out/i.test(error.message);
+    if (!timedOut || attempt >= 3) throw new Error(`Gagal membuat user test: ${error.message}`);
+    await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+  }
 }
 
 export async function setUserActive(userId: string, active: boolean): Promise<void> {

@@ -149,8 +149,10 @@ test.describe("Login portal", () => {
 
     await page.getByRole("button", { name: "Keluar" }).click();
     await expect(page).toHaveURL("/portal/login");
+    // Logout adalah POST biasa, jadi back kembali ke halaman portal terakhir (absensi), yang sekarang
+    // dialihkan ke halaman masuk.
     await page.goBack();
-    await expect(page).toHaveURL(/\/portal\/login\?next=%2Fportal%2Fcrm/);
+    await expect(page).toHaveURL(/\/portal\/login\?next=%2Fportal%2Fabsensi/);
     await expect(page.getByRole("heading", { level: 1, name: "Masuk ke portal" })).toBeVisible();
   });
 });
