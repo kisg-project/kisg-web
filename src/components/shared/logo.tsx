@@ -4,7 +4,15 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /** Logo KIS Group yang menaut ke beranda. Lebar minimal 96px (docs/brand.md). */
-export function Logo({ className, eager = false }: { className?: string; eager?: boolean }) {
+export function Logo({
+  className,
+  imageClassName = "h-12 w-auto min-w-24",
+  eager = false,
+}: {
+  className?: string;
+  imageClassName?: string;
+  eager?: boolean;
+}) {
   return (
     <Link
       href="/"
@@ -17,8 +25,8 @@ export function Logo({ className, eager = false }: { className?: string; eager?:
         width={siteConfig.logo.width}
         height={siteConfig.logo.height}
         loading={eager ? "eager" : "lazy"}
-        sizes="120px"
-        className="h-10 w-auto min-w-24"
+        sizes="160px"
+        className={imageClassName}
       />
     </Link>
   );

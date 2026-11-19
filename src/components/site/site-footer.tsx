@@ -1,5 +1,6 @@
 import { MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/shared/container";
+import { Logo } from "@/components/shared/logo";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 
 export function SiteFooter() {
@@ -7,8 +8,11 @@ export function SiteFooter() {
     <footer className="bg-footer pb-safe text-footer-foreground">
       <Container className="grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
         <div>
-          <p className="text-lg font-bold">{siteConfig.name}</p>
-          <p className="mt-1 text-sm">{siteConfig.legalName}</p>
+          {/* Bidang terang supaya atap hijau logo tetap kontras di latar footer yang gelap. */}
+          <div className="inline-flex rounded-md bg-white px-4 py-3">
+            <Logo imageClassName="h-14 w-auto min-w-24" />
+          </div>
+          <p className="mt-3 text-sm">{siteConfig.legalName}</p>
         </div>
         <address className="not-italic">
           <p className="text-sm font-semibold text-gold-400">Kantor pemasaran</p>

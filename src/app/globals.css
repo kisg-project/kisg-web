@@ -221,7 +221,7 @@
   --chart-3: var(--color-info-600);
   --chart-4: var(--color-success-600);
   --chart-5: var(--color-danger-500);
-  --header-height: 4rem;
+  --header-height: 4.5rem;
 }
 
 /* Mode gelap hanya dipakai portal (class "dark" di elemen root portal). */

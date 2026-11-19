@@ -33,6 +33,8 @@ export default defineConfig({
         "src/lib/image/compress.ts",
         "src/lib/image/compress.worker.ts",
         "src/lib/image/encode.ts",
+        // Pembuat PDF jsPDF (butuh DOM, FileReader, unduhan). Diuji E2E di e2e/site/simulasi-kpr.spec.ts.
+        "src/features/kpr/utils/pdf.ts",
       ],
       thresholds: {
         lines: 80,

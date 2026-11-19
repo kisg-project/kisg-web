@@ -2,7 +2,7 @@ import Image from "next/image";
 import { PARTNER_BANKS } from "@/config/banks";
 import { cn } from "@/lib/utils";
 
-/** Logo bank rekanan KPR. SVG tidak dioptimasi next/image, jadi dipakai apa adanya (unoptimized). */
+/** Logo bank rekanan KPR. SVG dipakai apa adanya (unoptimized). Bank tanpa logo tampil sebagai nama. */
 export function PartnerBanks({ className }: { className?: string }) {
   return (
     <div className={cn("rounded-lg border bg-card p-5", className)}>
@@ -11,16 +11,20 @@ export function PartnerBanks({ className }: { className?: string }) {
         {PARTNER_BANKS.map((bank) => (
           <li
             key={bank.key}
-            className="flex h-20 items-center justify-center rounded-md border bg-white px-4"
+            className="flex h-20 items-center justify-center rounded-md border bg-white px-4 text-center"
           >
-            <Image
-              src={bank.logo.src}
-              alt={bank.name}
-              width={bank.logo.width}
-              height={bank.logo.height}
-              unoptimized
-              className="h-10 w-auto max-w-full object-contain"
-            />
+            {bank.logo ? (
+              <Image
+                src={bank.logo.src}
+                alt={bank.name}
+                width={bank.logo.width}
+                height={bank.logo.height}
+                unoptimized
+                className="h-10 w-auto max-w-full object-contain"
+              />
+            ) : (
+              <span className="text-sm font-bold text-primary-800">{bank.name}</span>
+            )}
           </li>
         ))}
       </ul>

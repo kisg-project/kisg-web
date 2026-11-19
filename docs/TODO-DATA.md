@@ -73,11 +73,19 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 
 ### KPR dan bank rekanan
 
-| Data | Dibutuhkan di |
-|---|---|
-| Konfirmasi bank rekanan KPR yang resmi bekerja sama: BTN, Mandiri, BSI, dan BTN Syariah. BTN Syariah sudah menjadi Bank Syariah Nasional (BSN) sejak Desember 2025. Logo BTN, Mandiri, dan BSI sudah tampil. Logo BSN belum bisa diunduh dari Wikimedia (diblokir sementara), jadi menyusul, atau owner mengirim file logo resmi dari bank | Fase 3 |
-| Acuan simulasi KPR konvensional dari bank rekanan: DP minimal, tenor maksimal, bunga fixed dan lama masa fixed, perkiraan bunga floating. Sekarang terisi contoh: DP 10%, 15 tahun, fixed 7,5% selama 3 tahun, floating 11% | Fase 3 |
-| Acuan simulasi KPR syariah: margin per tahun dan tenor. Sekarang terisi contoh margin flat 5% per tahun, 15 tahun | Fase 3 |
+Produk di `/simulasi-kpr` ada di `src/config/kpr-products.ts`, masing-masing dengan sumber dan tanggal akses (19 November 2026). Semua angka bisa diubah pengunjung. Mohon dikonfirmasi ke bank rekanan:
+
+| Data | Status | Dibutuhkan di |
+|---|---|---|
+| Bank yang resmi bekerja sama dengan KIS: BTN, Mandiri, BSI, BSN (dulu BTN Syariah) | Perlu konfirmasi | Fase 3 |
+| Mandiri KPR Bunga Spesial (Fixed 3 tahun 2,76%, Fixed 5 tahun 3,50%, Berjenjang 10 tahun 4,06% lalu 8,76% lalu 9,76%), kategori Gold Selected KPR Primary, berlaku s.d. 30 November 2026 | Dari situs resmi Mandiri. Perlu kategori nasabah yang berlaku untuk pembeli KIS dan tenor maksimal | Sebelum 30 November 2026 |
+| BTN Fixed 3 tahun 2,65% | Dari pemberitaan (Kontan). Perlu konfirmasi angka, tenor, DP minimal | Fase 3 |
+| BSI KPR Sejahtera margin 5% tetap sampai lunas | Dari pemberitaan (Kontan). Perlu konfirmasi produk dan syaratnya | Fase 3 |
+| BSN margin 3,65% tetap 1 tahun | Dari pemberitaan (Kontan). Perlu margin setelah tahun pertama | Fase 3 |
+| Logo BSN | Belum ada. Kirim file logo resmi dari bank, atau saya coba unduh ulang dari Wikimedia | Fase 3 |
+| Asumsi bunga floating setelah masa fixed (sekarang 11%) dan margin setelah periode tetap syariah (sekarang 10%) | Asumsi, perlu acuan dari bank | Fase 3 |
+| NPOPTKP Kabupaten Bekasi untuk BPHTB (sekarang Rp 80.000.000, batas minimal UU HKPD) | Perlu angka perda | Fase 3 |
+| Perkiraan biaya bank, notaris bank, dan asuransi (sekarang 3% dari pokok) | Asumsi, perlu angka dari bank rekanan | Fase 3 |
 
 ## 4. Konten website
 
