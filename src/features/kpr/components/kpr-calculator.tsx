@@ -212,8 +212,12 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       ? downPaymentPercent(currentPrice, currentDp)
       : Number.NaN;
   const tenorRange = selected?.tenor ?? KPR_LIMITS.tenorYears;
-  const segmentsError =
-    form.formState.errors.segments?.root?.message ?? form.formState.errors.segments?.message;
+  // Error level array (total periode) diambil dari hasil schema, karena mode onChange hanya
+  // memperbarui error field yang sedang diubah (misal segments.1.years), bukan "segments".
+  const segmentsError = parsed.success
+    ? undefined
+    : parsed.error.issues.find((issue) => issue.path.length === 1 && issue.path[0] === "segments")
+        ?.message;
 
   function chooseProduct(id: string, scroll: boolean) {
     const product = products.find((item) => item.id === id) ?? null;
