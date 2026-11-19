@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+
+      "Bash(pnpm *)",
+      "Bash(pnpx *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(corepack *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(supabase *)",
+      "Bash(vercel *)",
+      "Bash(docker *)",
+      "Bash(bash .claude/hooks/*)",
+      "Bash(bash scripts/*)",
+      "Bash(./scripts/*)",
+      "Bash(ssh -T git@*)",
+
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(jq *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(diff *)",
+      "Bash(tree *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(touch *)",
+      "Bash(chmod *)",
+      "Bash(install *)",
+      "Bash(echo *)",
+      "Bash(printf *)",
+      "Bash(which *)",
+      "Bash(command -v *)",
+      "Bash(curl *)",
+      "Bash(lsof *)",
+      "Bash(ps *)",
+      "Bash(kill *)",
+      "Bash(pkill *)",
+      "Bash(sleep *)",
+      "Bash(date *)",
+      "Bash(tar *)",
+      "Bash(unzip *)",
+      "Bash(zip *)",
+      "Bash(openssl *)",
+      "Bash(sha256sum *)",
+      "Bash(shasum *)"
+    ],
+    "ask": [
+      "Edit(~/.gitconfig)",
+      "Edit(~/.ssh/config)",
+      "Bash(ssh-keygen *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh release create *)"
+    ],
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(rm -rf $HOME*)",
+      "Bash(printenv*)",
+
+      "Bash(git config --global *)",
+      "Bash(git config --system *)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f *)",
+      "Bash(git push origin main*)",
+      "Bash(git push origin staging*)",
+      "Bash(git push * HEAD:main*)",
+      "Bash(git push * HEAD:staging*)",
+
+      "Bash(gh auth switch*)",
+      "Bash(gh auth login*)",
+      "Bash(gh auth logout*)",
+      "Bash(gh auth refresh*)",
+      "Bash(gh auth token*)",
+      "Bash(gh repo delete*)",
+
+      "Bash(supabase login*)",
+      "Bash(supabase logout*)",
+      "Bash(supabase db push*)",
+      "Bash(supabase db reset --linked*)",
+      "Bash(supabase db reset --db-url*)",
+      "Bash(supabase projects delete*)",
+      "Bash(supabase branches delete*)",
+
+      "Bash(vercel login*)",
+      "Bash(vercel logout*)",
+      "Bash(vercel switch*)",
+      "Bash(vercel --prod*)",
+      "Bash(vercel * --prod*)",
+      "Bash(vercel promote*)",
+      "Bash(vercel rollback*)",
+      "Bash(vercel remove*)",
+      "Bash(vercel rm *)",
+      "Bash(vercel env rm*)",
+      "Bash(vercel project rm*)",
+      "Bash(vercel domains rm*)",
+
+      "Read(./.env.production*)",
+      "Read(./.env.staging*)",
+      "Read(~/.config/kis/**)",
+      "Read(~/.ssh/id_*)",
+      "Read(~/.config/gh/hosts.yml)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/kis-accounts.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

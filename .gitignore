@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# env: semua file env diabaikan kecuali contoh
+.env
+.env*
+!.env.example
+
+# akun dan link layanan
+.vercel/
+supabase/.temp/
+supabase/.branches/
+.claude/settings.local.json
+
+# testing
+coverage/
+playwright-report/
+test-results/
+blob-report/
+e2e/.auth/
+.playwright-cli/
+
+# Sentry
+.sentryclirc
+
+# OS dan editor
+.DS_Store
+Thumbs.db
+*.log
