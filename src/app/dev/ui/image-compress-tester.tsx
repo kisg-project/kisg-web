@@ -39,8 +39,8 @@ export function ImageCompressTester() {
   }
 
   return (
-    <div className="grid gap-4 sm:max-w-xl">
-      <div className="grid gap-1.5">
+    <div className="grid grid-cols-1 gap-4 sm:max-w-xl">
+      <div className="grid grid-cols-1 gap-1.5">
         <Label htmlFor="profil-kompresi">Profil kompresi</Label>
         <select
           id="profil-kompresi"
@@ -58,7 +58,7 @@ export function ImageCompressTester() {
           ))}
         </select>
       </div>
-      <div className="grid gap-1.5">
+      <div className="grid grid-cols-1 gap-1.5">
         <Label htmlFor="file-kompresi">Pilih foto</Label>
         <input
           id="file-kompresi"
