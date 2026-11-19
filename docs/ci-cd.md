@@ -37,7 +37,7 @@ Pengaman ini bisa dilewati oleh orang yang sengaja memakai `git push --no-verify
 
 | File | Pemicu | Isi |
 |---|---|---|
-| `ci.yml` | PR dan push ke `staging`/`main` | typecheck, lint, check:copy, format, unit test + coverage 80%, build, E2E (PR saja). PR draft: Chromium saja di 1 runner untuk iterasi hemat menit. PR siap merge (ready for review): 3 browser x 3 shard |
+| `ci.yml` | PR dan push ke `staging`/`main` | typecheck, lint, check:copy, format, unit test + coverage 80%, build, E2E (PR saja). PR ke `staging`: Chromium di 1 runner. PR ke `main` dan PR akhir fase berlabel `e2e:full`: 3 browser x 3 shard (label dibaca saat event, jadi pasang label lalu push). Keputusan owner, Fase 2 |
 | `security.yml` | PR dan mingguan | gitleaks, `pnpm audit --audit-level high` |
 | `preview.yml` | Deploy Preview Vercel berhasil | Smoke E2E Chromium dan Lighthouse ke URL preview, komentar skor ke PR. Pemicu `deployment_status` hanya dibaca dari branch default, jadi workflow ini aktif setelah Fase 1 masuk ke `main` |
 | `db.yml` | PR yang menyentuh `supabase/` | Migrasi dari nol, test RLS, lint database (aktif Fase 2) |

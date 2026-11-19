@@ -140,7 +140,7 @@ Sisa ruang sekitar 15%. Pengaman:
 - push kecil-kecil digabung sebelum membuka PR
 - pemakaian menit dicek tiap akhir fase di halaman Billing GitHub (endpoint API billing yang berlaku dicek saat Fase 1)
 
-Kalau kuota hampir habis: kurangi shard E2E per PR menjadi Chromium saja, dan jalankan tiga browser hanya di PR ke `main`.
+Sejak Fase 2 (keputusan owner, opsi B): E2E per PR ke `staging` cukup Chromium. Tiga browser hanya di PR akhir fase (label `e2e:full`), PR ke `main`, dan `e2e-weekly.yml`. Risiko yang diterima: bug khusus Safari baru ketahuan di akhir fase atau di run mingguan.
 
 ## Keputusan owner (akhir Fase 0)
 

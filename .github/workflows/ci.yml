@@ -124,8 +124,10 @@ jobs:
           retention-days: 3
 
   e2e:
-    # Hemat menit Actions: PR draft cukup Chromium di 1 runner. PR siap merge menjalankan 3 browser x 3 shard.
-    name: e2e (${{ matrix.shard }}/${{ github.event.pull_request.draft && 1 || 3 }})
+    # Keputusan owner (opsi B, Fase 2): setiap PR cukup Chromium di 1 runner (termasuk cek responsif
+    # 320 sampai 1440 px). Tiga browser x 3 shard hanya untuk PR ke main (rilis production) dan PR
+    # berlabel e2e:full (akhir fase). Label dibaca saat event, jadi pasang label lalu push.
+    name: e2e (${{ matrix.shard }}/${{ (github.base_ref == 'main' || contains(github.event.pull_request.labels.*.name, 'e2e:full')) && 3 || 1 }})
     needs: [changes, build]
     # Suite penuh di setiap PR. Saat merge ke staging/main cukup build, karena PR sudah menjalankan suite penuh.
     if: needs.changes.outputs.code == 'true' && github.event_name == 'pull_request'
@@ -134,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: ${{ fromJSON(github.event.pull_request.draft && '[1]' || '[1, 2, 3]') }}
+        shard: ${{ fromJSON((github.base_ref == 'main' || contains(github.event.pull_request.labels.*.name, 'e2e:full')) && '[1, 2, 3]' || '[1]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -164,7 +166,7 @@ jobs:
         if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium webkit
       - name: E2E
-        run: pnpm exec playwright test --shard=${{ matrix.shard }}/${{ github.event.pull_request.draft && 1 || 3 }} ${{ github.event.pull_request.draft && '--project=chromium' || '' }}
+        run: pnpm exec playwright test --shard=${{ matrix.shard }}/${{ (github.base_ref == 'main' || contains(github.event.pull_request.labels.*.name, 'e2e:full')) && 3 || 1 }} ${{ (github.base_ref == 'main' || contains(github.event.pull_request.labels.*.name, 'e2e:full')) && ' ' || '--project=chromium' }}
       - name: Unggah laporan Playwright
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
