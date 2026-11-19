@@ -1,4 +1,6 @@
 allowBuilds:
+  # core-js (dependency jspdf): postinstall hanya menampilkan pesan donasi, tidak dibutuhkan.
+  core-js: false
   sharp: false
   unrs-resolver: false
 minimumReleaseAgeExclude:
