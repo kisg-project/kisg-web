@@ -8,3 +8,6 @@ AGENTS.md
 CLAUDE.md
 PROMPT-CLAUDE-CODE.md
 docs/
+# Hasil generate supabase gen types (db.yml memeriksa sama persis dengan output CLI).
+src/lib/supabase/database.types.ts
+supabase/

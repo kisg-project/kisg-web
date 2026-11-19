@@ -1,11 +1,15 @@
 name: Deploy DB staging
 
-# Merge ke staging menerapkan migrasi ke Supabase staging. Production lewat deploy-production.yml.
+# Merge ke staging menerapkan migrasi dan pengaturan Auth ke Supabase staging.
+# Production lewat deploy-production.yml (manual).
 on:
   push:
     branches: [staging]
     paths:
       - "supabase/migrations/**"
+      - "scripts/supabase-auth-config.mjs"
+      - ".github/workflows/deploy-db.yml"
+  workflow_dispatch:
 
 concurrency:
   group: deploy-db-staging
@@ -26,18 +30,23 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Cek konfigurasi
-        id: check
         run: |
-          if [ ! -f supabase/config.toml ] || [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_DB_PASSWORD" ]; then
-            echo "::notice::Folder supabase/ atau secret staging belum ada. Aktif mulai Fase 2."
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          fi
+          for name in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF; do
+            if [ -z "${!name}" ]; then echo "::error::Secret $name belum diisi."; exit 1; fi
+          done
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
-        if: steps.check.outputs.ready == 'true'
+        with:
+          version: 3.2.0
       - name: supabase db push ke staging
-        if: steps.check.outputs.ready == 'true'
         run: |
-          supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          supabase db push
+          supabase db push --remote="$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD" --yes
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Pengaturan Auth staging
+        env:
+          SITE_URL: https://kisg-web-git-staging-kisg-project.vercel.app
+          ADDITIONAL_REDIRECT_URLS: https://*-kisg-project.vercel.app/**
+          BREVO_SMTP_LOGIN: ${{ secrets.BREVO_SMTP_LOGIN }}
+          BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
+        run: node scripts/supabase-auth-config.mjs

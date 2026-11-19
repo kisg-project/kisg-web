@@ -26,7 +26,7 @@ flowchart LR
   end
   META[Meta Graph API dan CAPI]
   GEM[Gemini]
-  RES[Resend]
+  RES[Brevo]
 
   SITE --> PX --> RSC
   LP --> PX
@@ -166,7 +166,7 @@ sequenceDiagram
   DB->>DB: RLS memeriksa klaim dan kepemilikan
 ```
 
-- Tidak ada registrasi publik. Admin mengundang user (email undangan lewat Resend), user mengatur password di `/portal/undangan`.
+- Tidak ada registrasi publik. Admin mengundang user (email undangan dari notifikasi@kisgroup.co.id lewat SMTP Brevo), user mengatur password di `/portal/undangan`.
 - `user_roles`: satu role aktif per user. Penugasan proyek di `project_assignments`, keanggotaan tim di `team_members`.
 - Custom Access Token Hook (fungsi Postgres) menyuntikkan `app_role`, `team_id`, `is_active` ke JWT. Penugasan proyek tidak masuk JWT karena bisa berubah kapan saja. RLS memeriksanya lewat fungsi helper.
 - Fungsi helper RLS di schema `private` (`security definer`, `stable`): `current_app_role()`, `has_role(roles[])`, `is_active_staff()`, `is_assigned_to_project(project_id)`, `manages_user(user_id)`.
@@ -322,4 +322,4 @@ sequenceDiagram
 | Staging | Branch `staging`, `staging.kisgroup.co.id` | `zpxdkjmwsjeeeypszwzm` | `test_event_code` |
 | Production | `main` lewat `deploy-production.yml` | `skxawyvopumzrefnmvyf` | Live |
 
-Env divalidasi `@t3-oss/env-nextjs`. Secret server (`SUPABASE_SERVICE_ROLE_KEY`, `META_*`, `GEMINI_API_KEY`, `CRON_SECRET`, `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) hanya dibaca di file `server-only`.
+Env divalidasi `@t3-oss/env-nextjs`. Secret server (`SUPABASE_SERVICE_ROLE_KEY`, `META_*`, `GEMINI_API_KEY`, `CRON_SECRET`, `BREVO_API_KEY`, `BREVO_SMTP_KEY`, `TURNSTILE_SECRET_KEY`) hanya dibaca di file `server-only`.
