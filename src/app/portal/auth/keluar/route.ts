@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { relativeRedirect } from "@/lib/http/redirect";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /**
@@ -8,9 +9,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
-  const target = new URL("/portal/login", request.url);
-  if (request.nextUrl.searchParams.get("alasan") === "nonaktif") {
-    target.searchParams.set("error", "nonaktif");
-  }
-  return NextResponse.redirect(target);
+  const nonaktif = request.nextUrl.searchParams.get("alasan") === "nonaktif";
+  return relativeRedirect(nonaktif ? "/portal/login?error=nonaktif" : "/portal/login");
 }

@@ -1,5 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { relativeRedirect } from "@/lib/http/redirect";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const ALLOWED_TYPES: readonly EmailOtpType[] = ["invite", "recovery", "email", "email_change"];
@@ -35,5 +36,5 @@ export async function GET(request: NextRequest) {
   }
 
   const target = ok ? next : "/portal/login?error=tautan";
-  return NextResponse.redirect(new URL(target, request.url));
+  return relativeRedirect(target);
 }
