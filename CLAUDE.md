@@ -54,7 +54,7 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 - **Chart**: Recharts
 - **PWA**: Serwist. Cek dulu kompatibilitasnya dengan bundler versi Next yang terpasang. Kalau belum kompatibel, tulis service worker manual, jangan dipaksa.
 - **Offline storage**: Dexie (IndexedDB)
-- **Email transaksional**: Resend + React Email
+- **Email transaksional**: Brevo (relay SMTP untuk email Supabase Auth, API HTTP lewat `fetch` untuk email aplikasi). Pola sama dengan proyek KELOLA: login SMTP terpisah dari alamat pengirim (`SMTP_FROM`). Template email ditulis sebagai komponen React (React Email, persetujuan dependency diminta saat dipakai)
 - **AI customer service**: Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/google`) dengan Gemini, `pgvector` di Supabase untuk pencarian knowledge base. Nama model diambil dari env `GEMINI_MODEL` dan `GEMINI_EMBEDDING_MODEL`, jangan hardcode. Cek dokumentasi Google untuk model yang masih aktif.
 - **Env**: `@t3-oss/env-nextjs` (validasi env saat build)
 - **Testing**: Vitest + Testing Library (unit), Playwright (e2e), pgTAP atau test SQL untuk RLS
@@ -159,7 +159,7 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 - Selector pakai `getByRole`, `getByLabel`, `getByText`. `data-testid` hanya kalau tidak ada alternatif. Dilarang selector CSS rapuh dan `waitForTimeout`.
 - Setiap test mandiri: menyiapkan datanya sendiri (lewat helper/factory ke Supabase lokal) dan tidak bergantung urutan. Bisa jalan paralel.
 - Assertion sampai ke hasil akhir, bukan cuma UI. Contoh: submit form lead dicek sampai baris `leads` dan `meta_event_outbox` benar-benar ada di database.
-- Layanan eksternal (Meta Graph API, CAPI, Resend, Turnstile, Web Push) di-mock di level jaringan (`page.route` atau mock server). Payload yang dikirim tetap di-assert.
+- Layanan eksternal (Meta Graph API, CAPI, Brevo, Turnstile, Web Push) di-mock di level jaringan (`page.route` atau mock server). Payload yang dikirim tetap di-assert.
 - Wajib diuji juga: jalur gagal (validasi, network error, akses ditolak per role), state kosong, mode offline PWA (`context.setOffline`), dan aksesibilitas dengan `@axe-core/playwright` di setiap halaman.
 - Visual regression (`toHaveScreenshot`) untuk halaman publik utama dan landing page.
 - Test flaky tidak boleh di-skip atau diberi retry untuk menutupi masalah. Cari penyebabnya dan perbaiki.
@@ -282,6 +282,23 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Soft delete (`deleted_at`) untuk data bisnis. Kolom `created_at`, `updated_at` (trigger), `created_by`.
 - Patuh UU PDP (UU 27/2022): checkbox persetujuan di setiap form lead, halaman kebijakan privasi, fitur hapus/ekspor data konsumen di admin.
 - Security headers (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) di `next.config`. Rate limit untuk form publik dan endpoint webhook. Honeypot + Cloudflare Turnstile di form publik.
+
+### Keamanan tingkat tinggi (keputusan owner, Fase 2)
+- Cloudflare dipakai untuk DNS domain, forwarding email, dan Turnstile. Trafik web tetap langsung ke Vercel (record DNS tanpa proxy), karena Vercel sudah menyediakan perlindungan DDoS dan firewall, dan proxy tambahan mengganggu cache serta deteksi IP asli.
+- Portal (PWA) tanpa captcha: tidak ada pendaftaran publik, akun hanya lewat undangan. Login dilindungi rate limit per IP dan per akun, penguncian sementara setelah beberapa kali gagal, dan pesan error yang tidak membocorkan akun mana yang ada.
+- Verifikasi dua langkah (TOTP, Supabase Auth MFA) wajib untuk role `owner` dan `admin`, opsional untuk role lain. Server action dan halaman admin/owner menolak sesi yang belum level AAL2.
+- Akun admin master: role `admin`, akses CMS dan PWA penuh, bisa mengundang semua role termasuk `owner`. Dibuat sekali lewat skrip bootstrap, setelah itu semua akun lewat undangan.
+- Sesi portal berumur terbatas, logout membersihkan sesi di server, perubahan role atau penonaktifan akun langsung mencabut sesi.
+- Semua aksi sensitif (undang, ubah role, nonaktifkan, ekspor, hapus data) tercatat di `audit_log`.
+
+### Email domain
+| Alamat | Dipakai untuk |
+|---|---|
+| `notifikasi@kisgroup.co.id` | Email otomatis sistem (undangan, lupa password, notifikasi internal). Balasan diteruskan ke `corporate@` |
+| `marketing@kisgroup.co.id` | Email ke calon pembeli (konfirmasi form, brosur, jadwal survei) |
+| `corporate@kisgroup.co.id` | Urusan resmi perusahaan (mitra, bank, lamaran kerja) |
+
+Pengiriman lewat Brevo dengan domain terautentikasi (SPF, DKIM, DMARC). Email masuk ke `marketing@` dan `corporate@` diteruskan ke Gmail lewat Cloudflare Email Routing.
 - Semua migrasi lewat `supabase/migrations` (Supabase CLI). Tidak ada perubahan schema manual lewat dashboard.
 
 ### Kompresi gambar (wajib)

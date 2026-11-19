@@ -10,7 +10,7 @@ export interface CapturedCall {
 
 export interface ExternalCalls {
   meta: CapturedCall[];
-  resend: CapturedCall[];
+  brevo: CapturedCall[];
   turnstile: CapturedCall[];
 }
 
@@ -19,7 +19,7 @@ function capture(request: Request): CapturedCall {
 }
 
 export async function mockExternalServices(page: Page): Promise<ExternalCalls> {
-  const calls: ExternalCalls = { meta: [], resend: [], turnstile: [] };
+  const calls: ExternalCalls = { meta: [], brevo: [], turnstile: [] };
 
   // Skrip Vercel Analytics dan Speed Insights hanya ada saat di-deploy ke Vercel.
   // Di production build lokal CI, path ini 404, jadi dijawab kosong.
@@ -39,12 +39,12 @@ export async function mockExternalServices(page: Page): Promise<ExternalCalls> {
     },
   );
 
-  await page.route("https://api.resend.com/**", (route) => {
-    calls.resend.push(capture(route.request()));
+  await page.route("https://api.brevo.com/**", (route) => {
+    calls.brevo.push(capture(route.request()));
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: '{"id":"mock-email"}',
+      body: '{"messageId":"<mock-email@kisgroup.co.id>"}',
     });
   });
 

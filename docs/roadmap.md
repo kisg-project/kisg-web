@@ -12,7 +12,7 @@ Kondisi yang memengaruhi semua fase:
 | Fase | Isi | Perkiraan file | Risiko utama | Data owner yang menahan |
 |---|---|---|---|---|
 | 1 | Fondasi: Next.js, tooling, token desain, komponen dasar, infrastruktur E2E, CI/CD | 110 sampai 140 | Kompatibilitas versi terbaru, kuota Actions | Akun Sentry, project Vercel |
-| 2 | Database, auth, RBAC, storage | 60 sampai 80 | Generate types tanpa Supabase lokal di laptop, konfigurasi hook auth | Daftar karyawan dan role, Resend |
+| 2 | Database, auth, RBAC, storage | 60 sampai 80 | Generate types tanpa Supabase lokal di laptop, konfigurasi hook auth | Daftar karyawan dan role, Brevo, Cloudflare |
 | 3 | Website corporate | 80 sampai 100 | Lighthouse 95 di mobile, data proyek belum ada | Data proyek, foto, harga, konten |
 | 4 | Panel admin CMS | 90 sampai 120 | Editor siteplan, editor rich text, dependency baru | Siteplan SVG, daftar kavling |
 | 5 | Landing page builder + tracking Meta | 50 sampai 70 | Consent dan dedup event, A/B tetap statis | Akun Meta Business, Pixel |
@@ -50,7 +50,7 @@ Risiko teknis:
 - `database.types.ts` biasanya di-generate dari Supabase lokal. Karena laptop tidak menjalankan Docker, job `db.yml` yang men-generate types di CI lalu mengunggahnya sebagai artifact. Kalau berbeda, CI gagal dan menampilkan diff. File diperbarui dengan mengambil artifact itu (`gh run download`).
 - Custom Access Token Hook harus aktif di lokal CI (`config.toml`) dan di staging/production. Pengaktifan remote lewat Supabase Management API dari workflow, bukan klik di dashboard.
 - Policy RLS yang memanggil fungsi per baris bisa lambat. Fungsi helper dibuat `stable` dan dibungkus `(select ...)` supaya dievaluasi sekali per query.
-- Email undangan dan lupa password butuh domain pengirim Resend terverifikasi.
+- Email undangan dan lupa password dikirim dari `notifikasi@kisgroup.co.id` lewat SMTP Brevo, butuh domain terautentikasi di Brevo (DNS di Cloudflare).
 
 ## Fase 3: Website corporate
 

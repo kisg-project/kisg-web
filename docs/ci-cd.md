@@ -73,7 +73,7 @@ Diisi di GitHub, menu Settings, Secrets and variables, Actions. Tidak pernah di 
 | `NEXT_PUBLIC_SENTRY_DSN` | Setelah akun Sentry ada | Sama |
 | `ENABLE_DEV_UI` | Jangan diisi | Jangan diisi |
 
-Variabel Supabase, Meta, Resend, Turnstile, dan Gemini ditambah di fase masing-masing.
+Variabel Supabase, Meta, Brevo, Turnstile, dan Gemini ditambah di fase masing-masing.
 
 ## Rollback
 

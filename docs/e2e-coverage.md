@@ -72,7 +72,7 @@ Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
 |---|---|---|---|
 | Login berhasil per role (7 role) dan diarahkan ke beranda sesuai role | D, MC | 2 | Belum |
 | Login gagal: password salah, akun nonaktif, email tidak terdaftar. Pesan benar, tanpa membocorkan akun mana yang ada | D | 2 | Belum |
-| Lupa password sampai email terkirim (Resend di-mock, isi email di-assert), lalu reset berhasil | D | 2 | Belum |
+| Lupa password sampai email terkirim (dibaca dari Mailpit Supabase lokal, isi email di-assert), lalu reset berhasil | D | 2 | Belum |
 | Undangan user: link undangan, set password, login dengan role benar | D | 2 | Belum |
 | Matriks akses bagian 1: setiap sel "Tolak" diuji lewat URL dan server action | D | 2, diperluas tiap fase | Belum |
 | Logout membersihkan sesi, tombol back tidak membuka halaman portal | D, MS | 2 | Belum |

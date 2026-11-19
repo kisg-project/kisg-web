@@ -69,6 +69,10 @@ fi
 echo "OK    PR #$pr ($head -> $base) siap di-merge"
 [ "$mode" = "--check-only" ] && exit 0
 
-delete_flag="--delete-branch"
-[ "$head" = "staging" ] && delete_flag=""
-gh pr merge "$pr" --squash $delete_flag --subject "$title (#$pr)"
+# PR fitur ke staging: squash. PR staging ke main: merge commit, supaya riwayat staging dan main tidak
+# bercabang dan main tetap memuat commit per fitur untuk CHANGELOG release-please.
+if [ "$head" = "staging" ]; then
+  gh pr merge "$pr" --merge --subject "$title (#$pr)"
+else
+  gh pr merge "$pr" --squash --delete-branch --subject "$title (#$pr)"
+fi
