@@ -4,7 +4,7 @@ changes
 pr-title
 static
 build
-# Check E2E diatur di merge-pr.sh: e2e (1/1) untuk PR biasa, e2e (1/3) sampai (3/3) untuk PR ke main
-# dan PR berlabel e2e:full.
+# Check E2E diatur di merge-pr.sh: e2e (1/1) untuk PR biasa, e2e (1/3) sampai (3/3) untuk PR
+# berlabel e2e:full (akhir fase).
 gitleaks
 audit

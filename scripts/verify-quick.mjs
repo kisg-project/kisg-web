@@ -26,9 +26,7 @@ run("typecheck", "pnpm typecheck");
 run("lint", "pnpm lint");
 run("check:copy", "pnpm check:copy");
 
-const base = gitLines("git rev-parse --verify --quiet origin/staging").length
-  ? "origin/staging"
-  : "origin/main";
+const base = "origin/main";
 const changed = new Set([
   ...gitLines(`git diff --name-only --diff-filter=ACMR ${base}...HEAD`),
   ...gitLines("git diff --name-only --diff-filter=ACMR HEAD"),

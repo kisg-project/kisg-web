@@ -25,16 +25,13 @@ IFS=$'\t' read -r state draft base head title labels <<< "$info"
 
 [ "$state" = "OPEN" ] || fail "PR #$pr berstatus $state"
 [ "$draft" = "false" ] || fail "PR #$pr masih draft"
+# Semua PR ke main (tanpa staging sejak Fase 2). SEMENTARA: base staging masih diterima untuk
+# memindahkan isi staging ke main satu kali. Dihapus bersama branch staging.
 case "$base" in
-  staging) ;;
-  main)
-    case "$head" in
-      staging | release-please--*) ;;
-      *) fail "PR ke main hanya boleh dari staging atau release-please (sekarang dari $head)" ;;
-    esac
-    ;;
-  *) fail "base PR harus staging atau main (sekarang $base)" ;;
+  main | staging) ;;
+  *) fail "base PR harus main (sekarang $base)" ;;
 esac
+[ "$head" != "main" ] || fail "head PR tidak boleh main"
 
 # Judul PR menjadi pesan squash commit, jadi harus Conventional Commits.
 printf '%s' "$title" | grep -Eq '^(feat|fix|chore|docs|refactor|test|perf|build|ci|style|revert)(\([a-z0-9-]+\))?!?: .+' \
@@ -71,13 +68,12 @@ if [ -f "$REQUIRED_FILE" ]; then
   done < "$REQUIRED_FILE"
 fi
 
-# E2E: PR biasa cukup Chromium, e2e (1/1). PR ke main dan PR akhir fase (label e2e:full) wajib
+# E2E: PR biasa cukup Chromium, e2e (1/1). PR akhir fase (label e2e:full) wajib
 # 3 browser x 3 shard. Kalau label dipasang setelah CI jalan, push ulang supaya suite penuh jalan.
 full_e2e=no
 case ",$labels," in
   *",e2e:full,"*) full_e2e=yes ;;
 esac
-[ "$base" = "main" ] && full_e2e=yes
 if [ "$full_e2e" = "yes" ]; then
   for shard in 1 2 3; do require_check "e2e ($shard/3)"; done
 else
@@ -87,8 +83,8 @@ fi
 echo "OK    PR #$pr ($head -> $base) siap di-merge"
 [ "$mode" = "--check-only" ] && exit 0
 
-# PR fitur ke staging: squash. PR staging ke main: merge commit, supaya riwayat staging dan main tidak
-# bercabang dan main tetap memuat commit per fitur untuk CHANGELOG release-please.
+# PR fitur: squash. SEMENTARA: PR staging ke main memakai merge commit supaya commit per fitur tetap
+# ada di main untuk CHANGELOG release-please.
 if [ "$head" = "staging" ]; then
   gh pr merge "$pr" --merge --subject "$title (#$pr)"
 else

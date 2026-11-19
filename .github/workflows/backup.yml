@@ -2,7 +2,8 @@ name: Backup
 
 # Supabase Free tidak punya backup otomatis (CLAUDE.md bagian 10).
 # Harian: pg_dump production, dienkripsi, disimpan sebagai artifact.
-# Harian juga: ping staging supaya project tidak dijeda (Supabase Free menjeda setelah 7 hari tanpa aktivitas).
+# Koneksi harian ini juga menjaga project production tetap aktif (Supabase Free menjeda project
+# setelah 7 hari tanpa aktivitas). Tanpa staging sejak Fase 2.
 on:
   schedule:
     - cron: "0 19 * * *" # 02.00 WIB
@@ -52,18 +53,3 @@ jobs:
           name: backup-production
           path: backup-*.tar.gz.gpg
           retention-days: 30
-
-  ping-staging:
-    name: ping-staging
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      STAGING_URL: ${{ secrets.STAGING_SUPABASE_URL }}
-      STAGING_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
-    steps:
-      - name: Ping API staging
-        run: |
-          if [ -z "$STAGING_URL" ] || [ -z "$STAGING_ANON_KEY" ]; then
-            echo "::notice::Secret staging belum diisi. Ping dilewati (aktif mulai Fase 2)."; exit 0
-          fi
-          curl -fsS -o /dev/null -w "%{http_code}\n" "$STAGING_URL/rest/v1/" -H "apikey: $STAGING_ANON_KEY"
