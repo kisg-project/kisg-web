@@ -3,14 +3,7 @@
 import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Controller,
-  useFieldArray,
-  useForm,
-  useWatch,
-  type Control,
-  type FieldPath,
-} from "react-hook-form";
+import { Controller, useForm, useWatch, type Control, type FieldPath } from "react-hook-form";
 import { CircleCheck, CircleMinus, Download, Phone, Plus, Trash2 } from "lucide-react";
 import { NumberInput } from "@/components/shared/number-input";
 import { Button } from "@/components/ui/button";
@@ -190,7 +183,13 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       ...productValues(products[0] ?? null, scheme, KPR_DEFAULTS.tenorYears),
     },
   });
-  const segments = useFieldArray({ control: form.control, name: "segments" });
+  // Tanpa useFieldArray: library itu membuat ID baris dengan crypto.randomUUID() saat render,
+  // yang memblokir prerender Next.js (Cache Components). Daftar periode pendek dan tidak diurutkan
+  // ulang, jadi key berdasarkan urutan aman.
+  const segmentValues = useWatch({ control: form.control, name: "segments" });
+  const setSegments = (next: KprFormInput["segments"]) => {
+    form.setValue("segments", next, { shouldValidate: true });
+  };
   const values = useWatch({ control: form.control });
   const parsed = schema.safeParse(values);
   const result = parsed.success ? calculateKpr(parsed.data) : null;
@@ -226,7 +225,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       scheme,
       form.getValues("tenorYears") || KPR_DEFAULTS.tenorYears,
     );
-    segments.replace(next.segments);
+    setSegments(next.segments);
     form.setValue("afterRatePercent", next.afterRatePercent, { shouldValidate: true });
     form.setValue("tenorYears", next.tenorYears, { shouldValidate: true });
     if (scroll) {
@@ -475,13 +474,14 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
 
             <div className="grid gap-3 sm:col-span-2">
               <p className="text-sm font-semibold">{terms.fixedPeriods}</p>
-              {segments.fields.length === 0 ? (
+              {segmentValues.length === 0 ? (
                 <p className="text-sm text-subtle-foreground">
                   Tidak ada periode tetap. {terms.rate} di bawah berlaku sampai lunas.
                 </p>
               ) : null}
-              {segments.fields.map((field, index) => (
-                <div key={field.id} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
+              {segmentValues.map((_segment, index) => (
+                // Key urutan: periode stabil dan tidak diurutkan ulang (lihat setSegments).
+                <div key={index} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
                   <NumberField
                     control={form.control}
                     name={`segments.${index}.ratePercent`}
@@ -503,7 +503,9 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                     size="icon"
                     aria-label={`Hapus periode ${index + 1}`}
                     onClick={() => {
-                      segments.remove(index);
+                      setSegments(
+                        form.getValues("segments").filter((_item, position) => position !== index),
+                      );
                     }}
                   >
                     <Trash2 aria-hidden="true" />
@@ -511,13 +513,16 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                 </div>
               ))}
               {segmentsError ? <p className="text-sm text-destructive">{segmentsError}</p> : null}
-              {segments.fields.length < KPR_LIMITS.segments.max ? (
+              {segmentValues.length < KPR_LIMITS.segments.max ? (
                 <Button
                   type="button"
                   variant="outline"
                   className="w-fit"
                   onClick={() => {
-                    segments.append({ ratePercent: values.afterRatePercent ?? 0, years: 1 });
+                    setSegments([
+                      ...form.getValues("segments"),
+                      { ratePercent: values.afterRatePercent ?? 0, years: 1 },
+                    ]);
                   }}
                 >
                   <Plus aria-hidden="true" />
@@ -530,12 +535,12 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
               <NumberField
                 control={form.control}
                 name="afterRatePercent"
-                label={segments.fields.length === 0 ? terms.fixedUntilEnd : terms.afterRate}
+                label={segmentValues.length === 0 ? terms.fixedUntilEnd : terms.afterRate}
                 decimals={2}
                 suffix="%/tahun"
                 readOnly={!hydrated}
                 hint={
-                  segments.fields.length === 0
+                  segmentValues.length === 0
                     ? undefined
                     : "Bank tidak mempublikasikan angka pasti. Ubah sesuai penawaran bank."
                 }
