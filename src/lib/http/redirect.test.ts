@@ -8,6 +8,10 @@ describe("relativeRedirect", () => {
     expect(response.headers.get("location")).toBe("/portal/login?error=tautan");
   });
 
+  it("bisa memakai 303 setelah POST", () => {
+    expect(relativeRedirect("/portal/login", 303).status).toBe(303);
+  });
+
   it("menolak URL luar dan protocol-relative", () => {
     expect(() => relativeRedirect("https://contoh.com")).toThrow();
     expect(() => relativeRedirect("//contoh.com")).toThrow();

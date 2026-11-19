@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -16,16 +15,11 @@ const PAGE_MESSAGES: Record<string, string> = {
 };
 
 export function LoginForm({ next, message }: { next?: string; message?: string }) {
-  const router = useRouter();
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", next },
   });
-  const { execute, result, isExecuting } = useAction(loginAction, {
-    onSuccess({ data }) {
-      router.replace(data.redirectTo);
-    },
-  });
+  const { execute, result, isExecuting } = useAction(loginAction);
   const serverError = result.serverError;
   const pageMessage = message ? PAGE_MESSAGES[message] : undefined;
 

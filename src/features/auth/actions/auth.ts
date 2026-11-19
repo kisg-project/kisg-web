@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { isAppRole } from "@/config/roles";
 import { safeNextPath } from "@/config/portal";
 import { env } from "@/env";
@@ -36,17 +37,9 @@ export const loginAction = actionClient.inputSchema(loginSchema).action(async ({
     await supabase.auth.signOut();
     throw new ActionError("Akun Anda tidak aktif. Hubungi admin.");
   }
-  return { redirectTo: safeNextPath(parsedInput.next, role) };
-});
-
-/**
- * Mengakhiri sesi di server (semua perangkat). Browser lalu memuat ulang halaman masuk secara penuh,
- * supaya cache router tidak menyimpan halaman portal untuk tombol back.
- */
-export const logoutAction = actionClient.action(async () => {
-  const supabase = await createSupabaseServerClient();
-  await supabase.auth.signOut();
-  return { redirectTo: "/portal/login" };
+  // Redirect dari server: cookie sesi dan navigasi dikirim dalam satu response, tanpa refresh
+  // halaman login yang bisa terputus di Safari.
+  redirect(safeNextPath(parsedInput.next, role));
 });
 
 /** Selalu menjawab sukses yang sama, supaya tidak membocorkan email mana yang terdaftar. */
@@ -79,5 +72,5 @@ export const updatePasswordAction = authActionClient
           : "Password gagal disimpan. Buka lagi tautan dari email, lalu coba lagi.",
       );
     }
-    return { redirectTo: safeNextPath(null, ctx.role) };
+    redirect(safeNextPath(null, ctx.role));
   });

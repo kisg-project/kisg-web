@@ -50,8 +50,13 @@ vi.mock("@/lib/security/rate-limit", () => ({
 }));
 vi.mock("@/env", () => ({ env: { NEXT_PUBLIC_SITE_URL: "https://kisgroup.co.id" } }));
 
-const { forgotPasswordAction, loginAction, logoutAction, updatePasswordAction } =
-  await import("./auth");
+const { forgotPasswordAction, loginAction, updatePasswordAction } = await import("./auth");
+
+/** Error redirect asli Next (next/navigation) yang diteruskan next-safe-action. */
+function redirectTo(path: string): unknown {
+  const digest: unknown = expect.stringContaining(`;${path};`);
+  return expect.objectContaining({ digest });
+}
 
 beforeEach(() => {
   state.allowed = true;
@@ -67,15 +72,15 @@ const credentials = { email: "a@kisgroup.co.id", password: "Rahasia2026" };
 
 describe("loginAction", () => {
   it("mengarahkan ke beranda role setelah berhasil", async () => {
-    const result = await loginAction(credentials);
-    expect(result.data).toEqual({ redirectTo: "/portal/crm" });
+    await expect(loginAction(credentials)).rejects.toEqual(redirectTo("/portal/crm"));
     expect(hitRateLimit).toHaveBeenCalledWith("login-ip", "203.0.113.9", 900, 20);
     expect(hitRateLimit).toHaveBeenCalledWith("login-akun", "a@kisgroup.co.id", 900, 5);
   });
 
   it("memakai next kalau role boleh membukanya", async () => {
-    const result = await loginAction({ ...credentials, next: "/portal/absensi" });
-    expect(result.data).toEqual({ redirectTo: "/portal/absensi" });
+    await expect(loginAction({ ...credentials, next: "/portal/absensi" })).rejects.toEqual(
+      redirectTo("/portal/absensi"),
+    );
   });
 
   it("menolak dengan pesan umum kalau password salah", async () => {
@@ -111,14 +116,6 @@ describe("loginAction", () => {
   });
 });
 
-describe("logoutAction", () => {
-  it("menghapus sesi lalu kembali ke halaman masuk", async () => {
-    const result = await logoutAction();
-    expect(auth.signOut).toHaveBeenCalled();
-    expect(result.data).toEqual({ redirectTo: "/portal/login" });
-  });
-});
-
 describe("forgotPasswordAction", () => {
   it("selalu menjawab terkirim dan memakai URL portal", async () => {
     const result = await forgotPasswordAction({ email: "a@kisgroup.co.id" });
@@ -139,8 +136,7 @@ describe("updatePasswordAction", () => {
   const input = { password: "Rahasia2026", confirm: "Rahasia2026" };
 
   it("menyimpan password lalu ke beranda role", async () => {
-    const result = await updatePasswordAction(input);
-    expect(result.data).toEqual({ redirectTo: "/portal/crm" });
+    await expect(updatePasswordAction(input)).rejects.toEqual(redirectTo("/portal/crm"));
   });
 
   it("menolak password yang sama dengan sebelumnya", async () => {

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -11,16 +10,11 @@ import { newPasswordSchema, type NewPasswordInput } from "../schemas/auth";
 
 /** Dipakai untuk atur ulang password dan untuk menerima undangan. */
 export function NewPasswordForm() {
-  const router = useRouter();
   const form = useForm<NewPasswordInput>({
     resolver: zodResolver(newPasswordSchema),
     defaultValues: { password: "", confirm: "" },
   });
-  const { execute, result, isExecuting } = useAction(updatePasswordAction, {
-    onSuccess({ data }) {
-      router.replace(data.redirectTo);
-    },
-  });
+  const { execute, result, isExecuting } = useAction(updatePasswordAction);
 
   return (
     <form
