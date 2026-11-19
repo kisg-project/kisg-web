@@ -15,8 +15,10 @@ KIS Group adalah developer perumahan di Bekasi dan Depok.
 | Sejahtera Residence Mangunjaya | Sold out |
 | Sejahtera Green Village Tambun Selatan | Tersedia (proyek aktif, fokus penjualan) |
 
+- Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
-- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`)
+- Alamat kantor: Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123
+- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
@@ -152,7 +154,7 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 - Suite E2E hanya jalan di CI, di atas **production build** (`next build && next start`) dengan **Supabase lokal** di runner (`supabase start`) yang di-reset dan di-seed sebelum suite jalan. Tidak dijalankan di laptop pengembang. Tidak boleh menyentuh database staging/production.
 - Spec E2E tetap ditulis bersama fitur. Spec yang ditulis tanpa dijalankan di lokal harus lolos `typecheck` dan `lint`, dan baru dianggap lolos setelah CI hijau.
 - Browser: Chromium desktop, Mobile Chrome (Pixel), Mobile Safari (iPhone). Portal wajib lolos di profil mobile.
-- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor).
+- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor, finance).
 - Selector pakai `getByRole`, `getByLabel`, `getByText`. `data-testid` hanya kalau tidak ada alternatif. Dilarang selector CSS rapuh dan `waitForTimeout`.
 - Setiap test mandiri: menyiapkan datanya sendiri (lewat helper/factory ke Supabase lokal) dan tidak bergantung urutan. Bisa jalan paralel.
 - Assertion sampai ke hasil akhir, bukan cuma UI. Contoh: submit form lead dicek sampai baris `leads` dan `meta_event_outbox` benar-benar ada di database.
@@ -184,7 +186,7 @@ Palet diambil dari file logo di `public/brand/`, bukan ditebak.
 
 Prosedur (dijalankan sekali di fase fondasi, hasilnya dikunci):
 1. Kalau logo SVG: baca nilai `fill`/`stroke` langsung. Kalau PNG/JPG: lihat gambarnya, lalu ekstrak warna dominan dengan `sharp` (quantize, abaikan putih/transparan/anti-alias).
-2. Tetapkan peran: `primary` (warna paling dominan di logo), `secondary` (warna kedua), `accent` (kalau ada warna ketiga yang cukup kontras, khusus CTA dan highlight).
+2. Tetapkan peran: `primary` (warna paling dominan di logo), `secondary` (warna kedua), `accent` (kalau ada warna ketiga yang cukup kontras, khusus CTA dan highlight). Pengecualian yang sudah disetujui owner di Fase 0: primary = hijau logo `#0F6D5F`, accent = emas logo `#D7AE5F`, karena emas (paling dominan) hanya 2.08:1 di latar putih. Palet final terkunci di `docs/brand.md`.
 3. Buat skala 50 sampai 950 untuk tiap warna di ruang OKLCH, dengan warna logo asli tepat di salah satu step (catat step-nya).
 4. Neutral: abu-abu dengan sedikit tint ke hue `primary` supaya menyatu.
 5. Warna semantik (success, warning, danger, info) dan warna status unit (tersedia, hold, booking, terjual) diselaraskan dengan palet, tetap mudah dibedakan.
@@ -235,7 +237,7 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 ## 8. Data, keamanan, dan akses
 
 - Semua tabel di schema `public` wajib RLS aktif dan punya policy eksplisit. Tidak ada tabel tanpa policy.
-- Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance` (opsional). Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
+- Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance`. Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
 - Marketing hanya melihat lead miliknya. Manager melihat timnya. Owner dan admin melihat semua.
 - Service role key hanya dipakai di server (webhook, cron, admin task) dan tidak pernah sampai ke client.
 - Storage: bucket publik hanya untuk aset website. Foto laporan, dokumen konsumen (KTP, slip gaji, dsb) di bucket privat dengan signed URL berumur pendek.
@@ -274,7 +276,7 @@ Semua gambar yang diunggah ke website, portal, atau PWA dikompres di browser seb
 1. **Pixel (browser)**: `PageView`, `ViewContent` (halaman proyek/unit), `Lead` (submit form), `Contact` (klik WhatsApp), `Schedule` (booking survei). Hanya dimuat setelah consent.
 2. **Conversions API (server)**: event yang sama dikirim dari server dengan `event_id` identik untuk deduplikasi. Sertakan `fbp`, `fbc` (dari cookie / `fbclid`), IP, user agent, `em`/`ph`/`external_id` yang di-hash SHA-256 setelah dinormalisasi.
 3. **Lead Ads webhook**: `/api/webhooks/meta/leadgen`. Verifikasi `hub.verify_token` (GET) dan `X-Hub-Signature-256` dengan App Secret (POST). Ambil detail lead via Graph API, simpan `meta_lead_id`, proses idempotent.
-4. **Conversion Leads (CRM ke Meta)**: setiap perubahan tahap pipeline dicatat ke tabel `meta_event_outbox`, lalu worker cron mengirim ke dataset Meta dengan `action_source: "system_generated"`, `custom_data.event_source: "crm"`, `custom_data.lead_event_source: "KIS CRM"`, dan `user_data.lead_id` kalau ada (kalau tidak, `em`/`ph` ter-hash). `event_time` harus setelah waktu lead dibuat dan maksimal 7 hari ke belakang. Retry dengan exponential backoff, simpan respons, tampilkan status sinkron di admin.
+4. **Conversion Leads (CRM ke Meta)**: setiap perubahan tahap pipeline dicatat ke tabel `meta_event_outbox`, lalu worker `/api/cron/meta-outbox` (dipicu `pg_cron` + `pg_net` dari Supabase, lihat bagian 10) mengirim ke dataset Meta dengan `action_source: "system_generated"`, `custom_data.event_source: "crm"`, `custom_data.lead_event_source: "KIS CRM"`, dan `user_data.lead_id` kalau ada (kalau tidak, `em`/`ph` ter-hash). `event_time` harus setelah waktu lead dibuat dan maksimal 7 hari ke belakang. Retry dengan exponential backoff, simpan respons, tampilkan status sinkron di admin.
 5. Versi Graph API, Pixel ID, dataset ID, token, dan `test_event_code` lewat env. Preview deployment selalu memakai `test_event_code`.
 
 ---
@@ -283,31 +285,48 @@ Semua gambar yang diunggah ke website, portal, atau PWA dikompres di browser seb
 
 Tidak ada kode yang sampai ke staging atau production tanpa lewat PR dan CI hijau.
 
+### Paket gratis (keputusan owner, Fase 0)
+Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Supabase Free. Batasan dan penggantinya:
+
+| Batasan | Pengganti |
+|---|---|
+| GitHub Free private: tanpa branch protection, rulesets, dan GitHub Environments | Pengaman berlapis: aturan `deny` di `.claude/settings.json`, hook Husky `pre-push` menolak push ke `main`/`staging`, merge hanya lewat `bash scripts/merge-pr.sh <nomor>` yang memeriksa semua check hijau lalu squash merge. Secret CI disimpan sebagai repository secret dengan awalan `STAGING_` dan `PRODUCTION_` |
+| GitHub Free private: CodeQL dan dependency review butuh Advanced Security | Keamanan dependency lewat Dependabot alerts (gratis), `pnpm audit`, gitleaks, dan `eslint` aturan keamanan |
+| GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
+| Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
+| Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |
+| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | Backup `pg_dump` terenkripsi terjadwal lewat GitHub Actions, ping mingguan ke staging |
+| Supabase Free: database 500 MB, storage 1 GB | Kompresi gambar wajib (bagian 8), masa simpan data yang bisa diatur, pemantauan kuota |
+
+Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
+
 ### Branch dan alur
 - `main` = production (`kisgroup.co.id`). `staging` = staging (`staging.kisgroup.co.id`, Supabase staging).
-- Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...` lalu PR ke `staging`. Setelah dicek di staging, PR `staging` ke `main`.
-- Branch protection di `main` dan `staging`: tanpa push langsung, tanpa force push, wajib PR, wajib semua status check lolos, branch harus up to date, squash merge.
+- Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...`, `docs/...` lalu PR ke `staging`. Setelah dicek di staging, PR `staging` ke `main`.
+- Aturan yang biasanya dipaksa branch protection tetap berlaku dan dijaga oleh pengaman di atas: tanpa push langsung ke `main`/`staging`, tanpa force push, wajib PR, wajib semua status check lolos, branch harus up to date, squash merge.
 - Conventional Commits dipaksa dengan commitlint (hook `commit-msg`) dan judul PR dicek di CI.
 - `.github/pull_request_template.md` berisi checklist: ringkasan, skenario E2E yang ditambah, migrasi DB (ya/tidak, aman untuk rollback atau tidak), screenshot untuk perubahan UI, data yang butuh owner.
-- `CODEOWNERS` untuk `supabase/migrations/`, `src/lib/meta/`, `.github/`, `proxy.ts`.
+- `CODEOWNERS` untuk `supabase/migrations/`, `src/lib/meta/`, `.github/`, `proxy.ts` (tanpa branch protection, fungsinya sebagai penanda review, tidak memblokir).
 
 ### Workflow GitHub Actions (`.github/workflows/`)
 Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang membatalkan run lama di branch yang sama, `timeout-minutes` di setiap job, permission minimum (`contents: read` kecuali perlu), versi action di-pin.
 
 1. **`ci.yml`** (setiap PR dan push ke `staging`/`main`): install, typecheck, lint, check:copy, unit test dengan ambang coverage (minimal 80% untuk `src/lib` dan `src/features/*/utils|schemas|actions`), build, E2E penuh di production build dengan Supabase lokal (di-shard paralel, 3 browser), axe. Upload laporan Playwright, trace, video, dan coverage sebagai artifact.
 2. **`db.yml`** (PR yang menyentuh `supabase/`): `supabase start`, terapkan semua migrasi dari nol, jalankan test RLS, `supabase db lint`, pastikan `database.types.ts` sama dengan hasil generate (`git diff --exit-code`), deteksi operasi destruktif (DROP, RENAME, ubah tipe kolom) dan wajibkan label `migration:destructive` + persetujuan.
-3. **`security.yml`** (setiap PR + terjadwal mingguan): CodeQL, gitleaks (secret scan), `dependency-review-action`, `pnpm audit` gagal di level high ke atas.
+3. **`security.yml`** (setiap PR + terjadwal mingguan): gitleaks (secret scan), `pnpm audit` gagal di level high ke atas. CodeQL dan `dependency-review-action` tidak dipakai selama repo private di GitHub Free.
 4. **`preview.yml`** (event `deployment_status` dari Vercel Preview): smoke E2E ke URL preview memakai Supabase staging dan akun test khusus, lalu Lighthouse CI dengan budget (performance, accessibility, best practices, SEO minimal 95 untuk halaman publik dan LP). Hasil dikomentari ke PR.
-5. **`deploy-db.yml`**: merge ke `staging` menjalankan `supabase db push` ke staging. Merge ke `main` menjalankan push ke production lewat GitHub Environment `production` yang wajib approval manual. Migrasi selalu dijalankan sebelum app versi baru aktif.
-6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
-7. **`e2e-nightly.yml`** (terjadwal tiap malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal.
+5. **`deploy-db.yml`**: merge ke `staging` menjalankan `supabase db push` ke staging.
+6. **`deploy-production.yml`** (`workflow_dispatch` manual, hanya dari `main`, wajib mengetik `production` di input konfirmasi): `supabase db push` ke production, lalu `vercel deploy --prebuilt --prod`. Ini pengganti approval Environment, dan menjamin migrasi jalan sebelum app versi baru aktif. Deploy production otomatis Vercel dari `main` dimatikan.
+7. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
+8. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
+9. **`backup.yml`** (terjadwal harian): `pg_dump` production, dienkripsi, disimpan sebagai artifact dengan masa simpan terbatas. Ping staging mingguan supaya tidak dijeda.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
 ### Deploy (Vercel)
-- Integrasi Git Vercel: Preview untuk setiap PR, `staging` ke domain staging, Production hanya dari `main`.
+- Integrasi Git Vercel: Preview untuk setiap PR, `staging` ke domain staging. Production hanya lewat `deploy-production.yml` dari `main`.
 - `ignoreCommand` supaya perubahan yang hanya menyentuh `docs/` atau `*.md` tidak memicu build.
-- Env var dipisah per environment. Secret CI disimpan di GitHub Environments, tidak pernah di repo.
+- Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `STAGING_`/`PRODUCTION_`, tidak pernah di file repo.
 - Migrasi harus backward compatible (pola expand lalu contract) karena app lama dan baru sempat berjalan bersamaan saat deploy. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
 - Rollback app lewat Instant Rollback Vercel. Rollback database lewat migrasi perbaikan baru, tidak pernah mengedit migrasi lama.
 - `docs/ci-cd.md` menjelaskan alur ini, daftar secret yang dibutuhkan, dan cara rollback.
