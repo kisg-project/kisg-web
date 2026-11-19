@@ -2,7 +2,7 @@
 
 Data yang belum ada tampil sebagai placeholder `[...]` di website, tidak dikarang. Kolom "Dibutuhkan di" menunjukkan fase paling lambat data itu harus ada supaya fase tersebut bisa selesai tanpa placeholder.
 
-Cara kirim: tempel di chat, atau taruh file di folder yang disepakati. Foto dikirim versi asli (resolusi penuh). Kompresi dilakukan sistem.
+Cara kirim: tempel di chat, atau taruh file di folder Downloads lalu kabari nama file atau foldernya. Foto dikirim versi asli (resolusi penuh). Kompresi dilakukan sistem.
 
 ## 1. Profil dan kontak (tampil di website)
 
@@ -35,34 +35,63 @@ Sumber: NIB yang diterbitkan OSS, 16 Januari 2023. Atas keputusan owner, NIB, te
 
 ## 3. Data per proyek
 
-Diisi untuk keempat proyek. Proyek sold out cukup bagian yang ditandai "semua", karena tampil sebagai portofolio.
+Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase 1).
 
-| Data | Proyek | Dibutuhkan di |
+### Sudah diterima dari owner (19 November 2026)
+
+| Data | Nilai |
+|---|---|
+| Alamat proyek | Jl. Garuda 3 No. NK-34, Blok H-21, RT 9/RW 14, Mangunjaya, Kec. Tambun Selatan, Kab. Bekasi, Jawa Barat 17510 |
+| Tipe unit | Tipe 36/60: luas bangunan 36 m2, luas tanah 60 m2, 2 kamar tidur, 1 kamar mandi |
+| Harga | Rp 571.250.000 |
+| Harga sudah termasuk | Biaya notaris, cek sertifikat di BPN, balik nama sertifikat di BPN, pajak penjualan (SSP), IMB, PBB |
+| Harga belum termasuk | Administrasi bank, biaya notaris bank, pajak pembelian (BPHTB), asuransi |
+| Fasilitas unit | Carport, halaman belakang, smart door lock |
+| Tempat sekitar (nama saja) | Stasiun Tambun, Tol Bekasi Timur, Bank Mandiri KCP Mangunjaya, Superindo dan area komersial Tambun |
+| Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dipakai untuk Hero Banner |
+
+### Masih dibutuhkan
+
+| Data | Dibutuhkan di |
+|---|---|
+| Konfirmasi: "Panjang Penjualan / SSP" ditulis sebagai "Pajak penjualan (SSP)" | Fase 3 |
+| Konfirmasi: 7 gambar di folder `foto rumah` adalah render resmi dari arsitek atau konsultan (CLAUDE.md melarang gambar hasil AI) | Fase 3 |
+| Jarak atau waktu tempuh ke tiap tempat sekitar (contoh: 10 menit ke Stasiun Tambun) | Fase 3 |
+| Titik Google Maps proyek (link share) | Fase 3 |
+| Tahun mulai pembangunan dan target serah terima | Fase 3 |
+| Jumlah unit total | Fase 3 |
+| Foto lapangan asli (gerbang, jalan lingkungan, progres) | Fase 3 |
+| Deskripsi singkat proyek (2 sampai 3 kalimat fakta) | Fase 3 |
+| Testimoni pembeli dengan izin tertulis (opsional) | Fase 3 |
+| Spesifikasi teknis (pondasi, dinding, atap, lantai, kusen, listrik, air) dan denah | Fase 3 |
+| Legalitas proyek: status SHM/SHGB, PBG, nomor izin yang boleh ditampilkan | Fase 3 |
+| Fasilitas lingkungan (taman, musala, keamanan, dsb) | Fase 3 |
+| Brosur PDF | Fase 3 |
+| Siteplan (SVG, atau PDF/gambar resolusi tinggi untuk digambar ulang) dan daftar kavling (blok, nomor, luas, hook, status) | Fase 4 |
+| Radius geofence absensi dan titik pusat lokasi proyek | Fase 8 |
+| Radius geofence absensi kantor | Fase 8 |
+
+### KPR dan bank rekanan
+
+Produk di `/simulasi-kpr` ada di `src/config/kpr-products.ts`, masing-masing dengan sumber dan tanggal akses (19 November 2026). Semua angka bisa diubah pengunjung. Mohon dikonfirmasi ke bank rekanan:
+
+| Data | Status | Dibutuhkan di |
 |---|---|---|
-| Alamat lengkap dan titik Google Maps | Semua | Fase 3 |
-| Tahun mulai dan tahun sold out | Semua | Fase 3 |
-| Jumlah unit total | Semua | Fase 3 |
-| Foto proyek asli (fasad, jalan lingkungan, gerbang, fasilitas). Minimal 6 per proyek | Semua | Fase 3 |
-| Deskripsi singkat (2 sampai 3 kalimat fakta) | Semua | Fase 3 |
-| Testimoni penghuni dengan izin tertulis (nama, foto, kutipan) | Semua, opsional | Fase 3 |
-| Siteplan dalam bentuk SVG, atau PDF/gambar resolusi tinggi untuk digambar ulang | Sejahtera Green Village | Fase 4 |
-| Daftar kavling: blok, nomor, luas tanah, tipe, posisi hook atau tidak, status saat ini | Sejahtera Green Village | Fase 4 |
-| Tipe unit: nama, luas tanah, luas bangunan, jumlah kamar tidur dan mandi, lantai, spesifikasi teknis (pondasi, dinding, atap, lantai, kusen, listrik, air) | Sejahtera Green Village | Fase 3 |
-| Denah per tipe | Sejahtera Green Village | Fase 3 |
-| Harga per tipe atau per kavling (owner sudah memutuskan harga ditampilkan, angka menyusul) | Sejahtera Green Village | Fase 3 |
-| Skema pembayaran: tunai keras, tunai bertahap, KPR (bank rekanan, DP minimal, tenor) | Sejahtera Green Village | Fase 3 |
-| Legalitas proyek: status SHM/SHGB, PBG, nomor izin yang boleh ditampilkan | Sejahtera Green Village | Fase 3 |
-| Fasilitas lingkungan (taman, musala, keamanan, dsb) | Semua | Fase 3 |
-| Tempat terdekat dengan jarak dan waktu tempuh asli (stasiun, gerbang tol, sekolah, rumah sakit, pasar, mal) | Semua | Fase 3 |
-| Brosur PDF | Sejahtera Green Village | Fase 3 |
-| Radius geofence absensi (meter) dan titik pusat lokasi proyek | Proyek yang sedang dibangun | Fase 8 |
-| Radius geofence absensi kantor (titik kantor diambil dari Google Maps kantor) | Kantor | Fase 8 |
+| Bank yang resmi bekerja sama dengan KIS: BTN, Mandiri, BSI, BSN (dulu BTN Syariah) | Perlu konfirmasi | Fase 3 |
+| Mandiri KPR Bunga Spesial (Fixed 3 tahun 2,76%, Fixed 5 tahun 3,50%, Berjenjang 10 tahun 4,06% lalu 8,76% lalu 9,76%), kategori Gold Selected KPR Primary, berlaku s.d. 30 November 2026 | Dari situs resmi Mandiri. Perlu kategori nasabah yang berlaku untuk pembeli KIS dan tenor maksimal | Sebelum 30 November 2026 |
+| BTN Fixed 3 tahun 2,65% | Dari pemberitaan (Kontan). Perlu konfirmasi angka, tenor, DP minimal | Fase 3 |
+| BSI KPR Sejahtera margin 5% tetap sampai lunas | Dari pemberitaan (Kontan). Perlu konfirmasi produk dan syaratnya | Fase 3 |
+| BSN margin 3,65% tetap 1 tahun | Dari pemberitaan (Kontan). Perlu margin setelah tahun pertama | Fase 3 |
+| Logo BSN | Belum ada. Kirim file logo resmi dari bank, atau saya coba unduh ulang dari Wikimedia | Fase 3 |
+| Asumsi bunga floating setelah masa fixed (sekarang 11%) dan margin setelah periode tetap syariah (sekarang 10%) | Asumsi, perlu acuan dari bank | Fase 3 |
+| NPOPTKP Kabupaten Bekasi untuk BPHTB (sekarang Rp 80.000.000, batas minimal UU HKPD) | Perlu angka perda | Fase 3 |
+| Perkiraan biaya bank, notaris bank, dan asuransi (sekarang 3% dari pokok) | Asumsi, perlu angka dari bank rekanan | Fase 3 |
 
 ## 4. Konten website
 
 | Data | Dibutuhkan di |
 |---|---|
-| Foto atau desain banner hero (versi desktop dan mobile) | Fase 3 |
+| Foto Hero Banner beranda (penuh satu layar). Versi desktop mendatar minimal 2560 x 1440 px, versi HP tegak minimal 1080 x 1920 px. Owner menaruhnya di folder Downloads, lalu sistem mengompres dan mengunggahnya | Fase 3 |
 | Berita awal (minimal 3, boleh dari postingan Instagram) | Fase 3 |
 | Promo aktif: judul, isi, syarat, masa berlaku | Fase 3 |
 | FAQ: pertanyaan yang paling sering ditanyakan calon pembeli, beserta jawabannya | Fase 3 |

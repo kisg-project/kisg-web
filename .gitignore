@@ -35,3 +35,11 @@ e2e/.auth/
 .DS_Store
 Thumbs.db
 *.log
+
+# tambahan dari template Next.js
+.pnp
+.pnp.*
+*.pem
+npm-debug.log*
+.pnpm-debug.log*
+/test-results-*/

@@ -143,7 +143,7 @@ Fase 2: Supabase. Ikuti docs/data-model.md yang sudah disetujui.
 7. Storage buckets: public-assets (publik), site-reports, customer-docs, avatars (privat) beserta policy.
 8. Generate types ke src/lib/supabase/database.types.ts. Buat client browser, server, dan admin (server-only).
 9. Auth portal: login email + password, lupa password, undang user oleh admin (tanpa registrasi publik). Guard role di proxy dan di wrapper next-safe-action.
-10. seed.sql untuk development saja: 4 proyek sesuai CLAUDE.md dengan status yang benar, user contoh per role, data dummy yang jelas berlabel dummy.
+10. seed.sql untuk development saja: 1 proyek (Sejahtera Green Village) sesuai CLAUDE.md, user contoh per role, data dummy yang jelas berlabel dummy.
 
 E2E wajib:
 - Lengkapi storageState per role di global setup.
@@ -166,9 +166,9 @@ pnpm verify:full lokal + semua workflow CI (termasuk db.yml) harus hijau.
 Fase 3: website publik di route group (site). Struktur mengacu pola damaiputra.com, visual dan copy milik KIS sendiri sesuai CLAUDE.md bagian 6 dan 7. Semua konten diambil dari database (nanti diatur di admin), tidak hardcode.
 
 Halaman:
-1. Beranda: hero carousel (banner dari admin, gambar dioptimasi, autoplay bisa dijeda, aksesibel), strip statistik (dari site_settings, kosongkan kalau datanya belum ada), sorotan Sejahtera Green Village, portofolio proyek (badge Sold Out / Tersedia), progres pembangunan terbaru, berita, promo, CTA penutup, footer lengkap.
-2. Proyek: daftar dengan filter status dan lokasi.
-3. Detail proyek /proyek/[slug]: galeri, tipe unit (luas tanah/bangunan, spesifikasi, harga atau "Hubungi marketing"), siteplan interaktif SVG dengan status kavling realtime, fasilitas, lokasi (peta + jarak ke tempat penting), progres pembangunan, simulasi KPR, unduh brosur (wajib isi form singkat, masuk ke CRM), form minat, FAQ. Untuk proyek sold out: tampilkan sebagai portofolio + blok yang mengarahkan ke proyek tersedia.
+1. Beranda: hero carousel (banner dari admin, gambar dioptimasi, autoplay bisa dijeda, aksesibel), strip statistik (dari site_settings, kosongkan kalau datanya belum ada), sorotan Sejahtera Green Village, progres pembangunan terbaru, berita, promo, CTA penutup, footer lengkap.
+2. Proyek: daftar proyek terbit tanpa filter. Selama hanya ada satu proyek, menu Proyek langsung ke detailnya.
+3. Detail proyek /proyek/[slug]: galeri, tipe unit (luas tanah/bangunan, spesifikasi, harga atau "Hubungi marketing"), siteplan interaktif SVG dengan status kavling realtime, fasilitas, lokasi (peta + jarak ke tempat penting), progres pembangunan, simulasi KPR, unduh brosur (wajib isi form singkat, masuk ke CRM), form minat, FAQ.
 4. Simulasi KPR: input harga, DP, tenor, bunga. Rumus anuitas yang benar, disclaimer singkat bahwa angka bersifat estimasi.
 5. Tentang Kami (profil, visi misi, legalitas, perjalanan proyek), Berita + detail, Promo + detail, Karir + form lamaran, Kontak (form + peta + kontak), Kebijakan Privasi, Syarat Ketentuan.
 6. Tombol WhatsApp melayang dengan pesan pembuka otomatis yang menyebut halaman/proyek asal. Klik dicatat sebagai event Contact.
@@ -181,7 +181,7 @@ E2E wajib (desktop dan mobile):
 - Semua halaman publik render, tanpa error console, tanpa pelanggaran axe, link internal tidak ada yang 404.
 - Navigasi header, menu mobile, footer.
 - Hero carousel: autoplay, jeda, navigasi keyboard.
-- Detail proyek tersedia dan sold out menampilkan blok yang benar. Slug tidak ada menampilkan 404.
+- Detail Sejahtera Green Village menampilkan blok yang benar. Slug tidak ada menampilkan 404.
 - Siteplan: klik kavling menampilkan status yang sesuai database.
 - Simulasi KPR: hasil cicilan sesuai perhitungan yang di-assert, input tidak valid ditolak.
 - Form minat, kontak, unduh brosur, lamaran karir: jalur sukses (dicek sampai ke database lengkap dengan UTM dan sumber), validasi gagal, tanpa persetujuan PDP ditolak, honeypot terisi ditolak, rate limit aktif.

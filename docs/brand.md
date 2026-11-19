@@ -62,7 +62,7 @@ Hue semantik: success 150 (hijau murni, beda dari hijau brand 179), warning 65, 
 
 ## Token semantik
 
-Komponen memakai token semantik, bukan step langsung. Website publik hanya mode terang. Portal mendukung terang dan gelap.
+Komponen memakai token semantik, bukan step langsung. Di kode, skala emas bernama `gold-*` dan token semantik CTA emas bernama `highlight`, karena `accent` di shadcn berarti latar hover netral. Palet bawaan Tailwind dimatikan di `globals.css`. Token ditulis dalam hex supaya warna logo tepat, nilai OKLCH ada di komentar. Website publik hanya mode terang. Portal mendukung terang dan gelap.
 
 | Token | Terang | Gelap (portal) | Pemakaian |
 |---|---|---|---|
@@ -75,10 +75,11 @@ Komponen memakai token semantik, bukan step langsung. Website publik hanya mode 
 | `primary` | primary-700 | primary-400 | Tombol utama, link, navigasi aktif |
 | `primary-foreground` | putih | neutral-950 | Teks di atas `primary` |
 | `primary-hover` | primary-800 | primary-300 | Hover tombol utama |
-| `accent` | accent-400 | accent-400 | CTA aksen, garis aksen, highlight |
-| `accent-foreground` | primary-950 | neutral-950 | Teks di atas `accent` |
-| `accent-hover` | accent-300 | accent-300 | Hover CTA aksen |
-| `accent-text` | accent-700 | accent-400 | Teks berwarna emas (label, angka sorotan) |
+| `highlight` | gold-400 | gold-400 | CTA aksen, garis aksen, highlight |
+| `highlight-foreground` | primary-950 | neutral-950 | Teks di atas `highlight` |
+| `highlight-hover` | gold-300 | gold-300 | Hover CTA aksen |
+| `highlight-text` | gold-700 | gold-400 | Teks berwarna emas (label, angka sorotan) |
+| `accent` | neutral-100 | neutral-800 | Latar hover netral (konvensi shadcn), bukan emas |
 | `ring` | primary-700 | primary-300 | Fokus keyboard |
 | `footer` | primary-950, teks putih, aksen accent-400 | sama | Footer website |
 | `success`, `warning`, `danger`, `info` (solid) | 700, 600, 600, 600 berteks putih | 400 berteks neutral-950 | Tombol dan toast |
