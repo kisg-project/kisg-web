@@ -1,4 +1,10 @@
-import { expect, expectNoA11yViolations, expectResponsive, test } from "../fixtures/test";
+import {
+  expect,
+  expectNoA11yViolations,
+  expectResponsive,
+  test,
+  waitForKprReady,
+} from "../fixtures/test";
 
 test.describe("Beranda", () => {
   test("hero penuh satu layar di bawah navbar, dengan CTA WhatsApp", async ({ page }) => {
@@ -50,10 +56,7 @@ test.describe("Beranda", () => {
 
   test("lolos aksesibilitas dan responsif di semua lebar", async ({ page }) => {
     await page.goto("/");
-    // Field KPR nonaktif sampai halaman siap. Axe memeriksa keadaan akhir yang dipakai pengunjung.
-    await expect(
-      page.getByRole("tabpanel", { name: "KPR konvensional" }).getByLabel("Harga rumah"),
-    ).toBeEnabled();
+    await waitForKprReady(page);
     await expectNoA11yViolations(page);
     await expectResponsive(page);
   });
@@ -84,6 +87,7 @@ test.describe("Simulasi KPR", () => {
     page,
   }) => {
     await page.goto("/#simulasi-kpr");
+    await waitForKprReady(page);
     const panel = page.getByRole("tabpanel", { name: "KPR konvensional" });
     await expect(panel.getByLabel("Harga rumah")).toHaveValue("571250000");
     await expect(panel.getByText("Rp 4.766.002")).toBeVisible();
@@ -99,6 +103,7 @@ test.describe("Simulasi KPR", () => {
   test("KPR syariah menghitung angsuran tetap murabahah", async ({ page }) => {
     await page.goto("/#simulasi-kpr");
     await page.getByRole("tab", { name: "KPR syariah" }).click();
+    await waitForKprReady(page, "syariah");
     const panel = page.getByRole("tabpanel", { name: "KPR syariah" });
     await expect(panel.getByText("Rp 4.998.438")).toBeVisible();
     await expect(panel.getByText("180 bulan")).toBeVisible();
@@ -109,10 +114,14 @@ test.describe("Simulasi KPR", () => {
     const banks = page.getByRole("list", { name: "Bank rekanan KPR" });
     for (const name of ["Bank BTN", "Bank Mandiri", "Bank Syariah Indonesia (BSI)"]) {
       const logo = banks.getByRole("img", { name });
+      await logo.scrollIntoViewIfNeeded();
       await expect(logo).toBeVisible();
-      expect(await logo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(
-        0,
-      );
+      // Gambar memakai lazy loading: tunggu sampai selesai dimuat, lalu pastikan file SVG terbaca.
+      await expect
+        .poll(() =>
+          logo.evaluate((image: HTMLImageElement) => (image.complete ? image.naturalWidth : 0)),
+        )
+        .toBeGreaterThan(0);
     }
   });
 
@@ -120,6 +129,7 @@ test.describe("Simulasi KPR", () => {
     page,
   }) => {
     await page.goto("/#simulasi-kpr");
+    await waitForKprReady(page);
     const panel = page.getByRole("tabpanel", { name: "KPR konvensional" });
     await panel.getByLabel("Tenor").fill("40");
     await expect(panel.getByText("Tenor maksimal 30 tahun.")).toBeVisible();

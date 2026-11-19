@@ -74,15 +74,26 @@ export async function expectResponsive(page: Page, mainLocator = page.locator("m
         `${element.tagName.toLowerCase()}.${[...element.classList].slice(0, 4).join(".")} "${element.textContent
           .trim()
           .slice(0, 30)}" (${Math.round(element.getBoundingClientRect().right)}px)`;
-      // Elemen terdalam yang melewati lebar layar, supaya penyebab overflow langsung terlihat.
+      // Elemen terdalam yang melewati lebar layar, tidak termasuk isi wadah scroll (tidak menggeser halaman).
+      const insideScroller = (element: Element) => {
+        for (let node = element.parentElement; node; node = node.parentElement) {
+          const { overflowX } = getComputedStyle(node);
+          if (["auto", "scroll", "hidden", "clip"].includes(overflowX) && node !== document.body)
+            return true;
+        }
+        return false;
+      };
       const wide = [...document.querySelectorAll("body *")].filter(
         (element) =>
           element.getBoundingClientRect().right > limit + 1 &&
+          !insideScroller(element) &&
           ![...element.children].some((child) => child.getBoundingClientRect().right > limit + 1),
       );
+      const label = (element: Element) =>
+        `${getComputedStyle(element).position === "fixed" ? "[fixed] " : ""}${describe(element)}`;
       return {
         overflow: document.documentElement.scrollWidth - limit,
-        offenders: wide.slice(0, 5).map(describe),
+        offenders: wide.slice(0, 5).map(label),
       };
     });
     expect(
@@ -92,4 +103,12 @@ export async function expectResponsive(page: Page, mainLocator = page.locator("m
     await expect(mainLocator, `Konten utama terlihat di lebar ${width}px`).toBeVisible();
   }
   if (original) await page.setViewportSize(original);
+}
+
+/** Field simulasi KPR nonaktif sampai halaman siap (hydration). Tunggu sebelum mengisi atau memeriksa axe. */
+export async function waitForKprReady(
+  page: Page,
+  kind: "konvensional" | "syariah" = "konvensional",
+) {
+  await expect(page.getByRole("group", { name: `Data KPR ${kind}` })).toBeEnabled();
 }

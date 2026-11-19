@@ -225,12 +225,15 @@ function KonvensionalForm({ price }: { price: number }) {
     <div className="grid gap-6 lg:grid-cols-2">
       <form
         noValidate
-        className="grid gap-4 sm:grid-cols-2"
         onSubmit={(event) => {
           event.preventDefault();
         }}
       >
-        <fieldset disabled={!hydrated} className="contents">
+        <fieldset
+          disabled={!hydrated}
+          aria-label="Data KPR konvensional"
+          className="grid min-w-0 gap-4 sm:grid-cols-2"
+        >
           <div className="sm:col-span-2">
             <NumberField form={form} name="price" label="Harga rumah" money />
           </div>
@@ -308,12 +311,15 @@ function SyariahForm({ price }: { price: number }) {
     <div className="grid gap-6 lg:grid-cols-2">
       <form
         noValidate
-        className="grid gap-4 sm:grid-cols-2"
         onSubmit={(event) => {
           event.preventDefault();
         }}
       >
-        <fieldset disabled={!hydrated} className="contents">
+        <fieldset
+          disabled={!hydrated}
+          aria-label="Data KPR syariah"
+          className="grid min-w-0 gap-4 sm:grid-cols-2"
+        >
           <div className="sm:col-span-2">
             <NumberField form={form} name="price" label="Harga rumah" money />
           </div>

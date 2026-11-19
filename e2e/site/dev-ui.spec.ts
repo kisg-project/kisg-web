@@ -1,4 +1,10 @@
-import { expect, expectNoA11yViolations, expectResponsive, test } from "../fixtures/test";
+import {
+  expect,
+  expectNoA11yViolations,
+  expectResponsive,
+  test,
+  waitForKprReady,
+} from "../fixtures/test";
 
 test.describe("Halaman review UI", () => {
   test("menampilkan token dan komponen tanpa pelanggaran aksesibilitas", async ({ page }) => {
@@ -6,9 +12,7 @@ test.describe("Halaman review UI", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Review UI" })).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.getByRole("heading", { name: "Skala warna" })).toBeVisible();
-    await expect(
-      page.getByRole("tabpanel", { name: "KPR konvensional" }).getByLabel("Harga rumah"),
-    ).toBeEnabled();
+    await waitForKprReady(page);
     await expectNoA11yViolations(page);
     await expectResponsive(page);
   });
