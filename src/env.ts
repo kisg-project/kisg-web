@@ -19,7 +19,13 @@ export const env = createEnv({
     SENTRY_ORG: process.env.SENTRY_ORG,
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     ENABLE_DEV_UI: process.env.ENABLE_DEV_UI,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
+    // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
+    NEXT_PUBLIC_SITE_URL:
+      process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : undefined),
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
   emptyStringAsUndefined: true,
