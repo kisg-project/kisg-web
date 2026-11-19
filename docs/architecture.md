@@ -60,7 +60,7 @@ Prinsip:
 | `/proyek` | Daftar proyek terbit, tanpa filter. Selama hanya ada satu proyek terbit, menu "Proyek" langsung menuju halaman detailnya | Static, revalidate by tag |
 | `/proyek/[slug]` | Galeri, tipe unit, siteplan, fasilitas, lokasi, progres, form minat | Static per slug (`generateStaticParams`), revalidate by tag. Status kavling siteplan di-hydrate dari Realtime |
 | `/proyek/[slug]/progres` | Progres pembangunan yang disetujui | Static, revalidate by tag |
-| `/simulasi-kpr` | Kalkulator KPR | Static, hitung di client |
+| `/simulasi-kpr` | Simulasi KPR konvensional (fixed lalu floating) dan syariah (murabahah margin flat), semua angka bisa diubah, logo bank rekanan. Versi pertama sudah tampil di beranda sejak Fase 1 | Static, hitung di client. Nilai awal dari `src/config/kpr.ts`, Fase 4 dari admin |
 | `/tentang` | Profil, visi misi, legalitas, perjalanan proyek | Static |
 | `/berita`, `/berita/[slug]` | Berita | Static, revalidate by tag |
 | `/promo`, `/promo/[slug]` | Promo aktif dan detail | Static, revalidate by tag dan saat masa berlaku habis |

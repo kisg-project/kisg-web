@@ -100,6 +100,18 @@ test.describe("Simulasi KPR", () => {
     await expect(panel.getByText("180 bulan")).toBeVisible();
   });
 
+  test("logo bank rekanan KPR tampil dan termuat", async ({ page }) => {
+    await page.goto("/#simulasi-kpr");
+    const banks = page.getByRole("list", { name: "Bank rekanan KPR" });
+    for (const name of ["Bank BTN", "Bank Mandiri", "Bank Syariah Indonesia (BSI)"]) {
+      const logo = banks.getByRole("img", { name });
+      await expect(logo).toBeVisible();
+      expect(await logo.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(
+        0,
+      );
+    }
+  });
+
   test("masukan tidak valid menampilkan pesan per field dan menyembunyikan hasil", async ({
     page,
   }) => {

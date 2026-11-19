@@ -32,14 +32,29 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 
 ## 2. Skenario per area
 
-### Fondasi (`e2e/site/`, Fase 1)
+### Fondasi dan beranda (`e2e/site/`, Fase 1)
 
-| Skenario | Profil | Fase | Status |
+Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
+
+| Skenario | Spec | Fase | Status |
 |---|---|---|---|
-| `/dev/ui` render semua token dan komponen tanpa error console dan tanpa pelanggaran axe (hanya aktif di development/test) | D | 1 | Belum |
-| Beranda placeholder render tanpa error dan tanpa pelanggaran axe | D, MC, MS | 1 | Belum |
-| Security headers ada di response (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) | D | 1 | Belum |
-| Modul kompresi gambar: file 6 MB dari kamera menjadi WebP di bawah target, orientasi benar, EXIF hilang (dijalankan di halaman uji `/dev/ui`) | D, MC, MS | 1 | Belum |
+| Hero Banner penuh satu layar tepat di bawah navbar, foto tampil, CTA WhatsApp menuju `wa.me/6289673296881` dengan pesan menyebut proyek | `home.spec.ts` | 1 | Ditulis |
+| Ringkasan Tipe 36/60: harga Rp 571.250.000, spesifikasi dengan ikon, fasilitas, tempat sekitar, rincian biaya termasuk dan belum termasuk | `home.spec.ts` | 1 | Ditulis |
+| Beranda tanpa pelanggaran axe dan tanpa scroll horizontal di lebar 320, 375, 768, 1024, 1440 px | `home.spec.ts` | 1 | Ditulis |
+| Menu HP (sheet) membuka navigasi dan menuju Simulasi KPR (MC, MS). Navigasi desktop tampil, tombol menu tersembunyi (D) | `home.spec.ts` | 1 | Ditulis |
+| Simulasi KPR konvensional: harga terisi dari data proyek, cicilan fixed dan floating sesuai nilai acuan, DP persen mengisi DP rupiah | `home.spec.ts` | 1 | Ditulis |
+| Simulasi KPR syariah: angsuran tetap murabahah sesuai nilai acuan | `home.spec.ts` | 1 | Ditulis |
+| Logo bank rekanan KPR (BTN, Mandiri, BSI) tampil dan termuat | `home.spec.ts` | 1 | Ditulis |
+| Simulasi KPR: tenor di luar batas dan masa fixed melebihi tenor ditolak dengan pesan per field, hasil disembunyikan | `home.spec.ts` | 1 | Ditulis |
+| SEO: judul, `lang="id"`, canonical, meta description, Open Graph, satu `h1`, JSON-LD `RealEstateAgent` dan `RealEstateListing` dengan harga IDR | `home.spec.ts` | 1 | Ditulis |
+| `robots.txt` menutup `/portal` dan `/dev`, `sitemap.xml` tersedia | `home.spec.ts` | 1 | Ditulis |
+| Security headers (CSP, HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy), tanpa `x-powered-by` | `headers-and-errors.spec.ts` | 1 | Ditulis |
+| Halaman yang tidak ada: status 404, `h1`, tautan ke beranda | `headers-and-errors.spec.ts` | 1 | Ditulis |
+| `/dev/ui`: token dan komponen tampil, `noindex`, tanpa pelanggaran axe, responsif | `dev-ui.spec.ts` | 1 | Ditulis |
+| `/dev/ui`: dialog tertutup dengan Escape, toast tampil | `dev-ui.spec.ts` | 1 | Ditulis |
+| Kompresi gambar: foto JPEG besar (4000 x 3000) menjadi di bawah 500 KB, sisi terpanjang maksimal 2048 px, WebP (atau JPEG di browser tanpa encoder WebP) | `image-compress.spec.ts` | 1 | Ditulis |
+| Kompresi gambar: orientasi EXIF diterapkan, EXIF dan GPS dibuang | `image-compress.spec.ts` | 1 | Ditulis |
+| Kompresi gambar: file bukan gambar ditolak dengan pesan jelas | `image-compress.spec.ts` | 1 | Ditulis |
 
 ### Auth (`e2e/admin/auth`, Fase 2)
 

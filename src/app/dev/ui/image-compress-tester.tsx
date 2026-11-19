@@ -44,7 +44,7 @@ export function ImageCompressTester() {
         <Label htmlFor="profil-kompresi">Profil kompresi</Label>
         <select
           id="profil-kompresi"
-          className="h-11 rounded-md border border-input bg-background px-3"
+          className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3"
           value={profile}
           onChange={(event) => {
             setProfile(event.target.value as ImageProfileName);
