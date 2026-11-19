@@ -59,6 +59,6 @@ Password database staging tersimpan di `~/.config/kis/accounts.env` sebagai `KIS
 | Supabase | supabase.com/dashboard/account/tokens | Buat token baru, ganti `SUPABASE_ACCESS_TOKEN`, cabut token lama |
 | Vercel | vercel.com/account/settings/tokens | Buat token baru dengan scope tim `kisg-project`, ganti `VERCEL_TOKEN`, hapus token lama |
 | Sentry | Sentry > Settings > Auth Tokens | Buat token baru, ganti `SENTRY_AUTH_TOKEN`, cabut token lama |
-| Password database | Supabase > Project Settings > Database | Reset, lalu perbarui secret `SUPABASE_DB_PASSWORD` di GitHub Environments |
+| Password database | Supabase > Project Settings > Database | Reset, lalu perbarui repository secret GitHub `STAGING_SUPABASE_DB_PASSWORD` atau `PRODUCTION_SUPABASE_DB_PASSWORD` (dan `KIS_STAGING_DB_PASSWORD` di `accounts.env` untuk staging) |
 
-Setelah mengganti token, buka sesi Claude Code baru supaya hook memuat nilai baru. Token yang juga disimpan sebagai secret GitHub Actions atau env Vercel harus diganti di sana juga.
+Setelah mengganti token, buka sesi Claude Code baru supaya hook memuat nilai baru. Token yang juga disimpan sebagai secret GitHub Actions atau env Vercel harus diganti di sana juga (repository secret GitHub, env Vercel).
