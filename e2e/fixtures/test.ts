@@ -105,10 +105,13 @@ export async function expectResponsive(page: Page, mainLocator = page.locator("m
   if (original) await page.setViewportSize(original);
 }
 
-/** Field simulasi KPR nonaktif sampai halaman siap (hydration). Tunggu sebelum mengisi atau memeriksa axe. */
+/** Field simulasi KPR readOnly sampai halaman siap (hydration). Tunggu sebelum mengisi atau memeriksa axe. */
 export async function waitForKprReady(
   page: Page,
   kind: "konvensional" | "syariah" = "konvensional",
 ) {
-  await expect(page.getByRole("group", { name: `Data KPR ${kind}` })).toBeEnabled();
+  // Field readOnly sampai halaman siap. toBeEditable membaca atribut readonly langsung dari input.
+  await expect(
+    page.getByRole("group", { name: `Data KPR ${kind}` }).getByLabel("Harga rumah"),
+  ).toBeEditable();
 }

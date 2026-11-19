@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, use, useId, useState, useSyncExternalStore, type ReactNode } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useForm,
@@ -33,8 +33,7 @@ const DISCLAIMER =
 const noopSubscribe = () => () => undefined;
 
 /**
- * true setelah React aktif di browser. Field dinonaktifkan sebelum itu supaya ketikan di HP lambat
- * tidak hilang tanpa validasi (race hydration).
+ * true setelah React aktif di browser. Sebelum itu field readOnly (lihat FieldsReadyContext).
  */
 function useHydrated(): boolean {
   return useSyncExternalStore(
@@ -43,6 +42,12 @@ function useHydrated(): boolean {
     () => false,
   );
 }
+
+/**
+ * Sebelum halaman siap, field dibuat readOnly (bukan disabled) supaya tampilan tidak berkedip
+ * dari abu ke putih dan ketikan di HP lambat tidak hilang tanpa validasi.
+ */
+const FieldsReadyContext = createContext(true);
 
 function parseNumber(value: unknown): number {
   if (typeof value === "number") return value;
@@ -74,6 +79,7 @@ function NumberField<T extends FieldValues>({
   hint,
 }: FieldProps<T>) {
   const id = useId();
+  const ready = use(FieldsReadyContext);
   const error = form.formState.errors[name]?.message;
   const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
     .filter(Boolean)
@@ -89,6 +95,7 @@ function NumberField<T extends FieldValues>({
         ) : null}
         <Input
           id={id}
+          readOnly={!ready}
           inputMode={money ? "numeric" : "decimal"}
           autoComplete="off"
           aria-invalid={error ? true : undefined}
@@ -127,6 +134,7 @@ function DownPaymentPercentField({
   onChange: (value: number) => void;
 }) {
   const id = useId();
+  const ready = use(FieldsReadyContext);
   const [draft, setDraft] = useState<string | null>(null);
   const shown =
     draft ??
@@ -139,6 +147,7 @@ function DownPaymentPercentField({
       <div className="relative">
         <Input
           id={id}
+          readOnly={!ready}
           inputMode="decimal"
           autoComplete="off"
           className="h-11 pr-10 tabular"
@@ -229,34 +238,37 @@ function KonvensionalForm({ price }: { price: number }) {
           event.preventDefault();
         }}
       >
-        <fieldset
-          disabled={!hydrated}
-          aria-label="Data KPR konvensional"
-          className="grid min-w-0 gap-4 sm:grid-cols-2"
-        >
-          <div className="sm:col-span-2">
-            <NumberField form={form} name="price" label="Harga rumah" money />
-          </div>
-          <DownPaymentPercentField
-            price={values.price ?? Number.NaN}
-            downPayment={values.downPayment ?? Number.NaN}
-            onChange={(value) => {
-              form.setValue("downPayment", value, { shouldValidate: true });
-            }}
-          />
-          <NumberField form={form} name="downPayment" label="Uang muka (rupiah)" money />
-          <NumberField form={form} name="tenorYears" label="Tenor" suffix="tahun" />
-          <NumberField form={form} name="fixedYears" label="Masa bunga fixed" suffix="tahun" />
-          <NumberField form={form} name="fixedRatePercent" label="Bunga fixed" suffix="% / tahun" />
-          <NumberField
-            form={form}
-            name="floatingRatePercent"
-            label="Bunga floating"
-            suffix="% / tahun"
-          />
-          <p className="text-xs text-subtle-foreground sm:col-span-2">
-            Angka awal bunga dan masa fixed hanya contoh. Ubah sesuai penawaran bank.
-          </p>
+        <fieldset aria-label="Data KPR konvensional" className="grid min-w-0 gap-4 sm:grid-cols-2">
+          <FieldsReadyContext value={hydrated}>
+            <div className="sm:col-span-2">
+              <NumberField form={form} name="price" label="Harga rumah" money />
+            </div>
+            <DownPaymentPercentField
+              price={values.price ?? Number.NaN}
+              downPayment={values.downPayment ?? Number.NaN}
+              onChange={(value) => {
+                form.setValue("downPayment", value, { shouldValidate: true });
+              }}
+            />
+            <NumberField form={form} name="downPayment" label="Uang muka (rupiah)" money />
+            <NumberField form={form} name="tenorYears" label="Tenor" suffix="tahun" />
+            <NumberField form={form} name="fixedYears" label="Masa bunga fixed" suffix="tahun" />
+            <NumberField
+              form={form}
+              name="fixedRatePercent"
+              label="Bunga fixed"
+              suffix="% / tahun"
+            />
+            <NumberField
+              form={form}
+              name="floatingRatePercent"
+              label="Bunga floating"
+              suffix="% / tahun"
+            />
+            <p className="text-xs text-subtle-foreground sm:col-span-2">
+              Angka awal bunga dan masa fixed hanya contoh. Ubah sesuai penawaran bank.
+            </p>
+          </FieldsReadyContext>
         </fieldset>
       </form>
       <ResultPanel>
@@ -315,30 +327,28 @@ function SyariahForm({ price }: { price: number }) {
           event.preventDefault();
         }}
       >
-        <fieldset
-          disabled={!hydrated}
-          aria-label="Data KPR syariah"
-          className="grid min-w-0 gap-4 sm:grid-cols-2"
-        >
-          <div className="sm:col-span-2">
-            <NumberField form={form} name="price" label="Harga rumah" money />
-          </div>
-          <DownPaymentPercentField
-            price={values.price ?? Number.NaN}
-            downPayment={values.downPayment ?? Number.NaN}
-            onChange={(value) => {
-              form.setValue("downPayment", value, { shouldValidate: true });
-            }}
-          />
-          <NumberField form={form} name="downPayment" label="Uang muka (rupiah)" money />
-          <NumberField form={form} name="tenorYears" label="Tenor" suffix="tahun" />
-          <NumberField
-            form={form}
-            name="marginPercent"
-            label="Margin"
-            suffix="% / tahun"
-            hint="Margin flat per tahun (akad murabahah). Angka awal hanya contoh."
-          />
+        <fieldset aria-label="Data KPR syariah" className="grid min-w-0 gap-4 sm:grid-cols-2">
+          <FieldsReadyContext value={hydrated}>
+            <div className="sm:col-span-2">
+              <NumberField form={form} name="price" label="Harga rumah" money />
+            </div>
+            <DownPaymentPercentField
+              price={values.price ?? Number.NaN}
+              downPayment={values.downPayment ?? Number.NaN}
+              onChange={(value) => {
+                form.setValue("downPayment", value, { shouldValidate: true });
+              }}
+            />
+            <NumberField form={form} name="downPayment" label="Uang muka (rupiah)" money />
+            <NumberField form={form} name="tenorYears" label="Tenor" suffix="tahun" />
+            <NumberField
+              form={form}
+              name="marginPercent"
+              label="Margin"
+              suffix="% / tahun"
+              hint="Margin flat per tahun (akad murabahah). Angka awal hanya contoh."
+            />
+          </FieldsReadyContext>
         </fieldset>
       </form>
       <ResultPanel>
