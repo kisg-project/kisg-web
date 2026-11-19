@@ -7,6 +7,8 @@
 // Env opsional: ADDITIONAL_REDIRECT_URLS (dipisah koma), BREVO_SMTP_LOGIN, BREVO_SMTP_KEY,
 //               SMTP_FROM (default notifikasi@kisgroup.co.id), SMTP_SENDER_NAME (default KIS Group)
 
+import { readFileSync } from "node:fs";
+
 const required = ["SUPABASE_ACCESS_TOKEN", "SUPABASE_PROJECT_REF", "SITE_URL"];
 for (const name of required) {
   if (!process.env[name]) {
@@ -42,6 +44,11 @@ const payload = {
   rate_limit_verify: 30,
   rate_limit_otp: 30,
   rate_limit_token_refresh: 150,
+  // Template email berbahasa Indonesia (sama dengan lokal, supabase/templates).
+  mailer_subjects_invite: "Undangan portal KIS Group",
+  mailer_templates_invite_content: readFileSync("supabase/templates/invite.html", "utf8"),
+  mailer_subjects_recovery: "Atur ulang password portal KIS Group",
+  mailer_templates_recovery_content: readFileSync("supabase/templates/recovery.html", "utf8"),
 };
 
 const smtpReady = Boolean(env.BREVO_SMTP_LOGIN && env.BREVO_SMTP_KEY);

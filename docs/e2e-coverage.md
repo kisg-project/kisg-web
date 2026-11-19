@@ -66,17 +66,33 @@ Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
 | Unduh PDF: nama file, kop PT, judul, nomor halaman, angka angsuran | `simulasi-kpr.spec.ts` | 1 | Ditulis |
 | Halaman simulasi lolos axe, responsif, canonical, dan bagian akad tampil | `simulasi-kpr.spec.ts` | 1 | Ditulis |
 
-### Auth (`e2e/admin/auth`, Fase 2)
+### Auth (`e2e/auth/`, Fase 2)
 
-| Skenario | Profil | Fase | Status |
+Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi per role disiapkan `e2e/global-setup.ts` tanpa lewat UI. Setiap test memakai IP tiruan sendiri (`x-forwarded-for`) supaya rate limit login per IP tidak saling mengganggu.
+
+| Skenario | Spec | Fase | Status |
 |---|---|---|---|
-| Login berhasil per role (7 role) dan diarahkan ke beranda sesuai role | D, MC | 2 | Belum |
-| Login gagal: password salah, akun nonaktif, email tidak terdaftar. Pesan benar, tanpa membocorkan akun mana yang ada | D | 2 | Belum |
-| Lupa password sampai email terkirim (dibaca dari Mailpit Supabase lokal, isi email di-assert), lalu reset berhasil | D | 2 | Belum |
-| Undangan user: link undangan, set password, login dengan role benar | D | 2 | Belum |
-| Matriks akses bagian 1: setiap sel "Tolak" diuji lewat URL dan server action | D | 2, diperluas tiap fase | Belum |
-| Logout membersihkan sesi, tombol back tidak membuka halaman portal | D, MS | 2 | Belum |
-| Test RLS SQL: marketing tidak bisa baca lead orang lain, supervisor hanya proyek yang ditugaskan, anon hanya konten terbit | CI `db.yml` | 2 | Belum |
+| Halaman masuk: `noindex`, axe, responsif | `login.spec.ts` | 2b-1 | Ditulis |
+| Login berhasil per role (7 role), diarahkan ke beranda role, cookie sesi terbentuk | `login.spec.ts` | 2b-1 | Ditulis |
+| Validasi di browser: email dan password kosong, format email salah | `login.spec.ts` | 2b-1 | Ditulis |
+| Login gagal: password salah dan email tidak terdaftar memberi pesan yang sama | `login.spec.ts` | 2b-1 | Ditulis |
+| Akun nonaktif dan akun tanpa role tidak bisa masuk | `login.spec.ts` | 2b-1 | Ditulis |
+| Penguncian 15 menit setelah 5 kali gagal, walau password berikutnya benar | `login.spec.ts` | 2b-1 | Ditulis |
+| Kembali ke halaman tujuan (`next`) setelah login. `next` ke situs lain diabaikan | `login.spec.ts` | 2b-1 | Ditulis |
+| Akun dinonaktifkan saat sesi aktif: request berikutnya langsung keluar dengan pesan | `login.spec.ts` | 2b-1 | Ditulis |
+| Logout menghapus sesi, tombol back tidak membuka halaman portal | `login.spec.ts` | 2b-1 | Ditulis |
+| Lupa password: email dibaca dari Mailpit, tautan dibuka, aturan password dicek, password lama ditolak, password baru diterima | `password.spec.ts` | 2b-1 | Ditulis |
+| Lupa password untuk email tidak terdaftar: jawaban sama, tanpa email | `password.spec.ts` | 2b-1 | Ditulis |
+| Tautan email rusak atau kedaluwarsa: kembali ke halaman masuk dengan pesan | `password.spec.ts` | 2b-1 | Ditulis |
+| Halaman password baru tanpa sesi diarahkan ke login | `password.spec.ts` | 2b-1 | Ditulis |
+| Matriks akses bagian 1 lewat URL: setiap area tanpa login, dan setiap role ke setiap area (boleh atau ditolak) | `access.spec.ts` | 2b-1 | Ditulis |
+| Menu portal (sidebar desktop, navigasi bawah HP) hanya berisi area yang boleh dibuka | `access.spec.ts` | 2b-1 | Ditulis |
+| `/portal` dan `/portal/login` mengarahkan user yang sudah login ke beranda role | `access.spec.ts` | 2b-1 | Ditulis |
+| Halaman modul dan akses ditolak: axe, responsif, `noindex`. `robots.txt` memblokir `/portal` | `access.spec.ts` | 2b-1 | Ditulis |
+| Matriks akses lewat server action (aksi dengan batas role pertama: undang user) | `admin/` | 2b-2 | Belum |
+| Undangan user: tautan undangan, buat password, login dengan role benar | `admin/` | 2b-2 | Belum |
+| Verifikasi dua langkah (TOTP) wajib untuk owner dan admin, sesi AAL1 ditolak di halaman admin/owner | `auth/` | 2b-2 | Belum |
+| Test RLS SQL: tabel inti dan rate limit | CI `db.yml` | 2a, 2b-1 | Lolos (2a), Ditulis (rate limit) |
 
 ### Website (`e2e/site/`, Fase 3)
 

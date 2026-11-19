@@ -2,9 +2,14 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 // Variabel env divalidasi saat build dan saat server mulai (CLAUDE.md bagian 3).
-// Variabel fase berikutnya (Supabase, Meta, Gemini, Brevo, Turnstile) ditambah saat dibutuhkan.
+// Kunci Supabase dibaca saat runtime oleh server (bukan NEXT_PUBLIC), supaya satu build bisa dipakai
+// di CI (Supabase lokal) dan di Vercel (staging atau production). Halaman publik tidak memakainya.
+// Variabel fase berikutnya (Meta, Gemini, Brevo, Turnstile) ditambah saat dibutuhkan.
 export const env = createEnv({
   server: {
+    SUPABASE_URL: z.url().optional(),
+    SUPABASE_PUBLISHABLE_KEY: z.string().min(1).optional(),
+    SUPABASE_SECRET_KEY: z.string().min(1).optional(),
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
     SENTRY_ORG: z.string().min(1).optional(),
     SENTRY_PROJECT: z.string().min(1).optional(),
@@ -15,6 +20,9 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
   },
   runtimeEnv: {
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY: process.env.SUPABASE_PUBLISHABLE_KEY,
+    SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     SENTRY_ORG: process.env.SENTRY_ORG,
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,

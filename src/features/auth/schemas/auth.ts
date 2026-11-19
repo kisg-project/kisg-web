@@ -1,0 +1,41 @@
+import { z } from "zod";
+
+const email = z
+  .string({ error: "Isi email." })
+  .trim()
+  .toLowerCase()
+  .min(1, "Isi email.")
+  .max(254, "Email terlalu panjang.")
+  .pipe(z.email("Format email tidak valid. Contoh: nama@kisgroup.co.id."));
+
+export const loginSchema = z.object({
+  email,
+  password: z
+    .string({ error: "Isi password." })
+    .min(1, "Isi password.")
+    .max(128, "Password terlalu panjang."),
+  next: z.string().max(200).optional(),
+});
+
+export const forgotPasswordSchema = z.object({ email });
+
+/** Sama dengan aturan Supabase Auth (scripts/supabase-auth-config.mjs dan config.toml). */
+export const newPasswordSchema = z
+  .object({
+    password: z
+      .string({ error: "Isi password baru." })
+      .min(10, "Password minimal 10 karakter.")
+      .max(128, "Password maksimal 128 karakter.")
+      .regex(/[a-z]/, "Password harus memuat huruf kecil.")
+      .regex(/[A-Z]/, "Password harus memuat huruf besar.")
+      .regex(/[0-9]/, "Password harus memuat angka."),
+    confirm: z.string({ error: "Ulangi password baru." }),
+  })
+  .refine((value) => value.password === value.confirm, {
+    path: ["confirm"],
+    message: "Konfirmasi password tidak sama.",
+  });
+
+export type LoginInput = z.infer<typeof loginSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
