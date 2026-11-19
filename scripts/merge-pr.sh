@@ -26,7 +26,12 @@ IFS=$'\t' read -r state draft base head title <<< "$info"
 [ "$draft" = "false" ] || fail "PR #$pr masih draft"
 case "$base" in
   staging) ;;
-  main) [ "$head" = "staging" ] || fail "PR ke main hanya boleh dari staging (sekarang dari $head)" ;;
+  main)
+    case "$head" in
+      staging | release-please--*) ;;
+      *) fail "PR ke main hanya boleh dari staging atau release-please (sekarang dari $head)" ;;
+    esac
+    ;;
   *) fail "base PR harus staging atau main (sekarang $base)" ;;
 esac
 
@@ -49,7 +54,8 @@ not_green="$(printf '%s\n' "$checks" | awk -F'\t' '$2 != "pass" && $2 != "skippi
 if [ -f "$REQUIRED_FILE" ]; then
   while IFS= read -r required; do
     case "$required" in ''|'#'*) continue ;; esac
-    printf '%s\n' "$checks" | awk -F'\t' -v n="$required" '$1 == n && $2 == "pass" {found=1} END {exit !found}' \
+    # "skipping" diterima: job kode dilewati kalau PR hanya mengubah dokumen.
+    printf '%s\n' "$checks" | awk -F'\t' -v n="$required" '$1 == n && ($2 == "pass" || $2 == "skipping") {found=1} END {exit !found}' \
       || fail "check wajib '$required' tidak ada atau tidak lolos"
   done < "$REQUIRED_FILE"
 fi

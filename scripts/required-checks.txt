@@ -1,5 +1,7 @@
-# Nama check yang wajib ada dan hijau sebelum merge (dibaca scripts/merge-pr.sh).
-# Nama mengikuti nama job di .github/workflows/*.yml.
+# Nama check yang wajib ada dan hijau (atau dilewati untuk PR dokumen) sebelum merge.
+# Dibaca scripts/merge-pr.sh. Nama mengikuti nama job di .github/workflows/*.yml.
+changes
+pr-title
 static
 build
 e2e (1/3)

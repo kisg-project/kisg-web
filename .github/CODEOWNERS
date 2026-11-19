@@ -1,0 +1,5 @@
+# Penanda review (GitHub Free tanpa branch protection: tidak memblokir merge).
+/supabase/migrations/ @kisg-project
+/src/lib/meta/ @kisg-project
+/.github/ @kisg-project
+/src/proxy.ts @kisg-project
