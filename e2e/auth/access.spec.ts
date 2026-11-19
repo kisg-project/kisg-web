@@ -86,7 +86,7 @@ test.describe("Tampilan portal", () => {
 
   test("halaman akses ditolak aksesibel", async ({ page }) => {
     await page.goto("/portal/akses-ditolak");
-    await expect(page.getByRole("link", { name: "Ke beranda portal" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Ke beranda portal", exact: true })).toBeVisible();
     await expectNoA11yViolations(page);
   });
 });

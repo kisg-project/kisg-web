@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { isAppRole, type AppRole } from "@/config/roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -22,6 +23,8 @@ interface PortalSession {
  * atau penonaktifan akun langsung berlaku. Di-cache per request.
  */
 const getPortalSession = cache(async (): Promise<PortalSession> => {
+  // Sesi hanya dibaca saat request nyata, tidak saat prerender (Supabase memakai Date.now()).
+  await connection();
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getClaims();
   const userId = data?.claims.sub;

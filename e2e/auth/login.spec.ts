@@ -50,21 +50,27 @@ test.describe("Login portal", () => {
     const user = await createPortalUser({ role: "marketing" });
     await page.goto("/portal/login");
     await loginViaForm(page, { email: user.email, password: "PasswordSalah123" });
-    await expect(page.getByRole("alert")).toHaveText("Email atau password salah.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Email atau password salah.",
+    );
     await expect(page).toHaveURL(/\/portal\/login/);
   });
 
   test("email yang tidak terdaftar memberi pesan yang sama", async ({ page }) => {
     await page.goto("/portal/login");
     await loginViaForm(page, { email: "tidak-ada@e2e.kisgroup.co.id", password: "Apapun12345" });
-    await expect(page.getByRole("alert")).toHaveText("Email atau password salah.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Email atau password salah.",
+    );
   });
 
   test("akun nonaktif tidak bisa masuk", async ({ page }) => {
     const user = await createPortalUser({ role: "marketing", active: false });
     await page.goto("/portal/login");
     await loginViaForm(page, user);
-    await expect(page.getByRole("alert")).toHaveText("Akun Anda tidak aktif. Hubungi admin.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Akun Anda tidak aktif. Hubungi admin.",
+    );
     await page.goto("/portal/crm");
     await expect(page).toHaveURL(/\/portal\/login\?next=%2Fportal%2Fcrm/);
   });
@@ -73,7 +79,9 @@ test.describe("Login portal", () => {
     const user = await createPortalUser({ role: null });
     await page.goto("/portal/login");
     await loginViaForm(page, user);
-    await expect(page.getByRole("alert")).toHaveText("Akun Anda tidak aktif. Hubungi admin.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Akun Anda tidak aktif. Hubungi admin.",
+    );
   });
 
   test("dikunci sementara setelah 5 kali gagal, walau password berikutnya benar", async ({
@@ -83,10 +91,12 @@ test.describe("Login portal", () => {
     await page.goto("/portal/login");
     for (let attempt = 1; attempt <= 5; attempt += 1) {
       await loginViaForm(page, { email: user.email, password: `Salah${String(attempt)}23456` });
-      await expect(page.getByRole("alert")).toHaveText("Email atau password salah.");
+      await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+        "Email atau password salah.",
+      );
     }
     await loginViaForm(page, user);
-    await expect(page.getByRole("alert")).toHaveText(
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
       "Terlalu banyak percobaan masuk. Coba lagi dalam 15 menit.",
     );
     await expect(page).toHaveURL(/\/portal\/login/);
@@ -116,7 +126,9 @@ test.describe("Login portal", () => {
     await setUserActive(user.id, false);
     await page.goto("/portal/crm");
     await expect(page).toHaveURL("/portal/login?error=nonaktif");
-    await expect(page.getByRole("alert")).toHaveText("Akun Anda sudah tidak aktif. Hubungi admin.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Akun Anda sudah tidak aktif. Hubungi admin.",
+    );
     // Sesi sudah dihapus: halaman portal kembali meminta login.
     await page.goto("/portal/crm");
     await expect(page).toHaveURL(/\/portal\/login\?next=/);
@@ -127,7 +139,9 @@ test.describe("Login portal", () => {
     await page.goto("/portal/login");
     await loginViaForm(page, user);
     await expect(page).toHaveURL("/portal/crm");
-    await expect(page.getByRole("banner").getByText(ROLE_LABELS.marketing)).toBeVisible({
+    await expect(
+      page.getByRole("banner").getByText(ROLE_LABELS.marketing, { exact: true }),
+    ).toBeVisible({
       visible: (page.viewportSize()?.width ?? 0) >= 640,
     });
     await page.goto("/portal/absensi");

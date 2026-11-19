@@ -17,7 +17,7 @@ test.describe("Lupa password", () => {
     await expectNoA11yViolations(page);
     await page.getByLabel("Email akun portal").fill(user.email);
     await page.getByRole("button", { name: "Kirim tautan" }).click();
-    await expect(page.getByRole("status")).toContainText(SENT_MESSAGE);
+    await expect(page.getByRole("main").getByRole("status")).toContainText(SENT_MESSAGE);
 
     const email = await waitForEmail(user.email, RESET_SUBJECT);
     const link = linkFrom(email, "/portal/auth/confirm");
@@ -46,7 +46,9 @@ test.describe("Lupa password", () => {
     await page.getByRole("button", { name: "Keluar" }).click();
     await expect(page).toHaveURL("/portal/login");
     await loginViaForm(page, user);
-    await expect(page.getByRole("alert")).toHaveText("Email atau password salah.");
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
+      "Email atau password salah.",
+    );
     await loginViaForm(page, { email: user.email, password: newPassword });
     await expect(page).toHaveURL("/portal/lapangan");
   });
@@ -58,14 +60,14 @@ test.describe("Lupa password", () => {
     await page.goto("/portal/lupa-password");
     await page.getByLabel("Email akun portal").fill(address);
     await page.getByRole("button", { name: "Kirim tautan" }).click();
-    await expect(page.getByRole("status")).toContainText(SENT_MESSAGE);
+    await expect(page.getByRole("main").getByRole("status")).toContainText(SENT_MESSAGE);
     expect(await countEmails(address)).toBe(0);
   });
 
   test("tautan rusak atau kedaluwarsa kembali ke halaman masuk dengan pesan", async ({ page }) => {
     await page.goto("/portal/auth/confirm?token_hash=tidak-valid&type=recovery");
     await expect(page).toHaveURL("/portal/login?error=tautan");
-    await expect(page.getByRole("alert")).toHaveText(
+    await expect(page.getByRole("main").getByRole("alert")).toHaveText(
       "Tautan sudah tidak berlaku. Minta tautan baru lewat lupa password.",
     );
   });
