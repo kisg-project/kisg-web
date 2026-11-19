@@ -49,13 +49,14 @@ Diisi untuk keempat proyek. Proyek sold out cukup bagian yang ditandai "semua", 
 | Daftar kavling: blok, nomor, luas tanah, tipe, posisi hook atau tidak, status saat ini | Sejahtera Green Village | Fase 4 |
 | Tipe unit: nama, luas tanah, luas bangunan, jumlah kamar tidur dan mandi, lantai, spesifikasi teknis (pondasi, dinding, atap, lantai, kusen, listrik, air) | Sejahtera Green Village | Fase 3 |
 | Denah per tipe | Sejahtera Green Village | Fase 3 |
-| Harga per tipe atau per kavling, dan apakah boleh ditampilkan di website | Sejahtera Green Village | Fase 3 |
+| Harga per tipe atau per kavling (owner sudah memutuskan harga ditampilkan, angka menyusul) | Sejahtera Green Village | Fase 3 |
 | Skema pembayaran: tunai keras, tunai bertahap, KPR (bank rekanan, DP minimal, tenor) | Sejahtera Green Village | Fase 3 |
 | Legalitas proyek: status SHM/SHGB, PBG, nomor izin yang boleh ditampilkan | Sejahtera Green Village | Fase 3 |
 | Fasilitas lingkungan (taman, musala, keamanan, dsb) | Semua | Fase 3 |
 | Tempat terdekat dengan jarak dan waktu tempuh asli (stasiun, gerbang tol, sekolah, rumah sakit, pasar, mal) | Semua | Fase 3 |
 | Brosur PDF | Sejahtera Green Village | Fase 3 |
 | Radius geofence absensi (meter) dan titik pusat lokasi proyek | Proyek yang sedang dibangun | Fase 8 |
+| Radius geofence absensi kantor (titik kantor diambil dari Google Maps kantor) | Kantor | Fase 8 |
 
 ## 4. Konten website
 
@@ -107,6 +108,7 @@ Kunci rahasia tidak pernah ditempel di chat. Owner mengisinya langsung di Vercel
 | Resend | Akun, domain pengirim terverifikasi (DNS), API key | Perlu | Fase 2 |
 | Cloudflare Turnstile | Site key dan secret key | Perlu | Fase 3 |
 | Meta Business | Business Manager, Pixel/dataset ID, token Conversions API, Facebook Page | Perlu | Fase 5 |
+| Meta Business | Status verifikasi bisnis. Cara cek: business.facebook.com, Pengaturan Bisnis, Pusat Keamanan, bagian "Verifikasi bisnis". Kalau belum, mulai verifikasi dengan dokumen NIB | Perlu dicek | Sebelum Fase 5 |
 | Meta App | App ID, App Secret, akses `leads_retrieval`, verify token webhook | Perlu | Fase 6 |
 | Google Gemini | `GEMINI_API_KEY` | Perlu | Fase 7 (sebelum itu pakai mock) |
 | Web Push | Kunci VAPID (dibuat sistem) | Dibuat otomatis | Fase 8 |

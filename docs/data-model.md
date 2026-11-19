@@ -126,7 +126,7 @@ erDiagram
 | `tasks` | `lead_id`, `assignee_id`, `title`, `due_at`, `status task_status`, `completed_at` | index (`assignee_id`, `status`, `due_at`) |
 | `deals` | `lead_id`, `unit_id`, `status deal_status`, `agreed_price bigint`, `booking_fee bigint`, `payment_method`, `booked_at`, `akad_at`, `cancelled_at`, `cancel_reason` | partial unique (`unit_id`) `where status <> 'batal'` |
 | `lead_documents` | `lead_id`, `kind lead_document_kind`, `path` (bucket `customer-docs`), `uploaded_by` | index `lead_id` |
-| `lead_assignment_state` | `scope_key` PK (`global` atau id proyek), `last_user_id`, `updated_at` | dipakai fungsi `assign_lead_round_robin()` dengan `for update` |
+| `lead_assignment_state` | `scope_key` PK (`global`, keputusan owner: semua marketing bergiliran untuk semua proyek. Kunci per proyek disiapkan kalau aturan berubah), `last_user_id`, `updated_at` | dipakai fungsi `assign_lead_round_robin()` dengan `for update` |
 
 Trigger:
 - `leads` sebelum insert: normalisasi nomor. Kalau nomor sudah ada, data digabung ke lead lama (aktivitas "lead masuk lagi"), lalu insert dibatalkan lewat fungsi `upsert_lead()`. Insert langsung tidak dipakai.
@@ -164,6 +164,8 @@ erDiagram
 
 ## 8. Lapangan dan absensi
 
+Absensi dipakai tim lapangan dan tim marketing (keputusan owner Fase 0). Marketing absen di kantor atau di lokasi proyek. Kegiatan di luar lokasi (canvassing, open table) dicatat sebagai absensi di luar radius dengan alasan, lalu ditinjau manager.
+
 ```mermaid
 erDiagram
   projects ||--o{ work_items : "WBS"
@@ -176,6 +178,8 @@ erDiagram
   daily_site_reports ||--o{ material_logs : "material"
   projects ||--o{ site_issues : "kendala"
   profiles ||--o{ attendance : "absen"
+  work_locations ||--o{ attendance : "lokasi"
+  projects ||--o| work_locations : "lokasi proyek"
 ```
 
 | Tabel | Kolom utama | Index dan constraint |
@@ -186,7 +190,8 @@ erDiagram
 | `site_report_photos` | `report_id`, `report_item_id null`, `path` (bucket `site-reports`), `taken_at`, `lat`, `lng`, `caption`, `is_public_candidate bool` | index `report_id` |
 | `material_logs` | `report_id`, `project_id`, `material_name`, `unit_label` (sak, m3, batang), `qty_in`, `qty_used`, `note` | index (`project_id`, `created_at`) |
 | `site_issues` | `project_id`, `report_id null`, `title`, `description`, `priority`, `status`, `reported_by`, `assigned_to`, `photo_path`, `resolved_at` | index (`project_id`, `status`) |
-| `attendance` | `user_id`, `project_id`, `kind attendance_kind`, `captured_at`, `received_at`, `lat`, `lng`, `accuracy_m`, `distance_m`, `within_geofence bool`, `selfie_path` (bucket `attendance`), `status attendance_status`, `justification`, `reviewed_by`, `client_id` | index (`user_id`, `captured_at`), unique `client_id` |
+| `work_locations` | `name`, `kind` (kantor, proyek), `project_id null`, `lat`, `lng`, `radius_m int`, `is_active` | titik geofence absensi: kantor pemasaran dan lokasi proyek |
+| `attendance` | `user_id`, `work_location_id`, `project_id null`, `kind attendance_kind`, `captured_at`, `received_at`, `lat`, `lng`, `accuracy_m`, `distance_m`, `within_geofence bool`, `selfie_path` (bucket `attendance`), `status attendance_status`, `justification`, `reviewed_by`, `client_id` | index (`user_id`, `captured_at`), unique `client_id` |
 
 Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per item. Dihitung lewat view `unit_progress` dan materialized view `project_progress`, disegarkan saat laporan disetujui.
 
@@ -263,7 +268,8 @@ Keterangan:
 | Laporan harian, item, foto, material | - | R S | R S | - | - | R P, W review | RW M (status draft/dikembalikan) di P | - |
 | `site_issues` | - | R S | R S | - | - | RW P | RW P | - |
 | `construction_updates` | R Pub | RW S | RW S | - | - | RW P | - | - |
-| `attendance` | - | R S | R S | R T | RW M (insert) | R P, W review | RW M (insert) | - |
+| `attendance` | - | R S | R S | R T, W review timnya | RW M (insert) | R P, W review | RW M (insert) | - |
+| `work_locations` | - | RW S | RW S | R | R | R | R | - |
 | `marketing_activities` | - | R S | R S | R T | RW M | - | - | - |
 | KPI definisi dan target | - | RW S | RW S | R S, W target timnya | R M | R S, W target timnya | R M | - |
 | `kpi_scores` | - | R S | R S | R T | R M | R T | R M | - |
@@ -282,7 +288,7 @@ Semua role staf mensyaratkan `is_active = true`. Penulisan yang melibatkan beber
 |---|---|---|---|---|
 | `public-assets` | Ya | Foto proyek, berita, promo, banner, logo | 2 MB, gambar | Tulis: owner, admin |
 | `site-reports` | Tidak | Foto laporan lapangan | 1 MB, gambar | Tulis: pembuat laporan di folder `user_id`-nya. Baca: P dan owner/admin |
-| `attendance` | Tidak | Selfie absensi | 512 KB, gambar | Tulis: user sendiri. Baca: user sendiri, site_manager P, owner/admin |
+| `attendance` | Tidak | Selfie absensi | 512 KB, gambar | Tulis: user sendiri. Baca: user sendiri, site_manager P, marketing_manager untuk timnya, owner/admin |
 | `customer-docs` | Tidak | KTP, slip gaji, dsb | 2 MB, gambar dan PDF | Tulis dan baca mengikuti RLS `leads` |
 | `job-applications` | Tidak | CV pelamar | 2 MB, PDF | Tulis: server action. Baca: owner, admin |
 | `avatars` | Tidak | Foto profil staf | 256 KB, gambar | Tulis: user sendiri. Baca: staf |

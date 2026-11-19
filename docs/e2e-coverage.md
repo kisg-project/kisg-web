@@ -21,6 +21,7 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 | `/portal/crm/*` | Tolak | Semua lead | Semua lead | Lead tim | Lead sendiri | Tolak | Tolak | Booking saja |
 | `/portal/crm/inbox` | Tolak | Boleh | Boleh | Boleh | Boleh | Tolak | Tolak | Tolak |
 | `/portal/marketing/*` | Tolak | Boleh | Boleh | Tim | Sendiri | Tolak | Tolak | Tolak |
+| `/portal/absensi` | Tolak | Rekap | Rekap | Absen + tinjau tim | Absen | Absen + tinjau proyek | Absen | Tolak |
 | `/portal/lapangan/*` | Tolak | Boleh | Boleh | Tolak | Tolak | Proyek ditugaskan | Proyek ditugaskan | Tolak |
 | `/portal/lapangan/persetujuan` | Tolak | Boleh | Boleh | Tolak | Tolak | Boleh | Tolak | Tolak |
 | `/api/cron/*` tanpa `CRON_SECRET` | Tolak 401 | | | | | | | |
@@ -111,6 +112,7 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 | Dokumen konsumen: unggah ke bucket privat, dibuka lewat signed URL, marketing lain tidak bisa membuka | D | 6 | Belum |
 | SLA: lead tanpa respons melewati batas memicu eskalasi ke manager | D | 6 | Belum |
 | Laporan CRM menampilkan angka sesuai data seed (funnel, sumber, konversi, CPL dari biaya iklan) | D | 6 | Belum |
+| Finance melihat daftar booking dan laporan penjualan, tetapi tidak bisa mengubah lead, tahap, atau unit (UI dan server action) | D | 6 | Belum |
 
 ### Meta server (`e2e/meta/`, Fase 6)
 
@@ -143,7 +145,8 @@ Setiap sel diuji dua arah: lewat URL langsung (halaman) dan lewat pemanggilan se
 
 | Skenario | Profil | Fase | Status |
 |---|---|---|---|
-| Absensi di dalam geofence diterima (geolocation Playwright), di luar geofence ditolak dengan opsi alasan, selfie wajib | MC, MS | 8 | Belum |
+| Absensi tim lapangan di lokasi proyek: di dalam geofence diterima (geolocation Playwright), di luar geofence ditolak dengan opsi alasan, selfie wajib | MC, MS | 8 | Belum |
+| Absensi marketing di kantor diterima. Canvassing di luar radius tersimpan dengan alasan, lalu disetujui atau ditolak marketing_manager | MC, MS | 8 | Belum |
 | Laporan harian lengkap dengan foto (`setInputFiles` foto besar): tersimpan, foto terkompresi di bawah target ada di bucket privat | MC, MS | 8 | Belum |
 | Site manager menyetujui dan mengembalikan laporan. Supervisor melihat catatannya dan bisa mengedit laporan yang dikembalikan | MC | 8 | Belum |
 | Progres yang disetujui dan dipilih tampil di halaman progres website | D | 8 | Belum |

@@ -154,7 +154,7 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 - Suite E2E hanya jalan di CI, di atas **production build** (`next build && next start`) dengan **Supabase lokal** di runner (`supabase start`) yang di-reset dan di-seed sebelum suite jalan. Tidak dijalankan di laptop pengembang. Tidak boleh menyentuh database staging/production.
 - Spec E2E tetap ditulis bersama fitur. Spec yang ditulis tanpa dijalankan di lokal harus lolos `typecheck` dan `lint`, dan baru dianggap lolos setelah CI hijau.
 - Browser: Chromium desktop, Mobile Chrome (Pixel), Mobile Safari (iPhone). Portal wajib lolos di profil mobile.
-- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor).
+- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor, finance).
 - Selector pakai `getByRole`, `getByLabel`, `getByText`. `data-testid` hanya kalau tidak ada alternatif. Dilarang selector CSS rapuh dan `waitForTimeout`.
 - Setiap test mandiri: menyiapkan datanya sendiri (lewat helper/factory ke Supabase lokal) dan tidak bergantung urutan. Bisa jalan paralel.
 - Assertion sampai ke hasil akhir, bukan cuma UI. Contoh: submit form lead dicek sampai baris `leads` dan `meta_event_outbox` benar-benar ada di database.
@@ -237,7 +237,7 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 ## 8. Data, keamanan, dan akses
 
 - Semua tabel di schema `public` wajib RLS aktif dan punya policy eksplisit. Tidak ada tabel tanpa policy.
-- Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance` (opsional). Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
+- Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance`. Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
 - Marketing hanya melihat lead miliknya. Manager melihat timnya. Owner dan admin melihat semua.
 - Service role key hanya dipakai di server (webhook, cron, admin task) dan tidak pernah sampai ke client.
 - Storage: bucket publik hanya untuk aset website. Foto laporan, dokumen konsumen (KTP, slip gaji, dsb) di bucket privat dengan signed URL berumur pendek.

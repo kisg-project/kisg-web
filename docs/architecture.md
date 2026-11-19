@@ -87,7 +87,7 @@ A/B variant: `proxy.ts` memilih variant berdasarkan bobot traffic, menyimpan coo
 | `/portal` | Semua staf. Redirect ke beranda sesuai role | Dynamic |
 | `/portal/akun` | Semua staf. Profil, ganti password, notifikasi | Dynamic |
 | `/portal/offline` | Semua. Halaman fallback service worker | Static, di-precache |
-| `/portal/lapangan/absensi` | site_supervisor, site_manager | Dynamic, bisa offline |
+| `/portal/absensi` | site_supervisor, site_manager, marketing, marketing_manager | Dynamic, bisa offline |
 | `/portal/lapangan/laporan`, `/baru`, `/[id]` | site_supervisor (proyek yang ditugaskan), site_manager | Dynamic, bisa offline |
 | `/portal/lapangan/isu` | site_supervisor, site_manager | Dynamic |
 | `/portal/lapangan/persetujuan` | site_manager | Dynamic |
@@ -101,7 +101,7 @@ A/B variant: `proxy.ts` memilih variant berdasarkan bobot traffic, menyimpan coo
 
 Sub-route admin: `proyek`, `proyek/[id]/unit` (editor siteplan), `konten/berita`, `konten/promo`, `konten/banner`, `konten/testimoni`, `konten/faq`, `karir`, `karir/lamaran`, `landing-pages`, `kampanye`, `pipeline`, `pengguna`, `tim`, `kpi`, `cs/pengetahuan`, `cs/pengaturan`, `cs/transkrip`, `cs/statistik`, `integrasi/meta`, `audit`, `pdp`, `pengaturan`.
 
-Role `finance` (opsional) mendapat akses baca ke `crm/booking` dan laporan penjualan di Fase 6 kalau owner mengaktifkannya.
+Role `finance` aktif sejak awal: akses baca ke `/portal/crm/booking` (deal, booking fee, status berkas) dan laporan penjualan. Tidak bisa mengubah lead atau tahap pipeline.
 
 ### 2.4 API: `src/app/api/`
 
@@ -316,7 +316,7 @@ sequenceDiagram
 
 | Lingkungan | App | Database | Meta |
 |---|---|---|---|
-| Lokal (laptop) | `pnpm dev` hanya untuk melihat UI. Tidak ada E2E dan Supabase lokal | Belum diputuskan: Supabase staging dengan akun dev, atau tanpa database (data contoh di memori). Lihat pertanyaan di `docs/roadmap.md` | `test_event_code` |
+| Lokal (laptop) | `pnpm dev` hanya untuk melihat UI. Tidak ada E2E dan Supabase lokal | Supabase staging dengan akun dev khusus (keputusan owner Fase 0). Dari laptop tidak ada migrasi, reset, atau seed ke staging. Semua itu hanya lewat CI | `test_event_code` |
 | CI | Production build | Supabase lokal di runner, di-reset dan di-seed | Di-mock |
 | Preview (PR) | Vercel Preview | Supabase staging | `test_event_code` |
 | Staging | Branch `staging`, `staging.kisgroup.co.id` | `zpxdkjmwsjeeeypszwzm` | `test_event_code` |

@@ -142,13 +142,16 @@ Sisa ruang sekitar 15%. Pengaman:
 
 Kalau kuota hampir habis: kurangi shard E2E per PR menjadi Chromium saja, dan jalankan tiga browser hanya di PR ke `main`.
 
-## Pertanyaan untuk owner (akhir Fase 0)
+## Keputusan owner (akhir Fase 0)
 
-1. **Database untuk melihat UI di laptop**: pakai Supabase staging dengan akun dev khusus (data staging bisa berubah karena dipakai dev), atau tanpa database dengan data contoh di memori (lebih aman, tapi tampilan tidak memakai data asli)?
-2. **Vercel Hobby untuk website komersial**: terima risikonya, atau rencanakan upgrade Vercel Pro sebelum domain production diarahkan (Fase 9)?
-3. **Kuota foto laporan lapangan**: setuju target foto laporan 150 KB, maksimal 6 foto per laporan, dan foto yang tidak dipakai di website dihapus 3 bulan setelah laporan disetujui?
-4. **Harga di website**: harga Sejahtera Green Village ditampilkan, atau cukup "Hubungi marketing"?
-5. **Pembagian lead**: semua marketing bergiliran untuk semua proyek, atau marketing tertentu per proyek?
-6. **Role finance**: dipakai sekarang, atau ditunda?
-7. **Absensi**: hanya untuk tim lapangan, atau marketing juga absen lewat portal?
-8. **Meta**: apakah Business Manager KIS sudah terverifikasi? Kalau belum, pengajuan verifikasi dan App Review untuk Lead Ads sebaiknya dimulai dari sekarang karena butuh waktu.
+| Topik | Keputusan |
+|---|---|
+| Database untuk melihat UI di laptop | Supabase staging dengan akun dev khusus. Migrasi, reset, dan seed ke staging hanya lewat CI |
+| Vercel Hobby untuk website komersial | Tetap Hobby. Risiko ketentuan non-komersial diterima owner |
+| Harga Sejahtera Green Village | Ditampilkan di website. Angka dikirim owner (lihat `docs/TODO-DATA.md`) |
+| Pembagian lead | Round-robin ke semua marketing aktif untuk semua proyek |
+| Role finance | Dipakai sejak awal: baca booking, deal, dan laporan penjualan |
+| Absensi | Tim lapangan dan tim marketing. Geofence di kantor dan lokasi proyek (`work_locations`) |
+| Verifikasi Meta Business | Belum diketahui. KIS sudah beriklan di Meta Ads. Dicek owner sebelum Fase 5 (langkah di `docs/TODO-DATA.md`) |
+
+Masih terbuka (dibutuhkan paling lambat Fase 8): batas foto laporan lapangan. Usulan: 150 KB per foto, maksimal 6 foto per laporan, foto yang tidak dipakai di website dihapus 3 bulan setelah laporan disetujui.
