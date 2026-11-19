@@ -55,13 +55,13 @@ if [ -f "$REQUIRED_FILE" ]; then
   while IFS= read -r required; do
     case "$required" in ''|'#'*) continue ;; esac
     # "skipping" diterima: job kode dilewati kalau PR hanya mengubah dokumen.
-    # Job matrix yang dilewati tampil dengan nama mentah, misal "e2e (${{ matrix.shard }}/3)".
+    # Job matrix yang dilewati tampil dengan nama mentah, misal "e2e (${{ matrix.shard }}/...)".
     template=""
     case "$required" in
-      *"("[0-9]*"/"[0-9]*")") template="${required%%(*}(\${{ matrix.shard }}/${required##*/}" ;;
+      *"("[0-9]*"/"[0-9]*")") template="${required%%(*}(\${{" ;;
     esac
     printf '%s\n' "$checks" | awk -F'\t' -v n="$required" -v t="$template" \
-      '($1 == n && ($2 == "pass" || $2 == "skipping")) || (t != "" && $1 == t && $2 == "skipping") {found=1} END {exit !found}' \
+      '($1 == n && ($2 == "pass" || $2 == "skipping")) || (t != "" && index($1, t) == 1 && $2 == "skipping") {found=1} END {exit !found}' \
       || fail "check wajib '$required' tidak ada atau tidak lolos"
   done < "$REQUIRED_FILE"
 fi

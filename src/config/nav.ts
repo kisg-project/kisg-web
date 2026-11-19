@@ -8,6 +8,6 @@ export interface NavItem {
 
 export const siteNav: readonly NavItem[] = [
   { label: "Tipe unit", href: "/#tipe-unit" },
-  { label: "Simulasi KPR", href: "/#simulasi-kpr" },
+  { label: "Simulasi KPR", href: "/simulasi-kpr" },
   { label: "Lokasi", href: "/#lokasi" },
 ];

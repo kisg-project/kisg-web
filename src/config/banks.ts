@@ -4,9 +4,10 @@
 // BTN Syariah sudah menjadi Bank Syariah Nasional (BSN) sejak Desember 2025.
 
 export interface PartnerBank {
-  key: string;
+  key: "btn" | "mandiri" | "bsi" | "bsn";
   name: string;
-  logo: { src: string; width: number; height: number };
+  /** null: logo belum tersedia (BSN), nama bank tampil sebagai teks. */
+  logo: { src: string; width: number; height: number } | null;
   /** Jenis KPR yang tersedia di bank ini. */
   schemes: readonly ("konvensional" | "syariah")[];
 }
@@ -30,4 +31,16 @@ export const PARTNER_BANKS: readonly PartnerBank[] = [
     logo: { src: "/images/banks/bank-bsi.svg", width: 1355, height: 377 },
     schemes: ["syariah"],
   },
+  {
+    key: "bsn",
+    name: "Bank Syariah Nasional (BSN)",
+    logo: null,
+    schemes: ["syariah"],
+  },
 ];
+
+export function bankByKey(key: PartnerBank["key"]): PartnerBank {
+  const bank = PARTNER_BANKS.find((item) => item.key === key);
+  if (!bank) throw new Error(`Bank ${key} tidak ada di PARTNER_BANKS.`);
+  return bank;
+}

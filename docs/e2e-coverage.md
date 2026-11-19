@@ -42,10 +42,7 @@ Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
 | Ringkasan Tipe 36/60: harga Rp 571.250.000, spesifikasi dengan ikon, fasilitas, tempat sekitar, rincian biaya termasuk dan belum termasuk | `home.spec.ts` | 1 | Lolos |
 | Beranda tanpa pelanggaran axe dan tanpa scroll horizontal di lebar 320, 375, 768, 1024, 1440 px | `home.spec.ts` | 1 | Lolos |
 | Menu HP (sheet) membuka navigasi dan menuju Simulasi KPR (MC, MS). Navigasi desktop tampil, tombol menu tersembunyi (D) | `home.spec.ts` | 1 | Lolos |
-| Simulasi KPR konvensional: harga terisi dari data proyek, cicilan fixed dan floating sesuai nilai acuan, DP persen mengisi DP rupiah | `home.spec.ts` | 1 | Lolos |
-| Simulasi KPR syariah: angsuran tetap murabahah sesuai nilai acuan | `home.spec.ts` | 1 | Lolos |
 | Logo bank rekanan KPR (BTN, Mandiri, BSI) tampil dan termuat | `home.spec.ts` | 1 | Lolos |
-| Simulasi KPR: tenor di luar batas dan masa fixed melebihi tenor ditolak dengan pesan per field, hasil disembunyikan | `home.spec.ts` | 1 | Lolos |
 | SEO: judul, `lang="id"`, canonical, meta description, Open Graph, satu `h1`, JSON-LD `RealEstateAgent` dan `RealEstateListing` dengan harga IDR | `home.spec.ts` | 1 | Lolos |
 | `robots.txt` menutup `/portal` dan `/dev`, `sitemap.xml` tersedia | `home.spec.ts` | 1 | Lolos |
 | Security headers (CSP, HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy), tanpa `x-powered-by` | `headers-and-errors.spec.ts` | 1 | Lolos |
@@ -55,6 +52,19 @@ Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
 | Kompresi gambar: foto JPEG besar (4000 x 3000) menjadi di bawah 500 KB, sisi terpanjang maksimal 2048 px, WebP (atau JPEG di browser tanpa encoder WebP) | `image-compress.spec.ts` | 1 | Lolos |
 | Kompresi gambar: orientasi EXIF diterapkan, EXIF dan GPS dibuang | `image-compress.spec.ts` | 1 | Lolos |
 | Kompresi gambar: file bukan gambar ditolak dengan pesan jelas | `image-compress.spec.ts` | 1 | Lolos |
+
+### Simulasi KPR (`e2e/site/simulasi-kpr.spec.ts`)
+
+| Skenario | Spec | Fase | Status |
+|---|---|---|---|
+| Beranda: ringkasan "angsuran mulai" dari produk termurah dan tautan ke halaman simulasi | `home.spec.ts` | 1 | Ditulis |
+| Konvensional: produk pertama terpilih, harga dan uang muka terisi, angsuran sesuai nilai acuan | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Tombol kartu produk mengisi form dengan produk itu | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Input nominal bertitik otomatis, uang muka persen dan rupiah saling terhubung, persen memakai koma | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Periode tetap bisa ditambah dan dihapus, total periode melebihi jangka waktu ditolak | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Syariah: istilah syariah (margin, angsuran, pembiayaan, harga jual bank), tanpa kata bunga, cicilan, pinjaman | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Unduh PDF: nama file, kop PT, judul, nomor halaman, angka angsuran | `simulasi-kpr.spec.ts` | 1 | Ditulis |
+| Halaman simulasi lolos axe, responsif, canonical, dan bagian akad tampil | `simulasi-kpr.spec.ts` | 1 | Ditulis |
 
 ### Auth (`e2e/admin/auth`, Fase 2)
 

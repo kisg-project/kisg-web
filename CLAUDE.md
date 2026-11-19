@@ -64,6 +64,10 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 
 Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan meminta persetujuan.
 
+Dependency tambahan yang sudah disetujui owner:
+- Fase 1: `clsx`, `radix-ui`, `sonner`, `server-only`, `prettier-plugin-tailwindcss`, `@vitest/coverage-v8`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/user-event`, `tw-animate-css` dan `shadcn` (CSS, dipakai saat build).
+- Simulasi KPR: `jspdf` dan `jspdf-autotable` untuk PDF berkop KIS, dimuat hanya saat tombol unduh diklik. Dipakai lagi untuk ekspor PDF portal di Fase 8.
+
 ---
 
 ## 4. Arsitektur folder

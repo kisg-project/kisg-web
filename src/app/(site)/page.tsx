@@ -7,7 +7,7 @@ import { featuredProject, formatProjectAddress } from "@/config/featured-project
 import { siteConfig, whatsappLink } from "@/config/site";
 import { env } from "@/env";
 import { HeroBanner } from "@/features/cms";
-import { KprSimulator, PartnerBanks } from "@/features/kpr";
+import { KprTeaser } from "@/features/kpr";
 import { UnitHighlights } from "@/features/projects";
 import { featuredListingJsonLd, jsonLdGraph, organizationJsonLd } from "@/lib/seo/structured-data";
 import { formatRupiah } from "@/lib/format";
@@ -63,11 +63,10 @@ export default function HomePage() {
         id="simulasi-kpr"
         tone="surface"
         title="Simulasi KPR"
-        description="Hitung perkiraan cicilan KPR konvensional dan KPR syariah. Semua angka bisa diubah."
+        description="KPR konvensional dan KPR syariah dari bank rekanan. Hitung angsuran, rincian biaya, dan jadwal, lalu unduh PDF."
         className="scroll-mt-(--header-height)"
       >
-        <KprSimulator price={featuredProject.unitType.price} />
-        <PartnerBanks className="mt-8" />
+        <KprTeaser price={featuredProject.unitType.price} />
       </Section>
 
       <Section id="lokasi" title="Lokasi" className="scroll-mt-(--header-height)">

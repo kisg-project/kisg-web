@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { featuredProject } from "@/config/featured-project";
 import { UNIT_STATUSES } from "@/config/units";
-import { KprSimulator } from "@/features/kpr";
+import { KprSimulatorTabs } from "@/features/kpr";
 import { UnitHighlights } from "@/features/projects";
 import { formatRupiah } from "@/lib/format";
 import { ImageCompressTester } from "./image-compress-tester";
@@ -206,7 +206,11 @@ export default function DevUiPage() {
         </DemoSection>
 
         <DemoSection title="Simulasi KPR">
-          <KprSimulator price={featuredProject.unitType.price} />
+          <KprSimulatorTabs
+            price={featuredProject.unitType.price}
+            projectName={featuredProject.name}
+            unitName={featuredProject.unitType.name}
+          />
         </DemoSection>
 
         <DemoSection title="Uji kompresi gambar">
