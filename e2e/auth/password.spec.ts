@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createPortalUser } from "../factories/users";
 import { countEmails, linkFrom, waitForEmail } from "../fixtures/mailpit";
 import { expectNoA11yViolations } from "../fixtures/test";
@@ -34,7 +35,8 @@ test.describe("Lupa password", () => {
     await expect(page.getByText("Password minimal 10 karakter.")).toBeVisible();
     await expect(page.getByText("Konfirmasi password tidak sama.")).toBeVisible();
 
-    const newPassword = "BaruSekali2026";
+    // Dibuat saat test berjalan (bukan literal) supaya tidak dianggap rahasia oleh gitleaks.
+    const newPassword = `Baru${randomUUID().slice(0, 8)}X9`;
     await page.getByLabel("Password baru", { exact: true }).fill(newPassword);
     await page.getByLabel("Ulangi password baru").fill(newPassword);
     await page.getByRole("button", { name: "Simpan password" }).click();

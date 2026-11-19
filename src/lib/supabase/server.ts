@@ -6,8 +6,10 @@ import { getSupabaseConfig } from "./config";
 
 /** Client Supabase dengan sesi user dari cookie. Untuk Server Component, server action, route handler. */
 export async function createSupabaseServerClient() {
-  const { url, publishableKey } = getSupabaseConfig();
+  // cookies() dulu: saat prerender, halaman berhenti di sini sebagai bagian dinamis, jadi env Supabase
+  // tidak dibutuhkan saat build.
   const cookieStore = await cookies();
+  const { url, publishableKey } = getSupabaseConfig();
   return createServerClient<Database>(url, publishableKey, {
     cookies: {
       getAll() {
