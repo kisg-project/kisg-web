@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { IMAGE_PROFILES, type ImageProfileName } from "@/config/images";
 import { compressImage, ImageCompressionError, type CompressedImage } from "@/lib/image";
@@ -18,13 +18,7 @@ export function ImageCompressTester() {
   const [result, setResult] = useState<CompressedImage | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [url, setUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [url]);
+  const [hasMetadata, setHasMetadata] = useState<boolean | null>(null);
 
   async function handleFile(file: File) {
     setBusy(true);
@@ -32,8 +26,11 @@ export function ImageCompressTester() {
     setResult(null);
     try {
       const compressed = await compressImage(file, profile);
+      // Cek penanda EXIF dan GPS di awal file hasil, tanpa fetch (CSP connect-src tidak mengizinkan blob:).
+      const head = new Uint8Array(await compressed.file.slice(0, 65_536).arrayBuffer());
+      const text = new TextDecoder("latin1").decode(head);
+      setHasMetadata(text.includes("Exif") || text.includes("GPS"));
       setResult(compressed);
-      setUrl(URL.createObjectURL(compressed.file));
     } catch (caught) {
       setError(caught instanceof ImageCompressionError ? caught.message : "Kompresi gagal.");
     } finally {
@@ -82,7 +79,7 @@ export function ImageCompressTester() {
           {error}
         </p>
       ) : null}
-      {result && url ? (
+      {result && hasMetadata !== null ? (
         <dl
           data-testid="hasil-kompresi"
           data-bytes={result.bytes}
@@ -91,7 +88,7 @@ export function ImageCompressTester() {
           data-width={result.width}
           data-height={result.height}
           data-met-target={String(result.metTarget)}
-          data-url={url}
+          data-has-metadata={String(hasMetadata)}
           className="grid grid-cols-2 gap-2 rounded-md border p-4 text-sm tabular"
         >
           <dt>Ukuran asli</dt>

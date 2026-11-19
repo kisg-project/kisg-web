@@ -9,12 +9,6 @@ async function compressedResult(page: Page) {
   const result = page.getByTestId("hasil-kompresi");
   await expect(result).toBeVisible({ timeout: 40_000 });
   const read = async (name: string) => (await result.getAttribute(name)) ?? "";
-  const url = await read("data-url");
-  const containsMetadata = await page.evaluate(async (objectUrl) => {
-    const bytes = new Uint8Array(await (await fetch(objectUrl)).arrayBuffer());
-    const text = new TextDecoder("latin1").decode(bytes.subarray(0, 65_536));
-    return text.includes("Exif") || text.includes("GPS");
-  }, url);
   return {
     bytes: Number(await read("data-bytes")),
     originalBytes: Number(await read("data-original-bytes")),
@@ -22,7 +16,7 @@ async function compressedResult(page: Page) {
     width: Number(await read("data-width")),
     height: Number(await read("data-height")),
     metTarget: await read("data-met-target"),
-    containsMetadata,
+    containsMetadata: (await read("data-has-metadata")) === "true",
   };
 }
 

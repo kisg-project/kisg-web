@@ -5,6 +5,8 @@ const isDev = process.env.NODE_ENV === "development";
 // CSP awal (Fase 1). Domain Meta, Turnstile, Sentry, dan Supabase ditambah di fase yang membutuhkannya.
 // script-src memakai 'unsafe-inline' karena CSP berbasis nonce memaksa semua halaman dirender dinamis,
 // sedangkan halaman publik harus statis. Ditinjau ulang di Fase 9.
+// Tanpa upgrade-insecure-requests: Vercel selalu HTTPS (ditambah HSTS), dan direktif itu membuat
+// WebKit memaksa HTTPS ke server E2E lokal http://127.0.0.1 sehingga semua aset gagal dimuat.
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
@@ -19,7 +21,6 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "manifest-src 'self'",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [

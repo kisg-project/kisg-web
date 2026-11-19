@@ -69,7 +69,7 @@ function NumberField<T extends FieldValues>({
       <Label htmlFor={id}>{label}</Label>
       <div className="relative">
         {money ? (
-          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-muted-foreground">
+          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-subtle-foreground">
             Rp
           </span>
         ) : null}
@@ -83,13 +83,13 @@ function NumberField<T extends FieldValues>({
           {...form.register(name, { setValueAs: money ? parseMoney : parseNumber })}
         />
         {suffix ? (
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-subtle-foreground">
             {suffix}
           </span>
         ) : null}
       </div>
       {hint ? (
-        <p id={`${id}-hint`} className="text-xs text-muted-foreground">
+        <p id={`${id}-hint`} className="text-xs text-subtle-foreground">
           {hint}
         </p>
       ) : null}
@@ -139,7 +139,7 @@ function DownPaymentPercentField({
             setDraft(null);
           }}
         />
-        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-muted-foreground">
+        <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-subtle-foreground">
           %
         </span>
       </div>
@@ -158,7 +158,7 @@ function ResultRow({
 }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-2">
-      <dt className={emphasis ? "font-semibold" : "text-muted-foreground"}>{label}</dt>
+      <dt className={emphasis ? "font-semibold" : "text-subtle-foreground"}>{label}</dt>
       <dd
         className={
           emphasis ? "text-xl font-bold text-primary tabular sm:text-2xl" : "font-semibold tabular"
@@ -235,7 +235,7 @@ function KonvensionalForm({ price }: { price: number }) {
           label="Bunga floating"
           suffix="% / tahun"
         />
-        <p className="text-xs text-muted-foreground sm:col-span-2">
+        <p className="text-xs text-subtle-foreground sm:col-span-2">
           Angka awal bunga dan masa fixed hanya contoh. Ubah sesuai penawaran bank.
         </p>
       </form>

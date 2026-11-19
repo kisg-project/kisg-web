@@ -121,7 +121,8 @@ test.describe("SEO", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/Sejahtera Green Village/);
     await expect(page.locator("html")).toHaveAttribute("lang", "id");
-    expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toMatch(/\/$/);
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+    expect(new URL(canonical ?? "").pathname).toBe("/");
     expect(await page.locator('meta[name="description"]').getAttribute("content")).toContain(
       "Rp 571.250.000",
     );

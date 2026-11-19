@@ -7,7 +7,7 @@ import { featuredProject, formatProjectAddress } from "@/config/featured-project
 import { siteConfig, whatsappLink } from "@/config/site";
 import { env } from "@/env";
 import { HeroBanner } from "@/features/cms";
-import { KprSimulator } from "@/features/kpr";
+import { KprSimulator, PartnerBanks } from "@/features/kpr";
 import { UnitHighlights } from "@/features/projects";
 import { featuredListingJsonLd, jsonLdGraph, organizationJsonLd } from "@/lib/seo/structured-data";
 import { formatRupiah } from "@/lib/format";
@@ -67,6 +67,7 @@ export default function HomePage() {
         className="scroll-mt-(--header-height)"
       >
         <KprSimulator price={featuredProject.unitType.price} />
+        <PartnerBanks className="mt-8" />
       </Section>
 
       <Section id="lokasi" title="Lokasi" className="scroll-mt-(--header-height)">

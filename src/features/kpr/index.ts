@@ -1,4 +1,5 @@
 export { KprSimulator } from "./components/kpr-simulator";
+export { PartnerBanks } from "./components/partner-banks";
 export {
   annuityPayment,
   calculateKprKonvensional,

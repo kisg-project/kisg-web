@@ -48,7 +48,12 @@ export async function expectNoA11yViolations(page: Page, options: { exclude?: st
   const results = await builder.analyze();
   const summary = results.violations.map(
     (violation) =>
-      `${violation.id}: ${violation.help} (${violation.nodes.map((node) => node.target.join(" ")).join(", ")})`,
+      `${violation.id}: ${violation.help} (${violation.nodes
+        .map(
+          (node) =>
+            `${node.target.join(" ")} :: ${(node.failureSummary ?? "").replace(/\s+/g, " ")}`,
+        )
+        .join(" | ")})`,
   );
   expect(summary, "Pelanggaran aksesibilitas").toEqual([]);
 }
