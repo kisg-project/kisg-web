@@ -200,6 +200,42 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
 
+### Responsif di semua perangkat (wajib)
+Website, landing page, dan PWA portal harus tampil dan bisa dipakai penuh di semua ukuran layar, dari HP kecil sampai monitor lebar.
+- Ditulis mobile first, dengan breakpoint Tailwind bawaan (`sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536).
+- Lebar minimum yang didukung 320px. Tidak boleh ada scroll horizontal di lebar mana pun, kecuali di dalam tabel atau galeri yang memang digulir dan diberi penanda.
+- Orientasi tegak dan mendatar di HP dan tablet. Memakai safe area (`env(safe-area-inset-*)`) untuk HP berponi dan PWA yang di-install.
+- Teks memakai ukuran relatif dan tetap terbaca saat zoom 200%. Gambar memakai `next/image` dengan `sizes` sesuai breakpoint.
+- Tabel lebar di portal berubah jadi daftar kartu di layar kecil, atau digulir di dalam wadahnya sendiri.
+- Navigasi: menu lengkap di desktop, menu ringkas (sheet) di HP. Portal memakai navigasi bawah di HP dan sidebar di desktop.
+- Diuji E2E: setiap halaman dicek di lebar 320, 375, 768, 1024, dan 1440px (tanpa scroll horizontal, elemen utama terlihat), ditambah profil Pixel dan iPhone.
+
+### SEO maksimal (wajib, semua halaman publik dan landing page)
+Berlaku untuk website dan landing page. Portal PWA tidak diindeks (`noindex`, diblokir di `robots.txt`).
+- Setiap halaman punya `generateMetadata`/`metadata`: judul unik, deskripsi faktual (maks 160 karakter), canonical, Open Graph, dan Twitter card dengan gambar.
+- Satu `h1` per halaman, urutan heading benar, landmark (`header`, `nav`, `main`, `footer`), alt text bermakna di setiap gambar.
+- Data terstruktur JSON-LD lewat `src/lib/seo/` (diuji unit): `RealEstateAgent` untuk perusahaan, `RealEstateListing` + `SingleFamilyResidence` + `Offer` untuk unit, `BreadcrumbList`, `Article` untuk berita, `FAQPage` untuk FAQ. Hanya data asli, tanpa rating atau ulasan karangan.
+- `sitemap.xml` (hanya konten terbit), `robots.txt`, URL bersih berbahasa Indonesia, `lang="id"`, satu domain kanonik.
+- Core Web Vitals: LCP di bawah 2,5 detik, CLS di bawah 0,1, INP di bawah 200 ms di profil mobile. Lighthouse SEO 100 dan kategori lain minimal 95 (dicek `preview.yml`).
+- Gambar lewat `next/image` dengan ukuran dan `sizes` yang benar. Gambar LCP memakai `preload` atau `fetchPriority="high"` (`priority` sudah deprecated di Next 16).
+- Diuji E2E: metadata, canonical, dan JSON-LD tiap tipe halaman valid.
+
+### Ekspor data di portal (PDF dan Excel saja)
+Portal tidak menyediakan ekspor CSV. Ekspor hanya PDF dan Excel (`.xlsx`), dan keduanya harus rapi dan siap dicetak atau dibagikan.
+- Excel:
+  - satu baris judul laporan, periode, dan waktu dibuat (WIB)
+  - header kolom tebal dengan latar, baris header dibekukan, filter otomatis aktif
+  - lebar kolom disesuaikan isi
+  - teks rata kiri, angka dan rupiah rata kanan dengan format angka asli Excel (bukan teks), tanggal memakai format tanggal Excel
+  - baris total di akhir kalau relevan
+- PDF:
+  - wajib header (logo, judul laporan, periode) dan footer (nama perusahaan, waktu dibuat WIB, nomor halaman "Halaman x dari y") di setiap halaman
+  - perataan kolom sama dengan Excel, header tabel diulang di setiap halaman, baris tidak terpotong di tengah
+  - ukuran A4, orientasi menyesuaikan jumlah kolom
+- Isi ekspor mengikuti filter dan hak akses role yang sama dengan tampilan di layar.
+- Library pembuat Excel dan PDF diminta persetujuannya saat fitur ekspor dibangun (Fase 8).
+- Diuji E2E: file terunduh, lalu isinya dibaca di test (nama sheet, header, format angka, jumlah baris, header dan footer PDF).
+
 ---
 
 ## 7. Aturan copywriting (berlaku untuk semua teks UI, konten seed, metadata, email, notifikasi)

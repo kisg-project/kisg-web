@@ -6,7 +6,10 @@ Status: `Belum` (belum ditulis), `Ditulis` (ada spec, belum hijau di CI), `Lolos
 
 Profil browser: Chromium desktop (D), Mobile Chrome Pixel (MC), Mobile Safari iPhone (MS). Kolom "Profil" menyebut profil wajib. Portal wajib lolos di MC dan MS.
 
-Berlaku untuk setiap halaman, tidak ditulis ulang per baris: tanpa error console, tanpa pelanggaran axe, punya state loading, error, dan kosong.
+Berlaku untuk setiap halaman, tidak ditulis ulang per baris:
+- tanpa error console dan tanpa pelanggaran axe
+- punya state loading, error, dan kosong
+- responsif: tanpa scroll horizontal di lebar 320, 375, 768, 1024, dan 1440px, dan elemen utama terlihat (helper `expectResponsive()`, CLAUDE.md bagian 6)
 
 ## 1. Matriks akses per role
 

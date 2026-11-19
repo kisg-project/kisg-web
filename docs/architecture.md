@@ -56,7 +56,7 @@ Prinsip:
 
 | Route | Isi | Rendering |
 |---|---|---|
-| `/` | Hero carousel, strip statistik, sorotan Sejahtera Green Village, progres pembangunan, berita, promo, CTA | Static, revalidate by tag |
+| `/` | Hero Banner penuh satu layar tepat di bawah navbar (tinggi `100svh` dikurangi tinggi navbar, foto `priority` dengan `sizes="100vw"`, bisa berisi beberapa slide dari admin), strip statistik, sorotan Sejahtera Green Village, progres pembangunan, berita, promo, CTA | Static, revalidate by tag |
 | `/proyek` | Daftar proyek terbit, tanpa filter. Selama hanya ada satu proyek terbit, menu "Proyek" langsung menuju halaman detailnya | Static, revalidate by tag |
 | `/proyek/[slug]` | Galeri, tipe unit, siteplan, fasilitas, lokasi, progres, form minat | Static per slug (`generateStaticParams`), revalidate by tag. Status kavling siteplan di-hydrate dari Realtime |
 | `/proyek/[slug]/progres` | Progres pembangunan yang disetujui | Static, revalidate by tag |
