@@ -2,26 +2,26 @@
 
 Daftar ini dilengkapi di Fase 0. Data yang belum ada tampil sebagai placeholder `[...]` di website, tidak dikarang.
 
-## Legalitas perusahaan
-
-Sumber: NIB yang diterbitkan OSS, 16 Januari 2023.
+## Profil dan kontak (tampil di website)
 
 | Data | Nilai | Status |
 |---|---|---|
 | Nama badan usaha | PT Kreatif Inovatif Sejahtera Group | Ada |
+| Alamat kantor | Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123 | Ada |
+| Kontak | WhatsApp marketing `+62 896-7329-6881` saja | Ada |
+| Jam operasional kantor | | Perlu |
+| Titik Google Maps kantor | | Perlu (link share atau koordinat) |
+
+## Legalitas perusahaan (arsip internal, tidak tampil di website)
+
+Sumber: NIB yang diterbitkan OSS, 16 Januari 2023. Atas keputusan owner, NIB, telepon, dan email di NIB tidak ditampilkan di website.
+
+| Data | Nilai | Status |
+|---|---|---|
 | NIB | 1601230065146 | Ada |
-| Alamat kantor (NIB) | Karangan Raya No. 15, Desa/Kelurahan Karanggan, Kec. Gunung Putri, Kab. Bogor, Jawa Barat 16960 | Ada |
-| Telepon (NIB) | 0822-1351-6780 | Ada |
-| Email (NIB) | pt.kreatifinovatifsejahteragrp@gmail.com | Ada |
+| Alamat terdaftar di NIB | Karangan Raya No. 15, Desa/Kelurahan Karanggan, Kec. Gunung Putri, Kab. Bogor, Jawa Barat 16960 | Ada |
 | Status penanaman modal | PMDN | Ada |
 | Skala usaha | Usaha Mikro | Ada |
 | KBLI | Ada di lampiran NIB | Perlu lampiran NIB |
-| Akta pendirian dan SK Kemenkumham | | Perlu |
-| NPWP badan | | Perlu, hanya kalau mau ditampilkan |
+| Akta pendirian dan SK Kemenkumham | | Perlu, untuk halaman legalitas proyek kalau dibutuhkan |
 | Keanggotaan asosiasi (REI, APERSI, dsb) | | Perlu, kalau ada |
-
-## Perlu dikonfirmasi
-
-- Apakah alamat kantor di NIB yang tampil di website, atau ada kantor pemasaran lain (misal di lokasi Sejahtera Green Village)?
-- Apakah telepon dan email di NIB boleh ditampilkan di website? Kontak utama website saat ini WhatsApp marketing `+62 896-7329-6881` (CLAUDE.md bagian 1).
-- Ejaan nama jalan: NIB menulis "Karangan Raya", sedangkan nama desanya "Karanggan".

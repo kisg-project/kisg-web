@@ -15,8 +15,10 @@ KIS Group adalah developer perumahan di Bekasi dan Depok.
 | Sejahtera Residence Mangunjaya | Sold out |
 | Sejahtera Green Village Tambun Selatan | Tersedia (proyek aktif, fokus penjualan) |
 
+- Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
-- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`)
+- Alamat kantor: Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123
+- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
