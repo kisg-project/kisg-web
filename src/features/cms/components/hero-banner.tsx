@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { featuredProject } from "@/config/featured-project";
 import { whatsappLink } from "@/config/site";
-import { formatRupiah } from "@/lib/format";
+import { formatRupiahRange } from "@/lib/format";
 
 // Hero Banner beranda: penuh satu layar di bawah navbar (keputusan owner, Fase 1).
 // Fase 3 dan 4: gambar dan teks diambil dari tabel banners yang diatur admin, bisa beberapa slide.
@@ -62,7 +62,7 @@ export function HeroBanner() {
           <p className="mt-4 text-lg sm:text-xl">
             Rumah {featuredProject.unitType.name}, {featuredProject.unitType.bedrooms} kamar tidur.{" "}
             <span className="font-bold text-gold-300 tabular">
-              {formatRupiah(featuredProject.unitType.price)}.
+              Mulai {formatRupiahRange(featuredProject.unitType.price)}.
             </span>
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
