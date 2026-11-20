@@ -16,7 +16,7 @@ export async function SiteFooter() {
   return (
     <footer className="bg-footer pb-safe text-footer-foreground">
       <Container className="grid gap-8 border-b border-primary-800 py-12 lg:grid-cols-12 lg:items-center lg:py-16">
-        <div className="min-w-0 lg:col-span-5">
+        <div className="min-w-0 lg:col-span-7">
           <Logo tone="light" imageClassName="h-16 w-auto min-w-24" />
           <p className="mt-4 text-sm font-semibold text-white">{siteConfig.legalName}</p>
           <address className="mt-3 not-italic">
@@ -27,7 +27,7 @@ export async function SiteFooter() {
             </p>
           </address>
         </div>
-        <div className="min-w-0 lg:col-span-7">
+        <div className="w-full max-w-md min-w-0 lg:col-span-5 lg:justify-self-end">
           <OfficeMap />
         </div>
       </Container>

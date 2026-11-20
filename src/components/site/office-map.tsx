@@ -16,7 +16,7 @@ export function OfficeMap() {
       href={officeMapsUrl()}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block rounded-lg border border-primary-800 bg-primary-950/40 p-4 transition-colors hover:border-primary-600 sm:p-6"
+      className="group block rounded-lg border border-primary-800 bg-primary-950/40 p-4 transition-colors hover:border-primary-600"
     >
       <span className="sr-only">Buka lokasi kantor pemasaran di Google Maps</span>
       <div className="relative aspect-[1000/373] w-full">
