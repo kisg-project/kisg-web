@@ -56,6 +56,8 @@ export async function expectNoA11yViolations(page: Page, options: { exclude?: st
   for (const selector of options.exclude ?? []) builder = builder.exclude(selector);
   // Bagian Reveal yang belum di-scroll masih transparan dan tampak pucat bagi axe. Tampilkan semuanya
   // (keadaan yang dilihat pengunjung setelah scroll), lalu tunggu transisinya selesai.
+  // Transisi dimatikan dulu supaya bagian itu langsung terlihat penuh, tanpa jeda sebelum transisi mulai.
+  await page.addStyleTag({ content: ".reveal { transition: none !important; }" });
   await page.evaluate(() => {
     for (const element of document.querySelectorAll<HTMLElement>('[data-reveal="pending"]')) {
       element.dataset.reveal = "shown";
