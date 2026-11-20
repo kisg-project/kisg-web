@@ -1,7 +1,7 @@
 name: Supabase lokal untuk E2E
 description: >
   Menjalankan Supabase lokal di runner (migrasi dan seed dari nol), lalu mengekspor URL dan kunci
-  ke env job berikutnya. Dipakai ci.yml dan e2e-weekly.yml. Tidak pernah menyentuh staging/production.
+  ke env job berikutnya. Dipakai ci.yml dan e2e-weekly.yml. Tidak pernah menyentuh production.
 
 runs:
   using: composite

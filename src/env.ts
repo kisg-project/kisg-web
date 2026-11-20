@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Variabel env divalidasi saat build dan saat server mulai (CLAUDE.md bagian 3).
 // Kunci Supabase dibaca saat runtime oleh server (bukan NEXT_PUBLIC), supaya satu build bisa dipakai
-// di CI (Supabase lokal) dan di Vercel (staging atau production). Halaman publik tidak memakainya.
+// di CI (Supabase lokal) dan di Vercel (production). Halaman publik tidak memakainya.
 // Variabel fase berikutnya (Meta, Gemini, Brevo, Turnstile) ditambah saat dibutuhkan.
 export const env = createEnv({
   server: {

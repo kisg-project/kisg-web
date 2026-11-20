@@ -1,5 +1,5 @@
 // Akses Supabase lokal dari test (hanya di CI, CLAUDE.md bagian 5). Kunci diisi langkah CI
-// .github/actions/supabase-local dari `supabase status`. Tidak pernah menyentuh staging atau production.
+// .github/actions/supabase-local dari `supabase status`. Tidak pernah menyentuh production.
 
 import { createServerClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";

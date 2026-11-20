@@ -25,12 +25,8 @@ IFS=$'\t' read -r state draft base head title labels <<< "$info"
 
 [ "$state" = "OPEN" ] || fail "PR #$pr berstatus $state"
 [ "$draft" = "false" ] || fail "PR #$pr masih draft"
-# Semua PR ke main (tanpa staging sejak Fase 2). SEMENTARA: base staging masih diterima untuk
-# memindahkan isi staging ke main satu kali. Dihapus bersama branch staging.
-case "$base" in
-  main | staging) ;;
-  *) fail "base PR harus main (sekarang $base)" ;;
-esac
+# Semua PR ke main (tanpa staging sejak Fase 2, keputusan owner).
+[ "$base" = "main" ] || fail "base PR harus main (sekarang $base)"
 [ "$head" != "main" ] || fail "head PR tidak boleh main"
 
 # Judul PR menjadi pesan squash commit, jadi harus Conventional Commits.
@@ -83,10 +79,4 @@ fi
 echo "OK    PR #$pr ($head -> $base) siap di-merge"
 [ "$mode" = "--check-only" ] && exit 0
 
-# PR fitur: squash. SEMENTARA: PR staging ke main memakai merge commit supaya commit per fitur tetap
-# ada di main untuk CHANGELOG release-please.
-if [ "$head" = "staging" ]; then
-  gh pr merge "$pr" --merge --subject "$title (#$pr)"
-else
-  gh pr merge "$pr" --squash --delete-branch --subject "$title (#$pr)"
-fi
+gh pr merge "$pr" --squash --delete-branch --subject "$title (#$pr)"
