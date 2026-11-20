@@ -385,12 +385,20 @@
   transition:
     translate 250ms ease-out,
     box-shadow 250ms ease-out,
+    border-color 250ms ease-out,
     opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
 
   @media (hover: hover) {
     &:hover {
       translate: 0 -0.25rem;
       box-shadow: var(--shadow-md);
+      border-color: var(--color-primary-200);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      translate: none;
     }
   }
 }
@@ -406,5 +414,46 @@
 @keyframes fade-in {
   from {
     opacity: 0;
+  }
+}
+
+/*
+ * Efek kecil yang berlaku di seluruh website (keputusan owner: tidak ada kartu atau tombol yang diam).
+ * Ditulis di luar @layer supaya menang atas utility warna Tailwind di elemen yang sama.
+ * - Ikon di dalam kartu .lift berubah warna saat kartunya di-hover.
+ * - Panah kanan di tombol atau tautan bergeser ke kanan saat di-hover atau difokus.
+ */
+.icon-chip,
+.lucide-arrow-right,
+.lucide-arrow-up-right {
+  transition:
+    background-color 250ms ease-out,
+    color 250ms ease-out,
+    translate 200ms ease-out;
+}
+
+@media (hover: hover) {
+  .lift:hover .icon-chip {
+    background-color: var(--color-primary-700);
+    color: var(--color-white);
+  }
+
+  :is(a, button):hover .lucide-arrow-right {
+    translate: 0.25rem 0;
+  }
+
+  :is(a, button):hover .lucide-arrow-up-right {
+    translate: 0.125rem -0.125rem;
+  }
+}
+
+:is(a, button):focus-visible .lucide-arrow-right {
+  translate: 0.25rem 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lucide-arrow-right,
+  .lucide-arrow-up-right {
+    translate: none !important;
   }
 }

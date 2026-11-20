@@ -26,6 +26,8 @@ export const siteConfig = {
   },
   logo: {
     src: "/brand/logo-kis.png",
+    /** Versi untuk latar gelap (footer): atap dan tulisan GROUP putih, KIS tetap emas. */
+    lightSrc: "/brand/logo-kis-light.png",
     width: 966,
     height: 572,
     alt: "Logo KIS Group",
@@ -70,6 +72,13 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig;
 
 /** Alamat kantor dalam satu baris, untuk footer dan halaman kontak. */
+/** Tautan Google Maps ke kantor pemasaran (pencarian alamat lengkap, tanpa API key). */
+export function officeMapsUrl(): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${siteConfig.legalName}, ${formatOfficeAddress()}`,
+  )}`;
+}
+
 export function formatOfficeAddress(address: SiteConfig["address"] = siteConfig.address): string {
   return [
     address.street,

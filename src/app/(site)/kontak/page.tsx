@@ -5,7 +5,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
 import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
-import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
+import { formatOfficeAddress, officeMapsUrl, siteConfig, whatsappLink } from "@/config/site";
 import { LeadForm } from "@/features/leads";
 
 export const metadata: Metadata = {
@@ -13,10 +13,6 @@ export const metadata: Metadata = {
   description: `Hubungi marketing KIS Group lewat WhatsApp ${siteConfig.whatsapp.display} atau datang ke kantor pemasaran di Bekasi Utara.`,
   alternates: { canonical: "/kontak" },
 };
-
-const officeMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  `${siteConfig.legalName}, ${formatOfficeAddress()}`,
-)}`;
 
 export default function ContactPage() {
   return (
@@ -29,7 +25,7 @@ export default function ContactPage() {
       <Section>
         <div className="grid gap-6 lg:grid-cols-3">
           <Reveal className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-2">
-            <span className="flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+            <span className="icon-chip flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
               <MessageCircle aria-hidden="true" className="size-6" />
             </span>
             <div>
@@ -50,7 +46,7 @@ export default function ContactPage() {
           </Reveal>
 
           <Reveal delay={80} className="flex lift flex-col gap-4 rounded-lg border bg-card p-6">
-            <span className="flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+            <span className="icon-chip flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
               <InstagramIcon aria-hidden="true" className="size-6" />
             </span>
             <div>
@@ -71,7 +67,7 @@ export default function ContactPage() {
             className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-3 lg:flex-row lg:items-center lg:justify-between"
           >
             <div className="flex gap-4">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
                 <MapPin aria-hidden="true" className="size-6" />
               </span>
               <address className="not-italic">
@@ -81,7 +77,7 @@ export default function ContactPage() {
             </div>
             <div>
               <Button asChild variant="outline">
-                <a href={officeMaps} target="_blank" rel="noopener noreferrer">
+                <a href={officeMapsUrl()} target="_blank" rel="noopener noreferrer">
                   Buka di Google Maps
                 </a>
               </Button>
