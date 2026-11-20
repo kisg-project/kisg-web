@@ -177,14 +177,16 @@ export function ApplicationForm({
                 aria-describedby={fieldState.error ? `${ids.consent}-error` : undefined}
                 className="mt-0.5 size-5"
               />
-              <Label htmlFor={ids.consent} className="text-sm leading-snug font-normal">
-                Saya setuju data dan CV saya dipakai KIS Group untuk proses rekrutmen.{" "}
+              <Label htmlFor={ids.consent} className="block text-sm leading-relaxed font-normal">
+                Saya setuju data dan CV saya dipakai KIS Group untuk proses rekrutmen, sesuai{" "}
                 <Link
                   href="/kebijakan-privasi"
+                  target="_blank"
                   className="font-semibold text-primary underline underline-offset-2"
                 >
-                  Baca kebijakan privasi
+                  kebijakan privasi
                 </Link>
+                .
               </Label>
             </div>
             {fieldState.error ? (

@@ -116,6 +116,23 @@ test.describe("Form lead", () => {
     expect(await leadByPhone(phone.e164)).toBeNull();
   });
 
+  test("tautan kebijakan privasi menyatu di kalimat persetujuan dan dibuka di tab baru", async ({
+    page,
+  }) => {
+    await page.goto("/kontak");
+    const form = page.getByRole("form", { name: "Form kontak" });
+    const link = form.getByRole("link", { name: "kebijakan privasi" });
+    await expect(link).toHaveAttribute("href", "/kebijakan-privasi");
+    await expect(link).toHaveAttribute("target", "_blank");
+    // Tautan berada di baris teks yang sama dengan kalimat persetujuan, bukan kolom terpisah.
+    // Locator di dalam `has` harus relatif, jadi tidak boleh diawali `form`.
+    const label = form.locator("label", {
+      has: page.getByRole("link", { name: "kebijakan privasi" }),
+    });
+    await expect(label).toContainText("Saya setuju data saya dipakai KIS Group");
+    await expect(label).toHaveCSS("display", "block");
+  });
+
   test("honeypot terisi: tampak berhasil tetapi lead tidak dibuat", async ({ page }) => {
     const phone = uniquePhone();
     await page.goto("/kontak");

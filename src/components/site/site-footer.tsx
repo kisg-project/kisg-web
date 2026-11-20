@@ -3,6 +3,7 @@ import { MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Container } from "@/components/shared/container";
 import { Logo } from "@/components/shared/logo";
+import { OfficeMap } from "@/components/site/office-map";
 import { footerNav, withProjectsHref } from "@/config/nav";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { getProjectsHref } from "@/features/projects";
@@ -14,12 +15,9 @@ export async function SiteFooter() {
   const projectsHref = await getProjectsHref();
   return (
     <footer className="bg-footer pb-safe text-footer-foreground">
-      <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:py-16">
-        <div className="min-w-0 lg:col-span-3">
-          {/* Bidang terang supaya atap hijau logo tetap kontras di latar footer yang gelap. */}
-          <div className="inline-flex rounded-md bg-white px-4 py-3">
-            <Logo imageClassName="h-14 w-auto min-w-24" />
-          </div>
+      <Container className="grid gap-8 border-b border-primary-800 py-12 lg:grid-cols-12 lg:items-center lg:py-16">
+        <div className="min-w-0 lg:col-span-5">
+          <Logo tone="light" imageClassName="h-16 w-auto min-w-24" />
           <p className="mt-4 text-sm font-semibold text-white">{siteConfig.legalName}</p>
           <address className="mt-3 not-italic">
             <p className="text-sm font-semibold text-gold-400">Kantor pemasaran</p>
@@ -29,9 +27,13 @@ export async function SiteFooter() {
             </p>
           </address>
         </div>
-
+        <div className="min-w-0 lg:col-span-7">
+          <OfficeMap />
+        </div>
+      </Container>
+      <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12">
         {footerNav.map((group) => (
-          <nav key={group.title} aria-label={group.title} className="min-w-0 lg:col-span-2">
+          <nav key={group.title} aria-label={group.title} className="min-w-0 lg:col-span-3">
             <p className="text-sm font-semibold text-gold-400">{group.title}</p>
             <ul className="mt-2 flex flex-col text-sm">
               {withProjectsHref(group.items, projectsHref).map((item) => (

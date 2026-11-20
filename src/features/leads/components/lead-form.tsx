@@ -189,14 +189,16 @@ export function LeadForm({
                 aria-describedby={fieldState.error ? `${consentId}-error` : undefined}
                 className="mt-0.5 size-5"
               />
-              <Label htmlFor={consentId} className="text-sm leading-snug font-normal">
-                {LEAD_CONSENT_TEXT}{" "}
+              <Label htmlFor={consentId} className="block text-sm leading-relaxed font-normal">
+                {LEAD_CONSENT_TEXT.replace(/kebijakan privasi\.$/, "")}
                 <Link
                   href="/kebijakan-privasi"
+                  target="_blank"
                   className="font-semibold text-primary underline underline-offset-2"
                 >
-                  Baca kebijakan privasi
+                  kebijakan privasi
                 </Link>
+                .
               </Label>
             </div>
             {fieldState.error ? (

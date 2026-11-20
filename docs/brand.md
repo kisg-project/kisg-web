@@ -5,6 +5,7 @@ Palet dikunci di Fase 0 (19 November 2026). Setelah ini tidak ada warna hardcode
 ## Sumber
 
 - Logo: `public/brand/logo-kis.png` (PNG transparan, 966 x 572 px). Dibuat dari logo asli berlatar hitam.
+- Logo latar gelap: `public/brand/logo-kis-light.png`. Bagian hijau (atap dan tulisan GROUP) diganti putih, emas tetap. Dipakai di footer tanpa kotak putih (keputusan owner, 20 November 2026).
 - Warna diukur dari median pixel solid logo asli, bukan ditebak:
 
 | Warna logo | Hex | OKLCH | Porsi area logo |
@@ -163,3 +164,16 @@ Referensi pola dari Dribbble (tag clock-in, employee attendance app, face recogn
 5. CRM marketing: kanban lead yang bisa digeser antar tahap, tombol cepat WhatsApp dan telepon, pengingat follow-up.
 6. Dashboard owner: angka ringkas di atas (hadir, terlambat, belum lapor, lead baru, booking), lalu daftar karyawan dengan status hari ini, tap untuk detail dan foto.
 7. Umum: navigasi bawah di HP, sidebar di desktop, skeleton saat memuat, toast singkat, mode gelap, target sentuh minimal 44 px.
+
+## Foto stok (keputusan owner, 20 November 2026)
+
+Foto proyek tetap foto atau render asli. Untuk bagian yang tidak menggambarkan proyek (banner konsultasi, banner simulasi KPR, halaman karir, ilustrasi berita), owner mengizinkan foto stok orang, bukan foto rumah. Hanya dari sumber berlisensi bebas pakai komersial (Unsplash License), dipotong dan dikompres ke WebP sebelum di-commit. Alt text menyebut "Foto ilustrasi" supaya tidak terbaca sebagai konsumen atau karyawan KIS.
+
+| File | Sumber | Fotografer | Catatan |
+|---|---|---|---|
+| `public/images/banners/konsultasi-*.webp` | images.unsplash.com/photo-1672917187338-7f81ecac3d3f | Edi Kurniawan | Dipotong 16:9 dan potret |
+| `public/images/banners/kerja-laptop-*.webp` | images.unsplash.com/photo-1681569685386-b7bda397672e | phyo min | Dibalik horizontal supaya orangnya di kanan, tidak tertutup teks |
+
+## Peta footer
+
+`public/images/map/indonesia-dots.svg`: titik-titik daratan Indonesia dari Natural Earth 1:50m (domain publik), proyeksi equirectangular, lon 94,6 sampai 141,2, lat 6,2 sampai -11,2, jarak titik 0,42 derajat. Penanda kantor (Bekasi, 6,21 LS 107,00 BT) diletakkan di 26,62% dari kiri dan 71,37% dari atas (`src/components/site/office-map.tsx`). Kalau kantor pindah kota, hitung ulang dengan rumus yang sama.

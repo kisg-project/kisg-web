@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface HeroSlide {
@@ -38,16 +37,19 @@ function useReducedMotion(): boolean {
 
 /**
  * Hero Banner beranda: beberapa slide yang bergeser otomatis dengan transisi pudar dan zoom halus.
- * Autoplay bisa dijeda (WCAG 2.2.2), berhenti saat kursor atau fokus ada di dalam, dan tidak jalan
- * kalau pengunjung mematikan animasi. Slide nonaktif ditandai inert supaya tautannya tidak terjangkau.
+ * Kontrolnya hanya indikator kecil (keputusan owner). Autoplay berhenti saat kursor atau fokus ada di
+ * dalam, berhenti permanen begitu pengunjung memilih slide lewat indikator atau tombol panah keyboard
+ * (mekanisme jeda WCAG 2.2.2), dan tidak jalan kalau pengunjung mematikan animasi. Slide nonaktif
+ * ditandai inert supaya tautannya tidak terjangkau.
  */
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  // true setelah pengunjung memilih slide sendiri: autoplay tidak dilanjutkan lagi.
+  const [stopped, setStopped] = useState(false);
   const [hovered, setHovered] = useState(false);
   const reducedMotion = useReducedMotion();
   const count = slides.length;
-  const autoplay = count > 1 && !paused && !hovered && !reducedMotion;
+  const autoplay = count > 1 && !stopped && !hovered && !reducedMotion;
 
   const go = useCallback(
     (next: number) => {
@@ -84,8 +86,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         if (!event.currentTarget.contains(event.relatedTarget)) setHovered(false);
       }}
       onKeyDown={(event) => {
-        if (event.key === "ArrowRight") go(index + 1);
-        if (event.key === "ArrowLeft") go(index - 1);
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          setStopped(true);
+          go(index + (event.key === "ArrowRight" ? 1 : -1));
+        }
       }}
     >
       <div aria-live={autoplay ? "off" : "polite"}>
@@ -119,7 +123,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                   loading={slideIndex === 0 ? "eager" : "lazy"}
                   decoding="async"
                   className={cn(
-                    "absolute inset-0 -z-20 size-full object-cover transition-transform duration-[8000ms] ease-out",
+                    "absolute inset-0 -z-20 size-full object-cover object-[50%_60%] transition-transform duration-[8000ms] ease-out",
                     active ? "scale-105" : "scale-100",
                   )}
                 />
@@ -143,8 +147,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       </div>
 
       {count > 1 ? (
-        <div className="absolute inset-x-0 bottom-4 z-20 mx-auto flex w-full max-w-7xl items-center justify-end gap-2 px-4 sm:bottom-6 sm:px-6 lg:px-8">
-          <div className="mr-auto flex items-center gap-2 sm:mr-0">
+        <div className="absolute inset-x-0 bottom-3 z-20 mx-auto flex w-full max-w-7xl items-center px-4 sm:bottom-5 sm:px-6 lg:px-8">
+          <div className="flex items-center rounded-full bg-primary-950/35 px-1.5">
             {slides.map((slide, slideIndex) => (
               <button
                 key={slide.id}
@@ -152,71 +156,25 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 aria-label={`Tampilkan banner ${String(slideIndex + 1)}`}
                 aria-current={slideIndex === index ? "true" : undefined}
                 onClick={() => {
+                  setStopped(true);
                   go(slideIndex);
                 }}
-                className="flex size-11 items-center justify-center"
+                className="group flex h-11 min-w-6 items-center justify-center px-1"
               >
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "block h-1.5 rounded-sm bg-white/60 transition-[width,background-color] duration-300",
-                    slideIndex === index ? "w-8 bg-gold-300" : "w-4",
+                    "block h-1.5 rounded-full transition-[width,background-color] duration-300",
+                    slideIndex === index
+                      ? "w-6 bg-gold-300"
+                      : "w-1.5 bg-white/70 group-hover:bg-white",
                   )}
                 />
               </button>
             ))}
           </div>
-          <CarouselButton
-            label="Banner sebelumnya"
-            onClick={() => {
-              go(index - 1);
-            }}
-          >
-            <ChevronLeft aria-hidden="true" className="size-5" />
-          </CarouselButton>
-          <CarouselButton
-            label={paused ? "Putar banner otomatis" : "Jeda banner otomatis"}
-            onClick={() => {
-              setPaused((value) => !value);
-            }}
-          >
-            {paused ? (
-              <Play aria-hidden="true" className="size-5" />
-            ) : (
-              <Pause aria-hidden="true" className="size-5" />
-            )}
-          </CarouselButton>
-          <CarouselButton
-            label="Banner berikutnya"
-            onClick={() => {
-              go(index + 1);
-            }}
-          >
-            <ChevronRight aria-hidden="true" className="size-5" />
-          </CarouselButton>
         </div>
       ) : null}
     </section>
-  );
-}
-
-function CarouselButton({
-  label,
-  onClick,
-  children,
-}: {
-  label: string;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex size-11 items-center justify-center rounded-md border border-white/30 bg-primary-950/40 text-white transition-colors hover:bg-primary-950/70"
-    >
-      {children}
-    </button>
   );
 }

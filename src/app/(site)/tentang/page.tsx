@@ -55,10 +55,10 @@ export default async function AboutPage() {
             <Reveal
               key={fact.label}
               delay={index * 80}
-              className="flex h-full flex-col gap-2 rounded-lg border bg-card p-5"
+              className="flex h-full lift flex-col gap-2 rounded-lg border bg-card p-5"
             >
               <dt className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+                <span className="icon-chip flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
                   <fact.icon aria-hidden="true" className="size-5" />
                 </span>
                 {fact.label}
@@ -71,20 +71,20 @@ export default async function AboutPage() {
 
       <Section tone="surface" title="Visi dan misi">
         <div className="grid gap-6 lg:grid-cols-12">
-          <Reveal className="rounded-lg border bg-card p-6 lg:col-span-5">
+          <Reveal className="lift rounded-lg border bg-card p-6 lg:col-span-5">
             <h3 className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
               Visi
             </h3>
             <p className="mt-3 text-lg leading-relaxed font-semibold">{company.vision}</p>
           </Reveal>
-          <Reveal delay={80} className="rounded-lg border bg-card p-6 lg:col-span-7">
+          <Reveal delay={80} className="lift rounded-lg border bg-card p-6 lg:col-span-7">
             <h3 className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
               Misi
             </h3>
             <ol className="mt-3 grid gap-3">
               {company.missions.map((mission, index) => (
                 <li key={mission} className="flex gap-3">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary-50 text-sm font-bold text-primary-700 tabular">
+                  <span className="icon-chip flex size-7 shrink-0 items-center justify-center rounded-md bg-primary-50 text-sm font-bold text-primary-700 tabular">
                     {index + 1}
                   </span>
                   <span>{mission}</span>
@@ -105,7 +105,7 @@ export default async function AboutPage() {
                   delay={index * 80}
                   className="flex h-full lift flex-col gap-3 rounded-lg border bg-card p-5"
                 >
-                  <span className="flex size-11 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+                  <span className="icon-chip flex size-11 items-center justify-center rounded-md bg-primary-50 text-primary-700">
                     <Icon aria-hidden="true" className="size-5" />
                   </span>
                   <h3 className="text-lg font-bold">{service.title}</h3>
@@ -156,10 +156,11 @@ export default async function AboutPage() {
             href={siteConfig.instagram.url}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`Instagram ${siteConfig.instagram.handle}`}
             className="inline-flex min-h-11 lift items-center gap-2 rounded-md border bg-card px-4 font-semibold"
           >
             <InstagramIcon aria-hidden="true" className="size-4 text-primary" />
-            Instagram {siteConfig.instagram.handle}
+            {siteConfig.instagram.handle}
           </a>
         </Reveal>
       </Section>

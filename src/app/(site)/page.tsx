@@ -93,6 +93,12 @@ export default async function HomePage() {
   const firstUnit = project?.unitTypes[0];
   const projectPath = project ? `/proyek/${project.slug}` : "/";
 
+  // Foto yang sudah tampil di banner tidak diulang di cuplikan galeri (keputusan owner).
+  const bannerImages = new Set(banners.flatMap((banner) => [banner.image, banner.mobileImage]));
+  const homeGallery = (project?.gallery ?? [])
+    .filter((image) => !bannerImages.has(image.src))
+    .slice(0, 4);
+
   return (
     <>
       <JsonLd
@@ -147,12 +153,12 @@ export default async function HomePage() {
                   </Link>
                 </Button>
               </Reveal>
-              {project.gallery.length > 0 ? (
+              {homeGallery.length > 0 ? (
                 <ul
                   className="grid grid-cols-2 gap-3 lg:col-span-7"
                   aria-label={`Foto ${project.name}`}
                 >
-                  {project.gallery.slice(0, 4).map((image, index) => (
+                  {homeGallery.map((image, index) => (
                     <li key={image.id}>
                       <Reveal delay={index * 80}>
                         <Link
