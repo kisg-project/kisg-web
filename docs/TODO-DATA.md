@@ -14,10 +14,14 @@ Cara kirim: tempel di chat, atau taruh file di folder Downloads lalu kabari nama
 | Instagram | `@kreatifsejahteraproject` | Ada | |
 | Jam operasional kantor | | Perlu | Fase 3 |
 | Titik Google Maps kantor | | Perlu (link share atau koordinat) | Fase 3 |
-| Profil singkat perusahaan (tahun berdiri, sejarah singkat) | | Perlu | Fase 3 |
-| Visi dan misi | | Perlu | Fase 3 |
-| Statistik beranda (jumlah proyek, unit terjual, keluarga penghuni, tahun berdiri) | | Perlu, angka asli saja. Kalau tidak ada, strip statistik disembunyikan | Fase 3 |
+| Profil singkat perusahaan (tahun berdiri, sejarah singkat) | Berdiri 2022, fokus rumah terjangkau di Kabupaten Bekasi (Company Profile PT KISG 2024) | Ada | |
+| Visi dan misi | Dari Company Profile PT KISG 2024, tampil di `/tentang` | Ada | |
+| Statistik beranda (jumlah proyek, unit terjual, keluarga penghuni, tahun berdiri) | Tahun berdiri 2022, 16 unit Sejahtera Green Village, luas bangunan 36 m2 (`site_settings` key `stats.home`). Unit terjual dan keluarga penghuni belum ada | Sebagian | Fase 3 |
 | Foto kantor dan tim (opsional) | | Perlu | Fase 3 |
+
+### Beda kontak di Company Profile PT KISG (2024), perlu konfirmasi owner
+
+Company profile mencantumkan telepon +62 812-1038-7720, email kreatifsejahteraproject@gmail.com, dan website kisgproject.com. Website memakai WhatsApp +62 882-9095-7177 (keputusan owner, 20 November 2026) dan domain kisgroup.co.id. Company profile juga menyebut Sejahtera Green Village 16 unit dengan luas tanah 60 sampai 73 m2 (tipe 36/60 sampai 36/73); harga yang tampil baru tipe 36/60.
 
 ## 2. Legalitas perusahaan (arsip internal, tidak tampil di website)
 

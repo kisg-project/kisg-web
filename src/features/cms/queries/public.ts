@@ -21,6 +21,7 @@ import {
   toPromo,
   toPromoSummary,
 } from "../utils/map";
+import { parseHomeStats, type HomeStat } from "../utils/stats";
 
 // Konten website yang terbit (RLS anon). Di-cache per tag, diperbarui dari admin (Fase 4) atau paling
 // lama tiap jam, supaya promo dan lowongan yang berakhir hilang dengan sendirinya.
@@ -121,4 +122,18 @@ export async function getCareerBySlug(slug: string): Promise<Career | null> {
     .maybeSingle();
   if (error) return handleContentError("lowongan", error, null);
   return data ? toCareer(data) : null;
+}
+
+/** Angka strip statistik beranda dari site_settings (publik). Kosong kalau belum diisi. */
+export async function getHomeStats(): Promise<HomeStat[]> {
+  "use cache";
+  cacheTag(CACHE_TAGS.settings);
+  cacheLife("hours");
+  const { data, error } = await createSupabasePublicClient()
+    .from("site_settings")
+    .select("value")
+    .eq("key", "stats.home")
+    .maybeSingle();
+  if (error) return handleContentError("statistik", error, []);
+  return parseHomeStats(data?.value);
 }

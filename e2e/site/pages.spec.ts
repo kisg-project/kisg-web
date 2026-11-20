@@ -137,6 +137,34 @@ test.describe("Detail proyek", () => {
   });
 });
 
+test.describe("Profil perusahaan", () => {
+  test("tentang: tahun berdiri, visi, misi, dan layanan dari company profile", async ({ page }) => {
+    await page.goto("/tentang");
+    await expect(page.getByText("2022", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Visi dan misi" })).toBeVisible();
+    await expect(page.getByText(/^Menjadi pengembang properti yang terpercaya/)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Misi" }).locator("..").getByRole("listitem"),
+    ).toHaveCount(4);
+    for (const service of ["Pengembangan perumahan", "Solusi pembiayaan", "Konsultasi properti"]) {
+      await expect(page.getByRole("heading", { name: service })).toBeVisible();
+    }
+  });
+
+  test("beranda: strip angka dari database, dan detail proyek memuat deskripsi", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const stats = page.getByRole("region", { name: "KIS Group dalam angka" });
+    await expect(stats.getByText("Unit di Sejahtera Green Village")).toBeVisible();
+    await stats.scrollIntoViewIfNeeded();
+    await expect(stats.getByText("16", { exact: true })).toBeVisible();
+    await expect(stats.getByText("2022", { exact: true })).toBeVisible();
+    await page.goto(PROJECT_PATH);
+    await expect(page.locator("#tentang-proyek")).toContainText("16 unit tipe 36");
+  });
+});
+
 test.describe("SEO dan kontak", () => {
   test("sitemap memuat halaman terbit saja", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();

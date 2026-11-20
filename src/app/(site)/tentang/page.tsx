@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
-import { Building2, MapPin, Phone } from "lucide-react";
+import {
+  Building2,
+  CalendarDays,
+  Handshake,
+  House,
+  MapPin,
+  MessageSquareText,
+  Phone,
+} from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -9,18 +17,22 @@ import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { formatAddress, getPublishedProjects, lowestPrice } from "@/features/projects";
 import { formatRupiahRange } from "@/lib/format";
 
+const SERVICE_ICONS = [House, Handshake, MessageSquareText] as const;
+
 export const metadata: Metadata = {
   title: "Tentang KIS Group",
   description: `${siteConfig.legalName}, developer perumahan di Bekasi. Profil, proyek, dan kontak kantor pemasaran.`,
   alternates: { canonical: "/tentang" },
 };
 
-// Hanya fakta yang sudah dikonfirmasi owner. Profil lengkap, visi misi, dan legalitas ditambah saat
-// datanya ada (docs/TODO-DATA.md bagian 1 dan 2). Tidak ada kalimat pengisi.
+// Isi dari Company Profile PT KISG (2024) dan data owner. Legalitas ditambah saat datanya ada
+// (docs/TODO-DATA.md bagian 2). Proyek lama tidak disebut (keputusan owner, Fase 1).
 export default async function AboutPage() {
   const projects = await getPublishedProjects();
+  const { company } = siteConfig;
   const facts = [
     { icon: Building2, label: "Badan usaha", value: siteConfig.legalName },
+    { icon: CalendarDays, label: "Berdiri", value: String(company.foundedYear) },
     { icon: MapPin, label: "Kantor pemasaran", value: formatOfficeAddress() },
   ];
 
@@ -33,7 +45,12 @@ export default async function AboutPage() {
       />
 
       <Section title="Profil singkat">
-        <dl className="grid gap-4 sm:grid-cols-2">
+        <Reveal className="mb-8 grid max-w-3xl gap-3 text-base leading-relaxed">
+          {company.summary.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </Reveal>
+        <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {facts.map((fact, index) => (
             <Reveal
               key={fact.label}
@@ -50,6 +67,54 @@ export default async function AboutPage() {
             </Reveal>
           ))}
         </dl>
+      </Section>
+
+      <Section tone="surface" title="Visi dan misi">
+        <div className="grid gap-6 lg:grid-cols-12">
+          <Reveal className="rounded-lg border bg-card p-6 lg:col-span-5">
+            <h3 className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              Visi
+            </h3>
+            <p className="mt-3 text-lg leading-relaxed font-semibold">{company.vision}</p>
+          </Reveal>
+          <Reveal delay={80} className="rounded-lg border bg-card p-6 lg:col-span-7">
+            <h3 className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              Misi
+            </h3>
+            <ol className="mt-3 grid gap-3">
+              {company.missions.map((mission, index) => (
+                <li key={mission} className="flex gap-3">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary-50 text-sm font-bold text-primary-700 tabular">
+                    {index + 1}
+                  </span>
+                  <span>{mission}</span>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </div>
+      </Section>
+
+      <Section title="Layanan">
+        <ul className="grid gap-4 sm:grid-cols-3">
+          {company.services.map((service, index) => {
+            const Icon = SERVICE_ICONS[index] ?? House;
+            return (
+              <li key={service.title}>
+                <Reveal
+                  delay={index * 80}
+                  className="flex h-full lift flex-col gap-3 rounded-lg border bg-card p-5"
+                >
+                  <span className="flex size-11 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+                    <Icon aria-hidden="true" className="size-5" />
+                  </span>
+                  <h3 className="text-lg font-bold">{service.title}</h3>
+                  <p className="text-sm text-subtle-foreground">{service.body}</p>
+                </Reveal>
+              </li>
+            );
+          })}
+        </ul>
       </Section>
 
       {projects.length > 0 ? (

@@ -10,7 +10,14 @@ import { MediaCard } from "@/components/site/media-card";
 import { Button } from "@/components/ui/button";
 import { siteConfig, whatsappLink } from "@/config/site";
 import { env } from "@/env";
-import { getActiveBanners, getActivePromos, getPublishedPosts, HeroBanner } from "@/features/cms";
+import {
+  getActiveBanners,
+  getActivePromos,
+  getHomeStats,
+  getPublishedPosts,
+  HeroBanner,
+  StatsStrip,
+} from "@/features/cms";
 import { KprTeaser } from "@/features/kpr";
 import {
   formatAddress,
@@ -76,11 +83,12 @@ function mapsUrl(project: ProjectDetail): string {
 }
 
 export default async function HomePage() {
-  const [banners, project, promos, posts] = await Promise.all([
+  const [banners, project, promos, posts, stats] = await Promise.all([
     getActiveBanners(),
     getFeaturedProject(),
     getActivePromos(),
     getPublishedPosts(3),
+    getHomeStats(),
   ]);
   const firstUnit = project?.unitTypes[0];
   const projectPath = project ? `/proyek/${project.slug}` : "/";
@@ -115,6 +123,7 @@ export default async function HomePage() {
             : null
         }
       />
+      <StatsStrip stats={stats} />
 
       {project ? (
         <>

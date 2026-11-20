@@ -7,7 +7,7 @@
 -- Proyek ------------------------------------------------------------------
 insert into public.projects (
   id, slug, name, status, content_status, address, village, district, city, province, postal_code,
-  is_featured, sort_order
+  is_featured, sort_order, description
 ) values (
   '5a7e0000-0000-4000-8000-000000000001',
   'sejahtera-green-village',
@@ -21,7 +21,8 @@ insert into public.projects (
   'Jawa Barat',
   '17510',
   true,
-  1
+  1,
+  'Perumahan di Kelurahan Mangunjaya, Kecamatan Tambun Selatan. Pembangunan dimulai tahun 2024. Terdiri dari 16 unit tipe 36 dengan luas tanah 60 sampai 73 m2.'
 ) on conflict do nothing;
 
 insert into public.unit_types (
@@ -137,5 +138,11 @@ on conflict do nothing;
 -- Pengaturan publik --------------------------------------------------------
 insert into public.site_settings (key, value, is_public) values
   ('contact.whatsapp', '"+6288290957177"', true),
-  ('contact.instagram', '"@kreatifsejahteraproject"', true)
+  ('contact.instagram', '"@kreatifsejahteraproject"', true),
+  -- Strip angka beranda (Company Profile PT KISG 2024). Hanya angka asli.
+  ('stats.home', '[
+    {"value": 2022, "label": "Tahun berdiri", "countUp": false},
+    {"value": 16, "label": "Unit di Sejahtera Green Village"},
+    {"value": 36, "suffix": " m2", "label": "Luas bangunan per unit"}
+  ]', true)
 on conflict (key) do nothing;

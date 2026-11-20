@@ -124,6 +124,14 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
         </div>
       </PageHero>
 
+      {project.description ? (
+        <Section id="tentang-proyek" title="Tentang proyek" className="scroll-mt-(--header-height)">
+          <Reveal>
+            <p className="max-w-3xl text-lg leading-relaxed">{project.description}</p>
+          </Reveal>
+        </Section>
+      ) : null}
+
       {project.gallery.length > 0 ? (
         <Section id="galeri" title="Galeri" className="scroll-mt-(--header-height)">
           <Reveal>

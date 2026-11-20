@@ -34,6 +34,37 @@ export const siteConfig = {
     name: "Sejahtera Green Village",
     area: "Tambun Selatan",
   },
+  // Dari Company Profile PT KISG (2024). Kalimat ditulis ulang tanpa frasa klise (CLAUDE.md bagian 7),
+  // fakta tidak diubah. Visi dan misi dikutip sesuai dokumen.
+  company: {
+    foundedYear: 2022,
+    summary: [
+      "KIS Group membangun rumah untuk keluarga di Kabupaten Bekasi, dengan harga yang terjangkau untuk rumah pertama.",
+      "Perusahaan berdiri tahun 2022. Setiap proyek dipilih dekat fasilitas umum seperti transportasi dan pusat belanja, dengan desain rumah yang fungsional.",
+    ],
+    vision:
+      "Menjadi pengembang properti yang terpercaya dalam menciptakan hunian terjangkau dan berkualitas bagi keluarga Indonesia, dengan fokus pada keberlanjutan dan kesejahteraan masyarakat.",
+    missions: [
+      "Membangun rumah dan kawasan perumahan yang terjangkau tanpa mengorbankan kualitas dan kenyamanan bagi penghuninya.",
+      "Mengembangkan proyek perumahan yang strategis, dekat dengan fasilitas umum, dan dapat diakses oleh masyarakat berpenghasilan menengah ke bawah.",
+      "Menyediakan solusi pembiayaan yang memudahkan calon pembeli untuk memiliki rumah pertama mereka.",
+      "Menjaga transparansi dan memberikan pelayanan terbaik bagi setiap pelanggan.",
+    ],
+    services: [
+      {
+        title: "Pengembangan perumahan",
+        body: "Membangun rumah dengan material dan teknik konstruksi yang tepat, berikut jalan lingkungan, jaringan air bersih, dan ruang terbuka hijau.",
+      },
+      {
+        title: "Solusi pembiayaan",
+        body: "Bekerja sama dengan bank dan lembaga keuangan untuk KPR rumah pertama.",
+      },
+      {
+        title: "Konsultasi properti",
+        body: "Membantu calon pembeli memilih unit sesuai kebutuhan dan anggaran, sampai proses pembelian dan pembiayaan selesai.",
+      },
+    ],
+  },
 } as const;
 
 export type SiteConfig = typeof siteConfig;
