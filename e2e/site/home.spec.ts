@@ -29,7 +29,7 @@ test.describe("Beranda", () => {
       .getAttribute("href");
     const url = new URL(href ?? "");
     expect(url.hostname).toBe("wa.me");
-    expect(url.pathname).toBe("/6289673296881");
+    expect(url.pathname).toBe("/6288290957177");
     expect(url.searchParams.get("text")).toContain("Sejahtera Green Village");
   });
 

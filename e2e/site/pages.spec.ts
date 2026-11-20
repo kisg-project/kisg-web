@@ -158,7 +158,7 @@ test.describe("SEO dan kontak", () => {
     await button.click();
     const url = new URL((await button.getAttribute("href")) ?? "");
     expect(url.hostname).toBe("wa.me");
-    expect(url.pathname).toBe("/6289673296881");
+    expect(url.pathname).toBe("/6288290957177");
     expect(url.searchParams.get("text")).toContain("Kontak");
     expect(url.searchParams.get("text")).toContain("/kontak");
   });
@@ -172,6 +172,6 @@ test.describe("SEO dan kontak", () => {
       "https://instagram.com/kreatifsejahteraproject",
     );
     await expect(instagram.locator("svg")).toHaveCount(1);
-    await expect(footer.getByRole("link", { name: "WhatsApp +62 896-7329-6881" })).toBeVisible();
+    await expect(footer.getByRole("link", { name: "WhatsApp +62 882-9095-7177" })).toBeVisible();
   });
 });

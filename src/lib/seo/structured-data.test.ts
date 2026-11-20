@@ -27,7 +27,7 @@ describe("organizationJsonLd", () => {
     expect(data).toMatchObject({
       "@type": "RealEstateAgent",
       legalName: "PT Kreatif Inovatif Sejahtera Group",
-      telephone: "+6289673296881",
+      telephone: "+6288290957177",
       address: { postalCode: "17123", addressCountry: "ID" },
     });
   });

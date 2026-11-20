@@ -10,7 +10,7 @@ Cara kirim: tempel di chat, atau taruh file di folder Downloads lalu kabari nama
 |---|---|---|---|
 | Nama badan usaha | PT Kreatif Inovatif Sejahtera Group | Ada | |
 | Alamat kantor | Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123 | Ada | |
-| Kontak | WhatsApp marketing `+62 896-7329-6881` saja | Ada | |
+| Kontak | WhatsApp marketing `+62 882-9095-7177` saja (mengganti nomor lama, 20 November 2026) | Ada | |
 | Instagram | `@kreatifsejahteraproject` | Ada | |
 | Jam operasional kantor | | Perlu | Fase 3 |
 | Titik Google Maps kantor | | Perlu (link share atau koordinat) | Fase 3 |

@@ -16,9 +16,9 @@ export const siteConfig = {
     postalCode: "17123",
   },
   whatsapp: {
-    display: "+62 896-7329-6881",
-    e164: "+6289673296881",
-    url: "https://wa.me/6289673296881",
+    display: "+62 882-9095-7177",
+    e164: "+6288290957177",
+    url: "https://wa.me/6288290957177",
   },
   instagram: {
     handle: "@kreatifsejahteraproject",

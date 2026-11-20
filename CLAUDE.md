@@ -15,7 +15,7 @@ KIS Group adalah developer perumahan.
 - Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
 - Alamat kantor: Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123
-- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
+- WhatsApp marketing: `+62 882-9095-7177` (link: `https://wa.me/6288290957177`), menggantikan nomor lama sejak 20 November 2026 (keputusan owner). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 

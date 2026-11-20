@@ -38,7 +38,7 @@ Semua skenario jalan di ketiga profil (D, MC, MS) kecuali disebut lain.
 
 | Skenario | Spec | Fase | Status |
 |---|---|---|---|
-| Hero Banner penuh satu layar tepat di bawah navbar, foto tampil, CTA WhatsApp menuju `wa.me/6289673296881` dengan pesan menyebut proyek | `home.spec.ts` | 1 | Lolos |
+| Hero Banner penuh satu layar tepat di bawah navbar, foto tampil, CTA WhatsApp menuju `wa.me/6288290957177` dengan pesan menyebut proyek | `home.spec.ts` | 1 | Lolos |
 | Ringkasan Tipe 36/60: harga Rp 571.250.000, spesifikasi dengan ikon, fasilitas, tempat sekitar, rincian biaya termasuk dan belum termasuk | `home.spec.ts` | 1 | Lolos |
 | Beranda tanpa pelanggaran axe dan tanpa scroll horizontal di lebar 320, 375, 768, 1024, 1440 px | `home.spec.ts` | 1 | Lolos |
 | Menu HP (sheet) membuka navigasi dan menuju Simulasi KPR (MC, MS). Navigasi desktop tampil, tombol menu tersembunyi (D) | `home.spec.ts` | 1 | Lolos |
@@ -109,7 +109,7 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 | Simulasi KPR: hasil sesuai nilai acuan, dropdown custom bisa dipilih dengan klik dan keyboard | `simulasi-kpr.spec.ts` | 3 | Ditulis |
 | JSON-LD: RealEstateListing, FAQPage, BreadcrumbList, Article. Metadata dan Open Graph beranda | `home.spec.ts`, `pages.spec.ts` | 3 | Ditulis |
 | `sitemap.xml` hanya konten terbit, `robots.txt` | `pages.spec.ts`, `auth/access.spec.ts` | 3 | Ditulis |
-| Tombol WhatsApp melayang: `wa.me/6289673296881` dengan pesan yang menyebut halaman asal | `pages.spec.ts` | 3 | Ditulis |
+| Tombol WhatsApp melayang: `wa.me/6288290957177` dengan pesan yang menyebut halaman asal | `pages.spec.ts` | 3 | Ditulis |
 | Footer: ikon dan label Instagram dan WhatsApp | `pages.spec.ts` | 3 | Ditulis |
 | Siteplan interaktif dengan status kavling realtime | | 4 | Belum (menunggu file siteplan dari owner) |
 | Form minat, kontak, brosur, lamaran: sukses sampai database, validasi, PDP, honeypot, rate limit, Turnstile | | 3c | Belum |

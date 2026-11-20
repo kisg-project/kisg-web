@@ -136,6 +136,6 @@ on conflict do nothing;
 
 -- Pengaturan publik --------------------------------------------------------
 insert into public.site_settings (key, value, is_public) values
-  ('contact.whatsapp', '"+6289673296881"', true),
+  ('contact.whatsapp', '"+6288290957177"', true),
   ('contact.instagram', '"@kreatifsejahteraproject"', true)
 on conflict (key) do nothing;
