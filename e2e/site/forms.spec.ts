@@ -202,33 +202,38 @@ test.describe("Lamaran kerja", () => {
     expect(download.error).toBeNull();
   });
 
-  test("CV bukan PDF ditolak, termasuk file lain yang diganti namanya", async ({ page }) => {
-    const career = await createCareer();
-    await page.goto(`/karir/${career.slug}`);
-    const form = page.getByRole("form", { name: "Form lamaran" });
-    const cv = form.getByLabel("CV (PDF, maksimal 2 MB)");
-    await cv.setInputFiles({
-      name: "cv.docx",
-      mimeType: "application/msword",
-      buffer: Buffer.from("x"),
-    });
-    await expect(form.getByText("CV harus berformat PDF.")).toBeVisible();
+  test.describe("file ditolak", () => {
+    // Server menjawab 400 untuk file yang bukan PDF, dan browser selalu mencatatnya di console.
+    test.use({ allowedConsoleErrors: [/status of 400/] });
 
-    await form.getByLabel("Nama lengkap").fill("Uji Palsu");
-    await form.getByLabel("Nomor WhatsApp").fill(uniquePhone().local);
-    await form.getByLabel("Email").fill("palsu@e2e.kisgroup.co.id");
-    await cv.setInputFiles({
-      name: "cv.pdf",
-      mimeType: "application/pdf",
-      buffer: Buffer.from("bukan pdf"),
+    test("CV bukan PDF ditolak, termasuk file lain yang diganti namanya", async ({ page }) => {
+      const career = await createCareer();
+      await page.goto(`/karir/${career.slug}`);
+      const form = page.getByRole("form", { name: "Form lamaran" });
+      const cv = form.getByLabel("CV (PDF, maksimal 2 MB)");
+      await cv.setInputFiles({
+        name: "cv.docx",
+        mimeType: "application/msword",
+        buffer: Buffer.from("x"),
+      });
+      await expect(form.getByText("CV harus berformat PDF.")).toBeVisible();
+
+      await form.getByLabel("Nama lengkap").fill("Uji Palsu");
+      await form.getByLabel("Nomor WhatsApp").fill(uniquePhone().local);
+      await form.getByLabel("Email").fill("palsu@e2e.kisgroup.co.id");
+      await cv.setInputFiles({
+        name: "cv.pdf",
+        mimeType: "application/pdf",
+        buffer: Buffer.from("bukan pdf"),
+      });
+      await form.getByRole("checkbox").check();
+      await form.getByRole("button", { name: "Kirim lamaran" }).click();
+      await expect(form.getByRole("alert")).toHaveText("CV harus berformat PDF.");
+      const { data } = await adminClient()
+        .from("job_applications")
+        .select("id")
+        .eq("career_id", career.id);
+      expect(data).toEqual([]);
     });
-    await form.getByRole("checkbox").check();
-    await form.getByRole("button", { name: "Kirim lamaran" }).click();
-    await expect(form.getByRole("alert")).toHaveText("CV harus berformat PDF.");
-    const { data } = await adminClient()
-      .from("job_applications")
-      .select("id")
-      .eq("career_id", career.id);
-    expect(data).toEqual([]);
   });
 });

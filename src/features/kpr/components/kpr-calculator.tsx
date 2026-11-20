@@ -383,11 +383,11 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
         </section>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+      <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
         <form
           ref={formRef}
           noValidate
-          className="min-w-0 scroll-mt-24 rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7"
+          className="min-w-0 scroll-mt-24 rounded-lg border bg-card p-5 shadow-xs sm:p-6 xl:col-span-7"
           onSubmit={(event) => {
             event.preventDefault();
           }}
@@ -613,9 +613,9 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
           </fieldset>
         </form>
 
-        {/* Hasil ringkas di kanan, menempel saat form di-scroll (layar lebar). */}
+        {/* Hasil ringkas di kanan, menempel saat form di-scroll (layar 1280 px ke atas). */}
         <div
-          className="grid min-w-0 content-start gap-4 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:col-span-5"
+          className="grid min-w-0 content-start gap-4 xl:sticky xl:top-[calc(var(--header-height)+1.5rem)] xl:col-span-5"
           aria-live="polite"
         >
           <div className="rounded-lg border bg-surface p-5">
@@ -723,8 +723,8 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       </div>
 
       {result && costs ? (
-        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-          <div className="min-w-0 lg:col-span-5">
+        <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+          <div className="min-w-0 xl:col-span-5">
             <div className="rounded-lg border bg-card p-5">
               <h3 className="text-base font-bold">Rincian biaya</h3>
               <ul className="mt-3 grid gap-4 text-sm">
@@ -769,7 +769,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
               </dl>
             </div>
           </div>
-          <div className="min-w-0 lg:col-span-7">
+          <div className="min-w-0 xl:col-span-7">
             <details className="rounded-lg border bg-card p-5">
               <summary className="cursor-pointer font-bold">
                 Jadwal {terms.installmentLower} per tahun
