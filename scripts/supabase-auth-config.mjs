@@ -44,16 +44,18 @@ const payload = {
   rate_limit_verify: 30,
   rate_limit_otp: 30,
   rate_limit_token_refresh: 150,
-  // Template email berbahasa Indonesia (sama dengan lokal, supabase/templates).
-  mailer_subjects_invite: "Undangan portal KIS Group",
-  mailer_templates_invite_content: readFileSync("supabase/templates/invite.html", "utf8"),
-  mailer_subjects_recovery: "Atur ulang password portal KIS Group",
-  mailer_templates_recovery_content: readFileSync("supabase/templates/recovery.html", "utf8"),
 };
 
+// Supabase Free menolak template email kustom selama memakai email bawaan Supabase. Template
+// berbahasa Indonesia (supabase/templates) baru dikirim setelah SMTP Brevo diisi. Sebelum itu email
+// Auth memakai template bawaan, dan tautannya kembali ke /portal/auth/confirm dengan parameter code.
 const smtpReady = Boolean(env.BREVO_SMTP_LOGIN && env.BREVO_SMTP_KEY);
 if (smtpReady) {
   Object.assign(payload, {
+    mailer_subjects_invite: "Undangan portal KIS Group",
+    mailer_templates_invite_content: readFileSync("supabase/templates/invite.html", "utf8"),
+    mailer_subjects_recovery: "Atur ulang password portal KIS Group",
+    mailer_templates_recovery_content: readFileSync("supabase/templates/recovery.html", "utf8"),
     smtp_host: "smtp-relay.brevo.com",
     smtp_port: "587",
     smtp_user: env.BREVO_SMTP_LOGIN,
@@ -87,6 +89,6 @@ console.log(
 );
 console.log(
   smtpReady
-    ? "OK    SMTP Brevo aktif"
-    : "INFO  SMTP Brevo belum diisi, email Auth memakai layanan bawaan Supabase (terbatas)",
+    ? "OK    SMTP Brevo dan template email Indonesia aktif"
+    : "INFO  SMTP Brevo belum diisi: email Auth memakai layanan dan template bawaan Supabase (terbatas)",
 );

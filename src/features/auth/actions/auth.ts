@@ -56,7 +56,12 @@ export const forgotPasswordAction = actionClient
     }
     const supabase = await createSupabaseServerClient();
     await supabase.auth.resetPasswordForEmail(parsedInput.email, {
-      redirectTo: new URL("/portal/reset-password", env.NEXT_PUBLIC_SITE_URL).toString(),
+      // Lewat /portal/auth/confirm: tautan template bawaan Supabase membawa parameter code (PKCE),
+      // template Indonesia membawa token_hash. Keduanya ditangani di sana.
+      redirectTo: new URL(
+        "/portal/auth/confirm?next=/portal/reset-password",
+        env.NEXT_PUBLIC_SITE_URL,
+      ).toString(),
     });
     return { sent: true };
   });

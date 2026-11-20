@@ -121,7 +121,7 @@ describe("forgotPasswordAction", () => {
     const result = await forgotPasswordAction({ email: "a@kisgroup.co.id" });
     expect(result.data).toEqual({ sent: true });
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith("a@kisgroup.co.id", {
-      redirectTo: "https://kisgroup.co.id/portal/reset-password",
+      redirectTo: "https://kisgroup.co.id/portal/auth/confirm?next=/portal/reset-password",
     });
   });
 
