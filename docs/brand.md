@@ -160,7 +160,7 @@ Foto proyek tetap foto atau render asli. Untuk bagian yang tidak menggambarkan p
 | File | Sumber | Fotografer | Catatan |
 |---|---|---|---|
 | `public/images/banners/konsultasi-*.webp` | images.unsplash.com/photo-1672917187338-7f81ecac3d3f | Edi Kurniawan | Dipotong 16:9 dan potret |
-| `public/images/banners/kerja-laptop-*.webp` | images.unsplash.com/photo-1681569685386-b7bda397672e | phyo min | Dibalik horizontal supaya orangnya di kanan, tidak tertutup teks |
+| `public/images/banners/hitung-cicilan-*.webp` | images.unsplash.com/photo-1626178793926-22b28830aa30 | Towfiqu barbhuiya | Maket rumah dan kalkulator. Dibalik horizontal supaya maket di kanan, tidak tertutup teks (21 November 2026) |
 
 ## Peta footer
 
