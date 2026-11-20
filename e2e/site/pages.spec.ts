@@ -260,12 +260,15 @@ test.describe("Berita", () => {
 test.describe("Karir per jenjang", () => {
   test("halaman karir menampilkan empat jenjang bergambar", async ({ page }) => {
     await page.goto("/karir");
+    // Nama tautan kartu diawali alt foto, lalu judul jenjang, jadi dicocokkan tanpa jangkar awal.
+    const cards = page.getByRole("main").getByRole("listitem");
+    await expect(cards).toHaveCount(4);
     for (const name of ["Berpengalaman", "Lulusan baru", "Staf lapangan", "Magang"]) {
-      const card = page.getByRole("link", { name: new RegExp(`^${name}`) });
+      const card = cards.filter({ hasText: name }).getByRole("link");
       await expect(card).toBeVisible();
       await expect(card.locator("img")).toHaveCount(1);
     }
-    await page.getByRole("link", { name: /^Staf lapangan/ }).click();
+    await cards.filter({ hasText: "Staf lapangan" }).getByRole("link").click();
     await expect(page).toHaveURL("/karir/jenjang/lapangan");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Karir Staf lapangan");
   });
