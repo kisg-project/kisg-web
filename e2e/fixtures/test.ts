@@ -54,7 +54,13 @@ export async function expectNoA11yViolations(page: Page, options: { exclude?: st
     "wcag22aa",
   ]);
   for (const selector of options.exclude ?? []) builder = builder.exclude(selector);
-  // Bagian yang sedang memudar (Reveal) tampak pucat bagi axe. Tunggu transisinya selesai dulu.
+  // Bagian Reveal yang belum di-scroll masih transparan dan tampak pucat bagi axe. Tampilkan semuanya
+  // (keadaan yang dilihat pengunjung setelah scroll), lalu tunggu transisinya selesai.
+  await page.evaluate(() => {
+    for (const element of document.querySelectorAll<HTMLElement>('[data-reveal="pending"]')) {
+      element.dataset.reveal = "shown";
+    }
+  });
   await page.waitForFunction(() =>
     [...document.querySelectorAll(".reveal")].every((element) =>
       element.getAnimations().every((animation) => animation.playState !== "running"),
