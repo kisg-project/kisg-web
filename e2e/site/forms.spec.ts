@@ -125,7 +125,10 @@ test.describe("Form lead", () => {
     await expect(link).toHaveAttribute("href", "/kebijakan-privasi");
     await expect(link).toHaveAttribute("target", "_blank");
     // Tautan berada di baris teks yang sama dengan kalimat persetujuan, bukan kolom terpisah.
-    const label = form.locator("label", { has: link });
+    // Locator di dalam `has` harus relatif, jadi tidak boleh diawali `form`.
+    const label = form.locator("label", {
+      has: page.getByRole("link", { name: "kebijakan privasi" }),
+    });
     await expect(label).toContainText("Saya setuju data saya dipakai KIS Group");
     await expect(label).toHaveCSS("display", "block");
   });
