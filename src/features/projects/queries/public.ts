@@ -2,6 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS, projectTag } from "@/config/cache-tags";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
+import { handleContentError } from "@/lib/supabase/query-error";
 import type { ProjectDetail, ProjectSummary } from "../types";
 import {
   toAddress,
@@ -27,7 +28,7 @@ async function fetchSummaries() {
     .select(SUMMARY_SELECT)
     .order("is_featured", { ascending: false })
     .order("sort_order");
-  if (error) throw new Error(`Gagal memuat proyek: ${error.message}`);
+  if (error) return handleContentError("proyek", error, []);
   return data;
 }
 
@@ -75,7 +76,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectDetail | nu
     )
     .eq("slug", slug)
     .maybeSingle();
-  if (error) throw new Error(`Gagal memuat proyek ${slug}: ${error.message}`);
+  if (error) return handleContentError(`proyek ${slug}`, error, null);
   if (!row) return null;
 
   const gallery = toImages(row.project_media);

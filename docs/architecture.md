@@ -321,7 +321,7 @@ sequenceDiagram
 | Lokal (laptop) | `pnpm dev` hanya untuk melihat UI publik. Tidak ada E2E dan Supabase lokal | Tidak ada. Portal tidak aktif di laptop | `test_event_code` |
 | CI | Production build | Supabase lokal di runner, dibuat baru setiap run lalu dibuang | Di-mock |
 | Preview (PR) | Vercel Preview | Production, baca konten publik saja (publishable key). Portal dimatikan, form tidak menulis | `test_event_code` |
-| Production | `main`, deploy otomatis Vercel. Migrasi lewat `deploy-db.yml` | `skxawyvopumzrefnmvyf` | Live |
+| Production | `main`, otomatis lewat `deploy-production.yml` (migrasi lalu deploy Vercel) | `skxawyvopumzrefnmvyf` | Live |
 
 Tanpa staging sejak Fase 2 (keputusan owner, mengikuti pola prins dan kelola).
 

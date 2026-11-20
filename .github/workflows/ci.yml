@@ -164,9 +164,13 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - name: Pasang browser
+        # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
+        timeout-minutes: 8
         if: steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium webkit
       - name: Pasang dependency sistem browser
+        # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
+        timeout-minutes: 8
         if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium webkit
       - name: Supabase lokal

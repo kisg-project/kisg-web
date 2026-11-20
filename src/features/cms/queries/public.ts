@@ -2,6 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { CACHE_TAGS } from "@/config/cache-tags";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
+import { handleContentError } from "@/lib/supabase/query-error";
 import type { Banner } from "../types";
 import { toBanner } from "../utils/map";
 
@@ -14,6 +15,6 @@ export async function getActiveBanners(): Promise<Banner[]> {
     .from("banners")
     .select("*")
     .order("sort_order");
-  if (error) throw new Error(`Gagal memuat banner: ${error.message}`);
+  if (error) return handleContentError("banner", error, []);
   return data.map(toBanner);
 }

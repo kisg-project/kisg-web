@@ -371,7 +371,7 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 2. **`db.yml`** (PR yang menyentuh `supabase/`): `supabase start`, terapkan semua migrasi dari nol, jalankan test RLS, `supabase db lint`, pastikan `database.types.ts` sama dengan hasil generate (`git diff --exit-code`), deteksi operasi destruktif (DROP, RENAME, ubah tipe kolom) dan wajibkan label `migration:destructive` + persetujuan.
 3. **`security.yml`** (setiap PR + terjadwal mingguan): gitleaks (secret scan), `pnpm audit` gagal di level high ke atas. CodeQL dan `dependency-review-action` tidak dipakai selama repo private di GitHub Free.
 4. **`preview.yml`** (event `deployment_status` dari Vercel Preview): smoke E2E halaman publik ke URL preview, lalu Lighthouse CI dengan budget (performance, accessibility, best practices, SEO minimal 95 untuk halaman publik dan LP). Hasil dikomentari ke PR.
-5. **`deploy-db.yml`**: merge ke `main` yang menyentuh migrasi atau pengaturan Auth menjalankan `supabase db push` dan pengaturan Auth ke Supabase production.
+5. **`deploy-production.yml`** (setiap push ke `main`): migrasi dan pengaturan Auth ke Supabase production (kalau ada perubahan database), lalu `vercel build --prod` dan `vercel deploy --prebuilt --prod`. Urutan ini wajib karena halaman website di-prerender dari database. Deploy Git otomatis Vercel untuk `main` dimatikan di `vercel.json`.
 6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
 7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
 8. **`keepalive.yml`** (terjadwal harian): membaca satu baris data publik dari API Supabase production supaya project tidak dijeda, dan membuat issue kalau gagal.
@@ -379,10 +379,10 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
 ### Deploy (Vercel)
-- Integrasi Git Vercel: Preview untuk setiap PR, Production otomatis dari `main`. Preview hanya punya URL dan publishable key Supabase production untuk membaca konten publik (tanpa secret key). Portal di preview dimatikan oleh `proxy.ts` (`VERCEL_ENV=preview`) dan form publik tidak menulis, jadi tidak ada data percobaan yang masuk ke production.
+- Integrasi Git Vercel: Preview untuk setiap PR. Production dari `deploy-production.yml` setelah migrasi, otomatis di setiap merge ke `main`. Preview hanya punya URL dan publishable key Supabase production untuk membaca konten publik (tanpa secret key). Portal di preview dimatikan oleh `proxy.ts` (`VERCEL_ENV=preview`) dan form publik tidak menulis, jadi tidak ada data percobaan yang masuk ke production.
 - `ignoreCommand` supaya perubahan yang hanya menyentuh `docs/` atau `*.md` tidak memicu build.
 - Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `PRODUCTION_`, tidak pernah di file repo.
-- Migrasi harus backward compatible (pola expand lalu contract) karena deploy Vercel dan `deploy-db.yml` berjalan bersamaan setelah merge, sehingga app lama dan baru sempat memakai skema yang sama. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
+- Migrasi harus backward compatible (pola expand lalu contract) karena app lama masih melayani pengunjung selama migrasi dan build production berjalan. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
 - Rollback app lewat Instant Rollback Vercel. Rollback database lewat migrasi perbaikan baru, tidak pernah mengedit migrasi lama.
 - `docs/ci-cd.md` menjelaskan alur ini, daftar secret yang dibutuhkan, dan cara rollback.
 

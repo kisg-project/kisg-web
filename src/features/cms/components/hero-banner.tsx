@@ -98,6 +98,19 @@ export function HeroBanner({
   banners: Banner[];
   project: HeroProject | null;
 }) {
+  if (banners.length === 0) {
+    // Belum ada banner terbit: judul tetap ada supaya halaman punya satu h1.
+    return (
+      <section className="bg-primary-900 py-16 text-white sm:py-24">
+        <Container>
+          <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
+            {project?.name ?? "KIS Group"}
+          </h1>
+          {project?.area ? <p className="mt-3 text-lg text-primary-100">{project.area}</p> : null}
+        </Container>
+      </section>
+    );
+  }
   const slides: HeroSlide[] = banners.map((banner, index) => ({
     id: banner.id,
     label: banner.title,

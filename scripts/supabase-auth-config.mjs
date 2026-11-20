@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Menerapkan pengaturan Auth ke project Supabase production lewat Management API.
 // config.toml hanya untuk lokal dan CI, karena `supabase config push` ikut membawa alamat 127.0.0.1.
-// Dipanggil deploy-db.yml dan deploy-production.yml. Tidak pernah mencetak nilai rahasia.
+// Dipanggil deploy-production.yml. Tidak pernah mencetak nilai rahasia.
 //
 // Env wajib: SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF, SITE_URL
 // Env opsional: ADDITIONAL_REDIRECT_URLS (dipisah koma), BREVO_SMTP_LOGIN, BREVO_SMTP_KEY,
