@@ -44,7 +44,7 @@ Pengaman ini bisa dilewati oleh orang yang sengaja memakai `git push --no-verify
 | `deploy-db.yml` | Push ke `main` yang menyentuh migrasi, template email, atau pengaturan Auth | `supabase db push` dan pengaturan Auth ke Supabase production |
 | `release.yml` | Push ke `main` | release-please: versi, tag, CHANGELOG |
 | `e2e-weekly.yml` | Minggu 22.00 WIB | Suite penuh 3 kali tanpa retry, issue otomatis kalau gagal |
-| `backup.yml` | Harian 02.00 WIB | `pg_dump` production terenkripsi (artifact 30 hari). Koneksi harian juga mencegah project dijeda |
+| `keepalive.yml` | Harian 09.17 WIB | Ping API Supabase production supaya project tidak dijeda (Supabase Free menjeda setelah 7 hari tanpa aktivitas). Issue otomatis kalau gagal |
 
 ## Secret GitHub (repository secrets)
 
@@ -53,12 +53,11 @@ Diisi di GitHub, menu Settings, Secrets and variables, Actions. Tidak pernah di 
 | Secret | Dipakai | Status | Cara mendapatkan |
 |---|---|---|---|
 | `CRON_SECRET` | Fase 6 (worker cron) | Dibuat otomatis di Fase 1 | Acak, salinannya di `~/.config/kis/accounts.env` |
-| `BACKUP_PASSPHRASE` | `backup.yml` | Dibuat otomatis di Fase 1 | Acak, salinannya di `~/.config/kis/accounts.env`. Wajib untuk membuka backup |
 | `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | Cadangan untuk deploy lewat CLI | Ada | `.vercel/project.json` atau dashboard Vercel |
 | `VERCEL_AUTOMATION_BYPASS_SECRET` | `preview.yml` | Perlu diisi owner | Vercel, project, Settings, Deployment Protection, Protection Bypass for Automation |
 | `SUPABASE_ACCESS_TOKEN` | `deploy-db.yml` | Ada | supabase.com, Account, Access Tokens |
 | `PRODUCTION_SUPABASE_PROJECT_REF`, `PRODUCTION_SUPABASE_DB_PASSWORD` | `deploy-db.yml` | Fase 2 | Ref `skxawyvopumzrefnmvyf`. Password dibuat acak lewat Management API, tidak ditampilkan |
-| `PRODUCTION_SUPABASE_DB_URL` | `backup.yml` | Fase 2 | Connection string pooler (session) dengan password yang sama |
+| `PRODUCTION_SUPABASE_URL`, `PRODUCTION_SUPABASE_PUBLISHABLE_KEY` | `keepalive.yml` | Ada | URL dan publishable key project production |
 | `SENTRY_AUTH_TOKEN` | Upload source map | Setelah akun Sentry dibuat | Sentry, Settings, Auth Tokens |
 
 ## Env Vercel
@@ -77,7 +76,7 @@ Variabel Meta, Brevo, Turnstile, dan Gemini ditambah di fase masing-masing.
 
 - **App**: Vercel, project, Deployments, pilih deployment production sebelumnya, Instant Rollback. Di Vercel Hobby, rollback hanya ke deployment production sebelumnya.
 - **Database**: buat migrasi perbaikan baru di branch fix, lewat PR seperti biasa. Migrasi lama tidak pernah diedit.
-- **Data hilang**: unduh artifact `backup-production` dari run `backup.yml`, lalu buka dengan `gpg --decrypt backup-*.tar.gz.gpg > backup.tar.gz` memakai `BACKUP_PASSPHRASE`. Langkah restore dicoba di Supabase lokal di Fase 9 dan dicatat di sini.
+- **Data hilang**: tidak ada backup terjadwal (keputusan owner, Fase 2). Supabase Free juga tidak punya backup otomatis, jadi data yang terhapus tidak bisa dikembalikan. Kalau dibutuhkan lagi, workflow backup bisa dipasang ulang.
 
 ## Anggaran menit Actions
 

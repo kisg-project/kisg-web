@@ -350,7 +350,7 @@ Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Su
 | GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
 | Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
 | Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |
-| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | Backup `pg_dump` terenkripsi harian lewat GitHub Actions, yang juga menjaga project production tetap aktif |
+| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | `keepalive.yml` ping API production setiap hari dan membuat issue kalau gagal. Backup terjadwal tidak dipakai (keputusan owner, Fase 2): data yang terhapus tidak bisa dikembalikan |
 | Supabase Free: database 500 MB, storage 1 GB | Kompresi gambar wajib (bagian 8), masa simpan data yang bisa diatur, pemantauan kuota |
 
 Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
@@ -373,7 +373,7 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 5. **`deploy-db.yml`**: merge ke `main` yang menyentuh migrasi atau pengaturan Auth menjalankan `supabase db push` dan pengaturan Auth ke Supabase production.
 6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
 7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
-8. **`backup.yml`** (terjadwal harian): `pg_dump` production, dienkripsi, disimpan sebagai artifact dengan masa simpan terbatas. Koneksi harian ini juga mencegah project dijeda.
+8. **`keepalive.yml`** (terjadwal harian): membaca satu baris data publik dari API Supabase production supaya project tidak dijeda, dan membuat issue kalau gagal.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
