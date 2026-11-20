@@ -265,14 +265,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "avatar_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string,"full_name": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"phone": string | null,"updated_at": string
+                    "activated_at": string | null,"avatar_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string,"full_name": string,"id": string,"invited_at": string | null,"invited_by": string | null,"is_active": boolean,"last_seen_at": string | null,"needs_password": boolean,"phone": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string,"full_name"?: string,"id": string,"is_active"?: boolean,"last_seen_at"?: string | null,"phone"?: string | null,"updated_at"?: string
+                    "activated_at"?: string | null,"avatar_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string,"full_name"?: string,"id": string,"invited_at"?: string | null,"invited_by"?: string | null,"is_active"?: boolean,"last_seen_at"?: string | null,"needs_password"?: boolean,"phone"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "avatar_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string,"full_name"?: string,"id"?: string,"is_active"?: boolean,"last_seen_at"?: string | null,"phone"?: string | null,"updated_at"?: string
+                    "activated_at"?: string | null,"avatar_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string,"full_name"?: string,"id"?: string,"invited_at"?: string | null,"invited_by"?: string | null,"is_active"?: boolean,"last_seen_at"?: string | null,"needs_password"?: boolean,"phone"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -485,20 +485,20 @@ isOneToOne: false
                   ]
                 },"user_roles": {
                   Row: {
-                    "created_at": string,"created_by": string | null,"role": Database["public"]['Enums']["app_role"],"updated_at": string,"user_id": string
+                    "created_at": string,"created_by": string | null,"is_primary": boolean,"role": Database["public"]['Enums']["app_role"],"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"role": Database["public"]['Enums']["app_role"],"updated_at"?: string,"user_id": string
+                    "created_at"?: string,"created_by"?: string | null,"is_primary"?: boolean,"role": Database["public"]['Enums']["app_role"],"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string | null,"role"?: Database["public"]['Enums']["app_role"],"updated_at"?: string,"user_id"?: string
+                    "created_at"?: string,"created_by"?: string | null,"is_primary"?: boolean,"role"?: Database["public"]['Enums']["app_role"],"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
       foreignKeyName: "user_roles_user_id_fkey"
       columns: ["user_id"]
-isOneToOne: true
+isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -563,6 +563,9 @@ isOneToOne: false
                            },
 "set_user_role":
 { Args: { "p_role": Database["public"]['Enums']["app_role"],"p_user": string }; Returns: undefined
+                           },
+"set_user_roles":
+{ Args: { "p_primary": Database["public"]['Enums']["app_role"],"p_roles": (Database["public"]['Enums']["app_role"])[],"p_user": string }; Returns: undefined
                            },
 "upsert_lead":
 { Args: { "p_consent_text_version": string,"p_email": string,"p_fbc"?: string,"p_fbp"?: string,"p_full_name": string,"p_note": string,"p_phone": string,"p_project_id": string,"p_source_detail": string,"p_source_kind": Database["public"]['Enums']["lead_source_kind"],"p_unit_type_id": string }; Returns: {

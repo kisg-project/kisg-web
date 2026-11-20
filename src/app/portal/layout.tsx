@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/features/pwa";
 
 // Portal internal tidak diindeks mesin pencari (CLAUDE.md bagian 6). Juga diblokir di robots.txt.
@@ -16,6 +17,7 @@ export default function PortalLayout({ children }: LayoutProps<"/portal">) {
   return (
     <>
       {children}
+      <Toaster position="top-center" />
       <PwaRegister />
     </>
   );

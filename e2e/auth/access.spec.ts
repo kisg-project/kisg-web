@@ -22,7 +22,7 @@ for (const role of APP_ROLES) {
   test.describe(`Role ${role}`, () => {
     test.use({ storageState: storageStateFor(role) });
 
-    const allowed = portalAreasFor(role);
+    const allowed = portalAreasFor([role]);
     const denied = PORTAL_AREAS.filter((area) => !area.roles.includes(role));
 
     test("beranda portal mengarah ke beranda role", async ({ page }) => {

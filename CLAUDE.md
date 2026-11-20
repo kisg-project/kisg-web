@@ -31,7 +31,8 @@ Satu codebase Next.js, empat area:
 
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
-3. **PWA Manajemen Operasional Bisnis Pengembang Properti** ("KIS Operasional", `company.kisgroup.co.id`, route `src/app/portal/`): aplikasi kerja lengkap untuk setiap role (absensi dengan scan wajah, rencana dan hasil kerja harian, CRM dan penjualan, lapangan dan progres, keuangan, izin), dashboard owner yang memantau semuanya, dan panel admin CMS. Beranda setiap role memakai sapaan sesuai jam WIB dengan nama dan role. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
+3. **PWA Manajemen Operasional Bisnis Pengembang Properti** ("KIS Operasional", `company.kisgroup.co.id`, route `src/app/portal/`): aplikasi kerja lengkap untuk setiap role (absensi dengan scan wajah, rencana dan hasil kerja harian, CRM dan penjualan, lapangan dan progres, keuangan, izin), dashboard owner yang memantau semuanya, HR dan penggajian. Pengganti aplikasi seperti Odoo atau Mekari (keputusan owner, 20 November 2026). Beranda setiap role memakai sapaan sesuai jam WIB dengan nama dan role. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
+   **Panel CMS** terpisah di `cms.kisgroup.co.id` (route `src/app/cms/`, env `CMS_HOST`) dan hanya bisa dipakai akun owner (keputusan owner, 20 November 2026).
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
 
@@ -67,6 +68,7 @@ Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan me
 Dependency tambahan yang sudah disetujui owner:
 - Fase 1: `clsx`, `radix-ui`, `sonner`, `server-only`, `prettier-plugin-tailwindcss`, `@vitest/coverage-v8`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/user-event`, `tw-animate-css` dan `shadcn` (CSS, dipakai saat build).
 - Simulasi KPR: `jspdf` dan `jspdf-autotable` untuk PDF berkop KIS, dimuat hanya saat tombol unduh diklik. Dipakai lagi untuk ekspor PDF portal di Fase 8.
+- Email: `@react-email/components` dan `@react-email/render` untuk template email HTML (keputusan owner, 20 November 2026).
 - Absensi: `@mediapipe/tasks-vision` (Google, Apache 2.0) untuk deteksi wajah dan kedip di browser, dimuat hanya di halaman absensi. Model dan file WASM disajikan dari domain sendiri, bukan CDN (keputusan owner, 20 November 2026).
 
 ---
@@ -299,12 +301,14 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Undangan akun: owner atau admin mengisi nama, email, dan role. Sistem mengirim email undangan (Brevo, dari `notifikasi@`) berisi tautan aktivasi sekali pakai yang kedaluwarsa. Tautan membuka halaman "Aktifkan akun": buat password (minimal 10 karakter, huruf besar, huruf kecil, angka, dengan indikator kekuatan), unggah foto profil, dan nomor HP. Setelah itu langsung masuk ke beranda. Undangan bisa dikirim ulang atau dibatalkan dari daftar akun. Selama Brevo belum aktif, tautan ditampilkan untuk disalin manual.
 - Halaman login hanya berisi email, password, dan "Lupa password". Tidak ada tombol buat akun. Login dengan Google tidak dipakai.
 - Foto profil wajib untuk semua akun (kamera atau galeri, dipotong persegi, dikompres, bucket privat dengan signed URL). Akun tanpa foto diarahkan ke halaman aktivasi sebelum bisa memakai modul lain. Foto tampil di header, daftar akun, dan cap persetujuan.
-- Setiap akun punya halaman "Akun saya": ganti foto, nomor HP, dan password (wajib memasukkan password lama).
+- Setiap akun punya halaman "Akun saya": ganti foto, nama, nomor HP, dan password (wajib memasukkan password lama).
+- Role `admin` tidak dipakai lagi (keputusan owner, 20 November 2026): tidak bisa dipilih di undangan, semua fungsi admin dipegang owner. Nilai enum tetap ada karena enum Postgres tidak bisa dihapus dengan aman.
 - Email sistem (undangan, lupa password, notifikasi) memakai template HTML berkop KIS: logo, warna brand, satu tombol aksi utama, tautan cadangan dalam teks, footer alamat kantor. Tampil rapi di Gmail, Outlook, dan aplikasi email HP, mendukung mode gelap, dan punya versi teks biasa.
 - Sesi portal berumur terbatas, logout membersihkan sesi di server, perubahan role atau penonaktifan akun langsung mencabut sesi.
 - Semua aksi sensitif (undang, ubah role, nonaktifkan, ekspor, hapus data) tercatat di `audit_log`.
 
 ### Absensi dan laporan harian (keputusan owner, 20 November 2026)
+- Jam masuk dan jam pulang diatur owner di portal (default perusahaan, bisa berbeda per titik absensi atau per karyawan, termasuk hari kerja dan toleransi terlambat). Clock in setelah jam masuk ditandai terlambat, clock out sebelum jam pulang ditandai pulang awal. Datanya dipakai di laporan dan penggajian.
 - Semua karyawan selain `owner` wajib absensi clock in dan clock out: foto selfie (dikompres, bagian 8) dan lokasi GPS. Absen hanya sah dalam radius 100 meter dari salah satu titik absensi aktif (lokasi proyek atau kantor, tabel `work_locations`). Di luar radius ditolak.
 - Setelah clock in, wajib mengisi formulir rencana kegiatan hari ini sebelum bisa memakai modul lain. Setelah clock out, wajib mengisi formulir hasil kerja hari ini.
 - Formulir menerima lampiran foto dan file. Foto selalu dikompres otomatis di browser. File dokumen dibatasi ukuran dan jenisnya di client dan server. Field wajib benar-benar wajib, field opsional tetap opsional.
@@ -326,6 +330,14 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Setiap persetujuan atau penolakan menyimpan cap permanen: nama, role, waktu (timestamptz, tampil WIB), user agent, lokasi kalau diizinkan, dan kode verifikasi berupa hash SHA-256 dari isi dokumen saat disetujui, penyetuju, dan waktu. Cap tidak bisa diubah atau dihapus (tabel tanpa policy update/delete, tercatat di audit).
 - Cap tampil di halaman dokumen dan di PDF ("Disetujui secara digital oleh ..."), dengan QR code ke halaman verifikasi. Kalau isi dokumen berubah setelah disetujui, verifikasi menunjukkan tidak cocok.
 - Ini tanda tangan elektronik tidak tersertifikasi (UU ITE). Tanda tangan tersertifikasi (PSrE) di luar cakupan.
+- Stempel perusahaan: gambar stempel KIS bergaya tinta basah (warna dan tekstur seperti stempel asli, sedikit miring) dipasang di PDF resmi yang sudah disetujui owner (pengajuan, slip gaji, surat). Stempel hanya muncul bersama cap persetujuan digital, tidak pernah di dokumen draf.
+
+### Penggajian dan slip gaji (keputusan owner, 20 November 2026)
+- Hanya keuangan yang membuat draf gaji per periode. Karyawan tidak bisa mengajukan gaji. Jenis pengajuan dana diatur per role.
+- Draf terisi otomatis: karyawan aktif, komponen gaji tetap, data absensi (hadir, alpa, terlambat, lembur disetujui), kasbon yang sudah dicairkan, komisi (setelah CRM ada), BPJS dan PPh 21 metode TER. BPJS dan PPh 21 terisi secara default tapi bisa dikosongkan atau dikoreksi per baris dan dimatikan di pengaturan perusahaan atau per karyawan.
+- Alur: keuangan mengajukan, owner menyetujui dengan persetujuan digital (periode terkunci, koreksi lewat revisi), keuangan menandai sudah dibayar dengan bukti, lalu klik "Kirim slip gaji".
+- Slip terkirim ke setiap karyawan sebagai notifikasi push, email berisi ringkasan dan lampiran PDF slip berkop (berpassword, default tanggal lahir), dan menu "Slip gaji saya" di PWA. Status kirim per karyawan dan tombol kirim ulang.
+- Data gaji hanya terlihat oleh keuangan, owner, dan karyawan pemilik slip. Semua aksi tercatat di audit_log.
 
 ### Email domain
 | Alamat | Dipakai untuk |

@@ -93,6 +93,20 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 | Undangan user: tautan undangan, buat password, login dengan role benar | `admin/` | 2b-2 | Belum |
 | Test RLS SQL: tabel inti dan rate limit | CI `db.yml` | 2a, 2b-1 | Lolos (2a), Ditulis (rate limit) |
 
+### Karyawan, undangan, dan aktivasi (`e2e/owner/karyawan.spec.ts`, PWA)
+
+| Skenario | Spec | Fase | Status |
+|---|---|---|---|
+| Halaman Karyawan dari beranda owner: axe dan responsif | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Undangan rangkap jabatan: email berkop di Mailpit, tautan ke aktivasi, foto profil (unggah dan kompres di bawah 100 KB), nomor HP E.164, password dengan indikator kekuatan, masuk ke beranda role utama, menu gabungan | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Email terdaftar ditolak, kirim ulang dan batalkan undangan (akun Auth terhapus) | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Ubah role menjadi rangkap jabatan dengan role utama, nonaktifkan dan aktifkan (blokir Auth) | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Owner tidak bisa mengubah akun sendiri, role admin tidak bisa dipilih | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Akun tanpa foto profil diarahkan ke aktivasi sebelum memakai modul | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Akun saya: ubah nama dan nomor HP, ganti password (password lama salah ditolak), masuk dengan password baru | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Halaman masuk tanpa tombol daftar dan tanpa login Google | `owner/karyawan.spec.ts` | PWA | Ditulis |
+| RLS multi role: hak gabungan, satu role utama, role owner hanya oleh owner, JWT `app_roles` | `supabase/tests/database/05_multi_role.test.sql` | PWA | Ditulis |
+
 ### Website (`e2e/site/`, Fase 3)
 
 | Skenario | Spec | Fase | Status |

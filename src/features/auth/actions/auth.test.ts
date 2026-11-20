@@ -29,12 +29,29 @@ const auth = {
   updateUser: vi.fn(() => Promise.resolve({ error: state.updateError })),
 };
 
+/** Profil lengkap untuk loadAccountRoles. Role dibaca sebagai daftar (multi role). */
 function from(table: string) {
-  const row = table === "user_roles" ? (state.role ? { role: state.role } : null) : state.profile;
+  const profile = state.profile
+    ? {
+        email: "budi@kisgroup.co.id",
+        full_name: "Budi",
+        phone: null,
+        avatar_path: null,
+        activated_at: null,
+        needs_password: false,
+        ...state.profile,
+      }
+    : null;
   const query = {
     select: () => query,
     eq: () => query,
-    maybeSingle: () => Promise.resolve({ data: row, error: null }),
+    maybeSingle: () => Promise.resolve({ data: profile, error: null }),
+    then: (resolve: (value: unknown) => void) => {
+      resolve({
+        data: table === "user_roles" && state.role ? [{ role: state.role, is_primary: true }] : [],
+        error: null,
+      });
+    },
   };
   return query;
 }
@@ -99,14 +116,14 @@ describe("loginAction", () => {
   it("mengeluarkan akun nonaktif", async () => {
     state.profile = { is_active: false };
     const result = await loginAction(credentials);
-    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi admin.");
+    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi owner.");
     expect(auth.signOut).toHaveBeenCalled();
   });
 
   it("mengeluarkan akun tanpa role", async () => {
     state.role = null;
     const result = await loginAction(credentials);
-    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi admin.");
+    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi owner.");
   });
 
   it("menolak input tidak valid sebelum menghubungi server auth", async () => {
@@ -162,6 +179,6 @@ describe("updatePasswordAction", () => {
   it("menolak akun yang sudah dihapus", async () => {
     state.profile = { is_active: true, deleted_at: "2026-11-01T00:00:00Z" };
     const result = await updatePasswordAction(input);
-    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi admin.");
+    expect(result.serverError).toBe("Akun Anda tidak aktif. Hubungi owner.");
   });
 });

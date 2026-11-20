@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isAppRole } from "@/config/roles";
+import { isAppRole, type AppRole } from "@/config/roles";
 import { portalAccess, ROLE_HOME } from "@/config/portal";
 import { resolvePortalRoute, toPublicPath } from "@/config/portal-host";
 
@@ -60,9 +60,9 @@ export async function proxy(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  const role =
-    claims && isAppRole(claims.app_role) && claims.is_active === true ? claims.app_role : null;
-  const access = portalAccess(internalPath, role, Boolean(claims));
+  const roles = claimRoles(claims);
+  const [role] = roles;
+  const access = portalAccess(internalPath, roles, Boolean(claims));
 
   const redirectTo = (internalTarget: string, params?: Record<string, string>) => {
     const destination = new URL(toPublicPath(internalTarget, onPortalHost), request.url);
@@ -84,6 +84,16 @@ export async function proxy(request: NextRequest) {
     return redirectTo(ROLE_HOME[role]);
   }
   return response;
+}
+
+/**
+ * Role dari JWT: app_roles (multi role, role utama di depan). Token lama hanya punya app_role.
+ * Kosong kalau akun nonaktif.
+ */
+function claimRoles(claims: Record<string, unknown> | undefined): AppRole[] {
+  if (!claims || claims.is_active !== true) return [];
+  const list = Array.isArray(claims.app_roles) ? claims.app_roles : [claims.app_role];
+  return list.filter(isAppRole);
 }
 
 export const config = {

@@ -8,8 +8,8 @@ export const metadata: Metadata = { title: "Admin" };
 
 const MODULES = [
   {
-    href: "/portal/admin/pengguna",
-    title: "Pengguna",
+    href: "/portal/owner/karyawan",
+    title: "Karyawan",
     description: "Undang karyawan, atur role, dan nonaktifkan akun.",
     icon: UsersRound,
     ready: true,
@@ -27,7 +27,7 @@ export default async function AdminPage() {
   const user = await requirePortalUser(["owner", "admin"]);
   return (
     <div className="grid gap-6">
-      <PortalGreeting fullName={user.fullName} role={user.role} />
+      <PortalGreeting fullName={user.fullName} roles={user.roles} />
       <h2 className="text-xl font-bold">Admin</h2>
       <ul className="grid gap-4 sm:grid-cols-2">
         {MODULES.map((module) => (

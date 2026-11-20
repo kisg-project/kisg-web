@@ -8,6 +8,8 @@ export const IMAGE_PROFILES = {
   siteReport: { maxEdge: 1600, targetBytes: 300 * 1024 },
   /** Selfie absensi. */
   attendance: { maxEdge: 800, targetBytes: 150 * 1024 },
+  /** Foto profil akun portal, dipotong persegi sebelum dikompres. */
+  avatar: { maxEdge: 512, targetBytes: 100 * 1024 },
   /** Dokumen konsumen (KTP, slip gaji). Harus tetap terbaca. */
   document: { maxEdge: 2000, targetBytes: 800 * 1024 },
 } as const satisfies Record<string, ImageProfile>;

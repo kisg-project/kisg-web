@@ -19,6 +19,8 @@ env:
   NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
   # Halaman /dev/ui hanya aktif di build CI untuk E2E, tidak di Vercel.
   ENABLE_DEV_UI: "1"
+  # Email aplikasi di E2E dikirim ke Mailpit milik Supabase lokal, bukan Brevo.
+  MAILPIT_URL: http://127.0.0.1:54324
 
 jobs:
   changes:
