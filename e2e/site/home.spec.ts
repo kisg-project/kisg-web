@@ -33,7 +33,7 @@ test.describe("Beranda", () => {
     expect(url.searchParams.get("text")).toContain("Sejahtera Green Village");
   });
 
-  test("banner bergeser otomatis, bisa dijeda, dan bisa dikendalikan keyboard", async ({
+  test("banner bergeser otomatis, berhenti setelah dipilih, dan bisa dikendalikan keyboard", async ({
     page,
   }) => {
     await page.clock.install();
@@ -43,6 +43,8 @@ test.describe("Beranda", () => {
     const slide = (n: number) =>
       hero.getByRole("group", { name: new RegExp(`^${String(n)} dari 3`), includeHidden: true });
     await expect(slide(1)).toHaveAttribute("aria-hidden", "false");
+    // Kontrol hanya indikator kecil: tanpa tombol panah dan tombol jeda.
+    await expect(hero.getByRole("button")).toHaveCount(3);
 
     // Autoplay: 7 detik per slide.
     await page.mouse.move(0, 0);
@@ -50,22 +52,41 @@ test.describe("Beranda", () => {
     await expect(slide(2)).toHaveAttribute("aria-hidden", "false");
     await expect(slide(1)).toHaveAttribute("aria-hidden", "true");
 
-    // Jeda: slide tidak berganti lagi.
-    await hero.getByRole("button", { name: "Jeda banner otomatis" }).click();
-    await page.mouse.move(0, 0);
-    await page.clock.fastForward(15_000);
-    await expect(slide(2)).toHaveAttribute("aria-hidden", "false");
-    await expect(hero.getByRole("button", { name: "Putar banner otomatis" })).toBeVisible();
-
-    // Tombol dan keyboard.
-    await hero.getByRole("button", { name: "Banner berikutnya" }).click();
+    // Memilih slide lewat indikator menghentikan autoplay (mekanisme jeda WCAG 2.2.2).
+    await hero.getByRole("button", { name: "Tampilkan banner 3" }).click();
     await expect(slide(3)).toHaveAttribute("aria-hidden", "false");
+    await expect(hero.getByRole("button", { name: "Tampilkan banner 3" })).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+    await page.mouse.move(0, 0);
+    await page.clock.fastForward(20_000);
+    await expect(slide(3)).toHaveAttribute("aria-hidden", "false");
+
+    // Keyboard.
+    await hero.getByRole("button", { name: "Tampilkan banner 3" }).focus();
     await page.keyboard.press("ArrowRight");
     await expect(slide(1)).toHaveAttribute("aria-hidden", "false");
-    await hero.getByRole("button", { name: "Tampilkan banner 3" }).click();
+    await page.keyboard.press("ArrowLeft");
     await expect(slide(3)).toHaveAttribute("aria-hidden", "false");
     // Tautan di slide yang tidak aktif tidak bisa dijangkau.
     await expect(slide(1)).toHaveAttribute("inert", "");
+  });
+
+  test("cuplikan galeri beranda tidak mengulang foto banner", async ({ page }) => {
+    await page.goto("/");
+    const bannerSources = await page
+      .getByRole("region", { name: "Banner utama" })
+      .locator("img")
+      .evaluateAll((images) => images.map((image) => image.getAttribute("src") ?? ""));
+    const gallery = page.getByRole("list", { name: "Foto Sejahtera Green Village" });
+    await expect(gallery.getByRole("listitem")).toHaveCount(4);
+    const gallerySources = await gallery
+      .locator("img")
+      .evaluateAll((images) => images.map((image) => image.getAttribute("src") ?? ""));
+    const fileOf = (src: string) => decodeURIComponent(src).match(/[\w-]+\.webp/)?.[0] ?? src;
+    const bannerFiles = new Set(bannerSources.map(fileOf));
+    for (const src of gallerySources) expect(bannerFiles.has(fileOf(src))).toBe(false);
   });
 
   test("banner tidak bergeser otomatis kalau pengunjung mematikan animasi", async ({ page }) => {

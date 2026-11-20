@@ -202,4 +202,29 @@ test.describe("SEO dan kontak", () => {
     await expect(instagram.locator("svg")).toHaveCount(1);
     await expect(footer.getByRole("link", { name: "WhatsApp +62 882-9095-7177" })).toBeVisible();
   });
+
+  test("footer memakai logo terang tanpa kotak dan peta kantor yang menaut ke Google Maps", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const footer = page.getByRole("contentinfo");
+    await expect(footer.getByRole("img", { name: "Logo KIS Group" })).toHaveAttribute(
+      "src",
+      /logo-kis-light/,
+    );
+    const map = footer.getByRole("link", { name: /Buka lokasi kantor pemasaran di Google Maps/ });
+    await expect(map).toBeVisible();
+    const url = new URL((await map.getAttribute("href")) ?? "");
+    expect(url.hostname).toBe("www.google.com");
+    expect(url.searchParams.get("query")).toContain("Bekasi");
+    await expect(map.getByText("Kantor KIS, Bekasi")).toBeVisible();
+  });
+
+  test("tautan Instagram di halaman Tentang tidak mengulang kata Instagram", async ({ page }) => {
+    await page.goto("/tentang");
+    const link = page
+      .getByRole("main")
+      .getByRole("link", { name: "Instagram @kreatifsejahteraproject" });
+    await expect(link).toHaveText("@kreatifsejahteraproject");
+  });
 });

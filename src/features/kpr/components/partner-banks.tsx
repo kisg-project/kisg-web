@@ -11,7 +11,7 @@ export function PartnerBanks({ className }: { className?: string }) {
         {PARTNER_BANKS.map((bank) => (
           <li
             key={bank.key}
-            className="flex h-20 items-center justify-center rounded-md border bg-white px-4 text-center"
+            className="flex h-20 lift items-center justify-center rounded-md border bg-white px-4 text-center"
           >
             {bank.logo ? (
               <Image

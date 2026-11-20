@@ -47,7 +47,7 @@ interface Highlight {
 function HighlightItem({ icon: Icon, label, value }: Highlight) {
   return (
     <li className="flex items-center gap-3">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+      <span className="icon-chip flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
         <Icon aria-hidden="true" className="size-5" />
       </span>
       <span className="min-w-0 text-sm leading-tight">
@@ -140,7 +140,7 @@ export function UnitHighlights({
   const hasCosts = unitType.priceIncludes.length > 0 || unitType.priceExcludes.length > 0;
 
   return (
-    <div className={cn("rounded-lg border bg-card p-5 shadow-xs sm:p-6", className)}>
+    <div className={cn("lift rounded-lg border bg-card p-5 shadow-xs sm:p-6", className)}>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
         <h2 className="text-xl font-bold">{unitType.name}</h2>
         <p className="text-xl font-bold text-highlight-text tabular">
