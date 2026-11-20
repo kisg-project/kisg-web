@@ -1,50 +1,63 @@
 import type { Metadata } from "next";
-import { Container } from "@/components/shared/container";
 import { Section } from "@/components/shared/section";
-import { featuredProject } from "@/config/featured-project";
+import { PageHero } from "@/components/site/page-hero";
 import { siteConfig } from "@/config/site";
 import { AkadInfo, KprSimulatorTabs, PartnerBanks } from "@/features/kpr";
+import { getFeaturedProject } from "@/features/projects";
 import { formatRupiah } from "@/lib/format";
 
-const description = `Simulasi KPR konvensional dan KPR syariah ${featuredProject.name}: pilih produk bank, atur uang muka dan jangka waktu, lihat angsuran, rincian biaya, dan jadwal, lalu unduh PDF.`;
+/** Harga contoh kalkulator kalau belum ada tipe unit berharga di database. */
+const EXAMPLE_PRICE = 500_000_000;
 
-export const metadata: Metadata = {
-  title: "Simulasi KPR",
-  description,
-  alternates: { canonical: "/simulasi-kpr" },
-  openGraph: {
-    type: "website",
-    locale: "id_ID",
-    url: "/simulasi-kpr",
-    siteName: siteConfig.name,
-    title: `Simulasi KPR ${featuredProject.name}`,
-    description,
-    images: [{ url: "/images/hero/sgv-hero-desktop.webp", width: 2048, height: 1337 }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const project = await getFeaturedProject();
+  const name = project?.name ?? siteConfig.name;
+  const description = `Simulasi KPR konvensional dan KPR syariah ${name}: pilih produk bank, atur uang muka dan jangka waktu, lihat angsuran, rincian biaya, dan jadwal, lalu unduh PDF.`;
+  return {
+    title: "Simulasi KPR",
+    description: description.slice(0, 160),
+    alternates: { canonical: "/simulasi-kpr" },
+    openGraph: {
+      type: "website",
+      locale: "id_ID",
+      url: "/simulasi-kpr",
+      siteName: siteConfig.name,
+      title: `Simulasi KPR ${name}`,
+      description,
+      images: project?.cover ? [{ url: project.cover.src, alt: project.cover.alt }] : [],
+    },
+  };
+}
 
-export default function SimulasiKprPage() {
+export default async function SimulasiKprPage() {
+  const project = await getFeaturedProject();
+  const unit = project?.unitTypes.find((item) => item.price !== null);
+  // Tanpa harga dari database, kalkulator memakai harga contoh yang bisa diubah pengunjung.
+  const price = unit?.price ?? EXAMPLE_PRICE;
+
   return (
     <>
-      <div className="border-b bg-surface">
-        <Container className="py-10 sm:py-12">
-          <p className="text-sm font-semibold text-highlight-text">{featuredProject.name}</p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Simulasi KPR</h1>
-          <p className="mt-3 max-w-2xl text-subtle-foreground">
-            Rumah {featuredProject.unitType.name} seharga{" "}
-            <span className="font-semibold text-foreground tabular">
-              {formatRupiah(featuredProject.unitType.price)}
-            </span>
-            . Pilih produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF.
-          </p>
-        </Container>
-      </div>
+      <PageHero
+        title="Simulasi KPR"
+        crumbs={[{ name: "Simulasi KPR", path: "/simulasi-kpr" }]}
+        description={
+          project && unit ? (
+            <>
+              {project.name}, rumah {unit.name} seharga{" "}
+              <span className="font-semibold text-white tabular">{formatRupiah(price)}</span>. Pilih
+              produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF.
+            </>
+          ) : (
+            "Pilih produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF."
+          )
+        }
+      />
 
       <Section aria-label="Kalkulator simulasi KPR">
         <KprSimulatorTabs
-          price={featuredProject.unitType.price}
-          projectName={featuredProject.name}
-          unitName={featuredProject.unitType.name}
+          price={price}
+          projectName={project?.name ?? siteConfig.name}
+          unitName={unit?.name ?? "Rumah"}
         />
       </Section>
 

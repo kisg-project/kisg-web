@@ -62,7 +62,8 @@ test("foto kamera besar diperkecil di bawah target profil konten", async ({ page
     return btoa(binary);
   });
 
-  await page.getByLabel("Profil kompresi").selectOption("content");
+  await page.getByRole("combobox", { name: "Profil kompresi" }).click();
+  await page.getByRole("option", { name: /^Konten website/ }).click();
   await page.getByLabel("Pilih foto").setInputFiles({
     name: "kamera.jpg",
     mimeType: "image/jpeg",
@@ -79,7 +80,8 @@ test("foto kamera besar diperkecil di bawah target profil konten", async ({ page
 
 test("orientasi kamera diterapkan dan EXIF termasuk GPS dibuang", async ({ page }) => {
   await page.goto("/dev/ui");
-  await page.getByLabel("Profil kompresi").selectOption("siteReport");
+  await page.getByRole("combobox", { name: "Profil kompresi" }).click();
+  await page.getByRole("option", { name: /^Laporan lapangan/ }).click();
   // Fixture 1200 x 800 dengan EXIF orientasi 6 (tampil tegak) dan koordinat GPS.
   const fixture = await readFile(join(process.cwd(), "e2e/fixtures/files/exif-gps-rotated.jpg"));
   await page.getByLabel("Pilih foto").setInputFiles({

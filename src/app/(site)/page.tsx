@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { MapPin, Phone } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
 import { EmptyState } from "@/components/shared/state-message";
+import { MediaCard } from "@/components/site/media-card";
 import { Button } from "@/components/ui/button";
 import { siteConfig, whatsappLink } from "@/config/site";
 import { env } from "@/env";
-import { getActiveBanners, HeroBanner } from "@/features/cms";
+import { getActiveBanners, getActivePromos, getPublishedPosts, HeroBanner } from "@/features/cms";
 import { KprTeaser } from "@/features/kpr";
 import {
   formatAddress,
@@ -17,7 +20,7 @@ import {
   UnitHighlights,
   type ProjectDetail,
 } from "@/features/projects";
-import { formatRupiah } from "@/lib/format";
+import { formatDateWIB, formatRupiah, formatRupiahRange } from "@/lib/format";
 import { jsonLdGraph, listingJsonLd, organizationJsonLd } from "@/lib/seo/structured-data";
 
 const OG_FALLBACK = "/images/hero/sgv-hero-desktop.webp";
@@ -73,7 +76,12 @@ function mapsUrl(project: ProjectDetail): string {
 }
 
 export default async function HomePage() {
-  const [banners, project] = await Promise.all([getActiveBanners(), getFeaturedProject()]);
+  const [banners, project, promos, posts] = await Promise.all([
+    getActiveBanners(),
+    getFeaturedProject(),
+    getActivePromos(),
+    getPublishedPosts(3),
+  ]);
   const firstUnit = project?.unitTypes[0];
   const projectPath = project ? `/proyek/${project.slug}` : "/";
 
@@ -110,7 +118,55 @@ export default async function HomePage() {
 
       {project ? (
         <>
-          <Section id="tipe-unit" className="scroll-mt-(--header-height)">
+          <Section id="sorotan" title="Sorotan proyek" className="scroll-mt-(--header-height)">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+              <Reveal className="lg:col-span-5">
+                <h3 className="text-2xl font-bold">{project.name}</h3>
+                <p className="mt-3 flex gap-2 text-subtle-foreground">
+                  <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+                  {formatAddress(project.address)}
+                </p>
+                {lowestPrice(project.unitTypes) ? (
+                  <p className="mt-4 text-lg font-bold text-highlight-text">
+                    Mulai {formatRupiahRange(lowestPrice(project.unitTypes) ?? 0)}
+                  </p>
+                ) : null}
+                <Button asChild className="mt-6">
+                  <Link href={projectPath}>
+                    Lihat detail proyek
+                    <ArrowRight aria-hidden="true" />
+                  </Link>
+                </Button>
+              </Reveal>
+              {project.gallery.length > 0 ? (
+                <ul
+                  className="grid grid-cols-2 gap-3 lg:col-span-7"
+                  aria-label={`Foto ${project.name}`}
+                >
+                  {project.gallery.slice(0, 4).map((image, index) => (
+                    <li key={image.id}>
+                      <Reveal delay={index * 80}>
+                        <Link
+                          href={`${projectPath}#galeri`}
+                          className="group relative block aspect-[4/3] overflow-hidden rounded-lg bg-surface"
+                        >
+                          <Image
+                            src={image.src}
+                            alt={image.alt}
+                            fill
+                            sizes="(min-width: 1024px) 28vw, 50vw"
+                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          />
+                        </Link>
+                      </Reveal>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </Section>
+
+          <Section id="tipe-unit" tone="surface" className="scroll-mt-(--header-height)">
             <div className="grid gap-6">
               {project.unitTypes.map((unitType, index) => (
                 <Reveal key={unitType.id} delay={index * 80}>
@@ -123,7 +179,6 @@ export default async function HomePage() {
           {firstUnit?.price ? (
             <Section
               id="simulasi-kpr"
-              tone="surface"
               title="Simulasi KPR"
               description="KPR konvensional dan KPR syariah dari bank rekanan. Hitung angsuran, rincian biaya, dan jadwal, lalu unduh PDF."
               className="scroll-mt-(--header-height)"
@@ -159,6 +214,55 @@ export default async function HomePage() {
           />
         </Section>
       )}
+
+      {promos.length > 0 ? (
+        <Section id="promo" tone="surface" title="Promo berlaku">
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {promos.slice(0, 3).map((promo, index) => (
+              <li key={promo.id}>
+                <Reveal delay={index * 80} className="h-full">
+                  <MediaCard
+                    href={`/promo/${promo.slug}`}
+                    title={promo.title}
+                    image={promo.cover}
+                    meta={
+                      promo.endsAt ? `Berlaku sampai ${formatDateWIB(promo.endsAt)}` : undefined
+                    }
+                  >
+                    {promo.summary}
+                  </MediaCard>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
+      {posts.length > 0 ? (
+        <Section id="berita" title="Berita terbaru">
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post, index) => (
+              <li key={post.id}>
+                <Reveal delay={index * 80} className="h-full">
+                  <MediaCard
+                    href={`/berita/${post.slug}`}
+                    title={post.title}
+                    image={post.cover}
+                    meta={
+                      <time dateTime={post.publishedAt}>{formatDateWIB(post.publishedAt)}</time>
+                    }
+                  >
+                    {post.excerpt}
+                  </MediaCard>
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+          <Button asChild variant="outline" className="mt-8">
+            <Link href="/berita">Semua berita</Link>
+          </Button>
+        </Section>
+      ) : null}
 
       <section aria-labelledby="cta-judul" className="bg-primary-900 py-12 text-white sm:py-16">
         <Reveal className="mx-auto flex w-full max-w-7xl flex-col items-start gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">

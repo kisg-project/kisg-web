@@ -203,6 +203,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Radius kecil sampai sedang (4 sampai 8px). Bayangan tipis. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
 - Website banyak gerak halus (keputusan owner, Fase 3): bagian halaman muncul saat di-scroll (`Reveal`, fade dan geser naik sekitar 600ms), banner bergeser otomatis dengan tombol jeda, kartu dan foto bereaksi saat disentuh atau di-hover, angka statistik berhitung naik. Interaksi kecil (hover, tombol) tetap pendek, maks ~250ms. Tanpa library animasi. Konten tidak boleh disembunyikan sebelum JavaScript jalan, LCP dan CLS tidak boleh terganggu, dan semua gerak berhenti kalau `prefers-reduced-motion` aktif.
 - Scrollbar minimalis: tipis, warna menyatu dengan palet, latar transparan (keputusan owner, Fase 3).
+- Dropdown selalu memakai komponen custom `src/components/ui/select.tsx` (Radix), tidak memakai `<select>` bawaan browser, supaya tampilannya seragam (keputusan owner, Fase 3). Dipaksa aturan ESLint `no-restricted-syntax`.
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
 

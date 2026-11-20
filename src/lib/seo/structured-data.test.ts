@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   absoluteUrl,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
   listingJsonLd,
   jsonLdGraph,
   organizationJsonLd,
@@ -71,6 +74,41 @@ describe("listingJsonLd", () => {
   it("tanpa Offer kalau harga tidak ditampilkan", () => {
     const data = listingJsonLd(SITE, { ...LISTING, unit: { ...LISTING.unit, price: null } });
     expect(data).not.toHaveProperty("offers");
+  });
+});
+
+describe("breadcrumb, artikel, dan FAQ", () => {
+  it("breadcrumb berurutan dengan URL absolut", () => {
+    expect(
+      breadcrumbJsonLd(SITE, [
+        { name: "Beranda", path: "/" },
+        { name: "Berita", path: "/berita" },
+      ]),
+    ).toMatchObject({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { position: 1, item: "https://kisgroup.co.id/" },
+        { position: 2, name: "Berita", item: "https://kisgroup.co.id/berita" },
+      ],
+    });
+  });
+
+  it("artikel tanpa gambar tidak memuat properti image", () => {
+    const data = articleJsonLd(SITE, {
+      title: "Judul",
+      path: "/berita/judul",
+      publishedAt: "2026-11-20T00:00:00Z",
+      image: null,
+      description: null,
+    });
+    expect(data).toMatchObject({ "@type": "Article", headline: "Judul" });
+    expect(data).not.toHaveProperty("image");
+  });
+
+  it("FAQ memetakan pertanyaan dan jawaban", () => {
+    expect(faqJsonLd([{ question: "Harga?", answer: "Rp 1" }])).toMatchObject({
+      mainEntity: [{ name: "Harga?", acceptedAnswer: { text: "Rp 1" } }],
+    });
   });
 });
 

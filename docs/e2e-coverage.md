@@ -96,21 +96,24 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 
 ### Website (`e2e/site/`, Fase 3)
 
-| Skenario | Profil | Fase | Status |
+| Skenario | Spec | Fase | Status |
 |---|---|---|---|
-| Semua halaman publik render, link internal tidak ada yang 404 | D, MC, MS | 3 | Belum |
-| Navigasi header, menu mobile (buka, tutup, fokus terjebak di menu), footer | D, MC | 3 | Belum |
-| Hero carousel: autoplay, jeda, navigasi keyboard, `prefers-reduced-motion` menghentikan autoplay | D, MC | 3 | Belum |
-| Detail Sejahtera Green Village menampilkan tipe unit, siteplan, form. Hanya proyek terbit yang tampil di menu dan sitemap. Menu "Proyek" langsung ke detail selama hanya ada satu proyek | D, MC | 3 | Belum |
-| Slug proyek, berita, promo yang tidak ada menampilkan 404 | D | 3 | Belum |
-| Siteplan: klik kavling menampilkan status sesuai database. Perubahan status di DB muncul tanpa reload (Realtime) | D, MC | 3 | Belum |
-| Simulasi KPR: hasil cicilan sama dengan perhitungan anuitas yang di-assert. Input tidak valid ditolak dengan pesan per field | D, MC | 3 | Belum |
-| Form minat, kontak, unduh brosur, lamaran karir: sukses (cek baris `leads`/`job_applications`, UTM, sumber, `form_submissions`) | D, MC | 3 | Belum |
-| Form gagal: validasi, tanpa persetujuan PDP, honeypot terisi, rate limit, Turnstile gagal (mock), network error | D | 3 | Belum |
-| Tombol WhatsApp: URL `wa.me/6289673296881` dengan pesan yang menyebut halaman/proyek asal | D, MC | 3 | Belum |
-| `sitemap.xml`, `robots.txt`, metadata, Open Graph, JSON-LD tiap tipe halaman | D | 3 | Belum |
-| Gambar dimuat lewat `next/image` dengan `sizes`, LCP hero diberi prioritas | D, MC | 3 | Belum |
-| Visual regression beranda dan detail proyek | D, MC | 3 | Belum |
+| Semua halaman publik tampil: satu h1, canonical, jejak halaman, axe, responsif 320 sampai 1440 px | `pages.spec.ts` | 3 | Ditulis |
+| Tautan internal header dan footer tidak 404 | `pages.spec.ts` | 3 | Ditulis |
+| Menu "Proyek" langsung ke detail selama hanya ada satu proyek terbit (desktop dan menu HP) | `pages.spec.ts` | 3 | Ditulis |
+| Slug tidak ada, proyek draft, berita draft, promo kedaluwarsa, lowongan draft: halaman 404 di layout website dan `noindex` | `pages.spec.ts` | 3 | Ditulis |
+| Keadaan kosong berita, promo, karir | `pages.spec.ts` | 3 | Ditulis |
+| Hero banner dari database: autoplay, jeda, tombol, keyboard, indikator, slide nonaktif inert, `prefers-reduced-motion` menghentikan autoplay | `home.spec.ts` | 3 | Ditulis |
+| Ringkasan unit, harga, rincian biaya, dan "Mulai Rp 500 jutaan" dari database | `home.spec.ts`, `pages.spec.ts` | 3 | Ditulis |
+| Detail proyek: galeri dengan tampilan penuh (tombol dan keyboard), tipe unit, FAQ | `pages.spec.ts` | 3 | Ditulis |
+| Simulasi KPR: hasil sesuai nilai acuan, dropdown custom bisa dipilih dengan klik dan keyboard | `simulasi-kpr.spec.ts` | 3 | Ditulis |
+| JSON-LD: RealEstateListing, FAQPage, BreadcrumbList, Article. Metadata dan Open Graph beranda | `home.spec.ts`, `pages.spec.ts` | 3 | Ditulis |
+| `sitemap.xml` hanya konten terbit, `robots.txt` | `pages.spec.ts`, `auth/access.spec.ts` | 3 | Ditulis |
+| Tombol WhatsApp melayang: `wa.me/6289673296881` dengan pesan yang menyebut halaman asal | `pages.spec.ts` | 3 | Ditulis |
+| Footer: ikon dan label Instagram dan WhatsApp | `pages.spec.ts` | 3 | Ditulis |
+| Siteplan interaktif dengan status kavling realtime | | 4 | Belum (menunggu file siteplan dari owner) |
+| Form minat, kontak, brosur, lamaran: sukses sampai database, validasi, PDP, honeypot, rate limit, Turnstile | | 3c | Belum |
+| Visual regression beranda dan detail proyek | | 3c | Belum |
 
 ### Admin CMS (`e2e/admin/`, Fase 4)
 

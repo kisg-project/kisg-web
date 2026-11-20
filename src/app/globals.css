@@ -392,3 +392,17 @@
     }
   }
 }
+
+/* Tombol melayang muncul halus saat halaman dibuka. */
+@keyframes float-in {
+  from {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}

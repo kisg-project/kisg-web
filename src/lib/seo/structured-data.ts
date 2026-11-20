@@ -108,6 +108,60 @@ export function listingJsonLd(siteUrl: string, input: ListingInput): JsonLd {
   };
 }
 
+export interface Crumb {
+  name: string;
+  path: string;
+}
+
+/** Jejak halaman (BreadcrumbList). Item pertama selalu beranda. */
+export function breadcrumbJsonLd(siteUrl: string, crumbs: readonly Crumb[]): JsonLd {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: absoluteUrl(siteUrl, crumb.path),
+    })),
+  };
+}
+
+/** Berita (Article). Penulis selalu organisasi, tanggal dari data terbit asli. */
+export function articleJsonLd(
+  siteUrl: string,
+  input: {
+    title: string;
+    path: string;
+    publishedAt: string;
+    image: string | null;
+    description: string | null;
+  },
+): JsonLd {
+  const organization = { "@id": absoluteUrl(siteUrl, "/#organisasi") };
+  return {
+    "@type": "Article",
+    headline: input.title,
+    url: absoluteUrl(siteUrl, input.path),
+    datePublished: input.publishedAt,
+    ...(input.image ? { image: [absoluteUrl(siteUrl, input.image)] } : {}),
+    ...(input.description ? { description: input.description } : {}),
+    author: organization,
+    publisher: organization,
+  };
+}
+
+/** Tanya jawab (FAQPage), hanya dari FAQ yang terbit. */
+export function faqJsonLd(items: readonly { question: string; answer: string }[]): JsonLd {
+  return {
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+}
+
 /** Menggabungkan beberapa node dalam satu @graph. */
 export function jsonLdGraph(nodes: JsonLd[]): JsonLd {
   return { "@context": "https://schema.org", "@graph": nodes };

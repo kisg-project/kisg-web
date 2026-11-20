@@ -8,6 +8,13 @@ import { CircleCheck, CircleMinus, Download, Phone, Plus, Trash2 } from "lucide-
 import { NumberInput } from "@/components/shared/number-input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { bankByKey } from "@/config/banks";
 import { KPR_COST_GROUPS, KPR_DEFAULTS, KPR_LIMITS } from "@/config/kpr";
 import {
@@ -132,6 +139,26 @@ function NumberField({
         </div>
       )}
     />
+  );
+}
+
+/** Kelompok isian form dengan judul kecil dan garis pemisah, supaya form panjang tetap mudah dibaca. */
+function FormGroup({
+  title,
+  children,
+  first = false,
+}: {
+  title: ReactNode;
+  children: ReactNode;
+  first?: boolean;
+}) {
+  return (
+    <div className={cn("grid min-w-0 gap-4 sm:grid-cols-2", !first && "border-t pt-5")}>
+      <p className="text-xs font-bold tracking-wide text-muted-foreground uppercase sm:col-span-2">
+        {title}
+      </p>
+      {children}
+    </div>
   );
 }
 
@@ -356,221 +383,241 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
         </section>
       ) : null}
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
         <form
           ref={formRef}
           noValidate
-          className="scroll-mt-24"
+          className="scroll-mt-24 rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7"
           onSubmit={(event) => {
             event.preventDefault();
           }}
         >
-          <fieldset aria-label={`Data KPR ${scheme}`} className="grid min-w-0 gap-4 sm:grid-cols-2">
-            <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
-              <Label htmlFor={`${scheme}-program`}>{terms.programLabel}</Label>
-              <select
-                id={`${scheme}-program`}
-                className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-sm"
-                value={selectedId}
-                disabled={!hydrated}
-                onChange={(event) => {
-                  chooseProduct(event.target.value, false);
-                }}
-              >
-                {products.map((product) => (
-                  <option key={product.id} value={product.id}>
-                    {product.name}
-                  </option>
-                ))}
-                <option value="custom">Atur sendiri</option>
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
+          <fieldset aria-label={`Data KPR ${scheme}`} className="grid min-w-0 gap-5">
+            <FormGroup first title="Program dan harga">
+              <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor={`${scheme}-program`}>{terms.programLabel}</Label>
+                <Select
+                  value={selectedId}
+                  disabled={!hydrated}
+                  onValueChange={(value) => {
+                    chooseProduct(value, false);
+                  }}
+                >
+                  <SelectTrigger
+                    id={`${scheme}-program`}
+                    className="h-11 w-full min-w-0 rounded-md bg-background px-3"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent position="popper" className="max-h-80">
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id} className="min-h-10">
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="custom" className="min-h-10">
+                      Atur sendiri
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="sm:col-span-2">
+                <NumberField
+                  control={form.control}
+                  name="price"
+                  label="Harga rumah"
+                  prefix="Rp"
+                  readOnly={!hydrated}
+                />
+              </div>
+            </FormGroup>
+            <FormGroup title="Uang muka">
+              <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor={`${scheme}-dp-slider`}>
+                  Uang muka: {Number.isFinite(dpPercent) ? percentText(dpPercent) : "-"}
+                </Label>
+                <input
+                  id={`${scheme}-dp-slider`}
+                  type="range"
+                  min={0}
+                  max={KPR_LIMITS.downPaymentSliderMax}
+                  step={1}
+                  value={
+                    Number.isFinite(dpPercent)
+                      ? Math.min(KPR_LIMITS.downPaymentSliderMax, Math.round(dpPercent))
+                      : 0
+                  }
+                  disabled={!hydrated}
+                  className="h-11 w-full accent-primary"
+                  onChange={(event) => {
+                    if (!Number.isFinite(currentPrice)) return;
+                    form.setValue(
+                      "downPayment",
+                      downPaymentFromPercent(currentPrice, Number(event.target.value)),
+                      {
+                        shouldValidate: true,
+                      },
+                    );
+                  }}
+                />
+              </div>
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <Label htmlFor={`${scheme}-dp-percent`}>Uang muka (persen)</Label>
+                <NumberInput
+                  id={`${scheme}-dp-percent`}
+                  value={dpPercent}
+                  decimals={1}
+                  suffix="%"
+                  readOnly={!hydrated}
+                  onValueChange={(percent) => {
+                    if (Number.isFinite(percent) && Number.isFinite(currentPrice)) {
+                      form.setValue("downPayment", downPaymentFromPercent(currentPrice, percent), {
+                        shouldValidate: true,
+                      });
+                    }
+                  }}
+                />
+              </div>
               <NumberField
                 control={form.control}
-                name="price"
-                label="Harga rumah"
+                name="downPayment"
+                label="Uang muka (rupiah)"
                 prefix="Rp"
                 readOnly={!hydrated}
               />
-            </div>
-
-            <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
-              <Label htmlFor={`${scheme}-dp-slider`}>
-                Uang muka: {Number.isFinite(dpPercent) ? percentText(dpPercent) : "-"}
-              </Label>
-              <input
-                id={`${scheme}-dp-slider`}
-                type="range"
-                min={0}
-                max={KPR_LIMITS.downPaymentSliderMax}
-                step={1}
-                value={
-                  Number.isFinite(dpPercent)
-                    ? Math.min(KPR_LIMITS.downPaymentSliderMax, Math.round(dpPercent))
-                    : 0
-                }
-                disabled={!hydrated}
-                className="h-11 w-full accent-primary"
-                onChange={(event) => {
-                  if (!Number.isFinite(currentPrice)) return;
-                  form.setValue(
-                    "downPayment",
-                    downPaymentFromPercent(currentPrice, Number(event.target.value)),
-                    {
-                      shouldValidate: true,
-                    },
-                  );
-                }}
-              />
-            </div>
-            <div className="flex min-w-0 flex-col gap-1.5">
-              <Label htmlFor={`${scheme}-dp-percent`}>Uang muka (persen)</Label>
-              <NumberInput
-                id={`${scheme}-dp-percent`}
-                value={dpPercent}
-                decimals={1}
-                suffix="%"
-                readOnly={!hydrated}
-                onValueChange={(percent) => {
-                  if (Number.isFinite(percent) && Number.isFinite(currentPrice)) {
-                    form.setValue("downPayment", downPaymentFromPercent(currentPrice, percent), {
+            </FormGroup>
+            <FormGroup title={terms.tenor}>
+              <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor={`${scheme}-tenor-slider`}>
+                  {terms.tenor}: {String(values.tenorYears ?? "-")} tahun
+                </Label>
+                <input
+                  id={`${scheme}-tenor-slider`}
+                  type="range"
+                  min={tenorRange.min}
+                  max={tenorRange.max}
+                  step={1}
+                  value={clamp(values.tenorYears ?? tenorRange.min, tenorRange.min, tenorRange.max)}
+                  disabled={!hydrated}
+                  className="h-11 w-full accent-primary"
+                  onChange={(event) => {
+                    form.setValue("tenorYears", Number(event.target.value), {
                       shouldValidate: true,
                     });
-                  }
-                }}
-              />
-            </div>
-            <NumberField
-              control={form.control}
-              name="downPayment"
-              label="Uang muka (rupiah)"
-              prefix="Rp"
-              readOnly={!hydrated}
-            />
-
-            <div className="flex min-w-0 flex-col gap-1.5 sm:col-span-2">
-              <Label htmlFor={`${scheme}-tenor-slider`}>
-                {terms.tenor}: {String(values.tenorYears ?? "-")} tahun
-              </Label>
-              <input
-                id={`${scheme}-tenor-slider`}
-                type="range"
-                min={tenorRange.min}
-                max={tenorRange.max}
-                step={1}
-                value={clamp(values.tenorYears ?? tenorRange.min, tenorRange.min, tenorRange.max)}
-                disabled={!hydrated}
-                className="h-11 w-full accent-primary"
-                onChange={(event) => {
-                  form.setValue("tenorYears", Number(event.target.value), { shouldValidate: true });
-                }}
-              />
-            </div>
-            <NumberField
-              control={form.control}
-              name="tenorYears"
-              label={terms.tenor}
-              suffix="tahun"
-              readOnly={!hydrated}
-            />
-
-            <div className="grid gap-3 sm:col-span-2">
-              <p className="text-sm font-semibold">{terms.fixedPeriods}</p>
-              {segmentValues.length === 0 ? (
-                <p className="text-sm text-subtle-foreground">
-                  Tidak ada periode tetap. {terms.rate} di bawah berlaku sampai lunas.
-                </p>
-              ) : null}
-              {segmentValues.map((_segment, index) => (
-                // Key urutan: periode stabil dan tidak diurutkan ulang (lihat setSegments).
-                <div key={index} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
-                  <NumberField
-                    control={form.control}
-                    name={`segments.${index}.ratePercent`}
-                    label={`Periode ${index + 1}: ${terms.rate}`}
-                    decimals={2}
-                    suffix="%/tahun"
-                    readOnly={!hydrated}
-                  />
-                  <NumberField
-                    control={form.control}
-                    name={`segments.${index}.years`}
-                    label="Lama"
-                    suffix="tahun"
-                    readOnly={!hydrated}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Hapus periode ${index + 1}`}
-                    onClick={() => {
-                      setSegments(
-                        form.getValues("segments").filter((_item, position) => position !== index),
-                      );
-                    }}
-                  >
-                    <Trash2 aria-hidden="true" />
-                  </Button>
-                </div>
-              ))}
-              {segmentsError ? <p className="text-sm text-destructive">{segmentsError}</p> : null}
-              {segmentValues.length < KPR_LIMITS.segments.max ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-fit"
-                  onClick={() => {
-                    setSegments([
-                      ...form.getValues("segments"),
-                      { ratePercent: values.afterRatePercent ?? 0, years: 1 },
-                    ]);
                   }}
-                >
-                  <Plus aria-hidden="true" />
-                  Tambah periode
-                </Button>
-              ) : null}
-            </div>
-
-            <div className="sm:col-span-2">
+                />
+              </div>
               <NumberField
                 control={form.control}
-                name="afterRatePercent"
-                label={segmentValues.length === 0 ? terms.fixedUntilEnd : terms.afterRate}
-                decimals={2}
-                suffix="%/tahun"
+                name="tenorYears"
+                label={terms.tenor}
+                suffix="tahun"
                 readOnly={!hydrated}
-                hint={
-                  segmentValues.length === 0
-                    ? undefined
-                    : "Bank tidak mempublikasikan angka pasti. Ubah sesuai penawaran bank."
-                }
               />
-            </div>
+            </FormGroup>
+            <FormGroup title={terms.fixedPeriods}>
+              <div className="grid gap-3 sm:col-span-2">
+                {segmentValues.length === 0 ? (
+                  <p className="text-sm text-subtle-foreground">
+                    Tidak ada periode tetap. {terms.rate} di bawah berlaku sampai lunas.
+                  </p>
+                ) : null}
+                {segmentValues.map((_segment, index) => (
+                  // Key urutan: periode stabil dan tidak diurutkan ulang (lihat setSegments).
+                  <div key={index} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
+                    <NumberField
+                      control={form.control}
+                      name={`segments.${index}.ratePercent`}
+                      label={`Periode ${index + 1}: ${terms.rate}`}
+                      decimals={2}
+                      suffix="%/tahun"
+                      readOnly={!hydrated}
+                    />
+                    <NumberField
+                      control={form.control}
+                      name={`segments.${index}.years`}
+                      label="Lama"
+                      suffix="tahun"
+                      readOnly={!hydrated}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Hapus periode ${index + 1}`}
+                      onClick={() => {
+                        setSegments(
+                          form
+                            .getValues("segments")
+                            .filter((_item, position) => position !== index),
+                        );
+                      }}
+                    >
+                      <Trash2 aria-hidden="true" />
+                    </Button>
+                  </div>
+                ))}
+                {segmentsError ? <p className="text-sm text-destructive">{segmentsError}</p> : null}
+                {segmentValues.length < KPR_LIMITS.segments.max ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-fit"
+                    onClick={() => {
+                      setSegments([
+                        ...form.getValues("segments"),
+                        { ratePercent: values.afterRatePercent ?? 0, years: 1 },
+                      ]);
+                    }}
+                  >
+                    <Plus aria-hidden="true" />
+                    Tambah periode
+                  </Button>
+                ) : null}
+              </div>
 
-            <NumberField
-              control={form.control}
-              name="npoptkp"
-              label="NPOPTKP untuk BPHTB"
-              prefix="Rp"
-              readOnly={!hydrated}
-              hint="Sesuai perda daerah. UU HKPD: paling sedikit Rp 80.000.000."
-            />
-            <NumberField
-              control={form.control}
-              name="otherCostsPercent"
-              label="Perkiraan biaya bank, notaris bank, asuransi"
-              decimals={2}
-              suffix={`% ${terms.principal === "Pokok pembiayaan" ? "pembiayaan" : "pinjaman"}`}
-              readOnly={!hydrated}
-            />
+              <div className="sm:col-span-2">
+                <NumberField
+                  control={form.control}
+                  name="afterRatePercent"
+                  label={segmentValues.length === 0 ? terms.fixedUntilEnd : terms.afterRate}
+                  decimals={2}
+                  suffix="%/tahun"
+                  readOnly={!hydrated}
+                  hint={
+                    segmentValues.length === 0
+                      ? undefined
+                      : "Bank tidak mempublikasikan angka pasti. Ubah sesuai penawaran bank."
+                  }
+                />
+              </div>
+            </FormGroup>
+            <FormGroup title="Biaya pembelian">
+              <NumberField
+                control={form.control}
+                name="npoptkp"
+                label="NPOPTKP untuk BPHTB"
+                prefix="Rp"
+                readOnly={!hydrated}
+                hint="Sesuai perda daerah. UU HKPD: paling sedikit Rp 80.000.000."
+              />
+              <NumberField
+                control={form.control}
+                name="otherCostsPercent"
+                label="Perkiraan biaya bank, notaris bank, asuransi"
+                decimals={2}
+                suffix={`% ${terms.principal === "Pokok pembiayaan" ? "pembiayaan" : "pinjaman"}`}
+                readOnly={!hydrated}
+              />
+            </FormGroup>
           </fieldset>
         </form>
 
-        <div className="grid content-start gap-6" aria-live="polite">
+        {/* Hasil ringkas di kanan, menempel saat form di-scroll (layar lebar). */}
+        <div
+          className="grid content-start gap-4 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:col-span-5"
+          aria-live="polite"
+        >
           <div className="rounded-lg border bg-surface p-5">
             <h3 className="text-base font-bold">Hasil simulasi {terms.title}</h3>
             {result && costs && firstPeriod ? (
@@ -668,7 +715,16 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
             )}
           </div>
 
-          {result && costs ? (
+          <p className="text-xs text-subtle-foreground">
+            Simulasi bersifat estimasi dan bukan penawaran bank. {terms.schemeNote} Persetujuan,{" "}
+            {terms.rateLower}, dan biaya akhir mengikuti ketentuan bank.
+          </p>
+        </div>
+      </div>
+
+      {result && costs ? (
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+          <div className="lg:col-span-5">
             <div className="rounded-lg border bg-card p-5">
               <h3 className="text-base font-bold">Rincian biaya</h3>
               <ul className="mt-3 grid gap-4 text-sm">
@@ -712,9 +768,8 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                 />
               </dl>
             </div>
-          ) : null}
-
-          {result ? (
+          </div>
+          <div className="lg:col-span-7">
             <details className="rounded-lg border bg-card p-5">
               <summary className="cursor-pointer font-bold">
                 Jadwal {terms.installmentLower} per tahun
@@ -761,14 +816,9 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                 </table>
               </div>
             </details>
-          ) : null}
-
-          <p className="text-xs text-subtle-foreground">
-            Simulasi bersifat estimasi dan bukan penawaran bank. {terms.schemeNote} Persetujuan,{" "}
-            {terms.rateLower}, dan biaya akhir mengikuti ketentuan bank.
-          </p>
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }

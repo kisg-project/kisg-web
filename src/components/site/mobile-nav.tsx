@@ -12,16 +12,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { siteNav } from "@/config/nav";
+import type { NavItem } from "@/config/nav";
 import { siteConfig, whatsappLink } from "@/config/site";
 
 /** Menu ringkas untuk layar kecil (CLAUDE.md bagian 6, responsif). */
-export function MobileNav() {
+export function MobileNav({ items }: { items: readonly NavItem[] }) {
   const [open, setOpen] = useState(false);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Buka menu">
+        <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Buka menu">
           <Menu aria-hidden="true" className="size-6" />
         </Button>
       </SheetTrigger>
@@ -32,8 +32,8 @@ export function MobileNav() {
         </SheetHeader>
         <nav aria-label="Navigasi utama" className="px-4">
           <ul className="flex flex-col">
-            {siteNav.map((item) => (
-              <li key={item.href}>
+            {items.map((item) => (
+              <li key={item.label}>
                 <Link
                   href={item.href}
                   onClick={() => {

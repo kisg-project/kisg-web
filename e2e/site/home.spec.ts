@@ -152,7 +152,8 @@ test.describe("Beranda", () => {
     test.skip(isMobile, "Khusus layar lebar");
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Navigasi utama" });
-    await expect(nav.getByRole("link", { name: "Tipe unit" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Proyek" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Kontak" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Buka menu" })).toBeHidden();
   });
 });
@@ -167,8 +168,9 @@ test.describe("SEO", () => {
     expect(await page.locator('meta[name="description"]').getAttribute("content")).toContain(
       "Rp 571.250.000",
     );
+    // Gambar Open Graph = foto sampul proyek unggulan dari database.
     expect(await page.locator('meta[property="og:image"]').getAttribute("content")).toContain(
-      "sgv-hero-desktop.webp",
+      "sgv-1.webp",
     );
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
 
