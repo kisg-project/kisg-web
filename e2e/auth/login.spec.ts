@@ -25,10 +25,14 @@ test.describe("Login portal", () => {
       await page.goto("/portal/login");
       await loginViaForm(page, user);
       await expect(page).toHaveURL(ROLE_HOME[role]);
+      // Beranda role: sapaan sesuai jam WIB dengan nama, lalu label role dan nama modul.
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+        new RegExp(`^Selamat (pagi|siang|sore|malam), ${user.fullName}$`),
+      );
+      await expect(page.getByText(ROLE_LABELS[role], { exact: true }).first()).toBeVisible();
       await expect(
-        page.getByRole("heading", { level: 1, name: areaLabel(ROLE_HOME[role]) }),
+        page.getByRole("heading", { level: 2, name: areaLabel(ROLE_HOME[role]) }),
       ).toBeVisible();
-      await expect(page.getByText(`Masuk sebagai ${user.fullName}.`)).toBeVisible();
       // Cookie sesi Supabase terbentuk.
       const cookies = await page.context().cookies();
       expect(cookies.some((cookie) => cookie.name.includes("auth-token"))).toBe(true);

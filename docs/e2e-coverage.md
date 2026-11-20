@@ -91,7 +91,6 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 | Halaman modul dan akses ditolak: axe, responsif, `noindex`. `robots.txt` memblokir `/portal` | `access.spec.ts` | 2b-1 | Ditulis |
 | Matriks akses lewat server action (aksi dengan batas role pertama: undang user) | `admin/` | 2b-2 | Belum |
 | Undangan user: tautan undangan, buat password, login dengan role benar | `admin/` | 2b-2 | Belum |
-| Verifikasi dua langkah (TOTP) wajib untuk owner dan admin, sesi AAL1 ditolak di halaman admin/owner | `auth/` | 2b-2 | Belum |
 | Test RLS SQL: tabel inti dan rate limit | CI `db.yml` | 2a, 2b-1 | Lolos (2a), Ditulis (rate limit) |
 
 ### Website (`e2e/site/`, Fase 3)
@@ -204,8 +203,11 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 
 | Skenario | Profil | Fase | Status |
 |---|---|---|---|
-| Manifest valid, service worker terdaftar, ikon maskable ada | MC | 8 | Belum |
-| Halaman offline muncul saat tidak ada koneksi (`context.setOffline`) | MC, MS | 8 | Belum |
+| Manifest valid (nama, start_url, scope, ikon maskable), ikon termuat, link manifest di halaman portal | D | 2 (PWA) | Ditulis (`pwa.spec.ts`) |
+| Service worker disajikan dengan `Service-Worker-Allowed` dan tanpa cache | D | 2 (PWA) | Ditulis (`pwa.spec.ts`) |
+| Halaman offline tanpa login: axe dan responsif | D | 2 (PWA) | Ditulis (`pwa.spec.ts`) |
+| Halaman offline muncul saat tidak ada koneksi (`context.setOffline`) setelah service worker aktif, lalu pulih saat online | D (Chromium, satu-satunya yang didukung Playwright untuk service worker) | 2 (PWA) | Ditulis (`pwa.spec.ts`) |
+| Subdomain portal: path bersih di host portal, `/portal` di website 404, alamat lama dialihkan | Unit (`portal-host.test.ts`) | 2 (PWA) | Ditulis |
 | Isi 2 laporan saat offline, reload, data masih ada di antrian | MC | 8 | Belum |
 | Kembali online: keduanya terkirim tepat satu kali, status sinkron berubah | MC | 8 | Belum |
 | Koneksi putus di tengah upload foto: tidak ada data ganda, upload dilanjutkan | MC | 8 | Belum |

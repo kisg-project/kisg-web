@@ -17,6 +17,12 @@ export const env = createEnv({
     // Cloudflare Turnstile. Kosong sampai akun Cloudflare siap: verifikasi dilewati, form tetap dijaga
     // honeypot dan rate limit (src/lib/security/turnstile.ts).
     TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
+    // Host portal karyawan, misal company.kisgroup.co.id (harus berawalan "company.", lihat proxy.ts).
+    // Kosong sampai domain terhubung: portal tetap di /portal.
+    PORTAL_HOST: z
+      .string()
+      .regex(/^company\.[a-z0-9.-]+(:\d+)?$/, "PORTAL_HOST harus berawalan company.")
+      .optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.url(),
@@ -32,6 +38,7 @@ export const env = createEnv({
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     ENABLE_DEV_UI: process.env.ENABLE_DEV_UI,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
+    PORTAL_HOST: process.env.PORTAL_HOST,
     // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
     // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
     NEXT_PUBLIC_SITE_URL:

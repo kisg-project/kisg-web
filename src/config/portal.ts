@@ -8,6 +8,10 @@ export const PORTAL_PUBLIC_PATHS = [
   "/portal/lupa-password",
   "/portal/auth/confirm",
   "/portal/auth/keluar",
+  // PWA: manifest, service worker, dan halaman offline harus bisa dimuat sebelum login.
+  "/portal/manifest.webmanifest",
+  "/portal/sw.js",
+  "/portal/offline",
 ] as const;
 
 /** Halaman yang butuh sesi tetapi tidak butuh role tertentu. */

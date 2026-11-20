@@ -31,7 +31,7 @@ Satu codebase Next.js, empat area:
 
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
-3. **Portal internal + PWA** (`company.kisgroup.co.id`, route `src/app/portal/`): laporan kinerja karyawan (lapangan, marketing), dashboard owner, CRM, dan panel admin CMS. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
+3. **PWA Manajemen Operasional Bisnis Pengembang Properti** ("KIS Operasional", `company.kisgroup.co.id`, route `src/app/portal/`): aplikasi kerja lengkap untuk setiap role (absensi dengan scan wajah, rencana dan hasil kerja harian, CRM dan penjualan, lapangan dan progres, keuangan, izin), dashboard owner yang memantau semuanya, dan panel admin CMS. Beranda setiap role memakai sapaan sesuai jam WIB dengan nama dan role. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
 
@@ -67,6 +67,7 @@ Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan me
 Dependency tambahan yang sudah disetujui owner:
 - Fase 1: `clsx`, `radix-ui`, `sonner`, `server-only`, `prettier-plugin-tailwindcss`, `@vitest/coverage-v8`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/user-event`, `tw-animate-css` dan `shadcn` (CSS, dipakai saat build).
 - Simulasi KPR: `jspdf` dan `jspdf-autotable` untuk PDF berkop KIS, dimuat hanya saat tombol unduh diklik. Dipakai lagi untuk ekspor PDF portal di Fase 8.
+- Absensi: `@mediapipe/tasks-vision` (Google, Apache 2.0) untuk deteksi wajah dan kedip di browser, dimuat hanya di halaman absensi. Model dan file WASM disajikan dari domain sendiri, bukan CDN (keputusan owner, 20 November 2026).
 
 ---
 
@@ -206,6 +207,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Dropdown selalu memakai komponen custom `src/components/ui/select.tsx` (Radix), tidak memakai `<select>` bawaan browser, supaya tampilannya seragam (keputusan owner, Fase 3). Dipaksa aturan ESLint `no-restricted-syntax`.
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
+- Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis.
 
 ### Responsif di semua perangkat (wajib)
 Website, landing page, dan PWA portal harus tampil dan bisa dipakai penuh di semua ukuran layar, dari HP kecil sampai monitor lebar.
@@ -278,6 +280,7 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 
 - Semua tabel di schema `public` wajib RLS aktif dan punya policy eksplisit. Tidak ada tabel tanpa policy.
 - Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance`. Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
+- Multi role (keputusan owner, 20 November 2026, karena ada rangkap jabatan): satu akun boleh memegang beberapa role sekaligus. Satu baris `user_roles` per role, salah satunya ditandai role utama (`is_primary`). Hak akses adalah gabungan semua role (RLS `private.has_role` dan server action memeriksa irisan). Role utama menentukan beranda dan urutan menu. Beranda menampilkan semua role sebagai badge. Akun yang memegang `owner` tidak wajib absensi.
 - Marketing hanya melihat lead miliknya. Manager melihat timnya. Owner dan admin melihat semua.
 - Service role key hanya dipakai di server (webhook, cron, admin task) dan tidak pernah sampai ke client.
 - Storage: bucket publik hanya untuk aset website. Foto laporan, dokumen konsumen (KTP, slip gaji, dsb) di bucket privat dengan signed URL berumur pendek.
@@ -289,10 +292,38 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 ### Keamanan tingkat tinggi (keputusan owner, Fase 2)
 - Cloudflare dipakai untuk DNS domain, forwarding email, dan Turnstile. Trafik web tetap langsung ke Vercel (record DNS tanpa proxy), karena Vercel sudah menyediakan perlindungan DDoS dan firewall, dan proxy tambahan mengganggu cache serta deteksi IP asli.
 - Portal (PWA) tanpa captcha: tidak ada pendaftaran publik, akun hanya lewat undangan. Login dilindungi rate limit per IP dan per akun, penguncian sementara setelah beberapa kali gagal, dan pesan error yang tidak membocorkan akun mana yang ada.
-- Verifikasi dua langkah (TOTP, Supabase Auth MFA) wajib untuk role `owner` dan `admin`, opsional untuk role lain. Server action dan halaman admin/owner menolak sesi yang belum level AAL2.
-- Akun admin master: role `admin`, akses CMS dan PWA penuh, bisa mengundang semua role termasuk `owner`. Dibuat sekali lewat skrip bootstrap, setelah itu semua akun lewat undangan.
+- Tanpa verifikasi dua langkah (keputusan owner, 20 November 2026, mencabut keputusan Fase 2). Login cukup email dan password, dijaga rate limit, penguncian sementara, akun hanya lewat undangan, dan pencabutan sesi saat akun dinonaktifkan. TOTP dimatikan di pengaturan Supabase Auth.
+- Akun utama adalah akun owner (keputusan owner, 20 November 2026): akses CMS dan PWA penuh, bisa mengundang semua role. Akun admin master dari skrip bootstrap dinonaktifkan setelah owner berhasil login. Role `admin` tetap tersedia untuk staf back office yang mengelola CMS dan akun.
+- Undangan akun: owner atau admin mengisi nama, email, dan role. Sistem mengirim email undangan (Brevo, dari `notifikasi@`) berisi tautan aktivasi sekali pakai yang kedaluwarsa. Tautan membuka halaman "Aktifkan akun": buat password (minimal 10 karakter, huruf besar, huruf kecil, angka, dengan indikator kekuatan), unggah foto profil, dan nomor HP. Setelah itu langsung masuk ke beranda. Undangan bisa dikirim ulang atau dibatalkan dari daftar akun. Selama Brevo belum aktif, tautan ditampilkan untuk disalin manual.
+- Halaman login hanya berisi email, password, dan "Lupa password". Tidak ada tombol buat akun. Login dengan Google tidak dipakai.
+- Foto profil wajib untuk semua akun (kamera atau galeri, dipotong persegi, dikompres, bucket privat dengan signed URL). Akun tanpa foto diarahkan ke halaman aktivasi sebelum bisa memakai modul lain. Foto tampil di header, daftar akun, dan cap persetujuan.
+- Setiap akun punya halaman "Akun saya": ganti foto, nomor HP, dan password (wajib memasukkan password lama).
+- Email sistem (undangan, lupa password, notifikasi) memakai template HTML berkop KIS: logo, warna brand, satu tombol aksi utama, tautan cadangan dalam teks, footer alamat kantor. Tampil rapi di Gmail, Outlook, dan aplikasi email HP, mendukung mode gelap, dan punya versi teks biasa.
 - Sesi portal berumur terbatas, logout membersihkan sesi di server, perubahan role atau penonaktifan akun langsung mencabut sesi.
 - Semua aksi sensitif (undang, ubah role, nonaktifkan, ekspor, hapus data) tercatat di `audit_log`.
+
+### Absensi dan laporan harian (keputusan owner, 20 November 2026)
+- Semua karyawan selain `owner` wajib absensi clock in dan clock out: foto selfie (dikompres, bagian 8) dan lokasi GPS. Absen hanya sah dalam radius 100 meter dari salah satu titik absensi aktif (lokasi proyek atau kantor, tabel `work_locations`). Di luar radius ditolak.
+- Setelah clock in, wajib mengisi formulir rencana kegiatan hari ini sebelum bisa memakai modul lain. Setelah clock out, wajib mengisi formulir hasil kerja hari ini.
+- Formulir menerima lampiran foto dan file. Foto selalu dikompres otomatis di browser. File dokumen dibatasi ukuran dan jenisnya di client dan server. Field wajib benar-benar wajib, field opsional tetap opsional.
+- Foto absensi hanya dari kamera saat itu (tidak bisa memilih dari galeri). Harus terdeteksi tepat satu wajah yang cukup besar, dan karyawan diminta berkedip dulu sebelum foto diambil, supaya foto dari layar atau cetakan ditolak. Deteksi berjalan di HP karyawan. Tidak ada pencocokan wajah dan tidak ada data biometrik yang disimpan, hanya fotonya.
+- Titik absensi diatur owner/admin di portal, termasuk tombol "pakai lokasi saya sekarang".
+- Clock in dan clock out boleh di titik absensi berbeda, asal masing-masing sah. Setiap absen mencatat titik, jarak, jam, dan foto. Laporan owner memberi penanda "pindah lokasi" untuk hari dengan titik berbeda.
+- Di luar radius, absen ditolak, tetapi karyawan bisa mengajukan "absen di luar lokasi" (alasan wajib, foto, lokasi). Pengajuan disetujui atau ditolak owner atau manajer karyawan itu, dan tercatat di audit.
+- Owner melihat semua absensi, rencana, hasil kerja, dan laporan semua karyawan. Setiap role punya modul kerja lengkap sesuai tugasnya.
+
+### Pengajuan dana (keputusan owner, 20 November 2026)
+- Semua role bisa membuat pengajuan (dana operasional, pembelian material, reimburse, kasbon, lainnya; jenis bisa diatur admin): nominal rupiah, rincian, lampiran foto (dikompres) atau file.
+- Alur wajib: pengaju, lalu keuangan memeriksa (lanjutkan ke owner, kembalikan untuk diperbaiki, atau tolak, dengan catatan), lalu owner menyetujui atau menolak, lalu keuangan menandai dicairkan dengan bukti. Tidak ada langkah yang bisa dilewati.
+- Setiap perpindahan status tercatat (siapa, kapan, catatan) dan memicu notifikasi ke pihak berikutnya. Owner bisa melihat semua pengajuan di semua status dan rekap per bulan.
+- Setiap pengajuan punya dokumen PDF berkop KIS (logo, nama dan alamat perusahaan) sebagai arsip back office: nomor pengajuan, pengaju, rincian dan nominal, daftar lampiran, riwayat status, dan cap persetujuan digital dengan QR verifikasi. PDF bisa dilihat langsung di portal dan diunduh. Saat pengajuan selesai (dicairkan atau ditolak), PDF final disimpan di bucket privat sebagai arsip yang tidak berubah.
+- Pengaju tidak bisa memeriksa atau menyetujui pengajuannya sendiri. Kalau satu orang memegang role keuangan dan owner, tiap langkah tetap dicatat terpisah dengan cap masing-masing.
+
+### Persetujuan digital (keputusan owner, 20 November 2026)
+- Tombol setujui (ACC) di semua alur persetujuan (pengajuan dana, izin, absen di luar lokasi, booking, laporan) adalah tanda tangan elektronik: penyetuju melihat ringkasan, lalu memasukkan password akunnya untuk mengonfirmasi. Password diperiksa di server dan dibatasi rate limit.
+- Setiap persetujuan atau penolakan menyimpan cap permanen: nama, role, waktu (timestamptz, tampil WIB), user agent, lokasi kalau diizinkan, dan kode verifikasi berupa hash SHA-256 dari isi dokumen saat disetujui, penyetuju, dan waktu. Cap tidak bisa diubah atau dihapus (tabel tanpa policy update/delete, tercatat di audit).
+- Cap tampil di halaman dokumen dan di PDF ("Disetujui secara digital oleh ..."), dengan QR code ke halaman verifikasi. Kalau isi dokumen berubah setelah disetujui, verifikasi menunjukkan tidak cocok.
+- Ini tanda tangan elektronik tidak tersertifikasi (UU ITE). Tanda tangan tersertifikasi (PSrE) di luar cakupan.
 
 ### Email domain
 | Alamat | Dipakai untuk |

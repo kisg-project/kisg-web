@@ -151,3 +151,15 @@ Pasangan yang gagal tidak boleh dipakai. Token di atas sudah menghindarinya:
 - Logo di latar terang dan gelap memakai `logo-kis.png` yang sama. Ruang kosong di sekitar logo minimal setinggi huruf "G" pada tulisan GROUP. Lebar minimal 96 px di layar.
 - Font: Plus Jakarta Sans untuk heading dan body. Angka di tabel dan dashboard memakai `tabular-nums`.
 - Radius 4 sampai 8 px, bayangan tipis, tanpa gradien neon dan glassmorphism (CLAUDE.md bagian 6).
+
+## Pola UI portal (keputusan owner, 20 November 2026)
+
+Referensi pola dari Dribbble (tag clock-in, employee attendance app, face recognition, daily task, real estate CRM). Polanya dipakai, visual tidak ditiru. Warna dan logo tetap palet KIS di atas.
+
+1. Beranda karyawan: kartu "hari ini" besar berisi status dan satu tombol aksi utama yang selalu menunjuk langkah berikutnya (clock in, isi rencana, clock out, isi hasil kerja), jam berjalan, dan titik lokasi terdekat.
+2. Absensi: kamera depan dengan bingkai wajah oval, panduan singkat (posisikan wajah, berkedip), peta kecil dengan lingkaran radius 100 meter (hijau di dalam, merah di luar) dan jarak dalam meter.
+3. Formulir rencana dan hasil kerja: daftar kegiatan yang bisa dicentang dan ditambah, lampiran dengan pratinjau dan status kompres, tombol kirim menempel di bawah layar.
+4. Riwayat harian sebagai linimasa: clock in, rencana, hasil, clock out, dengan foto kecil dan jam.
+5. CRM marketing: kanban lead yang bisa digeser antar tahap, tombol cepat WhatsApp dan telepon, pengingat follow-up.
+6. Dashboard owner: angka ringkas di atas (hadir, terlambat, belum lapor, lead baru, booking), lalu daftar karyawan dengan status hari ini, tap untuk detail dan foto.
+7. Umum: navigasi bawah di HP, sidebar di desktop, skeleton saat memuat, toast singkat, mode gelap, target sentuh minimal 44 px.

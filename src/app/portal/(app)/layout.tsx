@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { InstallButton } from "@/features/pwa";
 import { BottomNavForUser, SidebarNavForUser, UserMenu } from "./_components/portal-shell-parts";
 
 function PortalBrand() {
@@ -36,7 +37,8 @@ export default function PortalAppLayout({ children }: { children: React.ReactNod
           <div className="lg:hidden">
             <PortalBrand />
           </div>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            <InstallButton />
             <Suspense fallback={null}>
               <UserMenu />
             </Suspense>

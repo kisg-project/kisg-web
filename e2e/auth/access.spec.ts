@@ -58,7 +58,9 @@ for (const role of APP_ROLES) {
       test(`boleh membuka ${area.prefix}`, async ({ page }) => {
         await page.goto(area.prefix);
         await expect(page).toHaveURL(area.prefix);
-        await expect(page.getByRole("heading", { level: 1, name: area.label })).toBeVisible();
+        // Beranda role memakai sapaan sebagai h1 dan nama modul sebagai h2.
+        const level = ROLE_HOME[role] === area.prefix ? 2 : 1;
+        await expect(page.getByRole("heading", { level, name: area.label })).toBeVisible();
       });
     }
 

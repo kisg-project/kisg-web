@@ -47,3 +47,6 @@ export function roleActionClient(roles: readonly AppRole[]) {
     return next({ ctx });
   });
 }
+
+/** Aksi owner/admin (kelola pengguna, konten, pengaturan). */
+export const adminActionClient = roleActionClient(["owner", "admin"]);
