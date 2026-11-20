@@ -10,7 +10,10 @@ KIS Group adalah developer perumahan.
 
 | Proyek | Status |
 |---|---|
-| Sejahtera Green Village, Tambun Selatan | Tersedia (satu-satunya proyek yang ditampilkan, fokus penjualan) |
+| Sejahtera Green Village, Tambun Selatan | Tersedia (fokus penjualan, proyek unggulan) |
+| Sejahtera Residence Mangunjaya, Tambun Selatan | Sold out (2023, 10 unit) |
+| Sejahtera Residence Tapos, Depok | Sold out (2023, 5 unit) |
+| Sejahtera Residence Sumberjaya, Tambun Selatan | Sold out (2022, 14 unit) |
 
 - Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
@@ -19,7 +22,7 @@ KIS Group adalah developer perumahan.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
-Website, landing page, chat, dan konten seed hanya menampilkan Sejahtera Green Village (keputusan owner, Fase 1). Proyek lama tidak ditampilkan dan tidak disebut. Model data tetap mendukung banyak proyek, supaya proyek berikutnya tinggal ditambah dari admin.
+Semua proyek KIS tampil di website (keputusan owner, 20 November 2026, menggantikan keputusan Fase 1). Sejahtera Green Village tetap proyek unggulan di beranda, landing page, dan chat. Proyek lama tampil sebagai portofolio bertanda "Sold out": tanpa form lead, dengan ajakan ke proyek yang masih tersedia. Data dan gambarnya dari company profile 2024.
 
 Data, nomor, kontak, dan tautan di atas adalah satu-satunya sumber kebenaran. Simpan di satu tempat (`src/config/site.ts` lalu dapat di-override dari tabel `site_settings` lewat admin). Jangan hardcode di komponen.
 

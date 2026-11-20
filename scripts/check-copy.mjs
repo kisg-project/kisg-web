@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Memeriksa aturan copywriting CLAUDE.md bagian 7 di src/, supabase/seed.sql, dan content/.
+// Memeriksa aturan copywriting CLAUDE.md bagian 7 di src/, supabase/seed.sql, content/, dan migrasi
+// berisi konten website (data yang tampil ke pengunjung, mulai 20261121000300).
 // Exit 1 kalau ada temuan. Pengecualian per baris: komentar "check-copy: allow <alasan>".
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -34,7 +35,17 @@ function collect(path) {
   );
 }
 
-const files = TARGETS.flatMap((target) => collect(join(ROOT, target)));
+// Migrasi konten ditulis setelah aturan ini ada. Migrasi skema yang lebih lama tidak boleh diedit,
+// jadi tidak ikut diperiksa.
+const FIRST_CONTENT_MIGRATION = "20261121000300";
+const migrationsDir = join(ROOT, "supabase", "migrations");
+const contentMigrations = existsSync(migrationsDir)
+  ? readdirSync(migrationsDir)
+      .filter((name) => name.endsWith(".sql") && name.slice(0, 14) >= FIRST_CONTENT_MIGRATION)
+      .map((name) => join(migrationsDir, name))
+  : [];
+
+const files = [...TARGETS.flatMap((target) => collect(join(ROOT, target))), ...contentMigrations];
 let total = 0;
 
 for (const file of files) {

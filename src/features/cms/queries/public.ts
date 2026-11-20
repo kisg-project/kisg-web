@@ -96,7 +96,7 @@ export async function getPromoBySlug(slug: string): Promise<Promo | null> {
   return data ? toPromo(data) : null;
 }
 
-const CAREER_SUMMARY = "id, slug, title, department, location, employment_type, closes_on";
+const CAREER_SUMMARY = "id, slug, title, department, location, employment_type, closes_on, level";
 
 /** Lowongan terbit yang belum tutup. */
 export async function getOpenCareers(): Promise<CareerSummary[]> {

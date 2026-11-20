@@ -69,7 +69,7 @@ select is(
 -- Pengunjung (anon) -------------------------------------------------------
 set local role anon;
 select set_config('request.jwt.claims', '{"role": "anon"}', true);
-select is((select count(*)::int from public.projects), 1, 'anon hanya melihat proyek terbit');
+select is((select count(*)::int from public.projects), 4, 'anon hanya melihat proyek terbit (SGV dan 3 proyek sold out)');
 select is((select count(*)::int from public.unit_types), 1, 'anon melihat tipe unit proyek terbit');
 select is((select count(*)::int from public.site_settings), 3, 'anon hanya melihat pengaturan publik');
 select throws_ok('select count(*) from public.profiles', '42501', null, 'anon tidak bisa membaca profil');
@@ -80,7 +80,7 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000004", "role": "authenticated"}', true);
 select is((select count(*)::int from public.profiles), 1, 'marketing hanya melihat profilnya sendiri');
-select is((select count(*)::int from public.projects), 2, 'staf aktif melihat proyek draft juga');
+select is((select count(*)::int from public.projects), 5, 'staf aktif melihat proyek draft juga');
 select throws_ok(
   $$insert into public.projects (slug, name) values ('uji-marketing', 'Uji')$$,
   '42501', null, 'marketing tidak bisa membuat proyek'
@@ -111,7 +111,7 @@ reset role;
 -- Akun nonaktif ------------------------------------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000008", "role": "authenticated"}', true);
-select is((select count(*)::int from public.projects), 1, 'akun nonaktif kehilangan akses staf');
+select is((select count(*)::int from public.projects), 4, 'akun nonaktif kehilangan akses staf');
 reset role;
 
 -- Admin ------------------------------------------------------------------

@@ -30,7 +30,7 @@ export default async function NewsPage() {
             description="Berita dan kabar proyek akan tampil di sini."
           />
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul aria-label="Daftar berita" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <li key={post.id}>
                 <Reveal delay={(index % 3) * 80} className="h-full">

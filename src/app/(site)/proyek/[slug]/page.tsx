@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Phone } from "lucide-react";
+import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -15,6 +16,7 @@ import {
   FaqList,
   formatAddress,
   getProjectBySlug,
+  getPublishedProjects,
   lowestPrice,
   ProjectGallery,
   shortArea,
@@ -27,7 +29,7 @@ import { faqJsonLd, jsonLdGraph, listingJsonLd } from "@/lib/seo/structured-data
 const STATUS_LABEL: Record<ProjectDetail["status"], string> = {
   segera: "Segera hadir",
   tersedia: "Unit tersedia",
-  sold_out: "Terjual habis",
+  sold_out: "Sold out",
 };
 
 function describe(project: ProjectDetail): string {
@@ -82,6 +84,11 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
   const firstUnit = project.unitTypes[0];
   const fromPrice = lowestPrice(project.unitTypes);
   const area = shortArea(project.address);
+  const soldOut = project.status === "sold_out";
+  // Proyek sold out mengarahkan pengunjung ke proyek yang sedang dipasarkan.
+  const available = soldOut
+    ? (await getPublishedProjects()).find((item) => item.status !== "sold_out")
+    : undefined;
 
   return (
     <>
@@ -193,39 +200,41 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
         </Section>
       ) : null}
 
-      <Section
-        id="minta-info"
-        tone="surface"
-        title="Minta info"
-        description="Isi nama dan nomor WhatsApp. Marketing kami menghubungi Anda di jam kerja."
-        className="scroll-mt-(--header-height)"
-      >
-        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-          <Reveal className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7">
-            <LeadForm
-              formKind="minat"
-              projectSlug={project.slug}
-              projectName={project.name}
-              idPrefix="minat"
-            />
-          </Reveal>
-          <Reveal
-            delay={80}
-            className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
-          >
-            <h3 className="text-lg font-bold">Minta brosur</h3>
-            <p className="mt-1 mb-4 text-sm text-subtle-foreground">
-              Brosur dikirim marketing lewat WhatsApp.
-            </p>
-            <LeadForm
-              formKind="brosur"
-              projectSlug={project.slug}
-              projectName={project.name}
-              idPrefix="brosur"
-            />
-          </Reveal>
-        </div>
-      </Section>
+      {soldOut ? null : (
+        <Section
+          id="minta-info"
+          tone="surface"
+          title="Minta info"
+          description="Isi nama dan nomor WhatsApp. Marketing kami menghubungi Anda di jam kerja."
+          className="scroll-mt-(--header-height)"
+        >
+          <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+            <Reveal className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7">
+              <LeadForm
+                formKind="minat"
+                projectSlug={project.slug}
+                projectName={project.name}
+                idPrefix="minat"
+              />
+            </Reveal>
+            <Reveal
+              delay={80}
+              className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
+            >
+              <h3 className="text-lg font-bold">Minta brosur</h3>
+              <p className="mt-1 mb-4 text-sm text-subtle-foreground">
+                Brosur dikirim marketing lewat WhatsApp.
+              </p>
+              <LeadForm
+                formKind="brosur"
+                projectSlug={project.slug}
+                projectName={project.name}
+                idPrefix="brosur"
+              />
+            </Reveal>
+          </div>
+        </Section>
+      )}
 
       {project.faqs.length > 0 ? (
         <Section id="faq" title="Pertanyaan umum" className="scroll-mt-(--header-height)">
@@ -237,24 +246,49 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
 
       <section aria-labelledby="cta-proyek" className="bg-primary-900 py-12 text-white sm:py-16">
         <Reveal className="mx-auto flex w-full max-w-7xl flex-col items-start gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <div>
-            <h2 id="cta-proyek" className="text-2xl font-bold sm:text-3xl">
-              Tertarik dengan {project.name}?
-            </h2>
-            <p className="mt-2 text-primary-100">
-              Tanya unit tersedia, simulasi cicilan, atau jadwal survei lewat WhatsApp.
-            </p>
-          </div>
-          <Button asChild variant="highlight" size="lg">
-            <a
-              href={whatsappLink(`Halo, saya ingin info ${project.name}.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Phone aria-hidden="true" />
-              Hubungi marketing
-            </a>
-          </Button>
+          {soldOut ? (
+            <>
+              <div>
+                <h2 id="cta-proyek" className="text-2xl font-bold sm:text-3xl">
+                  Semua unit {project.name} sudah terjual
+                </h2>
+                <p className="mt-2 text-primary-100">
+                  {available
+                    ? `Unit yang masih tersedia ada di ${available.name}.`
+                    : "Tanya proyek berikutnya lewat WhatsApp."}
+                </p>
+              </div>
+              {available ? (
+                <Button asChild variant="highlight" size="lg">
+                  <Link href={`/proyek/${available.slug}`}>
+                    Lihat {available.name}
+                    <ArrowRight aria-hidden="true" />
+                  </Link>
+                </Button>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <div>
+                <h2 id="cta-proyek" className="text-2xl font-bold sm:text-3xl">
+                  Tertarik dengan {project.name}?
+                </h2>
+                <p className="mt-2 text-primary-100">
+                  Tanya unit tersedia, simulasi cicilan, atau jadwal survei lewat WhatsApp.
+                </p>
+              </div>
+              <Button asChild variant="highlight" size="lg">
+                <a
+                  href={whatsappLink(`Halo, saya ingin info ${project.name}.`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Phone aria-hidden="true" />
+                  Hubungi marketing
+                </a>
+              </Button>
+            </>
+          )}
         </Reveal>
       </section>
     </>

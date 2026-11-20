@@ -113,10 +113,16 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 |---|---|---|---|
 | Semua halaman publik tampil: satu h1, canonical, jejak halaman, axe, responsif 320 sampai 1440 px | `pages.spec.ts` | 3 | Ditulis |
 | Tautan internal header dan footer tidak 404 | `pages.spec.ts` | 3 | Ditulis |
-| Menu "Proyek" langsung ke detail selama hanya ada satu proyek terbit (desktop dan menu HP) | `pages.spec.ts` | 3 | Ditulis |
+| Menu "Proyek" membuka daftar proyek karena ada lebih dari satu proyek terbit (desktop dan menu HP) | `pages.spec.ts` | 3 | Ditulis |
 | Slug tidak ada, proyek draft, berita draft, promo kedaluwarsa, lowongan draft: halaman 404 di layout website dan `noindex` | `pages.spec.ts` | 3 | Ditulis |
-| Keadaan kosong berita, promo, karir | `pages.spec.ts` | 3 | Ditulis |
-| Hero banner dari database: autoplay, jeda, tombol, keyboard, indikator, slide nonaktif inert, `prefers-reduced-motion` menghentikan autoplay | `home.spec.ts` | 3 | Ditulis |
+| Keadaan kosong promo dan jenjang karir tanpa lowongan | `pages.spec.ts` | 3 | Ditulis |
+| Hero banner dari database: autoplay, hanya indikator kecil, memilih slide menghentikan autoplay, keyboard, slide nonaktif inert, `prefers-reduced-motion` menghentikan autoplay | `home.spec.ts` | 3 | Ditulis |
+| Cuplikan galeri beranda tidak mengulang foto banner | `home.spec.ts` | 3 | Ditulis |
+| Berita: 10 artikel bersampul, terbaru di atas; detail dengan Article JSON-LD dan sumber sebagai tautan keluar | `pages.spec.ts` | 3 | Ditulis |
+| Karir: 4 kartu jenjang bergambar, halaman jenjang dengan keadaan kosong dan tautan ke jenjang lain, sitemap | `pages.spec.ts` | 3 | Ditulis |
+| Proyek sold out: badge di daftar, detail tanpa form dan mengarah ke proyek tersedia, axe dan responsif, sitemap | `pages.spec.ts` | 3 | Ditulis |
+| Footer: logo terang tanpa kotak, peta kantor ke Google Maps | `pages.spec.ts` | 3 | Ditulis |
+| Persetujuan PDP: tautan kebijakan privasi menyatu di kalimat dan dibuka di tab baru | `forms.spec.ts` | 3 | Ditulis |
 | Ringkasan unit, harga, rincian biaya, dan "Mulai Rp 500 jutaan" dari database | `home.spec.ts`, `pages.spec.ts` | 3 | Ditulis |
 | Detail proyek: galeri dengan tampilan penuh (tombol dan keyboard), tipe unit, FAQ | `pages.spec.ts` | 3 | Ditulis |
 | Simulasi KPR: hasil sesuai nilai acuan, dropdown custom bisa dipilih dengan klik dan keyboard | `simulasi-kpr.spec.ts` | 3 | Ditulis |
