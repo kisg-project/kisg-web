@@ -73,7 +73,7 @@ test.describe("Login portal", () => {
     await page.goto("/portal/login");
     await loginViaForm(page, user);
     await expect(page.getByRole("main").getByRole("alert")).toHaveText(
-      "Akun Anda tidak aktif. Hubungi admin.",
+      "Akun Anda tidak aktif. Hubungi owner.",
     );
     await page.goto("/portal/crm");
     await expect(page).toHaveURL(/\/portal\/login\?next=%2Fportal%2Fcrm/);
@@ -84,7 +84,7 @@ test.describe("Login portal", () => {
     await page.goto("/portal/login");
     await loginViaForm(page, user);
     await expect(page.getByRole("main").getByRole("alert")).toHaveText(
-      "Akun Anda tidak aktif. Hubungi admin.",
+      "Akun Anda tidak aktif. Hubungi owner.",
     );
   });
 

@@ -34,12 +34,12 @@ export async function UserMenu() {
       <Link
         href="/portal/akun"
         className="flex min-h-11 min-w-0 items-center gap-2 rounded-md px-1 hover:bg-accent"
-        aria-label={`Akun saya: ${user.fullName}`}
       >
+        <span className="sr-only">Akun saya, </span>
         <Avatar src={photo} name={user.fullName} className="size-9" />
         <span className="hidden min-w-0 text-right sm:block">
           <span className="block truncate text-sm font-semibold">{user.fullName}</span>
-          <span className="block truncate text-xs text-muted-foreground">
+          <span className="block truncate text-xs text-subtle-foreground">
             {ROLE_LABELS[user.role]}
             {extra > 0 ? ` +${String(extra)}` : ""}
           </span>

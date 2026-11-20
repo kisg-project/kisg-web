@@ -101,9 +101,9 @@ test.describe("Karyawan (owner)", () => {
     await form.getByLabel("Pilih dari galeri").setInputFiles(PHOTO);
     await expect(form.getByText("Foto profil tersimpan.")).toBeVisible();
     await form.getByLabel("Nomor HP (WhatsApp)").fill("0812 7777 1234");
-    await form.getByLabel("Password baru").fill(E2E_PASSWORD);
+    await form.getByLabel("Password baru", { exact: true }).fill(E2E_PASSWORD);
     await expect(form.getByText(/Kekuatan:/)).toBeVisible();
-    await form.getByLabel("Ulangi password").fill(E2E_PASSWORD);
+    await form.getByLabel("Ulangi password", { exact: true }).fill(E2E_PASSWORD);
     await form.getByRole("button", { name: "Aktifkan akun" }).click();
     await expect(invitee).toHaveURL("/portal/lapangan");
 
@@ -200,6 +200,8 @@ test.describe("Aktivasi dan Akun saya", () => {
     const user = await createPortalUser({ role: "marketing", complete: false });
     await page.goto("/portal/login");
     await loginViaForm(page, user);
+    // Login mengarah ke beranda marketing, lalu layout portal mengalihkan ke aktivasi.
+    await expect(page).toHaveURL("/portal/aktivasi");
     await page.goto("/portal/crm");
     await expect(page).toHaveURL("/portal/aktivasi");
     // Akun lama sudah punya password: bagian password opsional.
@@ -229,13 +231,13 @@ test.describe("Aktivasi dan Akun saya", () => {
 
     const password = page.getByRole("form", { name: "Ganti password" });
     const next = "BaruRahasia2027";
-    await password.getByLabel("Password saat ini").fill("SalahSekali2026");
-    await password.getByLabel("Password baru").fill(next);
-    await password.getByLabel("Ulangi password baru").fill(next);
+    await password.getByLabel("Password saat ini", { exact: true }).fill("SalahSekali2026");
+    await password.getByLabel("Password baru", { exact: true }).fill(next);
+    await password.getByLabel("Ulangi password baru", { exact: true }).fill(next);
     await password.getByRole("button", { name: "Ganti password" }).click();
     await expect(password.getByRole("alert")).toHaveText("Password saat ini salah.");
 
-    await password.getByLabel("Password saat ini").fill(user.password);
+    await password.getByLabel("Password saat ini", { exact: true }).fill(user.password);
     await password.getByRole("button", { name: "Ganti password" }).click();
     await expect(page.getByText(/Password diganti/)).toBeVisible();
 

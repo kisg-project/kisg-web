@@ -75,12 +75,14 @@ test.describe("PWA portal", () => {
         page.getByRole("heading", { level: 1, name: "Anda sedang offline" }),
       ).toBeVisible();
       await context.setOffline(false);
-      await page.getByRole("button", { name: "Muat ulang" }).click();
-      await expect(
-        page.getByRole("heading", { level: 1, name: "Anda sedang offline" }),
-      ).toBeVisible({
-        visible: false,
-      });
+      // Jaringan service worker di Chromium baru pulih sesaat setelah emulasi offline dimatikan,
+      // jadi "Muat ulang" dicoba ulang sampai halaman asli tampil (maksimal 20 detik).
+      await expect(async () => {
+        await page.getByRole("button", { name: "Muat ulang" }).click();
+        await expect(
+          page.getByRole("heading", { level: 1, name: "Anda sedang offline" }),
+        ).toBeHidden({ timeout: 2000 });
+      }).toPass({ timeout: 20_000 });
     });
   });
 });

@@ -8,6 +8,8 @@ import {
   Target,
   UsersRound,
 } from "lucide-react";
+import { PageHeader } from "@/components/shared/page-header";
+import { ROLE_HOME } from "@/config/portal";
 import { requirePortalUser } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
 import { ModuleCards, type PortalModule } from "../_components/module-cards";
@@ -69,14 +71,22 @@ const MODULES: readonly PortalModule[] = [
 
 export default async function OwnerPage() {
   const user = await requirePortalUser(["owner", "admin"]);
+  // Beranda owner memakai sapaan sebagai h1. Akun lain (misal admin lama) melihat judul halaman biasa.
+  const isHome = ROLE_HOME[user.role] === "/portal/owner";
   return (
     <div className="grid gap-6">
-      <PortalGreeting
-        fullName={user.fullName}
-        roles={user.roles}
-        avatarUrl={await avatarUrl(user.avatarPath)}
-      />
-      <h2 className="text-xl font-bold">Dashboard owner</h2>
+      {isHome ? (
+        <>
+          <PortalGreeting
+            fullName={user.fullName}
+            roles={user.roles}
+            avatarUrl={await avatarUrl(user.avatarPath)}
+          />
+          <h2 className="text-xl font-bold">Dashboard owner</h2>
+        </>
+      ) : (
+        <PageHeader title="Dashboard owner" description={`Masuk sebagai ${user.fullName}.`} />
+      )}
       <ModuleCards label="Modul owner" modules={MODULES} />
     </div>
   );
