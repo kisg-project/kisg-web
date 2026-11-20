@@ -15,7 +15,7 @@ KIS Group adalah developer perumahan.
 - Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
 - Alamat kantor: Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123
-- WhatsApp marketing: `+62 896-7329-6881` (link: `https://wa.me/6289673296881`). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
+- WhatsApp marketing: `+62 882-9095-7177` (link: `https://wa.me/6288290957177`), menggantikan nomor lama sejak 20 November 2026 (keputusan owner). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
@@ -31,7 +31,7 @@ Satu codebase Next.js, empat area:
 
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
-3. **Portal internal + PWA** (`/portal`): laporan kinerja karyawan (lapangan, marketing), dashboard owner, CRM, dan panel admin CMS. Bisa di-install di HP.
+3. **Portal internal + PWA** (`company.kisgroup.co.id`, route `src/app/portal/`): laporan kinerja karyawan (lapangan, marketing), dashboard owner, CRM, dan panel admin CMS. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
 
@@ -201,7 +201,9 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Referensi struktur: damaiputra.com (hero carousel lebar, strip statistik, kartu proyek, berita, promo, CTA penutup, footer lengkap, tombol WhatsApp melayang). Ambil polanya, jangan meniru visual atau kontennya.
 - Grid 12 kolom, container maks ~1280px, ritme spasi konsisten (kelipatan 4/8).
 - Radius kecil sampai sedang (4 sampai 8px). Bayangan tipis. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
-- Animasi halus dan fungsional (fade/slide pendek, maks ~250ms), hormati `prefers-reduced-motion`.
+- Website banyak gerak halus (keputusan owner, Fase 3): bagian halaman muncul saat di-scroll (`Reveal`, fade dan geser naik sekitar 600ms), banner bergeser otomatis dengan tombol jeda, kartu dan foto bereaksi saat disentuh atau di-hover, angka statistik berhitung naik. Interaksi kecil (hover, tombol) tetap pendek, maks ~250ms. Tanpa library animasi. Konten tidak boleh disembunyikan sebelum JavaScript jalan, LCP dan CLS tidak boleh terganggu, dan semua gerak berhenti kalau `prefers-reduced-motion` aktif.
+- Scrollbar minimalis: tipis, warna menyatu dengan palet, latar transparan (keputusan owner, Fase 3).
+- Dropdown selalu memakai komponen custom `src/components/ui/select.tsx` (Radix), tidak memakai `<select>` bawaan browser, supaya tampilannya seragam (keputusan owner, Fase 3). Dipaksa aturan ESLint `no-restricted-syntax`.
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
 
@@ -350,7 +352,7 @@ Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Su
 | GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
 | Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
 | Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |
-| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | Backup `pg_dump` terenkripsi harian lewat GitHub Actions, yang juga menjaga project production tetap aktif |
+| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | `keepalive.yml` ping API production setiap hari dan membuat issue kalau gagal. Backup terjadwal tidak dipakai (keputusan owner, Fase 2): data yang terhapus tidak bisa dikembalikan |
 | Supabase Free: database 500 MB, storage 1 GB | Kompresi gambar wajib (bagian 8), masa simpan data yang bisa diatur, pemantauan kuota |
 
 Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
@@ -370,18 +372,18 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 2. **`db.yml`** (PR yang menyentuh `supabase/`): `supabase start`, terapkan semua migrasi dari nol, jalankan test RLS, `supabase db lint`, pastikan `database.types.ts` sama dengan hasil generate (`git diff --exit-code`), deteksi operasi destruktif (DROP, RENAME, ubah tipe kolom) dan wajibkan label `migration:destructive` + persetujuan.
 3. **`security.yml`** (setiap PR + terjadwal mingguan): gitleaks (secret scan), `pnpm audit` gagal di level high ke atas. CodeQL dan `dependency-review-action` tidak dipakai selama repo private di GitHub Free.
 4. **`preview.yml`** (event `deployment_status` dari Vercel Preview): smoke E2E halaman publik ke URL preview, lalu Lighthouse CI dengan budget (performance, accessibility, best practices, SEO minimal 95 untuk halaman publik dan LP). Hasil dikomentari ke PR.
-5. **`deploy-db.yml`**: merge ke `main` yang menyentuh migrasi atau pengaturan Auth menjalankan `supabase db push` dan pengaturan Auth ke Supabase production.
+5. **`deploy-production.yml`** (setiap push ke `main`): migrasi dan pengaturan Auth ke Supabase production (kalau ada perubahan database), lalu `vercel build --prod` dan `vercel deploy --prebuilt --prod`. Urutan ini wajib karena halaman website di-prerender dari database. Deploy Git otomatis Vercel untuk `main` dimatikan di `vercel.json`.
 6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
 7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
-8. **`backup.yml`** (terjadwal harian): `pg_dump` production, dienkripsi, disimpan sebagai artifact dengan masa simpan terbatas. Koneksi harian ini juga mencegah project dijeda.
+8. **`keepalive.yml`** (terjadwal harian): membaca satu baris data publik dari API Supabase production supaya project tidak dijeda, dan membuat issue kalau gagal.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
 ### Deploy (Vercel)
-- Integrasi Git Vercel: Preview untuk setiap PR, Production otomatis dari `main`. Preview tidak punya env Supabase, jadi portal di preview tidak aktif dan tidak ada data percobaan yang masuk ke production.
+- Integrasi Git Vercel: Preview untuk setiap PR. Production dari `deploy-production.yml` setelah migrasi, otomatis di setiap merge ke `main`. Preview hanya punya URL dan publishable key Supabase production untuk membaca konten publik (tanpa secret key). Portal di preview dimatikan oleh `proxy.ts` (`VERCEL_ENV=preview`) dan form publik tidak menulis, jadi tidak ada data percobaan yang masuk ke production.
 - `ignoreCommand` supaya perubahan yang hanya menyentuh `docs/` atau `*.md` tidak memicu build.
 - Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `PRODUCTION_`, tidak pernah di file repo.
-- Migrasi harus backward compatible (pola expand lalu contract) karena deploy Vercel dan `deploy-db.yml` berjalan bersamaan setelah merge, sehingga app lama dan baru sempat memakai skema yang sama. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
+- Migrasi harus backward compatible (pola expand lalu contract) karena app lama masih melayani pengunjung selama migrasi dan build production berjalan. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
 - Rollback app lewat Instant Rollback Vercel. Rollback database lewat migrasi perbaikan baru, tidak pernah mengedit migrasi lama.
 - `docs/ci-cd.md` menjelaskan alur ini, daftar secret yang dibutuhkan, dan cara rollback.
 

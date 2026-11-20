@@ -117,8 +117,8 @@ Risiko teknis:
 
 Risiko teknis:
 - **Vercel Hobby melarang pemakaian komersial.** Website perusahaan properti termasuk komersial. Kalau Vercel menegur, project bisa dinonaktifkan. Owner perlu memutuskan sebelum domain production diarahkan.
-- Supabase Free tanpa backup otomatis dan tanpa PITR. Backup harian lewat `backup.yml` harus diuji restore minimal sekali ke Supabase lokal.
-- Project Supabase Free dijeda kalau 7 hari tidak aktif. Production dijaga oleh koneksi harian `backup.yml`.
+- Supabase Free tanpa backup otomatis dan tanpa PITR. Backup terjadwal tidak dipakai (keputusan owner, Fase 2), risiko kehilangan data diterima.
+- Project Supabase Free dijeda kalau 7 hari tidak aktif. Production dijaga oleh ping harian `keepalive.yml`.
 - Domain production butuh akses DNS.
 
 ## Anggaran menit GitHub Actions
@@ -131,7 +131,7 @@ Kuota GitHub Free untuk repo private: 2.000 menit per bulan (runner Linux). Perk
 | `ci.yml` saat merge ke `main`: build saja, karena PR sudah menjalankan E2E | 10 | 15 | 150 |
 | `db.yml` (PR yang menyentuh `supabase/`) | 10 | 10 | 100 |
 | `e2e-weekly.yml` (3x suite penuh) | 75 | 4 | 300 |
-| `security.yml`, `preview.yml`, `backup.yml`, `deploy-*`, `release` | | | 200 |
+| `security.yml`, `preview.yml`, `keepalive.yml`, `deploy-*`, `release` | | | 200 |
 | **Total** | | | **sekitar 1.710** |
 
 Sisa ruang sekitar 15%. Pengaman:

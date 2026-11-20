@@ -1,0 +1,101 @@
+name: Deploy production
+
+# Setiap merge ke main langsung tayang (keputusan owner, tanpa staging). Urutannya dijaga di sini:
+# migrasi dan pengaturan Auth ke Supabase production dulu, baru build dan deploy Vercel production.
+# Halaman website di-prerender dari database, jadi build harus melihat skema yang sudah termigrasi.
+# Deploy Git otomatis Vercel untuk main dimatikan di vercel.json supaya tidak balapan dengan migrasi.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: migrate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.PRODUCTION_SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - name: Ada perubahan database atau Auth?
+        id: changes
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "${{ github.event_name }}" != "push" ] || [ -z "$BEFORE" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --name-only "$BEFORE" HEAD | grep -Eq '^(supabase/migrations/|supabase/templates/|scripts/supabase-auth-config.mjs|\.github/workflows/deploy-production.yml)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Tidak ada perubahan database. Migrasi dilewati."
+          fi
+      - name: Cek konfigurasi
+        if: steps.changes.outputs.run == 'true'
+        run: |
+          for name in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF; do
+            if [ -z "${!name}" ]; then echo "::error::Secret $name belum diisi."; exit 1; fi
+          done
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+        if: steps.changes.outputs.run == 'true'
+        with:
+          version: 3.2.0
+      - name: supabase db push ke production
+        if: steps.changes.outputs.run == 'true'
+        run: |
+          supabase db push --remote="$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD" --yes
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.changes.outputs.run == 'true'
+        with:
+          node-version: 24
+      - name: Pengaturan Auth production
+        if: steps.changes.outputs.run == 'true'
+        env:
+          # Ganti ke https://kisgroup.co.id saat domain sudah terhubung ke Vercel (docs/TODO-DATA.md).
+          SITE_URL: https://kisg-web.vercel.app
+          BREVO_SMTP_LOGIN: ${{ secrets.BREVO_SMTP_LOGIN }}
+          BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
+        run: node scripts/supabase-auth-config.mjs
+
+  deploy:
+    name: deploy
+    needs: migrate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Cek konfigurasi
+        run: |
+          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!name}" ]; then echo "::error::Secret $name belum diisi."; exit 1; fi
+          done
+      - name: Build dan deploy Vercel production
+        run: |
+          npx --yes vercel@66.2.0 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx --yes vercel@66.2.0 build --prod --token="$VERCEL_TOKEN"
+          npx --yes vercel@66.2.0 deploy --prebuilt --prod --token="$VERCEL_TOKEN"

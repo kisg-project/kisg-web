@@ -16,7 +16,9 @@ test.describe("Halaman simulasi KPR", () => {
     await page.goto("/simulasi-kpr");
     await waitForKprReady(page);
     const panel = page.getByRole("tabpanel", { name: "KPR Konvensional" });
-    await expect(panel.getByLabel("Program KPR")).toHaveValue("mandiri-fixed-3");
+    await expect(panel.getByRole("combobox", { name: "Program KPR" })).toHaveText(
+      "Mandiri KPR Bunga Spesial Fixed 3 Tahun",
+    );
     await expect(panel.getByLabel("Harga rumah")).toHaveValue("571.250.000");
     await expect(panel.getByLabel("Uang muka (rupiah)")).toHaveValue("57.125.000");
     await expect(panel.getByText("Rp 3.491.410").first()).toBeVisible();
@@ -33,8 +35,27 @@ test.describe("Halaman simulasi KPR", () => {
       "aria-pressed",
       "true",
     );
-    await expect(panel.getByLabel("Program KPR")).toHaveValue("btn-fixed-3");
+    await expect(panel.getByRole("combobox", { name: "Program KPR" })).toHaveText(
+      "KPR BTN Fixed 3 Tahun",
+    );
     await expect(panel.getByText("Rp 3.464.551").first()).toBeVisible();
+  });
+
+  test("dropdown program memakai komponen custom dan bisa dipilih dengan keyboard", async ({
+    page,
+  }) => {
+    await page.goto("/simulasi-kpr");
+    await waitForKprReady(page);
+    const panel = page.getByRole("tabpanel", { name: "KPR Konvensional" });
+    const program = panel.getByRole("combobox", { name: "Program KPR" });
+    await program.click();
+    await page.getByRole("option", { name: "KPR BTN Fixed 3 Tahun" }).click();
+    await expect(program).toHaveText("KPR BTN Fixed 3 Tahun");
+    await expect(panel.getByText("Rp 3.464.551").first()).toBeVisible();
+    await program.focus();
+    await page.keyboard.press("Enter");
+    await page.getByRole("option", { name: "Atur sendiri" }).click();
+    await expect(program).toHaveText("Atur sendiri");
   });
 
   test("input nominal bertitik otomatis dan persen memakai koma", async ({ page }) => {
@@ -77,7 +98,9 @@ test.describe("Halaman simulasi KPR", () => {
     await page.getByRole("tab", { name: "KPR Syariah" }).click();
     await waitForKprReady(page, "syariah");
     const panel = page.getByRole("tabpanel", { name: "KPR Syariah" });
-    await expect(panel.getByLabel("Program pembiayaan")).toHaveValue("bsi-sejahtera");
+    await expect(panel.getByRole("combobox", { name: "Program pembiayaan" })).toHaveText(
+      "BSI KPR Sejahtera",
+    );
     await expect(panel.getByText("Rp 4.065.668").first()).toBeVisible();
     await expect(panel.getByText("Harga jual bank (pokok + margin)")).toBeVisible();
     await expect(panel.getByText("Margin tetap sampai lunas").first()).toBeVisible();

@@ -6,6 +6,11 @@ import { portalAccess, ROLE_HOME } from "@/config/portal";
 // Proxy hanya untuk portal: menyegarkan sesi Supabase dan menolak rute di luar hak role.
 // Pengaman utama tetap RLS di database dan cek role di server action.
 export async function proxy(request: NextRequest) {
+  // Preview Vercel membaca konten publik dari database production (read-only), tetapi portal dimatikan
+  // supaya kode yang belum di-merge tidak bisa mengubah data production.
+  if (process.env.VERCEL_ENV === "preview") {
+    return new NextResponse("Portal tidak aktif di preview.", { status: 503 });
+  }
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) {

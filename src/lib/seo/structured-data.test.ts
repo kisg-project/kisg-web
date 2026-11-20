@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   absoluteUrl,
-  featuredListingJsonLd,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+  listingJsonLd,
   jsonLdGraph,
   organizationJsonLd,
   serializeJsonLd,
@@ -24,20 +27,87 @@ describe("organizationJsonLd", () => {
     expect(data).toMatchObject({
       "@type": "RealEstateAgent",
       legalName: "PT Kreatif Inovatif Sejahtera Group",
-      telephone: "+6289673296881",
+      telephone: "+6288290957177",
       address: { postalCode: "17123", addressCountry: "ID" },
     });
   });
 });
 
-describe("featuredListingJsonLd", () => {
-  it("memuat harga rupiah dan spesifikasi unit", () => {
-    const data = featuredListingJsonLd(SITE, ["/images/hero/sgv-hero-desktop.webp"]);
+const LISTING = {
+  name: "Sejahtera Green Village",
+  path: "/proyek/sejahtera-green-village",
+  address: {
+    street: "Jl. Garuda 3 No. NK-34",
+    village: "Mangunjaya",
+    district: "Kec. Tambun Selatan",
+    city: "Kab. Bekasi",
+    province: "Jawa Barat",
+    postalCode: "17510",
+  },
+  imagePaths: ["/images/hero/sgv-hero-desktop.webp"],
+  unit: {
+    name: "Tipe 36/60",
+    price: 571_250_000,
+    bedrooms: 2,
+    bathrooms: 1,
+    buildingArea: 36,
+    features: ["Carport"],
+  },
+};
+
+describe("listingJsonLd", () => {
+  it("memuat harga rupiah, spesifikasi unit, dan alamat proyek", () => {
+    const data = listingJsonLd(SITE, LISTING);
     expect(data).toMatchObject({
       "@type": "RealEstateListing",
+      url: "https://kisgroup.co.id/proyek/sejahtera-green-village",
       offers: { price: 571_250_000, priceCurrency: "IDR" },
-      about: { numberOfBedrooms: 2, numberOfBathroomsTotal: 1, address: { postalCode: "17510" } },
+      about: {
+        numberOfBedrooms: 2,
+        numberOfBathroomsTotal: 1,
+        address: { postalCode: "17510", addressLocality: "Mangunjaya, Kec. Tambun Selatan" },
+      },
       image: ["https://kisgroup.co.id/images/hero/sgv-hero-desktop.webp"],
+    });
+  });
+
+  it("tanpa Offer kalau harga tidak ditampilkan", () => {
+    const data = listingJsonLd(SITE, { ...LISTING, unit: { ...LISTING.unit, price: null } });
+    expect(data).not.toHaveProperty("offers");
+  });
+});
+
+describe("breadcrumb, artikel, dan FAQ", () => {
+  it("breadcrumb berurutan dengan URL absolut", () => {
+    expect(
+      breadcrumbJsonLd(SITE, [
+        { name: "Beranda", path: "/" },
+        { name: "Berita", path: "/berita" },
+      ]),
+    ).toMatchObject({
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { position: 1, item: "https://kisgroup.co.id/" },
+        { position: 2, name: "Berita", item: "https://kisgroup.co.id/berita" },
+      ],
+    });
+  });
+
+  it("artikel tanpa gambar tidak memuat properti image", () => {
+    const data = articleJsonLd(SITE, {
+      title: "Judul",
+      path: "/berita/judul",
+      publishedAt: "2026-11-20T00:00:00Z",
+      image: null,
+      description: null,
+    });
+    expect(data).toMatchObject({ "@type": "Article", headline: "Judul" });
+    expect(data).not.toHaveProperty("image");
+  });
+
+  it("FAQ memetakan pertanyaan dan jawaban", () => {
+    expect(faqJsonLd([{ question: "Harga?", answer: "Rp 1" }])).toMatchObject({
+      mainEntity: [{ name: "Harga?", acceptedAnswer: { text: "Rp 1" } }],
     });
   });
 });

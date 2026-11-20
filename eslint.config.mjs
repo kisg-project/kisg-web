@@ -28,6 +28,16 @@ export default defineConfig([
       "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
       "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
       "eslint-comments/require-description": "off",
+      // Dropdown wajib komponen custom (src/components/ui/select.tsx) supaya seragam di semua browser
+      // (keputusan owner, Fase 3). Elemen select bawaan browser tidak dipakai.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "JSXOpeningElement[name.name='select']",
+          message:
+            "Pakai komponen Select dari @/components/ui/select, bukan select bawaan browser.",
+        },
+      ],
       "no-restricted-imports": [
         "error",
         {

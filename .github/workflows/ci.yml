@@ -106,6 +106,10 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Halaman website di-prerender dari database (Fase 3), jadi build butuh Supabase lokal. Data
+      # konten memakai ID tetap dari migrasi, sehingga sama dengan database di job E2E.
+      - name: Supabase lokal
+        uses: ./.github/actions/supabase-local
       - name: Cache build Next.js
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -160,9 +164,13 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - name: Pasang browser
+        # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
+        timeout-minutes: 8
         if: steps.browsers.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium webkit
       - name: Pasang dependency sistem browser
+        # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
+        timeout-minutes: 8
         if: steps.browsers.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium webkit
       - name: Supabase lokal

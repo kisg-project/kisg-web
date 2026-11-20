@@ -10,14 +10,18 @@ Cara kirim: tempel di chat, atau taruh file di folder Downloads lalu kabari nama
 |---|---|---|---|
 | Nama badan usaha | PT Kreatif Inovatif Sejahtera Group | Ada | |
 | Alamat kantor | Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123 | Ada | |
-| Kontak | WhatsApp marketing `+62 896-7329-6881` saja | Ada | |
+| Kontak | WhatsApp marketing `+62 882-9095-7177` saja (mengganti nomor lama, 20 November 2026) | Ada | |
 | Instagram | `@kreatifsejahteraproject` | Ada | |
 | Jam operasional kantor | | Perlu | Fase 3 |
 | Titik Google Maps kantor | | Perlu (link share atau koordinat) | Fase 3 |
-| Profil singkat perusahaan (tahun berdiri, sejarah singkat) | | Perlu | Fase 3 |
-| Visi dan misi | | Perlu | Fase 3 |
-| Statistik beranda (jumlah proyek, unit terjual, keluarga penghuni, tahun berdiri) | | Perlu, angka asli saja. Kalau tidak ada, strip statistik disembunyikan | Fase 3 |
+| Profil singkat perusahaan (tahun berdiri, sejarah singkat) | Berdiri 2022, fokus rumah terjangkau di Kabupaten Bekasi (Company Profile PT KISG 2024) | Ada | |
+| Visi dan misi | Dari Company Profile PT KISG 2024, tampil di `/tentang` | Ada | |
+| Statistik beranda (jumlah proyek, unit terjual, keluarga penghuni, tahun berdiri) | Tahun berdiri 2022, 16 unit Sejahtera Green Village, luas bangunan 36 m2 (`site_settings` key `stats.home`). Unit terjual dan keluarga penghuni belum ada | Sebagian | Fase 3 |
 | Foto kantor dan tim (opsional) | | Perlu | Fase 3 |
+
+### Beda kontak di Company Profile PT KISG (2024), perlu konfirmasi owner
+
+Company profile mencantumkan telepon +62 812-1038-7720, email kreatifsejahteraproject@gmail.com, dan website kisgproject.com. Website memakai WhatsApp +62 882-9095-7177 (keputusan owner, 20 November 2026) dan domain kisgroup.co.id. Company profile juga menyebut Sejahtera Green Village 16 unit dengan luas tanah 60 sampai 73 m2 (tipe 36/60 sampai 36/73); harga yang tampil baru tipe 36/60.
 
 ## 2. Legalitas perusahaan (arsip internal, tidak tampil di website)
 
@@ -48,7 +52,7 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 | Harga belum termasuk | Administrasi bank, biaya notaris bank, pajak pembelian (BPHTB), asuransi |
 | Fasilitas unit | Carport, halaman belakang, smart door lock |
 | Tempat sekitar (nama saja) | Stasiun Tambun, Tol Bekasi Timur, Bank Mandiri KCP Mangunjaya, Superindo dan area komersial Tambun |
-| Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dipakai untuk Hero Banner |
+| Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dikompres ke `public/images/projects/sejahtera-green-village/` dan dipakai untuk banner beranda dan galeri proyek (migrasi `20261121000300`) |
 
 ### Masih dibutuhkan
 
@@ -132,7 +136,7 @@ Kunci rahasia tidak pernah ditempel di chat. Owner mengisinya langsung di Vercel
 | Supabase | Production `skxawyvopumzrefnmvyf` (staging dihapus, Fase 2) | Ada | |
 | Supabase | Password database production (owner yang memegang) | Perlu untuk secret CI | Fase 2 |
 | Vercel | Akun `kisg-project`, project belum dibuat | Sebagian | Fase 1 |
-| Domain | Akses DNS `kisgroup.co.id` (siapa registrar-nya) | Perlu | Fase 9 |
+| Domain | Registrar Rumahweb (info owner, 20 November 2026). Nameserver dipindah ke Cloudflare. Record yang dibutuhkan: `kisgroup.co.id` dan `www` ke Vercel, `company` (portal karyawan) CNAME `cname.vercel-dns.com`, semuanya tanpa proxy Cloudflare | Perlu (tutorial setelah website dan PWA) | Setelah PWA |
 | Sentry | Organisasi dan project, `SENTRY_AUTH_TOKEN` | Perlu | Fase 1 |
 | Cloudflare | Akun gratis, domain kisgroup.co.id ditambahkan, nameserver di registrar diganti ke nameserver Cloudflare, lalu API token (izin Zone DNS Edit dan Email Routing Edit untuk kisgroup.co.id) disimpan di `accounts.env` sebagai `CLOUDFLARE_API_TOKEN` | Perlu (langkah owner, lihat di bawah) | Fase 2 |
 | Brevo | Akun gratis, domain kisgroup.co.id ditambahkan di Senders and Domains (record DNS saya pasang lewat Cloudflare), SMTP login dan SMTP key, API key. Disimpan di `accounts.env` sebagai `BREVO_SMTP_LOGIN`, `BREVO_SMTP_KEY`, `BREVO_API_KEY` | Perlu (langkah owner) | Fase 2 |

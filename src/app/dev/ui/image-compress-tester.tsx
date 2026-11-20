@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { IMAGE_PROFILES, type ImageProfileName } from "@/config/images";
 import { compressImage, ImageCompressionError, type CompressedImage } from "@/lib/image";
 
@@ -42,21 +49,24 @@ export function ImageCompressTester() {
     <div className="grid grid-cols-1 gap-4 sm:max-w-xl">
       <div className="grid grid-cols-1 gap-1.5">
         <Label htmlFor="profil-kompresi">Profil kompresi</Label>
-        <select
-          id="profil-kompresi"
-          className="h-11 w-full min-w-0 rounded-md border border-input bg-background px-3"
+        <Select
           value={profile}
-          onChange={(event) => {
-            setProfile(event.target.value as ImageProfileName);
+          onValueChange={(value) => {
+            setProfile(value as ImageProfileName);
           }}
         >
-          {(Object.keys(IMAGE_PROFILES) as ImageProfileName[]).map((name) => (
-            <option key={name} value={name}>
-              {PROFILE_LABELS[name]} (maks {IMAGE_PROFILES[name].maxEdge} px,{" "}
-              {IMAGE_PROFILES[name].targetBytes / 1024} KB)
-            </option>
-          ))}
-        </select>
+          <SelectTrigger id="profil-kompresi" className="h-11 w-full min-w-0 rounded-md px-3">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            {(Object.keys(IMAGE_PROFILES) as ImageProfileName[]).map((name) => (
+              <SelectItem key={name} value={name} className="min-h-10">
+                {PROFILE_LABELS[name]} (maks {IMAGE_PROFILES[name].maxEdge} px,{" "}
+                {IMAGE_PROFILES[name].targetBytes / 1024} KB)
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="grid grid-cols-1 gap-1.5">
         <Label htmlFor="file-kompresi">Pilih foto</Label>

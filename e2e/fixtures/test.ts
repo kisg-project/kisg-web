@@ -3,6 +3,11 @@ import { test as base, expect, type Page } from "@playwright/test";
 import { mockExternalServices, type ExternalCalls } from "./network";
 
 interface Fixtures {
+  /**
+   * Error console yang memang diharapkan di test tertentu, misal respons 400 dari server saat file
+   * ditolak (browser selalu mencatatnya). Diatur lewat test.use di describe yang bersangkutan.
+   */
+  allowedConsoleErrors: RegExp[];
   /** Error console dan pageerror yang terjadi selama test. Test gagal kalau tidak kosong. */
   consoleErrors: string[];
   /** Request ke layanan eksternal yang dicegat (Meta, Brevo, Turnstile). */
@@ -10,6 +15,7 @@ interface Fixtures {
 }
 
 export const test = base.extend<Fixtures>({
+  allowedConsoleErrors: [[], { option: true }],
   externalCalls: [
     async ({ page }, use) => {
       const calls = await mockExternalServices(page);
@@ -18,10 +24,13 @@ export const test = base.extend<Fixtures>({
     { auto: true },
   ],
   consoleErrors: [
-    async ({ page }, use) => {
+    async ({ page, allowedConsoleErrors }, use) => {
       const errors: string[] = [];
       page.on("console", (message) => {
-        if (message.type() === "error") errors.push(message.text());
+        if (message.type() !== "error") return;
+        const text = message.text();
+        if (allowedConsoleErrors.some((pattern) => pattern.test(text))) return;
+        errors.push(text);
       });
       page.on("pageerror", (error) => {
         errors.push(error.message);
@@ -45,6 +54,20 @@ export async function expectNoA11yViolations(page: Page, options: { exclude?: st
     "wcag22aa",
   ]);
   for (const selector of options.exclude ?? []) builder = builder.exclude(selector);
+  // Bagian Reveal yang belum di-scroll masih transparan dan tampak pucat bagi axe. Tampilkan semuanya
+  // (keadaan yang dilihat pengunjung setelah scroll), lalu tunggu transisinya selesai.
+  // Transisi dimatikan dulu supaya bagian itu langsung terlihat penuh, tanpa jeda sebelum transisi mulai.
+  await page.addStyleTag({ content: ".reveal { transition: none !important; }" });
+  await page.evaluate(() => {
+    for (const element of document.querySelectorAll<HTMLElement>('[data-reveal="pending"]')) {
+      element.dataset.reveal = "shown";
+    }
+  });
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll(".reveal")].every((element) =>
+      element.getAnimations().every((animation) => animation.playState !== "running"),
+    ),
+  );
   const results = await builder.analyze();
   const summary = results.violations.map(
     (violation) =>

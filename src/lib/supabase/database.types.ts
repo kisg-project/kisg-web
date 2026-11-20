@@ -19,6 +19,250 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"banners": {
+                  Row: {
+                    "alt": string,"content_status": Database["public"]['Enums']["content_status"],"created_at": string,"created_by": string | null,"cta_href": string | null,"cta_label": string | null,"deleted_at": string | null,"ends_at": string | null,"id": string,"image_path": string,"mobile_image_path": string | null,"sort_order": number,"starts_at": string | null,"subtitle": string | null,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "alt": string,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"cta_href"?: string | null,"cta_label"?: string | null,"deleted_at"?: string | null,"ends_at"?: string | null,"id"?: string,"image_path": string,"mobile_image_path"?: string | null,"sort_order"?: number,"starts_at"?: string | null,"subtitle"?: string | null,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "alt"?: string,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"cta_href"?: string | null,"cta_label"?: string | null,"deleted_at"?: string | null,"ends_at"?: string | null,"id"?: string,"image_path"?: string,"mobile_image_path"?: string | null,"sort_order"?: number,"starts_at"?: string | null,"subtitle"?: string | null,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"careers": {
+                  Row: {
+                    "closes_on": string | null,"content_status": Database["public"]['Enums']["content_status"],"created_at": string,"created_by": string | null,"deleted_at": string | null,"department": string | null,"description": NonNullable<Json>,"employment_type": string | null,"id": string,"location": string | null,"requirements": NonNullable<Json>,"slug": string,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "closes_on"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"department"?: string | null,"description"?: NonNullable<Json>,"employment_type"?: string | null,"id"?: string,"location"?: string | null,"requirements"?: NonNullable<Json>,"slug": string,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "closes_on"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"department"?: string | null,"description"?: NonNullable<Json>,"employment_type"?: string | null,"id"?: string,"location"?: string | null,"requirements"?: NonNullable<Json>,"slug"?: string,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"construction_updates": {
+                  Row: {
+                    "body": string | null,"content_status": Database["public"]['Enums']["content_status"],"cover_alt": string | null,"cover_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"id": string,"photo_ids": (string)[],"project_id": string,"published_at": string | null,"source_report_id": string | null,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"photo_ids"?: (string)[],"project_id": string,"published_at"?: string | null,"source_report_id"?: string | null,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "body"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"photo_ids"?: (string)[],"project_id"?: string,"published_at"?: string | null,"source_report_id"?: string | null,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "construction_updates_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"facilities": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"deleted_at": string | null,"description": string | null,"icon": string | null,"id": string,"name": string,"project_id": string,"sort_order": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"icon"?: string | null,"id"?: string,"name": string,"project_id": string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"description"?: string | null,"icon"?: string | null,"id"?: string,"name"?: string,"project_id"?: string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "facilities_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"faqs": {
+                  Row: {
+                    "answer": string,"category": string | null,"content_status": Database["public"]['Enums']["content_status"],"created_at": string,"created_by": string | null,"deleted_at": string | null,"id": string,"project_id": string | null,"question": string,"sort_order": number,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answer": string,"category"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"project_id"?: string | null,"question": string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Update: {
+                    "answer"?: string,"category"?: string | null,"content_status"?: Database["public"]['Enums']["content_status"],"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"project_id"?: string | null,"question"?: string,"sort_order"?: number,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "faqs_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"form_submissions": {
+                  Row: {
+                    "created_at": string,"form_kind": Database["public"]['Enums']["form_kind"],"id": string,"ip_hash": string | null,"job_application_id": string | null,"lead_id": string | null,"page_path": string | null,"payload": NonNullable<Json>,"status": Database["public"]['Enums']["submission_status"],"user_agent": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"form_kind": Database["public"]['Enums']["form_kind"],"id"?: string,"ip_hash"?: string | null,"job_application_id"?: string | null,"lead_id"?: string | null,"page_path"?: string | null,"payload"?: NonNullable<Json>,"status": Database["public"]['Enums']["submission_status"],"user_agent"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"form_kind"?: Database["public"]['Enums']["form_kind"],"id"?: string,"ip_hash"?: string | null,"job_application_id"?: string | null,"lead_id"?: string | null,"page_path"?: string | null,"payload"?: NonNullable<Json>,"status"?: Database["public"]['Enums']["submission_status"],"user_agent"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "form_submissions_job_application_id_fkey"
+      columns: ["job_application_id"]
+isOneToOne: false
+      referencedRelation: "job_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "form_submissions_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"job_applications": {
+                  Row: {
+                    "career_id": string,"consent_pdp_at": string,"consent_text_version": string,"cover_note": string | null,"created_at": string,"created_by": string | null,"cv_path": string,"deleted_at": string | null,"email": string,"full_name": string,"id": string,"phone": string,"status": Database["public"]['Enums']["application_status"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "career_id": string,"consent_pdp_at": string,"consent_text_version": string,"cover_note"?: string | null,"created_at"?: string,"created_by"?: string | null,"cv_path": string,"deleted_at"?: string | null,"email": string,"full_name": string,"id"?: string,"phone": string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "career_id"?: string,"consent_pdp_at"?: string,"consent_text_version"?: string,"cover_note"?: string | null,"created_at"?: string,"created_by"?: string | null,"cv_path"?: string,"deleted_at"?: string | null,"email"?: string,"full_name"?: string,"id"?: string,"phone"?: string,"status"?: Database["public"]['Enums']["application_status"],"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "job_applications_career_id_fkey"
+      columns: ["career_id"]
+isOneToOne: false
+      referencedRelation: "careers"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lead_activities": {
+                  Row: {
+                    "actor_id": string | null,"body": string | null,"client_id": string | null,"created_at": string,"created_by": string | null,"id": string,"lead_id": string,"meta": NonNullable<Json>,"occurred_at": string,"type": Database["public"]['Enums']["lead_activity_type"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_id"?: string | null,"body"?: string | null,"client_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lead_id": string,"meta"?: NonNullable<Json>,"occurred_at"?: string,"type": Database["public"]['Enums']["lead_activity_type"]
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"body"?: string | null,"client_id"?: string | null,"created_at"?: string,"created_by"?: string | null,"id"?: string,"lead_id"?: string,"meta"?: NonNullable<Json>,"occurred_at"?: string,"type"?: Database["public"]['Enums']["lead_activity_type"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_activities_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_activities_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"leads": {
+                  Row: {
+                    "consent_pdp_at": string | null,"consent_text_version": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string | null,"fbc": string | null,"fbp": string | null,"first_response_at": string | null,"full_name": string,"id": string,"last_activity_at": string,"lost_reason": string | null,"merged_into_id": string | null,"meta_lead_id": string | null,"note": string | null,"owner_id": string | null,"phone": string,"project_id": string | null,"sla_due_at": string | null,"source_detail": string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage": Database["public"]['Enums']["lead_stage"],"team_id": string | null,"unit_type_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name": string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone": string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name"?: string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone"?: string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind"?: Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "leads_merged_into_id_fkey"
+      columns: ["merged_into_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_owner_id_fkey"
+      columns: ["owner_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_team_id_fkey"
+      columns: ["team_id"]
+isOneToOne: false
+      referencedRelation: "teams"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leads_unit_type_id_fkey"
+      columns: ["unit_type_id"]
+isOneToOne: false
+      referencedRelation: "unit_types"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"nearby_places": {
+                  Row: {
+                    "category": string,"created_at": string,"created_by": string | null,"deleted_at": string | null,"distance_km": number | null,"id": string,"name": string,"project_id": string,"sort_order": number,"travel_minutes": number | null,"travel_mode": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category": string,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"distance_km"?: number | null,"id"?: string,"name": string,"project_id": string,"sort_order"?: number,"travel_minutes"?: number | null,"travel_mode"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "category"?: string,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"distance_km"?: number | null,"id"?: string,"name"?: string,"project_id"?: string,"sort_order"?: number,"travel_minutes"?: number | null,"travel_mode"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "nearby_places_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"posts": {
+                  Row: {
+                    "author_id": string | null,"body": NonNullable<Json>,"content_status": Database["public"]['Enums']["content_status"],"cover_alt": string | null,"cover_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"excerpt": string | null,"id": string,"published_at": string | null,"scheduled_at": string | null,"slug": string,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author_id"?: string | null,"body"?: NonNullable<Json>,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"excerpt"?: string | null,"id"?: string,"published_at"?: string | null,"scheduled_at"?: string | null,"slug": string,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "author_id"?: string | null,"body"?: NonNullable<Json>,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"excerpt"?: string | null,"id"?: string,"published_at"?: string | null,"scheduled_at"?: string | null,"slug"?: string,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "posts_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"profiles": {
                   Row: {
                     "avatar_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string,"full_name": string,"id": string,"is_active": boolean,"last_seen_at": string | null,"phone": string | null,"updated_at": string
@@ -59,6 +303,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"project_media": {
+                  Row: {
+                    "alt": string,"caption": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"height": number | null,"id": string,"kind": Database["public"]['Enums']["media_kind"],"path": string,"project_id": string,"sort_order": number,"updated_at": string,"width": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "alt": string,"caption"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"height"?: number | null,"id"?: string,"kind"?: Database["public"]['Enums']["media_kind"],"path": string,"project_id": string,"sort_order"?: number,"updated_at"?: string,"width"?: number | null
+                  }
+                  Update: {
+                    "alt"?: string,"caption"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"height"?: number | null,"id"?: string,"kind"?: Database["public"]['Enums']["media_kind"],"path"?: string,"project_id"?: string,"sort_order"?: number,"updated_at"?: string,"width"?: number | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "project_media_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"projects": {
                   Row: {
                     "address": string | null,"city": string | null,"content_status": Database["public"]['Enums']["content_status"],"created_at": string,"created_by": string | null,"deleted_at": string | null,"description": string | null,"district": string | null,"id": string,"is_featured": boolean,"lat": number | null,"launched_on": string | null,"legal_summary": NonNullable<Json>,"lng": number | null,"name": string,"postal_code": string | null,"province": string | null,"siteplan_svg_path": string | null,"slug": string,"sold_out_on": string | null,"sort_order": number,"status": Database["public"]['Enums']["project_status"],"tagline": string | null,"updated_at": string,"village": string | null
@@ -72,6 +336,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"promos": {
+                  Row: {
+                    "body": NonNullable<Json>,"content_status": Database["public"]['Enums']["content_status"],"cover_alt": string | null,"cover_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"ends_at": string | null,"id": string,"project_id": string | null,"slug": string,"starts_at": string | null,"summary": string | null,"terms": string | null,"title": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: NonNullable<Json>,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"ends_at"?: string | null,"id"?: string,"project_id"?: string | null,"slug": string,"starts_at"?: string | null,"summary"?: string | null,"terms"?: string | null,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "body"?: NonNullable<Json>,"content_status"?: Database["public"]['Enums']["content_status"],"cover_alt"?: string | null,"cover_path"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"ends_at"?: string | null,"id"?: string,"project_id"?: string | null,"slug"?: string,"starts_at"?: string | null,"summary"?: string | null,"terms"?: string | null,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "promos_project_id_fkey"
+      columns: ["project_id"]
+isOneToOne: false
+      referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"rate_limits": {
                   Row: {
@@ -219,6 +503,26 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"utm_touchpoints": {
+                  Row: {
+                    "created_at": string,"fbc": string | null,"fbclid": string | null,"fbp": string | null,"id": string,"landing_path": string | null,"lead_id": string | null,"occurred_at": string,"referrer": string | null,"utm_campaign": string | null,"utm_content": string | null,"utm_medium": string | null,"utm_source": string | null,"utm_term": string | null,"visitor_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"fbc"?: string | null,"fbclid"?: string | null,"fbp"?: string | null,"id"?: string,"landing_path"?: string | null,"lead_id"?: string | null,"occurred_at"?: string,"referrer"?: string | null,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null,"visitor_id"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"fbc"?: string | null,"fbclid"?: string | null,"fbp"?: string | null,"id"?: string,"landing_path"?: string | null,"lead_id"?: string | null,"occurred_at"?: string,"referrer"?: string | null,"utm_campaign"?: string | null,"utm_content"?: string | null,"utm_medium"?: string | null,"utm_source"?: string | null,"utm_term"?: string | null,"visitor_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "utm_touchpoints_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"work_locations": {
                   Row: {
                     "created_at": string,"created_by": string | null,"deleted_at": string | null,"id": string,"is_active": boolean,"kind": Database["public"]['Enums']["work_location_kind"],"lat": number,"lng": number,"name": string,"project_id": string | null,"radius_m": number,"updated_at": string
@@ -259,10 +563,15 @@ isOneToOne: false
                            },
 "set_user_role":
 { Args: { "p_role": Database["public"]['Enums']["app_role"],"p_user": string }; Returns: undefined
+                           },
+"upsert_lead":
+{ Args: { "p_consent_text_version": string,"p_email": string,"p_fbc"?: string,"p_fbp"?: string,"p_full_name": string,"p_note": string,"p_phone": string,"p_project_id": string,"p_source_detail": string,"p_source_kind": Database["public"]['Enums']["lead_source_kind"],"p_unit_type_id": string }; Returns: {
+              "is_new": boolean,"lead_id": string
+            }[]
                            }
           }
           Enums: {
-            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance","audit_action": "insert"|"update"|"delete"|"soft_delete","content_status": "draft"|"terjadwal"|"terbit"|"arsip","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek"
+            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","audit_action": "insert"|"update"|"delete"|"soft_delete","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -378,7 +687,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance"],"audit_action": ["insert", "update", "delete", "soft_delete"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"]
+            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"audit_action": ["insert", "update", "delete", "soft_delete"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"]
           }
         }
 } as const

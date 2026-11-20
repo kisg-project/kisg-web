@@ -81,6 +81,8 @@ A/B variant: `proxy.ts` memilih variant berdasarkan bobot traffic, menyimpan coo
 
 ### 2.3 Portal: `src/app/portal/` (PWA, scope `/portal/`)
 
+Domain portal (keputusan owner, 20 November 2026): portal karyawan hanya di `company.kisgroup.co.id`. `proxy.ts` me-rewrite path bersih di host itu (misal `/login`, `/crm`) ke `src/app/portal/...`, dan `/portal` di host lain (termasuk `kisgroup.co.id/portal`) menjadi 404. Aktif lewat env `PORTAL_HOST`. Sebelum domain terhubung, portal sementara di `kisg-web.vercel.app/portal`. Dikerjakan di tahap PWA.
+
 | Route | Role | Rendering |
 |---|---|---|
 | `/portal/login`, `/portal/lupa-password`, `/portal/reset-password`, `/portal/undangan` | Publik | Dynamic |
@@ -318,8 +320,8 @@ sequenceDiagram
 |---|---|---|---|
 | Lokal (laptop) | `pnpm dev` hanya untuk melihat UI publik. Tidak ada E2E dan Supabase lokal | Tidak ada. Portal tidak aktif di laptop | `test_event_code` |
 | CI | Production build | Supabase lokal di runner, dibuat baru setiap run lalu dibuang | Di-mock |
-| Preview (PR) | Vercel Preview | Tidak ada. Portal tidak aktif, website publik tetap bisa dicek | `test_event_code` |
-| Production | `main`, deploy otomatis Vercel. Migrasi lewat `deploy-db.yml` | `skxawyvopumzrefnmvyf` | Live |
+| Preview (PR) | Vercel Preview | Production, baca konten publik saja (publishable key). Portal dimatikan, form tidak menulis | `test_event_code` |
+| Production | `main`, otomatis lewat `deploy-production.yml` (migrasi lalu deploy Vercel) | `skxawyvopumzrefnmvyf` | Live |
 
 Tanpa staging sejak Fase 2 (keputusan owner, mengikuti pola prins dan kelola).
 

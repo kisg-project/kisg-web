@@ -9,11 +9,13 @@ const isDev = process.env.NODE_ENV === "development";
 // WebKit memaksa HTTPS ke server E2E lokal http://127.0.0.1 sehingga semua aset gagal dimuat.
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  // Cloudflare Turnstile (form publik) memakai iframe dari domain ini.
+  "frame-src https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
   "media-src 'self'",
   "object-src 'none'",
