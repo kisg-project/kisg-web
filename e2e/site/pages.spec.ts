@@ -261,7 +261,7 @@ test.describe("Karir per jenjang", () => {
   test("halaman karir menampilkan empat jenjang bergambar", async ({ page }) => {
     await page.goto("/karir");
     // Nama tautan kartu diawali alt foto, lalu judul jenjang, jadi dicocokkan tanpa jangkar awal.
-    const cards = page.getByRole("main").getByRole("listitem");
+    const cards = page.getByRole("list", { name: "Jenjang posisi" }).getByRole("listitem");
     await expect(cards).toHaveCount(4);
     for (const name of ["Berpengalaman", "Lulusan baru", "Staf lapangan", "Magang"]) {
       const card = cards.filter({ hasText: name }).getByRole("link");

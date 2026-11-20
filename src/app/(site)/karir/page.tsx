@@ -27,7 +27,7 @@ export default async function CareersPage() {
         crumbs={[{ name: "Karir", path: "/karir" }]}
       />
       <Section title="Jenjang posisi">
-        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ul aria-label="Jenjang posisi" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {CAREER_LEVELS.map((item, index) => {
             const count = countFor(item.level);
             return (
