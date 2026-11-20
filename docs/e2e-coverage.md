@@ -226,5 +226,5 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 |---|---|---|---|
 | Audit: setiap route dan server action di kode tercakup minimal satu skenario di dokumen ini | CI skrip | 9 | Belum |
 | Seluruh suite lolos 3 kali berturut-turut tanpa retry | CI | 9 | Belum |
-| Smoke test ke URL staging setelah deploy | CI `preview.yml` | 9 | Belum |
+| Smoke test ke URL production setelah deploy | CI `preview.yml` | 9 | Belum |
 | Bundle client tidak berisi secret (`GEMINI_API_KEY`, service role, token Meta) | CI skrip | 9 | Belum |
