@@ -54,13 +54,13 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 - **Chart**: Recharts
 - **PWA**: Serwist. Cek dulu kompatibilitasnya dengan bundler versi Next yang terpasang. Kalau belum kompatibel, tulis service worker manual, jangan dipaksa.
 - **Offline storage**: Dexie (IndexedDB)
-- **Email transaksional**: Resend + React Email
+- **Email transaksional**: Brevo (relay SMTP untuk email Supabase Auth, API HTTP lewat `fetch` untuk email aplikasi). Pola sama dengan proyek KELOLA: login SMTP terpisah dari alamat pengirim (`SMTP_FROM`). Template email ditulis sebagai komponen React (React Email, persetujuan dependency diminta saat dipakai)
 - **AI customer service**: Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/google`) dengan Gemini, `pgvector` di Supabase untuk pencarian knowledge base. Nama model diambil dari env `GEMINI_MODEL` dan `GEMINI_EMBEDDING_MODEL`, jangan hardcode. Cek dokumentasi Google untuk model yang masih aktif.
 - **Env**: `@t3-oss/env-nextjs` (validasi env saat build)
 - **Testing**: Vitest + Testing Library (unit), Playwright (e2e), pgTAP atau test SQL untuk RLS
 - **Kualitas**: ESLint (config Next + `typescript-eslint` strict), Prettier, `lint-staged` + Husky
 - **Monitoring**: Vercel Analytics, Speed Insights, Sentry
-- **Deploy**: Vercel (Preview per branch, Production dari `main`), Supabase project terpisah untuk staging dan production
+- **Deploy**: Vercel (Preview per PR, Production otomatis dari `main`), satu project Supabase (production). Tanpa staging (keputusan owner, Fase 2)
 
 Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan meminta persetujuan.
 
@@ -152,14 +152,15 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 ### Test end to end (wajib)
 
 - **Setiap fitur yang terlihat user wajib punya test Playwright** sebelum dianggap selesai. Itu termasuk halaman, form, alur, dan role baru.
-- Suite E2E hanya jalan di CI, di atas **production build** (`next build && next start`) dengan **Supabase lokal** di runner (`supabase start`) yang di-reset dan di-seed sebelum suite jalan. Tidak dijalankan di laptop pengembang. Tidak boleh menyentuh database staging/production.
+- Suite E2E hanya jalan di CI, di atas **production build** (`next build && next start`) dengan **Supabase lokal** di runner (`supabase start`) yang di-reset dan di-seed sebelum suite jalan. Tidak dijalankan di laptop pengembang. Tidak boleh menyentuh database production.
 - Spec E2E tetap ditulis bersama fitur. Spec yang ditulis tanpa dijalankan di lokal harus lolos `typecheck` dan `lint`, dan baru dianggap lolos setelah CI hijau.
 - Browser: Chromium desktop, Mobile Chrome (Pixel), Mobile Safari (iPhone). Portal wajib lolos di profil mobile.
+- Kapan tiga browser jalan (keputusan owner, Fase 2, opsi B): setiap PR cukup Chromium (tetap termasuk cek responsif 320 sampai 1440 px dan axe). Tiga browser x 3 shard wajib untuk PR akhir fase (label `e2e:full`, dipasang sebelum push terakhir). `e2e-weekly.yml` menjalankan tiga browser tiap minggu. `scripts/merge-pr.sh` menolak merge kalau set E2E yang wajib belum hijau.
 - Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor, finance).
 - Selector pakai `getByRole`, `getByLabel`, `getByText`. `data-testid` hanya kalau tidak ada alternatif. Dilarang selector CSS rapuh dan `waitForTimeout`.
 - Setiap test mandiri: menyiapkan datanya sendiri (lewat helper/factory ke Supabase lokal) dan tidak bergantung urutan. Bisa jalan paralel.
 - Assertion sampai ke hasil akhir, bukan cuma UI. Contoh: submit form lead dicek sampai baris `leads` dan `meta_event_outbox` benar-benar ada di database.
-- Layanan eksternal (Meta Graph API, CAPI, Resend, Turnstile, Web Push) di-mock di level jaringan (`page.route` atau mock server). Payload yang dikirim tetap di-assert.
+- Layanan eksternal (Meta Graph API, CAPI, Brevo, Turnstile, Web Push) di-mock di level jaringan (`page.route` atau mock server). Payload yang dikirim tetap di-assert.
 - Wajib diuji juga: jalur gagal (validasi, network error, akses ditolak per role), state kosong, mode offline PWA (`context.setOffline`), dan aksesibilitas dengan `@axe-core/playwright` di setiap halaman.
 - Visual regression (`toHaveScreenshot`) untuk halaman publik utama dan landing page.
 - Test flaky tidak boleh di-skip atau diberi retry untuk menutupi masalah. Cari penyebabnya dan perbaiki.
@@ -282,6 +283,23 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Soft delete (`deleted_at`) untuk data bisnis. Kolom `created_at`, `updated_at` (trigger), `created_by`.
 - Patuh UU PDP (UU 27/2022): checkbox persetujuan di setiap form lead, halaman kebijakan privasi, fitur hapus/ekspor data konsumen di admin.
 - Security headers (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) di `next.config`. Rate limit untuk form publik dan endpoint webhook. Honeypot + Cloudflare Turnstile di form publik.
+
+### Keamanan tingkat tinggi (keputusan owner, Fase 2)
+- Cloudflare dipakai untuk DNS domain, forwarding email, dan Turnstile. Trafik web tetap langsung ke Vercel (record DNS tanpa proxy), karena Vercel sudah menyediakan perlindungan DDoS dan firewall, dan proxy tambahan mengganggu cache serta deteksi IP asli.
+- Portal (PWA) tanpa captcha: tidak ada pendaftaran publik, akun hanya lewat undangan. Login dilindungi rate limit per IP dan per akun, penguncian sementara setelah beberapa kali gagal, dan pesan error yang tidak membocorkan akun mana yang ada.
+- Verifikasi dua langkah (TOTP, Supabase Auth MFA) wajib untuk role `owner` dan `admin`, opsional untuk role lain. Server action dan halaman admin/owner menolak sesi yang belum level AAL2.
+- Akun admin master: role `admin`, akses CMS dan PWA penuh, bisa mengundang semua role termasuk `owner`. Dibuat sekali lewat skrip bootstrap, setelah itu semua akun lewat undangan.
+- Sesi portal berumur terbatas, logout membersihkan sesi di server, perubahan role atau penonaktifan akun langsung mencabut sesi.
+- Semua aksi sensitif (undang, ubah role, nonaktifkan, ekspor, hapus data) tercatat di `audit_log`.
+
+### Email domain
+| Alamat | Dipakai untuk |
+|---|---|
+| `notifikasi@kisgroup.co.id` | Email otomatis sistem (undangan, lupa password, notifikasi internal). Balasan diteruskan ke `corporate@` |
+| `marketing@kisgroup.co.id` | Email ke calon pembeli (konfirmasi form, brosur, jadwal survei) |
+| `corporate@kisgroup.co.id` | Urusan resmi perusahaan (mitra, bank, lamaran kerja) |
+
+Pengiriman lewat Brevo dengan domain terautentikasi (SPF, DKIM, DMARC). Email masuk ke `marketing@` dan `corporate@` diteruskan ke Gmail lewat Cloudflare Email Routing.
 - Semua migrasi lewat `supabase/migrations` (Supabase CLI). Tidak ada perubahan schema manual lewat dashboard.
 
 ### Kompresi gambar (wajib)
@@ -320,27 +338,27 @@ Semua gambar yang diunggah ke website, portal, atau PWA dikompres di browser seb
 
 ## 10. Git dan CI/CD (wajib)
 
-Tidak ada kode yang sampai ke staging atau production tanpa lewat PR dan CI hijau.
+Tidak ada kode yang sampai ke production tanpa lewat PR dan CI hijau.
 
 ### Paket gratis (keputusan owner, Fase 0)
 Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Supabase Free. Batasan dan penggantinya:
 
 | Batasan | Pengganti |
 |---|---|
-| GitHub Free private: tanpa branch protection, rulesets, dan GitHub Environments | Pengaman berlapis: aturan `deny` di `.claude/settings.json`, hook Husky `pre-push` menolak push ke `main`/`staging`, merge hanya lewat `bash scripts/merge-pr.sh <nomor>` yang memeriksa semua check hijau lalu squash merge. Secret CI disimpan sebagai repository secret dengan awalan `STAGING_` dan `PRODUCTION_` |
+| GitHub Free private: tanpa branch protection, rulesets, dan GitHub Environments | Pengaman berlapis: aturan `deny` di `.claude/settings.json`, hook Husky `pre-push` menolak push ke `main`, merge hanya lewat `bash scripts/merge-pr.sh <nomor>` yang memeriksa semua check hijau lalu squash merge. Secret CI disimpan sebagai repository secret dengan awalan `PRODUCTION_` |
 | GitHub Free private: CodeQL dan dependency review butuh Advanced Security | Keamanan dependency lewat Dependabot alerts (gratis), `pnpm audit`, gitleaks, dan aturan typescript-eslint strict |
 | GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
 | Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
 | Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |
-| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | Backup `pg_dump` terenkripsi terjadwal lewat GitHub Actions, ping mingguan ke staging |
+| Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | Backup `pg_dump` terenkripsi harian lewat GitHub Actions, yang juga menjaga project production tetap aktif |
 | Supabase Free: database 500 MB, storage 1 GB | Kompresi gambar wajib (bagian 8), masa simpan data yang bisa diatur, pemantauan kuota |
 
 Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
 
 ### Branch dan alur
-- `main` = production (`kisgroup.co.id`). `staging` = staging (`staging.kisgroup.co.id`, Supabase staging).
-- Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...`, `docs/...` lalu PR ke `staging`. Setelah dicek di staging, PR `staging` ke `main`.
-- Aturan yang biasanya dipaksa branch protection tetap berlaku dan dijaga oleh pengaman di atas: tanpa push langsung ke `main`/`staging`, tanpa force push, wajib PR, wajib semua status check lolos, branch harus up to date, squash merge.
+- `main` = production (`kisgroup.co.id`, sementara `kisg-web.vercel.app` sampai domain terhubung). Tanpa branch dan database staging (keputusan owner, Fase 2, mengikuti pola prins dan kelola): setiap merge ke `main` langsung tayang.
+- Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...`, `docs/...` lalu PR ke `main`. Pengecekan sebelum tayang: CI hijau dan Preview Vercel PR itu.
+- Aturan yang biasanya dipaksa branch protection tetap berlaku dan dijaga oleh pengaman di atas: tanpa push langsung ke `main`, tanpa force push, wajib PR, wajib semua status check lolos, branch harus up to date, squash merge.
 - Conventional Commits dipaksa dengan commitlint (hook `commit-msg`) dan judul PR dicek di CI.
 - `.github/pull_request_template.md` berisi checklist: ringkasan, skenario E2E yang ditambah, migrasi DB (ya/tidak, aman untuk rollback atau tidak), screenshot untuk perubahan UI, data yang butuh owner.
 - `CODEOWNERS` untuk `supabase/migrations/`, `src/lib/meta/`, `.github/`, `proxy.ts` (tanpa branch protection, fungsinya sebagai penanda review, tidak memblokir).
@@ -348,23 +366,22 @@ Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protect
 ### Workflow GitHub Actions (`.github/workflows/`)
 Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang membatalkan run lama di branch yang sama, `timeout-minutes` di setiap job, permission minimum (`contents: read` kecuali perlu), versi action di-pin.
 
-1. **`ci.yml`** (setiap PR dan push ke `staging`/`main`): install, typecheck, lint, check:copy, unit test dengan ambang coverage (minimal 80% untuk `src/lib` dan `src/features/*/utils|schemas|actions`), build, E2E penuh di production build dengan Supabase lokal (di-shard paralel, 3 browser), axe. Upload laporan Playwright, trace, video, dan coverage sebagai artifact.
+1. **`ci.yml`** (setiap PR dan push ke `main`): install, typecheck, lint, check:copy, unit test dengan ambang coverage (minimal 80% untuk `src/lib` dan `src/features/*/utils|schemas|actions`), build, E2E di production build dengan Supabase lokal (Chromium untuk PR biasa, 3 browser x 3 shard untuk PR berlabel `e2e:full`), axe. Upload laporan Playwright, trace, video, dan coverage sebagai artifact.
 2. **`db.yml`** (PR yang menyentuh `supabase/`): `supabase start`, terapkan semua migrasi dari nol, jalankan test RLS, `supabase db lint`, pastikan `database.types.ts` sama dengan hasil generate (`git diff --exit-code`), deteksi operasi destruktif (DROP, RENAME, ubah tipe kolom) dan wajibkan label `migration:destructive` + persetujuan.
 3. **`security.yml`** (setiap PR + terjadwal mingguan): gitleaks (secret scan), `pnpm audit` gagal di level high ke atas. CodeQL dan `dependency-review-action` tidak dipakai selama repo private di GitHub Free.
-4. **`preview.yml`** (event `deployment_status` dari Vercel Preview): smoke E2E ke URL preview memakai Supabase staging dan akun test khusus, lalu Lighthouse CI dengan budget (performance, accessibility, best practices, SEO minimal 95 untuk halaman publik dan LP). Hasil dikomentari ke PR.
-5. **`deploy-db.yml`**: merge ke `staging` menjalankan `supabase db push` ke staging.
-6. **`deploy-production.yml`** (`workflow_dispatch` manual, hanya dari `main`, wajib mengetik `production` di input konfirmasi): `supabase db push` ke production, lalu `vercel deploy --prebuilt --prod`. Ini pengganti approval Environment, dan menjamin migrasi jalan sebelum app versi baru aktif. Deploy production otomatis Vercel dari `main` dimatikan.
-7. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
-8. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
-9. **`backup.yml`** (terjadwal harian): `pg_dump` production, dienkripsi, disimpan sebagai artifact dengan masa simpan terbatas. Ping staging mingguan supaya tidak dijeda.
+4. **`preview.yml`** (event `deployment_status` dari Vercel Preview): smoke E2E halaman publik ke URL preview, lalu Lighthouse CI dengan budget (performance, accessibility, best practices, SEO minimal 95 untuk halaman publik dan LP). Hasil dikomentari ke PR.
+5. **`deploy-db.yml`**: merge ke `main` yang menyentuh migrasi atau pengaturan Auth menjalankan `supabase db push` dan pengaturan Auth ke Supabase production.
+6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
+7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
+8. **`backup.yml`** (terjadwal harian): `pg_dump` production, dienkripsi, disimpan sebagai artifact dengan masa simpan terbatas. Koneksi harian ini juga mencegah project dijeda.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
 ### Deploy (Vercel)
-- Integrasi Git Vercel: Preview untuk setiap PR, `staging` ke domain staging. Production hanya lewat `deploy-production.yml` dari `main`.
+- Integrasi Git Vercel: Preview untuk setiap PR, Production otomatis dari `main`. Preview tidak punya env Supabase, jadi portal di preview tidak aktif dan tidak ada data percobaan yang masuk ke production.
 - `ignoreCommand` supaya perubahan yang hanya menyentuh `docs/` atau `*.md` tidak memicu build.
-- Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `STAGING_`/`PRODUCTION_`, tidak pernah di file repo.
-- Migrasi harus backward compatible (pola expand lalu contract) karena app lama dan baru sempat berjalan bersamaan saat deploy. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
+- Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `PRODUCTION_`, tidak pernah di file repo.
+- Migrasi harus backward compatible (pola expand lalu contract) karena deploy Vercel dan `deploy-db.yml` berjalan bersamaan setelah merge, sehingga app lama dan baru sempat memakai skema yang sama. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.
 - Rollback app lewat Instant Rollback Vercel. Rollback database lewat migrasi perbaikan baru, tidak pernah mengedit migrasi lama.
 - `docs/ci-cd.md` menjelaskan alur ini, daftar secret yang dibutuhkan, dan cara rollback.
 
@@ -382,7 +399,7 @@ Perangkat ini dipakai untuk beberapa proyek (prins, kelola, KIS) dengan akun yan
 - Hook git (Husky) `pre-commit` dan `pre-push` menjalankan `bash scripts/check-accounts.sh --quick`, jadi commit atau push manual dari terminal juga terlindungi.
 - Token tidak pernah ditampilkan di output, ditulis ke file proyek, atau dikirim ke mana pun. Jangan menjalankan perintah yang mencetak isi env.
 - Izin Claude Code ada di `.claude/settings.json`. Mode auto diatur di `~/.claude/settings.json` milik saya, bukan di file proyek. Kalau sebuah aksi diblokir oleh mode auto atau aturan `deny`, jangan cari jalan memutar. Laporkan dan tunggu keputusan saya.
-- Migrasi database ke staging/production dan deploy production hanya lewat pipeline CI (bagian 10), tidak pernah dari lokal.
+- Migrasi database production dan deploy production hanya lewat pipeline (bagian 10), tidak pernah dari lokal.
 
 ---
 

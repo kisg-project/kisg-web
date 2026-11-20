@@ -2,7 +2,7 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 // Variabel env divalidasi saat build dan saat server mulai (CLAUDE.md bagian 3).
-// Variabel fase berikutnya (Supabase, Meta, Gemini, Resend, Turnstile) ditambah saat dibutuhkan.
+// Variabel fase berikutnya (Supabase, Meta, Gemini, Brevo, Turnstile) ditambah saat dibutuhkan.
 export const env = createEnv({
   server: {
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),

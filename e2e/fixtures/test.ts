@@ -5,7 +5,7 @@ import { mockExternalServices, type ExternalCalls } from "./network";
 interface Fixtures {
   /** Error console dan pageerror yang terjadi selama test. Test gagal kalau tidak kosong. */
   consoleErrors: string[];
-  /** Request ke layanan eksternal yang dicegat (Meta, Resend, Turnstile). */
+  /** Request ke layanan eksternal yang dicegat (Meta, Brevo, Turnstile). */
   externalCalls: ExternalCalls;
 }
 

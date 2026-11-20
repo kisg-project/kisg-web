@@ -1,5 +1,7 @@
 # Prompt Claude Code : KIS Group Platform
 
+> Catatan (Fase 2): proyek ini tidak lagi memakai staging (branch, domain, maupun project Supabase), keputusan owner. Semua PR langsung ke `main` dan tayang otomatis. Bagian prompt di bawah yang menyebut staging tidak berlaku. Acuan yang berlaku: CLAUDE.md bagian 10 dan `docs/ci-cd.md`.
+
 ## Persiapan (sekali saja)
 
 1. Buat folder proyek kosong, buka di VS Code.

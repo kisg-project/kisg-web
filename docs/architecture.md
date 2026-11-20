@@ -26,7 +26,7 @@ flowchart LR
   end
   META[Meta Graph API dan CAPI]
   GEM[Gemini]
-  RES[Resend]
+  RES[Brevo]
 
   SITE --> PX --> RSC
   LP --> PX
@@ -115,7 +115,7 @@ Role `finance` aktif sejak awal: akses baca ke `/portal/crm/booking` (deal, book
 | `/api/chat` | POST | Streaming jawaban widget | Turnstile, sesi anonim, rate limit, batas biaya |
 | `/api/events/contact` | POST | Event Contact (klik WhatsApp) untuk CAPI, dikirim dengan `sendBeacon` | Rate limit, consent |
 | `/api/sync` | POST | Sinkronisasi antrian offline PWA | Sesi user, idempotency key |
-| `/api/health` | GET | Cek hidup untuk smoke test dan ping staging | Publik, tanpa data |
+| `/api/health` | GET | Cek hidup untuk smoke test | Publik, tanpa data |
 
 Jadwal `pg_cron` (zona waktu UTC di database, dikonversi dari WIB):
 
@@ -128,7 +128,7 @@ Jadwal `pg_cron` (zona waktu UTC di database, dikonversi dari WIB):
 | Skor KPI | harian 01.00 WIB | SQL murni |
 | Retensi data | harian 02.00 WIB | `pg_net` (perlu hapus objek Storage) |
 
-`CRON_SECRET` dan URL app disimpan di Supabase Vault, berbeda untuk staging dan production. Batch kecil supaya selesai dalam batas durasi fungsi Vercel Hobby.
+`CRON_SECRET` dan URL app disimpan di Supabase Vault, hanya untuk production. Batch kecil supaya selesai dalam batas durasi fungsi Vercel Hobby.
 
 ## 3. Strategi rendering dan cache
 
@@ -166,7 +166,7 @@ sequenceDiagram
   DB->>DB: RLS memeriksa klaim dan kepemilikan
 ```
 
-- Tidak ada registrasi publik. Admin mengundang user (email undangan lewat Resend), user mengatur password di `/portal/undangan`.
+- Tidak ada registrasi publik. Admin mengundang user (email undangan dari notifikasi@kisgroup.co.id lewat SMTP Brevo), user mengatur password di `/portal/undangan`.
 - `user_roles`: satu role aktif per user. Penugasan proyek di `project_assignments`, keanggotaan tim di `team_members`.
 - Custom Access Token Hook (fungsi Postgres) menyuntikkan `app_role`, `team_id`, `is_active` ke JWT. Penugasan proyek tidak masuk JWT karena bisa berubah kapan saja. RLS memeriksanya lewat fungsi helper.
 - Fungsi helper RLS di schema `private` (`security definer`, `stable`): `current_app_role()`, `has_role(roles[])`, `is_active_staff()`, `is_assigned_to_project(project_id)`, `manages_user(user_id)`.
@@ -316,10 +316,11 @@ sequenceDiagram
 
 | Lingkungan | App | Database | Meta |
 |---|---|---|---|
-| Lokal (laptop) | `pnpm dev` hanya untuk melihat UI. Tidak ada E2E dan Supabase lokal | Supabase staging dengan akun dev khusus (keputusan owner Fase 0). Dari laptop tidak ada migrasi, reset, atau seed ke staging. Semua itu hanya lewat CI | `test_event_code` |
-| CI | Production build | Supabase lokal di runner, di-reset dan di-seed | Di-mock |
-| Preview (PR) | Vercel Preview | Supabase staging | `test_event_code` |
-| Staging | Branch `staging`, `staging.kisgroup.co.id` | `zpxdkjmwsjeeeypszwzm` | `test_event_code` |
-| Production | `main` lewat `deploy-production.yml` | `skxawyvopumzrefnmvyf` | Live |
+| Lokal (laptop) | `pnpm dev` hanya untuk melihat UI publik. Tidak ada E2E dan Supabase lokal | Tidak ada. Portal tidak aktif di laptop | `test_event_code` |
+| CI | Production build | Supabase lokal di runner, dibuat baru setiap run lalu dibuang | Di-mock |
+| Preview (PR) | Vercel Preview | Tidak ada. Portal tidak aktif, website publik tetap bisa dicek | `test_event_code` |
+| Production | `main`, deploy otomatis Vercel. Migrasi lewat `deploy-db.yml` | `skxawyvopumzrefnmvyf` | Live |
 
-Env divalidasi `@t3-oss/env-nextjs`. Secret server (`SUPABASE_SERVICE_ROLE_KEY`, `META_*`, `GEMINI_API_KEY`, `CRON_SECRET`, `RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) hanya dibaca di file `server-only`.
+Tanpa staging sejak Fase 2 (keputusan owner, mengikuti pola prins dan kelola).
+
+Env divalidasi `@t3-oss/env-nextjs`. Secret server (`SUPABASE_SERVICE_ROLE_KEY`, `META_*`, `GEMINI_API_KEY`, `CRON_SECRET`, `BREVO_API_KEY`, `BREVO_SMTP_KEY`, `TURNSTILE_SECRET_KEY`) hanya dibaca di file `server-only`.

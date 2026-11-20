@@ -129,15 +129,28 @@ Kunci rahasia tidak pernah ditempel di chat. Owner mengisinya langsung di Vercel
 | Layanan | Yang dibutuhkan | Status | Dibutuhkan di |
 |---|---|---|---|
 | GitHub | Akun `kisg-project`, repo `kisg-web` | Ada | |
-| Supabase | Production `skxawyvopumzrefnmvyf`, staging `zpxdkjmwsjeeeypszwzm` | Ada | |
+| Supabase | Production `skxawyvopumzrefnmvyf` (staging dihapus, Fase 2) | Ada | |
 | Supabase | Password database production (owner yang memegang) | Perlu untuk secret CI | Fase 2 |
 | Vercel | Akun `kisg-project`, project belum dibuat | Sebagian | Fase 1 |
 | Domain | Akses DNS `kisgroup.co.id` (siapa registrar-nya) | Perlu | Fase 9 |
 | Sentry | Organisasi dan project, `SENTRY_AUTH_TOKEN` | Perlu | Fase 1 |
-| Resend | Akun, domain pengirim terverifikasi (DNS), API key | Perlu | Fase 2 |
+| Cloudflare | Akun gratis, domain kisgroup.co.id ditambahkan, nameserver di registrar diganti ke nameserver Cloudflare, lalu API token (izin Zone DNS Edit dan Email Routing Edit untuk kisgroup.co.id) disimpan di `accounts.env` sebagai `CLOUDFLARE_API_TOKEN` | Perlu (langkah owner, lihat di bawah) | Fase 2 |
+| Brevo | Akun gratis, domain kisgroup.co.id ditambahkan di Senders and Domains (record DNS saya pasang lewat Cloudflare), SMTP login dan SMTP key, API key. Disimpan di `accounts.env` sebagai `BREVO_SMTP_LOGIN`, `BREVO_SMTP_KEY`, `BREVO_API_KEY` | Perlu (langkah owner) | Fase 2 |
+| Gmail tujuan forwarding | Gmail yang menerima email `marketing@` dan `corporate@` (default `kreatifsejahteraproject@gmail.com`) | Perlu konfirmasi | Fase 2 |
+| Akun admin master | Nama dan email untuk akun admin master pertama | Perlu | Fase 2 |
 | Cloudflare Turnstile | Site key dan secret key | Perlu | Fase 3 |
 | Meta Business | Business Manager, Pixel/dataset ID, token Conversions API, Facebook Page | Perlu | Fase 5 |
 | Meta Business | Status verifikasi bisnis. Cara cek: business.facebook.com, Pengaturan Bisnis, Pusat Keamanan, bagian "Verifikasi bisnis". Kalau belum, mulai verifikasi dengan dokumen NIB | Perlu dicek | Sebelum Fase 5 |
 | Meta App | App ID, App Secret, akses `leads_retrieval`, verify token webhook | Perlu | Fase 6 |
 | Google Gemini | `GEMINI_API_KEY` | Perlu | Fase 7 (sebelum itu pakai mock) |
 | Web Push | Kunci VAPID (dibuat sistem) | Dibuat otomatis | Fase 8 |
+
+## 8. Langkah owner: Cloudflare dan Brevo
+
+1. Buat akun Cloudflare (gratis), pilih Add a domain, isi `kisgroup.co.id`, pilih paket Free.
+2. Cloudflare menampilkan dua nameserver. Ganti nameserver domain di panel registrar ke dua nameserver itu. Aktif dalam beberapa menit sampai 24 jam.
+3. Di Cloudflare, My Profile, API Tokens, Create Token, template Edit zone DNS, tambahkan izin Email Routing Rules Edit dan Email Routing Addresses Edit, batasi ke zone `kisgroup.co.id`. Simpan token di `~/.config/kis/accounts.env` sebagai `CLOUDFLARE_API_TOKEN=...`.
+4. Buat akun Brevo (gratis, 300 email per hari). Di Senders, Domains, and Dedicated IPs, tambahkan domain `kisgroup.co.id`. Pilih autentikasi manual. Record DNS-nya saya pasang lewat Cloudflare.
+5. Di Brevo, SMTP and API: salin SMTP login, buat SMTP key, dan buat API key. Simpan di `accounts.env` sebagai `BREVO_SMTP_LOGIN`, `BREVO_SMTP_KEY`, `BREVO_API_KEY`.
+6. Buka sesi Claude Code baru supaya hook memuat nilai baru, lalu kabari. Sisanya saya kerjakan: record DNS Brevo (verifikasi, DKIM, SPF, DMARC), forwarding `marketing@` dan `corporate@`, konfigurasi SMTP Supabase, dan secret Vercel/GitHub.
+

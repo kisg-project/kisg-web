@@ -87,5 +87,7 @@ export default defineConfig([
     "playwright-report/**",
     "test-results/**",
     "next-env.d.ts",
+    // Hasil generate Supabase CLI, diperiksa sama persis oleh db.yml.
+    "src/lib/supabase/database.types.ts",
   ]),
 ]);
