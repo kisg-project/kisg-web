@@ -48,7 +48,7 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 | Harga belum termasuk | Administrasi bank, biaya notaris bank, pajak pembelian (BPHTB), asuransi |
 | Fasilitas unit | Carport, halaman belakang, smart door lock |
 | Tempat sekitar (nama saja) | Stasiun Tambun, Tol Bekasi Timur, Bank Mandiri KCP Mangunjaya, Superindo dan area komersial Tambun |
-| Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dipakai untuk Hero Banner |
+| Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dikompres ke `public/images/projects/sejahtera-green-village/` dan dipakai untuk banner beranda dan galeri proyek (migrasi `20261121000300`) |
 
 ### Masih dibutuhkan
 
@@ -132,7 +132,7 @@ Kunci rahasia tidak pernah ditempel di chat. Owner mengisinya langsung di Vercel
 | Supabase | Production `skxawyvopumzrefnmvyf` (staging dihapus, Fase 2) | Ada | |
 | Supabase | Password database production (owner yang memegang) | Perlu untuk secret CI | Fase 2 |
 | Vercel | Akun `kisg-project`, project belum dibuat | Sebagian | Fase 1 |
-| Domain | Akses DNS `kisgroup.co.id` (siapa registrar-nya) | Perlu | Fase 9 |
+| Domain | Registrar Rumahweb (info owner, 20 November 2026). Nameserver dipindah ke Cloudflare. Record yang dibutuhkan: `kisgroup.co.id` dan `www` ke Vercel, `company` (portal karyawan) CNAME `cname.vercel-dns.com`, semuanya tanpa proxy Cloudflare | Perlu (tutorial setelah website dan PWA) | Setelah PWA |
 | Sentry | Organisasi dan project, `SENTRY_AUTH_TOKEN` | Perlu | Fase 1 |
 | Cloudflare | Akun gratis, domain kisgroup.co.id ditambahkan, nameserver di registrar diganti ke nameserver Cloudflare, lalu API token (izin Zone DNS Edit dan Email Routing Edit untuk kisgroup.co.id) disimpan di `accounts.env` sebagai `CLOUDFLARE_API_TOKEN` | Perlu (langkah owner, lihat di bawah) | Fase 2 |
 | Brevo | Akun gratis, domain kisgroup.co.id ditambahkan di Senders and Domains (record DNS saya pasang lewat Cloudflare), SMTP login dan SMTP key, API key. Disimpan di `accounts.env` sebagai `BREVO_SMTP_LOGIN`, `BREVO_SMTP_KEY`, `BREVO_API_KEY` | Perlu (langkah owner) | Fase 2 |

@@ -31,7 +31,7 @@ Satu codebase Next.js, empat area:
 
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
-3. **Portal internal + PWA** (`/portal`): laporan kinerja karyawan (lapangan, marketing), dashboard owner, CRM, dan panel admin CMS. Bisa di-install di HP.
+3. **Portal internal + PWA** (`company.kisgroup.co.id`, route `src/app/portal/`): laporan kinerja karyawan (lapangan, marketing), dashboard owner, CRM, dan panel admin CMS. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
 

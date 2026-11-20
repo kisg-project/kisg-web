@@ -81,6 +81,8 @@ A/B variant: `proxy.ts` memilih variant berdasarkan bobot traffic, menyimpan coo
 
 ### 2.3 Portal: `src/app/portal/` (PWA, scope `/portal/`)
 
+Domain portal (keputusan owner, 20 November 2026): portal karyawan hanya di `company.kisgroup.co.id`. `proxy.ts` me-rewrite path bersih di host itu (misal `/login`, `/crm`) ke `src/app/portal/...`, dan `/portal` di host lain (termasuk `kisgroup.co.id/portal`) menjadi 404. Aktif lewat env `PORTAL_HOST`. Sebelum domain terhubung, portal sementara di `kisg-web.vercel.app/portal`. Dikerjakan di tahap PWA.
+
 | Route | Role | Rendering |
 |---|---|---|
 | `/portal/login`, `/portal/lupa-password`, `/portal/reset-password`, `/portal/undangan` | Publik | Dynamic |
