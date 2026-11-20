@@ -39,7 +39,9 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: `pnpm start --port ${PORT}`,
+        // Hostname eksplisit: tanpa ini request.url di route handler memakai localhost, berbeda dari
+        // baseURL 127.0.0.1, sehingga cookie sesi hilang setelah redirect.
+        command: `pnpm start --hostname 127.0.0.1 --port ${PORT}`,
         url: baseURL,
         reuseExistingServer: !isCI,
         timeout: 120_000,

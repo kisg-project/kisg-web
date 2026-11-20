@@ -2,8 +2,7 @@ name: DB
 
 on:
   pull_request:
-    # SEMENTARA: staging diterima sampai isinya pindah ke main, lalu dihapus bersama branch staging.
-    branches: [main, staging]
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
     paths:
       - "supabase/**"

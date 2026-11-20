@@ -37,6 +37,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium webkit
+      - name: Supabase lokal
+        uses: ./.github/actions/supabase-local
       - name: Suite penuh 3 kali
         run: |
           for run in 1 2 3; do
