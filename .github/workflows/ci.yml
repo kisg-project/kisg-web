@@ -141,6 +141,10 @@ jobs:
       fail-fast: false
       matrix:
         shard: ${{ fromJSON(contains(github.event.pull_request.labels.*.name, 'e2e:full') && '[1, 2, 3]' || '[1]') }}
+    env:
+      # PR biasa hanya Chromium: dependency sistem WebKit (codec video) besar dan mirror apt runner
+      # kadang sangat lambat. WebKit dipasang hanya untuk e2e:full.
+      BROWSERS: ${{ contains(github.event.pull_request.labels.*.name, 'e2e:full') && 'chromium webkit' || 'chromium' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
@@ -162,17 +166,17 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-${{ env.BROWSERS }}
       - name: Pasang browser
         # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
-        timeout-minutes: 8
+        timeout-minutes: 12
         if: steps.browsers.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium webkit
+        run: pnpm exec playwright install --with-deps $BROWSERS
       - name: Pasang dependency sistem browser
         # apt di runner kadang macet. Gagal cepat lebih hemat menit daripada menunggu batas job.
-        timeout-minutes: 8
+        timeout-minutes: 12
         if: steps.browsers.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium webkit
+        run: pnpm exec playwright install-deps $BROWSERS
       - name: Supabase lokal
         uses: ./.github/actions/supabase-local
       - name: E2E

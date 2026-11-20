@@ -86,7 +86,9 @@ Produk di `/simulasi-kpr` ada di `src/config/kpr-products.ts`, masing-masing den
 | BTN Fixed 3 tahun 2,65% | Dari pemberitaan (Kontan). Perlu konfirmasi angka, tenor, DP minimal | Fase 3 |
 | BSI KPR Sejahtera margin 5% tetap sampai lunas | Dari pemberitaan (Kontan). Perlu konfirmasi produk dan syaratnya | Fase 3 |
 | BSN margin 3,65% tetap 1 tahun | Dari pemberitaan (Kontan). Perlu margin setelah tahun pertama | Fase 3 |
-| Logo BSN | Belum ada. Kirim file logo resmi dari bank, atau saya coba unduh ulang dari Wikimedia | Fase 3 |
+| Logo BSN | Belum ada. Situs resmi BSN dan situs kumpulan logo menolak unduhan otomatis. Kirim file logo resmi (SVG atau PNG transparan), misalnya dari materi kerja sama bank | Fase 3 |
+| Foto proyek sold out | Sementara memakai gambar kecil dari company profile 2024. Kirim foto asli beresolusi tinggi Sejahtera Residence Mangunjaya, Tapos, dan Sumberjaya kalau ada | Fase 3 |
+| Lowongan per jenjang | Halaman karir sudah punya 4 jenjang. Isi lowongan nyata (judul, jenjang, syarat) lewat CMS | Fase 4 |
 | Asumsi bunga floating setelah masa fixed (sekarang 11%) dan margin setelah periode tetap syariah (sekarang 10%) | Asumsi, perlu acuan dari bank | Fase 3 |
 | NPOPTKP Kabupaten Bekasi untuk BPHTB (sekarang Rp 80.000.000, batas minimal UU HKPD) | Perlu angka perda | Fase 3 |
 | Perkiraan biaya bank, notaris bank, dan asuransi (sekarang 3% dari pokok) | Asumsi, perlu angka dari bank rekanan | Fase 3 |

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { CAREER_LEVELS } from "@/config/careers";
 import { env } from "@/env";
 import { getActivePromos, getOpenCareers, getPublishedPosts } from "@/features/cms";
 import { getPublishedProjects } from "@/features/projects";
@@ -42,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     })),
     ...promos.map((promo) => ({ url: url(`/promo/${promo.slug}`), priority: 0.6 })),
+    ...CAREER_LEVELS.map((item) => ({ url: url(`/karir/jenjang/${item.slug}`), priority: 0.4 })),
     ...careers.map((career) => ({ url: url(`/karir/${career.slug}`), priority: 0.4 })),
   ];
 }

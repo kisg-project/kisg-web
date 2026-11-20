@@ -10,7 +10,7 @@ import { formatRupiahRange } from "@/lib/format";
 export const metadata: Metadata = {
   title: "Proyek",
   description:
-    "Proyek perumahan KIS Group di Kabupaten Bekasi: tipe unit, harga, lokasi, dan progres pembangunan.",
+    "Proyek perumahan KIS Group di Bekasi dan Depok: Sejahtera Green Village yang sedang dipasarkan dan proyek yang sudah terjual habis.",
   alternates: { canonical: "/proyek" },
 };
 
@@ -20,7 +20,7 @@ export default async function ProjectsPage() {
     <>
       <PageHero
         title="Proyek"
-        description="Perumahan yang sedang dipasarkan KIS Group."
+        description="Perumahan yang sedang dipasarkan dan yang sudah terjual habis."
         crumbs={[{ name: "Proyek", path: "/proyek" }]}
       />
       <Section>
@@ -30,9 +30,10 @@ export default async function ProjectsPage() {
             description="Hubungi marketing lewat WhatsApp untuk info proyek terbaru."
           />
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul aria-label="Daftar proyek" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, index) => {
               const price = lowestPrice(project.unitTypes);
+              const soldOut = project.status === "sold_out";
               return (
                 <li key={project.id}>
                   <Reveal delay={index * 80} className="h-full">
@@ -40,7 +41,14 @@ export default async function ProjectsPage() {
                       href={`/proyek/${project.slug}`}
                       title={project.name}
                       image={project.cover}
-                      meta={price ? `Mulai ${formatRupiahRange(price)}` : "Hubungi marketing"}
+                      badge={soldOut ? "Sold out" : undefined}
+                      meta={
+                        soldOut
+                          ? "Terjual habis"
+                          : price
+                            ? `Mulai ${formatRupiahRange(price)}`
+                            : "Hubungi marketing"
+                      }
                     >
                       {formatAddress(project.address)}
                     </MediaCard>

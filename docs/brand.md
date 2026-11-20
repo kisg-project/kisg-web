@@ -165,3 +165,26 @@ Foto proyek tetap foto atau render asli. Untuk bagian yang tidak menggambarkan p
 ## Peta footer
 
 `public/images/map/indonesia-dots.svg`: titik-titik daratan Indonesia dari Natural Earth 1:50m (domain publik), proyeksi equirectangular, lon 94,6 sampai 141,2, lat 6,2 sampai -11,2, jarak titik 0,42 derajat. Penanda kantor (Bekasi, 6,21 LS 107,00 BT) diletakkan di 26,62% dari kiri dan 71,37% dari atas (`src/components/site/office-map.tsx`). Kalau kantor pindah kota, hitung ulang dengan rumus yang sama.
+
+### Foto stok berita dan karir (20 November 2026)
+
+Semua dari Unsplash (Unsplash License), dipotong 16:9 (berita, 1600 x 900) atau 4:5 (kartu karir, 800 x 1000) dan dikompres ke WebP.
+
+| File | Foto Unsplash | Fotografer |
+|---|---|---|
+| `berita/ppn-dtp-rumah-2026.webp` | photo-1783227610917-4b075d028693 | Defrino Maasy |
+| `berita/stasiun-bekasi-ekstensi.webp` | photo-1729974250139-8c389c3f2db4 | Gema Saputera |
+| `berita/bi-rate-cicilan-kpr.webp` | photo-1725258080098-727051947997 | Jakub Żerdzicki |
+| `berita/kpr-flpp-2026.webp` | photo-1759428679273-11d914866394 | Jakub Żerdzicki |
+| `berita/program-3-juta-rumah.webp` | photo-1665631153876-af6209034d41 | nanang adi |
+| `berita/kredit-properti-2026.webp` | photo-1770345743231-e17c1489435e | William Firmansyah |
+| `berita/biaya-membeli-rumah.webp` | photo-1758518731462-d091b0b4ed0d | Vitaly Gariev |
+| `berita/kpr-syariah-konvensional.webp` | photo-1681505531034-8d67054e07f6 | Amina Atar |
+| `berita/daftar-cek-survei-rumah.webp` | photo-1754548930574-6a995e5eb5a7 | Jakub Żerdzicki |
+| `berita/mengenal-tambun-selatan.webp` | photo-1610524370692-f33fba2afad8 | Eko Purwanto |
+| `karir/berpengalaman.webp` | photo-1758691737083-0e7fdbde0f05 | Vitaly Gariev |
+| `karir/lulusan-baru.webp` | photo-1531498352491-042fbae4cf57 | Mimi Thian |
+| `karir/lapangan.webp` | photo-1628146023674-ede6049609b1 | Mufid Majnun |
+| `karir/magang.webp` | photo-1531537571171-a707bf2683da | Mimi Thian |
+
+Gambar proyek sold out (`projects/sejahtera-residence-*/`) diambil dari Company Profile PT KISG 2024 (milik KIS). Resolusinya kecil (410 sampai 576 px), jadi diganti foto asli beresolusi tinggi kalau owner punya.

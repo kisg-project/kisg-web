@@ -12,12 +12,15 @@ export function MediaCard({
   title,
   image,
   meta,
+  badge,
   children,
 }: {
   href: string;
   title: string;
   image: { src: string; alt: string } | null;
   meta?: ReactNode;
+  /** Label di pojok foto, misal "Sold out". */
+  badge?: string;
   children?: ReactNode;
 }) {
   return (
@@ -36,6 +39,11 @@ export function MediaCard({
             <ImageOff aria-hidden="true" className="size-8" />
           </div>
         )}
+        {badge ? (
+          <span className="absolute top-3 left-3 rounded-md bg-primary-950/85 px-2.5 py-1 text-xs font-bold tracking-wide text-white uppercase">
+            {badge}
+          </span>
+        ) : null}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
         {meta ? <p className="text-xs font-semibold text-muted-foreground">{meta}</p> : null}

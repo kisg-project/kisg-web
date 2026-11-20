@@ -1,3 +1,5 @@
+import type { CareerLevel } from "@/config/careers";
+
 export interface Banner {
   id: string;
   title: string;
@@ -12,7 +14,9 @@ export interface Banner {
 export type ContentBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
-  | { type: "list"; items: string[] };
+  | { type: "list"; items: string[] }
+  /** Daftar sumber berita, tampil sebagai tautan keluar di akhir artikel. */
+  | { type: "sources"; items: { label: string; url: string }[] };
 
 export interface ContentImage {
   src: string;
@@ -55,6 +59,7 @@ export interface CareerSummary {
   location: string | null;
   employmentType: string | null;
   closesOn: string | null;
+  level: CareerLevel | null;
 }
 
 export interface Career extends CareerSummary {

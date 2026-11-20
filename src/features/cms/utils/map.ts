@@ -31,6 +31,11 @@ const blockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("paragraph"), text }),
   z.object({ type: z.literal("heading"), text }),
   z.object({ type: z.literal("list"), items: z.array(text).min(1) }),
+  z.object({
+    type: z.literal("sources"),
+    // Hanya https supaya tautan javascript: atau http dari isian admin tidak ikut dirender.
+    items: z.array(z.object({ label: text, url: z.url({ protocol: /^https$/ }) })).min(1),
+  }),
 ]);
 
 /** Isi konten dari kolom jsonb. Blok yang tidak sesuai skema dilewati, bukan merusak halaman. */
@@ -101,7 +106,7 @@ export function toPromo(row: Tables["promos"]["Row"]): Promo {
 
 type CareerRow = Pick<
   Tables["careers"]["Row"],
-  "id" | "slug" | "title" | "department" | "location" | "employment_type" | "closes_on"
+  "id" | "slug" | "title" | "department" | "location" | "employment_type" | "closes_on" | "level"
 >;
 
 export function toCareerSummary(row: CareerRow): CareerSummary {
@@ -113,6 +118,7 @@ export function toCareerSummary(row: CareerRow): CareerSummary {
     location: row.location,
     employmentType: row.employment_type,
     closesOn: row.closes_on,
+    level: row.level,
   };
 }
 
