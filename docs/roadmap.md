@@ -1,6 +1,6 @@
 # Roadmap Fase 1 sampai 9
 
-Disusun di Fase 0. Setiap fase selesai kalau semua skenario E2E fase itu di `docs/e2e-coverage.md` lolos di CI, PR sudah di-merge ke `staging`, dan owner sudah mengecek di staging.
+Disusun di Fase 0. Setiap fase selesai kalau semua skenario E2E fase itu di `docs/e2e-coverage.md` lolos di CI, PR sudah di-merge ke `main`, dan owner sudah mengecek di production. Tanpa staging sejak Fase 2 (keputusan owner).
 
 Kondisi yang memengaruhi semua fase:
 - E2E, Supabase lokal, dan `next build` hanya jalan di CI (laptop RAM 4 GB). Di laptop cukup `pnpm verify:quick`.
@@ -27,13 +27,13 @@ Tujuan: proyek Next.js yang siap dipakai semua fase, dengan pipeline CI yang ben
 
 Isi:
 - Next.js App Router, TypeScript strict, Tailwind v4 dengan token dari `docs/brand.md`, shadcn/ui dan komponen dasar.
-- Tooling: ESLint, Prettier, Husky (`pre-commit`, `commit-msg`, `pre-push` dengan cek akun dan tolak push ke `main`/`staging`).
+- Tooling: ESLint, Prettier, Husky (`pre-commit`, `commit-msg`, `pre-push` dengan cek akun dan tolak push ke `main`).
 - Skrip: `check:copy`, `verify:quick`, `verify:full`, dan `scripts/merge-pr.sh`.
 - Env schema, security headers, helper format (rupiah, tanggal WIB, nomor HP).
 - Modul kompresi gambar `src/lib/image/` beserta unit test-nya. Modul ini dibuat sekarang karena dipakai di Fase 3, 4, dan 8.
 - Playwright (3 profil browser), axe, mock jaringan.
 - Workflow `ci`, `security`, `preview`, `deploy-db`, `deploy-production`, `release`, `e2e-weekly`, `backup`. Job yang butuh Supabase di-skip sampai Fase 2.
-- Branch `staging`, project Vercel, halaman `/dev/ui`.
+- Project Vercel, halaman `/dev/ui`.
 
 Risiko teknis:
 - Next.js, Tailwind, dan shadcn versi terbaru bisa punya perubahan API. Mitigasi: baca dokumentasi versi terpasang lewat context7 sebelum menulis pola kode.
@@ -48,7 +48,7 @@ Tujuan: semua tabel inti, RLS, auth portal, dan storage sesuai `docs/data-model.
 
 Risiko teknis:
 - `database.types.ts` biasanya di-generate dari Supabase lokal. Karena laptop tidak menjalankan Docker, job `db.yml` yang men-generate types di CI lalu mengunggahnya sebagai artifact. Kalau berbeda, CI gagal dan menampilkan diff. File diperbarui dengan mengambil artifact itu (`gh run download`).
-- Custom Access Token Hook harus aktif di lokal CI (`config.toml`) dan di staging/production. Pengaktifan remote lewat Supabase Management API dari workflow, bukan klik di dashboard.
+- Custom Access Token Hook harus aktif di lokal CI (`config.toml`) dan di production. Pengaktifan remote lewat Supabase Management API dari workflow, bukan klik di dashboard.
 - Policy RLS yang memanggil fungsi per baris bisa lambat. Fungsi helper dibuat `stable` dan dibungkus `(select ...)` supaya dievaluasi sekali per query.
 - Email undangan dan lupa password dikirim dari `notifikasi@kisgroup.co.id` lewat SMTP Brevo, butuh domain terautentikasi di Brevo (DNS di Cloudflare).
 
@@ -117,9 +117,9 @@ Risiko teknis:
 
 Risiko teknis:
 - **Vercel Hobby melarang pemakaian komersial.** Website perusahaan properti termasuk komersial. Kalau Vercel menegur, project bisa dinonaktifkan. Owner perlu memutuskan sebelum domain production diarahkan.
-- Supabase Free tanpa backup otomatis dan tanpa PITR. Backup harian lewat `backup.yml` harus diuji restore minimal sekali di staging.
-- Project Supabase Free dijeda kalau 7 hari tidak aktif. Production aman karena ada trafik. Staging dijaga oleh ping mingguan.
-- Domain production dan `staging.kisgroup.co.id` butuh akses DNS.
+- Supabase Free tanpa backup otomatis dan tanpa PITR. Backup harian lewat `backup.yml` harus diuji restore minimal sekali ke Supabase lokal.
+- Project Supabase Free dijeda kalau 7 hari tidak aktif. Production dijaga oleh koneksi harian `backup.yml`.
+- Domain production butuh akses DNS.
 
 ## Anggaran menit GitHub Actions
 
@@ -128,7 +128,7 @@ Kuota GitHub Free untuk repo private: 2.000 menit per bulan (runner Linux). Perk
 | Workflow | Menit per run | Run per bulan | Total |
 |---|---|---|---|
 | `ci.yml` per PR: cek statis dan build (sekitar 8), E2E 3 shard (3 x 8) | 32 | 30 push PR | 960 |
-| `ci.yml` saat merge ke `staging`/`main`: build + smoke saja, karena PR sudah menjalankan suite penuh | 10 | 15 | 150 |
+| `ci.yml` saat merge ke `main`: build saja, karena PR sudah menjalankan E2E | 10 | 15 | 150 |
 | `db.yml` (PR yang menyentuh `supabase/`) | 10 | 10 | 100 |
 | `e2e-weekly.yml` (3x suite penuh) | 75 | 4 | 300 |
 | `security.yml`, `preview.yml`, `backup.yml`, `deploy-*`, `release` | | | 200 |
@@ -140,13 +140,13 @@ Sisa ruang sekitar 15%. Pengaman:
 - push kecil-kecil digabung sebelum membuka PR
 - pemakaian menit dicek tiap akhir fase di halaman Billing GitHub (endpoint API billing yang berlaku dicek saat Fase 1)
 
-Kalau kuota hampir habis: kurangi shard E2E per PR menjadi Chromium saja, dan jalankan tiga browser hanya di PR ke `main`.
+Sejak Fase 2 (keputusan owner, opsi B): E2E per PR cukup Chromium. Tiga browser hanya di PR akhir fase (label `e2e:full`) dan `e2e-weekly.yml`. Risiko yang diterima: bug khusus Safari baru ketahuan di akhir fase atau di run mingguan.
 
 ## Keputusan owner (akhir Fase 0)
 
 | Topik | Keputusan |
 |---|---|
-| Database untuk melihat UI di laptop | Supabase staging dengan akun dev khusus. Migrasi, reset, dan seed ke staging hanya lewat CI |
+| Database untuk melihat UI di laptop | Tidak ada (tanpa staging sejak Fase 2). Portal dicek lewat E2E di CI dan di production |
 | Vercel Hobby untuk website komersial | Tetap Hobby. Risiko ketentuan non-komersial diterima owner |
 | Harga Sejahtera Green Village | Ditampilkan di website. Angka dikirim owner (lihat `docs/TODO-DATA.md`) |
 | Pembagian lead | Round-robin ke semua marketing aktif untuk semua proyek |
