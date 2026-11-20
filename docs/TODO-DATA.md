@@ -129,7 +129,7 @@ Kunci rahasia tidak pernah ditempel di chat. Owner mengisinya langsung di Vercel
 | Layanan | Yang dibutuhkan | Status | Dibutuhkan di |
 |---|---|---|---|
 | GitHub | Akun `kisg-project`, repo `kisg-web` | Ada | |
-| Supabase | Production `skxawyvopumzrefnmvyf`, staging `zpxdkjmwsjeeeypszwzm` | Ada | |
+| Supabase | Production `skxawyvopumzrefnmvyf` (staging dihapus, Fase 2) | Ada | |
 | Supabase | Password database production (owner yang memegang) | Perlu untuk secret CI | Fase 2 |
 | Vercel | Akun `kisg-project`, project belum dibuat | Sebagian | Fase 1 |
 | Domain | Akses DNS `kisgroup.co.id` (siapa registrar-nya) | Perlu | Fase 9 |

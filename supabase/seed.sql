@@ -1,4 +1,4 @@
--- Seed khusus development dan CI (supabase db reset). Tidak pernah dijalankan ke staging atau production.
+-- Seed khusus development dan CI (supabase db reset). Tidak pernah dijalankan ke production.
 -- Data proyek di bawah adalah data asli dari owner (19 November 2026). User contoh per role dibuat
 -- oleh global setup E2E lewat admin API (Fase 2b), bukan di sini.
 

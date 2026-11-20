@@ -25,9 +25,8 @@ Identitas yang benar (tanpa secret) ada di `scripts/accounts.expected.env`.
 | Repo | `kisg-project/kisg-web` (private) |
 | Supabase | org `yiwfpvjviqrrragrkukf` (paket Free) |
 | Supabase production | `skxawyvopumzrefnmvyf` (kisg web-pwa, ap-southeast-1) |
-| Supabase staging | `zpxdkjmwsjeeeypszwzm` (kisg web-pwa staging, ap-southeast-1) |
 
-Password database staging tersimpan di `~/.config/kis/accounts.env` sebagai `KIS_STAGING_DB_PASSWORD` (tidak dimuat ke sesi). Password production dipegang owner.
+Tanpa project staging sejak Fase 2 (keputusan owner, project staging sudah dihapus). Password database production tersimpan di `~/.config/kis/accounts.env` sebagai `KIS_PRODUCTION_DB_PASSWORD` (tidak dimuat ke sesi) dan sebagai repository secret GitHub.
 
 ## Cara kerja
 
@@ -59,6 +58,6 @@ Password database staging tersimpan di `~/.config/kis/accounts.env` sebagai `KIS
 | Supabase | supabase.com/dashboard/account/tokens | Buat token baru, ganti `SUPABASE_ACCESS_TOKEN`, cabut token lama |
 | Vercel | vercel.com/account/settings/tokens | Buat token baru dengan scope tim `kisg-project`, ganti `VERCEL_TOKEN`, hapus token lama |
 | Sentry | Sentry > Settings > Auth Tokens | Buat token baru, ganti `SENTRY_AUTH_TOKEN`, cabut token lama |
-| Password database | Supabase > Project Settings > Database | Reset, lalu perbarui repository secret GitHub `STAGING_SUPABASE_DB_PASSWORD` atau `PRODUCTION_SUPABASE_DB_PASSWORD` (dan `KIS_STAGING_DB_PASSWORD` di `accounts.env` untuk staging) |
+| Password database | Supabase > Project Settings > Database | Reset, lalu perbarui repository secret GitHub `PRODUCTION_SUPABASE_DB_PASSWORD` dan `PRODUCTION_SUPABASE_DB_URL`, serta `KIS_PRODUCTION_DB_PASSWORD` di `accounts.env` |
 
 Setelah mengganti token, buka sesi Claude Code baru supaya hook memuat nilai baru. Token yang juga disimpan sebagai secret GitHub Actions atau env Vercel harus diganti di sana juga (repository secret GitHub, env Vercel).

@@ -85,9 +85,7 @@
       "Bash(git push * --force*)",
       "Bash(git push * -f *)",
       "Bash(git push origin main*)",
-      "Bash(git push origin staging*)",
       "Bash(git push * HEAD:main*)",
-      "Bash(git push * HEAD:staging*)",
       "Bash(gh auth switch*)",
       "Bash(gh auth login*)",
       "Bash(gh auth logout*)",
@@ -114,7 +112,6 @@
       "Bash(vercel project rm*)",
       "Bash(vercel domains rm*)",
       "Read(./.env.production*)",
-      "Read(./.env.staging*)",
       "Read(~/.config/kis/**)",
       "Read(~/.ssh/id_*)",
       "Read(~/.config/gh/hosts.yml)"

@@ -1,0 +1,53 @@
+name: Supabase lokal untuk E2E
+description: >
+  Menjalankan Supabase lokal di runner (migrasi dan seed dari nol), lalu mengekspor URL dan kunci
+  ke env job berikutnya. Dipakai ci.yml dan e2e-weekly.yml. Tidak pernah menyentuh production.
+
+runs:
+  using: composite
+  steps:
+    - name: Kosongkan ruang disk runner
+      shell: bash
+      run: |
+        # Image Docker Supabase, browser Playwright, dan video test bisa memenuhi disk runner (ENOSPC).
+        # Toolchain bawaan runner yang tidak dipakai proyek ini dihapus.
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+        df -h / | tail -1
+
+    - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
+      with:
+        version: 3.2.0
+
+    - name: Jalankan Supabase lokal
+      shell: bash
+      run: |
+        # Layanan yang tidak dipakai E2E dimatikan supaya start lebih cepat. Mailpit tetap jalan
+        # untuk membaca email lupa password. Runner baru, jadi migrasi dan seed jalan dari nol.
+        supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+        supabase status -o env > "$RUNNER_TEMP/supabase.env"
+
+    - name: Ekspor kunci ke env
+      shell: bash
+      run: |
+        value() {
+          sed -n "s/^$1=\"\{0,1\}\([^\"]*\)\"\{0,1\}\$/\1/p" "$RUNNER_TEMP/supabase.env"
+        }
+        url="$(value API_URL)"
+        publishable="$(value PUBLISHABLE_KEY)"
+        secret="$(value SECRET_KEY)"
+        mailpit="$(value MAILPIT_URL)"
+        rm -f "$RUNNER_TEMP/supabase.env"
+        for name in url publishable secret; do
+          if [ -z "${!name}" ]; then
+            echo "::error::supabase status tidak mengeluarkan nilai $name."
+            exit 1
+          fi
+        done
+        echo "::add-mask::$secret"
+        {
+          echo "SUPABASE_URL=$url"
+          echo "SUPABASE_PUBLISHABLE_KEY=$publishable"
+          echo "SUPABASE_SECRET_KEY=$secret"
+          echo "MAILPIT_URL=${mailpit:-http://127.0.0.1:54324}"
+          echo "E2E_SUPABASE=1"
+        } >> "$GITHUB_ENV"

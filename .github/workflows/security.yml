@@ -2,7 +2,7 @@ name: Security
 
 on:
   pull_request:
-    branches: [staging, main]
+    branches: [main]
   schedule:
     - cron: "0 1 * * 1" # Senin 08.00 WIB
   workflow_dispatch:

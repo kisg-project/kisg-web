@@ -2,7 +2,7 @@ name: DB
 
 on:
   pull_request:
-    branches: [staging, main]
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
     paths:
       - "supabase/**"

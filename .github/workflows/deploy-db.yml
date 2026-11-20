@@ -1,32 +1,34 @@
-name: Deploy DB staging
+name: Deploy DB production
 
-# Merge ke staging menerapkan migrasi dan pengaturan Auth ke Supabase staging.
-# Production lewat deploy-production.yml (manual).
+# Merge ke main menerapkan migrasi dan pengaturan Auth ke Supabase production. Vercel men-deploy app
+# dari main secara otomatis di waktu yang sama, jadi migrasi wajib backward compatible
+# (pola expand lalu contract, CLAUDE.md bagian 10). Tanpa staging sejak Fase 2 (keputusan owner).
 on:
   push:
-    branches: [staging]
+    branches: [main]
     paths:
       - "supabase/migrations/**"
+      - "supabase/templates/**"
       - "scripts/supabase-auth-config.mjs"
       - ".github/workflows/deploy-db.yml"
   workflow_dispatch:
 
 concurrency:
-  group: deploy-db-staging
+  group: deploy-db-production
   cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  migrate-staging:
-    name: migrate-staging
+  migrate-production:
+    name: migrate-production
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
-      SUPABASE_PROJECT_REF: ${{ secrets.STAGING_SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.PRODUCTION_SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.PRODUCTION_SUPABASE_PROJECT_REF }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Cek konfigurasi
@@ -37,16 +39,16 @@ jobs:
       - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
         with:
           version: 3.2.0
-      - name: supabase db push ke staging
+      - name: supabase db push ke production
         run: |
           supabase db push --remote="$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD" --yes
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
-      - name: Pengaturan Auth staging
+      - name: Pengaturan Auth production
         env:
-          SITE_URL: https://kisg-web-git-staging-kisg-project.vercel.app
-          ADDITIONAL_REDIRECT_URLS: https://*-kisg-project.vercel.app/**
+          # Ganti ke https://kisgroup.co.id saat domain sudah terhubung ke Vercel (docs/TODO-DATA.md).
+          SITE_URL: https://kisg-web.vercel.app
           BREVO_SMTP_LOGIN: ${{ secrets.BREVO_SMTP_LOGIN }}
           BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
         run: node scripts/supabase-auth-config.mjs
