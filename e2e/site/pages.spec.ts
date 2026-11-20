@@ -9,6 +9,11 @@ const PAGES: { path: string; h1: string }[] = [
   { path: "/berita", h1: "Berita" },
   { path: "/promo", h1: "Promo" },
   { path: "/karir", h1: "Karir" },
+  { path: "/karir/jenjang/magang", h1: "Karir Magang" },
+  {
+    path: "/berita/bi-rate-naik-ke-6-persen-cara-menjaga-cicilan-kpr",
+    h1: "BI-Rate naik ke 6 persen: cara menjaga cicilan KPR tetap terkendali",
+  },
   { path: "/tentang", h1: "Tentang KIS Group" },
   { path: "/kontak", h1: "Kontak" },
   { path: "/kebijakan-privasi", h1: "Kebijakan privasi" },
@@ -50,7 +55,7 @@ test.describe("Halaman publik", () => {
     }
   });
 
-  test("menu Proyek langsung ke detail karena hanya ada satu proyek terbit", async ({
+  test("menu Proyek membuka daftar proyek karena ada lebih dari satu proyek terbit", async ({
     page,
     isMobile,
   }) => {
@@ -67,8 +72,8 @@ test.describe("Halaman publik", () => {
         .getByRole("link", { name: "Proyek" })
         .click();
     }
-    await expect(page).toHaveURL(PROJECT_PATH);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sejahtera Green Village");
+    await expect(page).toHaveURL("/proyek");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Proyek");
   });
 
   for (const path of [
@@ -77,6 +82,7 @@ test.describe("Halaman publik", () => {
     "/berita/berita-draft-dummy",
     "/promo/promo-kedaluwarsa-dummy",
     "/karir/lowongan-draft-dummy",
+    "/karir/jenjang/tidak-ada",
   ]) {
     test(`${path} menampilkan 404 di dalam layout website`, async ({ page }) => {
       // Konten dinamis di-stream, jadi status bisa 200. Yang wajib: halaman 404 dan noindex.
@@ -91,12 +97,8 @@ test.describe("Halaman publik", () => {
   }
 
   test("halaman kosong menampilkan keadaan kosong yang jelas", async ({ page }) => {
-    await page.goto("/berita");
-    await expect(page.getByText("Belum ada berita.")).toBeVisible();
     await page.goto("/promo");
     await expect(page.getByText("Belum ada promo yang berlaku.")).toBeVisible();
-    await page.goto("/karir");
-    await expect(page.getByText("Belum ada lowongan yang dibuka.")).toBeVisible();
   });
 });
 
@@ -226,5 +228,109 @@ test.describe("SEO dan kontak", () => {
       .getByRole("main")
       .getByRole("link", { name: "Instagram @kreatifsejahteraproject" });
     await expect(link).toHaveText("@kreatifsejahteraproject");
+  });
+});
+
+test.describe("Berita", () => {
+  test("daftar berita berisi 10 artikel bersampul, terbaru di atas", async ({ page }) => {
+    await page.goto("/berita");
+    const list = page.getByRole("list", { name: "Daftar berita" });
+    await expect(list.getByRole("listitem")).toHaveCount(10);
+    await expect(list.getByRole("listitem").locator("img")).toHaveCount(10);
+    await expect(list.getByRole("listitem").first()).toContainText("BI-Rate naik ke 6 persen");
+  });
+
+  test("detail berita: satu h1, Article JSON-LD, dan sumber berupa tautan keluar", async ({
+    page,
+  }) => {
+    await page.goto("/berita/beli-rumah-baru-bebas-ppn-2026-ini-syarat-lengkapnya");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Beli rumah baru bebas PPN di 2026: ini syarat lengkapnya",
+    );
+    expect(await jsonLdTypes(page)).toContain("Article");
+    const sources = page.getByRole("region", { name: "Sumber" });
+    const links = sources.getByRole("link");
+    await expect(links).toHaveCount(2);
+    await expect(links.first()).toHaveAttribute("href", /^https:\/\/pajak\.go\.id\//);
+    await expect(links.first()).toHaveAttribute("target", "_blank");
+    await expect(links.first()).toHaveAttribute("rel", "noopener noreferrer");
+  });
+});
+
+test.describe("Karir per jenjang", () => {
+  test("halaman karir menampilkan empat jenjang bergambar", async ({ page }) => {
+    await page.goto("/karir");
+    for (const name of ["Berpengalaman", "Lulusan baru", "Staf lapangan", "Magang"]) {
+      const card = page.getByRole("link", { name: new RegExp(`^${name}`) });
+      await expect(card).toBeVisible();
+      await expect(card.locator("img")).toHaveCount(1);
+    }
+    await page.getByRole("link", { name: /^Staf lapangan/ }).click();
+    await expect(page).toHaveURL("/karir/jenjang/lapangan");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Karir Staf lapangan");
+  });
+
+  test("jenjang tanpa lowongan menampilkan keadaan kosong dan tautan ke jenjang lain", async ({
+    page,
+  }) => {
+    await page.goto("/karir/jenjang/magang");
+    await expect(page.getByText("Belum ada lowongan untuk jenjang ini.")).toBeVisible();
+    const status = page.getByRole("status");
+    await expect(status.getByRole("link")).toHaveCount(3);
+    await status.getByRole("link", { name: "Berpengalaman" }).click();
+    await expect(page).toHaveURL("/karir/jenjang/berpengalaman");
+  });
+
+  test("sitemap memuat halaman jenjang karir", async ({ request }) => {
+    const body = await (await request.get("/sitemap.xml")).text();
+    for (const slug of ["berpengalaman", "lulusan-baru", "lapangan", "magang"]) {
+      expect(body).toContain(`/karir/jenjang/${slug}`);
+    }
+  });
+});
+
+test.describe("Proyek sold out", () => {
+  const SOLD_OUT = [
+    "Sejahtera Residence Mangunjaya",
+    "Sejahtera Residence Tapos",
+    "Sejahtera Residence Sumberjaya",
+  ];
+
+  test("daftar proyek: Sejahtera Green Village di depan, tiga proyek lain bertanda Sold out", async ({
+    page,
+  }) => {
+    await page.goto("/proyek");
+    const items = page.getByRole("list", { name: "Daftar proyek" }).getByRole("listitem");
+    await expect(items).toHaveCount(4);
+    await expect(items.first()).toContainText("Sejahtera Green Village");
+    await expect(items.first()).not.toContainText("Sold out");
+    for (const name of SOLD_OUT) {
+      const card = items.filter({ hasText: name });
+      await expect(card).toContainText("Sold out");
+      await expect(card.locator("img")).toHaveCount(1);
+    }
+  });
+
+  test("detail proyek sold out tanpa form minat dan mengarah ke proyek yang tersedia", async ({
+    page,
+  }) => {
+    await page.goto("/proyek/sejahtera-residence-tapos");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sejahtera Residence Tapos");
+    await expect(page.getByText("Sold out").first()).toBeVisible();
+    await expect(page.getByText("Pembangunan dimulai tahun 2023")).toBeVisible();
+    await expect(page.getByRole("form")).toHaveCount(0);
+    await page.getByRole("link", { name: "Lihat Sejahtera Green Village" }).click();
+    await expect(page).toHaveURL(PROJECT_PATH);
+  });
+
+  test("detail proyek sold out lolos aksesibilitas dan responsif", async ({ page }) => {
+    await page.goto("/proyek/sejahtera-residence-sumberjaya");
+    await expectNoA11yViolations(page);
+    await expectResponsive(page);
+  });
+
+  test("sitemap memuat proyek sold out", async ({ request }) => {
+    const body = await (await request.get("/sitemap.xml")).text();
+    expect(body).toContain("/proyek/sejahtera-residence-mangunjaya");
   });
 });

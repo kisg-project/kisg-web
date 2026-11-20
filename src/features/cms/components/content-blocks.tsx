@@ -13,6 +13,27 @@ export function ContentBlocks({ blocks }: { blocks: readonly ContentBlock[] }) {
             </h2>
           );
         }
+        if (block.type === "sources") {
+          return (
+            <section key={key} aria-label="Sumber" className="mt-6 border-t pt-4 text-sm">
+              <p className="font-semibold">Sumber</p>
+              <ul className="mt-2 grid gap-1.5">
+                {block.items.map((item) => (
+                  <li key={item.url}>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline underline-offset-2 hover:text-primary-800"
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        }
         if (block.type === "list") {
           return (
             <ul key={key} className="grid list-disc gap-1.5 pl-6">

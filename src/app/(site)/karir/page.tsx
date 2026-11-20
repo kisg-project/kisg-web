@@ -1,77 +1,71 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Briefcase, MapPin } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
-import { EmptyState } from "@/components/shared/state-message";
 import { PageHero } from "@/components/site/page-hero";
-import { getOpenCareers } from "@/features/cms";
-import { formatDateWIB } from "@/lib/format";
+import { CAREER_LEVELS } from "@/config/careers";
+import { CareerList, getOpenCareers } from "@/features/cms";
 
 export const metadata: Metadata = {
   title: "Karir",
   description:
-    "Lowongan kerja di KIS Group, developer perumahan di Bekasi. Kirim lamaran langsung dari halaman lowongan.",
+    "Karir di KIS Group, developer perumahan di Bekasi: jenjang berpengalaman, lulusan baru, staf lapangan, dan magang.",
   alternates: { canonical: "/karir" },
 };
 
 export default async function CareersPage() {
   const careers = await getOpenCareers();
+  const countFor = (level: string) => careers.filter((career) => career.level === level).length;
+
   return (
     <>
       <PageHero
         title="Karir"
-        description="Lowongan yang sedang dibuka di KIS Group."
+        description="Pilih jenjang yang sesuai dengan pengalaman Anda, lalu lihat lowongan yang sedang dibuka."
         crumbs={[{ name: "Karir", path: "/karir" }]}
       />
-      <Section>
-        {careers.length === 0 ? (
-          <EmptyState
-            title="Belum ada lowongan yang dibuka."
-            description="Lowongan baru akan tampil di sini."
-          />
-        ) : (
-          <ul className="grid gap-4">
-            {careers.map((career, index) => (
-              <li key={career.id}>
-                <Reveal delay={index * 60}>
+      <Section title="Jenjang posisi">
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {CAREER_LEVELS.map((item, index) => {
+            const count = countFor(item.level);
+            return (
+              <li key={item.level}>
+                <Reveal delay={index * 80} className="h-full">
                   <Link
-                    href={`/karir/${career.slug}`}
-                    className="group flex lift flex-col gap-3 rounded-lg border bg-card p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between"
+                    href={`/karir/jenjang/${item.slug}`}
+                    className="group flex h-full lift flex-col overflow-hidden rounded-lg border bg-card shadow-xs"
                   >
-                    <span>
-                      <span className="block text-lg font-bold group-hover:text-primary">
-                        {career.title}
-                      </span>
-                      <span className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                        {career.department ? (
-                          <span className="inline-flex items-center gap-1">
-                            <Briefcase aria-hidden="true" className="size-4" />
-                            {career.department}
-                          </span>
-                        ) : null}
-                        {career.location ? (
-                          <span className="inline-flex items-center gap-1">
-                            <MapPin aria-hidden="true" className="size-4" />
-                            {career.location}
-                          </span>
-                        ) : null}
-                        {career.closesOn ? (
-                          <span>Ditutup {formatDateWIB(career.closesOn)}</span>
-                        ) : null}
+                    <span className="relative block aspect-[4/5] overflow-hidden bg-surface">
+                      <Image
+                        src={item.image.src}
+                        alt={item.image.alt}
+                        fill
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      />
+                    </span>
+                    <span className="flex flex-1 flex-col gap-2 p-5">
+                      <span className="text-xl font-bold text-primary-800">{item.title}</span>
+                      <span className="text-sm text-subtle-foreground">{item.description}</span>
+                      <span className="mt-auto inline-flex items-center gap-2 pt-3 text-sm font-semibold text-primary">
+                        {count > 0 ? `${String(count)} lowongan dibuka` : "Lihat jenjang"}
+                        <ArrowRight aria-hidden="true" className="size-4" />
                       </span>
                     </span>
-                    <ArrowRight
-                      aria-hidden="true"
-                      className="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-1"
-                    />
                   </Link>
                 </Reveal>
               </li>
-            ))}
-          </ul>
-        )}
+            );
+          })}
+        </ul>
       </Section>
+      {careers.length > 0 ? (
+        <Section title="Semua lowongan" className="pt-0">
+          <CareerList careers={careers} />
+        </Section>
+      ) : null}
     </>
   );
 }

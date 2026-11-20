@@ -33,6 +33,19 @@ describe("parseBlocks", () => {
     ).toEqual([{ type: "paragraph", text: "Aman" }]);
     expect(parseBlocks(null)).toEqual([]);
   });
+
+  it("menerima daftar sumber hanya dengan tautan https", () => {
+    expect(
+      parseBlocks([
+        { type: "sources", items: [{ label: "Bank Indonesia", url: "https://www.bi.go.id/a" }] },
+        { type: "sources", items: [{ label: "Bahaya", url: "javascript:alert(1)" }] },
+        { type: "sources", items: [{ label: "Tidak aman", url: "http://contoh.id" }] },
+        { type: "sources", items: [] },
+      ]),
+    ).toEqual([
+      { type: "sources", items: [{ label: "Bank Indonesia", url: "https://www.bi.go.id/a" }] },
+    ]);
+  });
 });
 
 describe("parseTextList", () => {
@@ -104,9 +117,14 @@ describe("promo dan lowongan", () => {
       description: [{ type: "paragraph", text: "Tugas" }],
       requirements: ["Domisili Bekasi"],
       closes_on: "2026-12-31",
+      level: "lulusan_baru",
       content_status: "terbit",
     });
-    expect(career).toMatchObject({ requirements: ["Domisili Bekasi"], department: "Pemasaran" });
+    expect(career).toMatchObject({
+      requirements: ["Domisili Bekasi"],
+      department: "Pemasaran",
+      level: "lulusan_baru",
+    });
     expect(career.description).toHaveLength(1);
   });
 });

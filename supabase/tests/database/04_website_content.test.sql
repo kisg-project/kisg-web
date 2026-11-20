@@ -61,11 +61,11 @@ update public.leads set owner_id = '00000000-0000-4000-8000-000000000104' where 
 -- Pengunjung (anon) ----------------------------------------------------------
 set local role anon;
 select set_config('request.jwt.claims', '{"role": "anon"}', true);
-select is((select count(*)::int from public.project_media), 7, 'anon melihat galeri proyek terbit');
+select is((select count(*)::int from public.project_media), 10, 'anon melihat galeri proyek terbit');
 select is((select count(*)::int from public.nearby_places), 4, 'anon melihat akses sekitar');
 select is((select count(*)::int from public.banners), 3, 'anon melihat banner terbit');
 select is((select count(*)::int from public.faqs), 6, 'anon melihat FAQ terbit');
-select is((select count(*)::int from public.posts), 0, 'berita draft tidak terlihat');
+select is((select count(*)::int from public.posts), 10, 'anon hanya melihat berita terbit, berita draft tidak');
 select is((select count(*)::int from public.promos), 0, 'promo kedaluwarsa tidak terlihat');
 select is((select count(*)::int from public.careers), 0, 'lowongan draft tidak terlihat');
 select throws_ok('select count(*) from public.leads', '42501', null, 'anon tidak bisa membaca lead');
@@ -83,7 +83,7 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000103", "role": "authenticated"}', true);
 select is((select count(*)::int from public.leads), 1, 'marketing hanya melihat lead miliknya');
-select is((select count(*)::int from public.posts), 1, 'staf melihat berita draft');
+select is((select count(*)::int from public.posts), 11, 'staf melihat berita draft');
 reset role;
 
 -- Manajer tim A: lead timnya ----------------------------------------------
