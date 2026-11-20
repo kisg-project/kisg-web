@@ -35,16 +35,18 @@ export default async function AboutPage() {
       <Section title="Profil singkat">
         <dl className="grid gap-4 sm:grid-cols-2">
           {facts.map((fact, index) => (
-            <Reveal key={fact.label} delay={index * 80}>
-              <div className="flex h-full gap-4 rounded-lg border bg-card p-5">
+            <Reveal
+              key={fact.label}
+              delay={index * 80}
+              className="flex h-full flex-col gap-2 rounded-lg border bg-card p-5"
+            >
+              <dt className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
                   <fact.icon aria-hidden="true" className="size-5" />
                 </span>
-                <div>
-                  <dt className="text-sm font-semibold text-muted-foreground">{fact.label}</dt>
-                  <dd className="mt-1 font-semibold">{fact.value}</dd>
-                </div>
-              </div>
+                {fact.label}
+              </dt>
+              <dd className="font-semibold">{fact.value}</dd>
             </Reveal>
           ))}
         </dl>

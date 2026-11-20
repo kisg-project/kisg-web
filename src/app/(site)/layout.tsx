@@ -1,6 +1,7 @@
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { WhatsAppFloat } from "@/components/site/whatsapp-float";
+import { TrackingCapture } from "@/features/leads";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -17,6 +18,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       </main>
       <SiteFooter />
       <WhatsAppFloat />
+      <TrackingCapture />
     </>
   );
 }

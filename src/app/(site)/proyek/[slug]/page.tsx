@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { whatsappLink } from "@/config/site";
 import { env } from "@/env";
 import { KprTeaser } from "@/features/kpr";
+import { LeadForm } from "@/features/leads";
 import {
   ConstructionUpdates,
   FaqList,
@@ -183,6 +184,40 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
           <ConstructionUpdates items={project.updates} />
         </Section>
       ) : null}
+
+      <Section
+        id="minta-info"
+        tone="surface"
+        title="Minta info"
+        description="Isi nama dan nomor WhatsApp. Marketing kami menghubungi Anda di jam kerja."
+        className="scroll-mt-(--header-height)"
+      >
+        <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+          <Reveal className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7">
+            <LeadForm
+              formKind="minat"
+              projectSlug={project.slug}
+              projectName={project.name}
+              idPrefix="minat"
+            />
+          </Reveal>
+          <Reveal
+            delay={80}
+            className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
+          >
+            <h3 className="text-lg font-bold">Minta brosur</h3>
+            <p className="mt-1 mb-4 text-sm text-subtle-foreground">
+              Brosur dikirim marketing lewat WhatsApp.
+            </p>
+            <LeadForm
+              formKind="brosur"
+              projectSlug={project.slug}
+              projectName={project.name}
+              idPrefix="brosur"
+            />
+          </Reveal>
+        </div>
+      </Section>
 
       {project.faqs.length > 0 ? (
         <Section id="faq" title="Pertanyaan umum" className="scroll-mt-(--header-height)">

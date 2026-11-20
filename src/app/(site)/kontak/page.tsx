@@ -6,6 +6,7 @@ import { Section } from "@/components/shared/section";
 import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
+import { LeadForm } from "@/features/leads";
 
 export const metadata: Metadata = {
   title: "Kontak",
@@ -87,6 +88,17 @@ export default function ContactPage() {
             </div>
           </Reveal>
         </div>
+      </Section>
+
+      <Section
+        id="kirim-pesan"
+        tone="surface"
+        title="Kirim pesan"
+        description="Tinggalkan nama dan nomor WhatsApp. Marketing kami membalas di jam kerja."
+      >
+        <Reveal className="max-w-3xl rounded-lg border bg-card p-5 shadow-xs sm:p-6">
+          <LeadForm formKind="kontak" idPrefix="kontak" />
+        </Reveal>
       </Section>
     </>
   );

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import { PageHero } from "@/components/site/page-hero";
 import { ContentBlocks, getCareerBySlug } from "@/features/cms";
+import { ApplicationForm } from "@/features/leads";
 import { formatDateWIB } from "@/lib/format";
 
 export async function generateMetadata({ params }: PageProps<"/karir/[slug]">): Promise<Metadata> {
@@ -53,6 +54,15 @@ export default async function CareerPage({ params }: PageProps<"/karir/[slug]">)
             </ul>
           </section>
         ) : null}
+        <section
+          aria-labelledby="kirim-lamaran"
+          className="max-w-3xl rounded-lg border bg-card p-5 shadow-xs sm:p-6"
+        >
+          <h2 id="kirim-lamaran" className="mb-4 text-xl font-bold">
+            Kirim lamaran
+          </h2>
+          <ApplicationForm careerSlug={career.slug} careerTitle={career.title} />
+        </section>
       </Container>
     </>
   );

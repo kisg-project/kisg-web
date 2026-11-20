@@ -15,7 +15,7 @@ export async function SiteFooter() {
   return (
     <footer className="bg-footer pb-safe text-footer-foreground">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:py-16">
-        <div className="lg:col-span-4">
+        <div className="min-w-0 lg:col-span-3">
           {/* Bidang terang supaya atap hijau logo tetap kontras di latar footer yang gelap. */}
           <div className="inline-flex rounded-md bg-white px-4 py-3">
             <Logo imageClassName="h-14 w-auto min-w-24" />
@@ -31,7 +31,7 @@ export async function SiteFooter() {
         </div>
 
         {footerNav.map((group) => (
-          <nav key={group.title} aria-label={group.title} className="lg:col-span-2">
+          <nav key={group.title} aria-label={group.title} className="min-w-0 lg:col-span-2">
             <p className="text-sm font-semibold text-gold-400">{group.title}</p>
             <ul className="mt-2 flex flex-col text-sm">
               {withProjectsHref(group.items, projectsHref).map((item) => (
@@ -45,7 +45,7 @@ export async function SiteFooter() {
           </nav>
         ))}
 
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-3">
           <p className="text-sm font-semibold text-gold-400">Kontak</p>
           <ul className="mt-2 flex flex-col text-sm">
             <li>
@@ -68,8 +68,8 @@ export async function SiteFooter() {
                 aria-label={`Instagram ${siteConfig.instagram.handle}`}
                 className={`${linkClass} gap-2`}
               >
-                <InstagramIcon aria-hidden="true" className="size-4" />
-                {siteConfig.instagram.handle}
+                <InstagramIcon aria-hidden="true" className="size-4 shrink-0" />
+                <span className="min-w-0 break-all">{siteConfig.instagram.handle}</span>
               </a>
             </li>
           </ul>

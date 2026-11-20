@@ -14,10 +14,14 @@ export const env = createEnv({
     SENTRY_ORG: z.string().min(1).optional(),
     SENTRY_PROJECT: z.string().min(1).optional(),
     ENABLE_DEV_UI: z.enum(["0", "1"]).optional(),
+    // Cloudflare Turnstile. Kosong sampai akun Cloudflare siap: verifikasi dilewati, form tetap dijaga
+    // honeypot dan rate limit (src/lib/security/turnstile.ts).
+    TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.url(),
     NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
   },
   runtimeEnv: {
     SUPABASE_URL: process.env.SUPABASE_URL,
@@ -27,6 +31,7 @@ export const env = createEnv({
     SENTRY_ORG: process.env.SENTRY_ORG,
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     ENABLE_DEV_UI: process.env.ENABLE_DEV_UI,
+    TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
     // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
     NEXT_PUBLIC_SITE_URL:
@@ -35,6 +40,7 @@ export const env = createEnv({
         ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
         : undefined),
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   },
   emptyStringAsUndefined: true,
 });
