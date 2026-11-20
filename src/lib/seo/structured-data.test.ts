@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   absoluteUrl,
-  featuredListingJsonLd,
+  listingJsonLd,
   jsonLdGraph,
   organizationJsonLd,
   serializeJsonLd,
@@ -30,15 +30,47 @@ describe("organizationJsonLd", () => {
   });
 });
 
-describe("featuredListingJsonLd", () => {
-  it("memuat harga rupiah dan spesifikasi unit", () => {
-    const data = featuredListingJsonLd(SITE, ["/images/hero/sgv-hero-desktop.webp"]);
+const LISTING = {
+  name: "Sejahtera Green Village",
+  path: "/proyek/sejahtera-green-village",
+  address: {
+    street: "Jl. Garuda 3 No. NK-34",
+    village: "Mangunjaya",
+    district: "Kec. Tambun Selatan",
+    city: "Kab. Bekasi",
+    province: "Jawa Barat",
+    postalCode: "17510",
+  },
+  imagePaths: ["/images/hero/sgv-hero-desktop.webp"],
+  unit: {
+    name: "Tipe 36/60",
+    price: 571_250_000,
+    bedrooms: 2,
+    bathrooms: 1,
+    buildingArea: 36,
+    features: ["Carport"],
+  },
+};
+
+describe("listingJsonLd", () => {
+  it("memuat harga rupiah, spesifikasi unit, dan alamat proyek", () => {
+    const data = listingJsonLd(SITE, LISTING);
     expect(data).toMatchObject({
       "@type": "RealEstateListing",
+      url: "https://kisgroup.co.id/proyek/sejahtera-green-village",
       offers: { price: 571_250_000, priceCurrency: "IDR" },
-      about: { numberOfBedrooms: 2, numberOfBathroomsTotal: 1, address: { postalCode: "17510" } },
+      about: {
+        numberOfBedrooms: 2,
+        numberOfBathroomsTotal: 1,
+        address: { postalCode: "17510", addressLocality: "Mangunjaya, Kec. Tambun Selatan" },
+      },
       image: ["https://kisgroup.co.id/images/hero/sgv-hero-desktop.webp"],
     });
+  });
+
+  it("tanpa Offer kalau harga tidak ditampilkan", () => {
+    const data = listingJsonLd(SITE, { ...LISTING, unit: { ...LISTING.unit, price: null } });
+    expect(data).not.toHaveProperty("offers");
   });
 });
 

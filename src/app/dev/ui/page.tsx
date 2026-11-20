@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { featuredProject } from "@/config/featured-project";
 import { UNIT_STATUSES } from "@/config/units";
 import { KprSimulatorTabs } from "@/features/kpr";
-import { UnitHighlights } from "@/features/projects";
+import { UnitHighlights, type NearbyPlace, type UnitType } from "@/features/projects";
 import { formatRupiah } from "@/lib/format";
 import { ImageCompressTester } from "./image-compress-tester";
 import { InteractiveDemos } from "./interactive-demos";
@@ -32,6 +32,29 @@ export const metadata: Metadata = {
   title: "Review UI",
   robots: { index: false, follow: false },
 };
+
+// Contoh data untuk menampilkan komponen. Data website yang sebenarnya dibaca dari database.
+const SAMPLE_UNIT: UnitType = {
+  id: "contoh",
+  slug: "contoh",
+  name: featuredProject.unitType.name,
+  landArea: featuredProject.unitType.landArea,
+  buildingArea: featuredProject.unitType.buildingArea,
+  bedrooms: featuredProject.unitType.bedrooms,
+  bathrooms: featuredProject.unitType.bathrooms,
+  floors: 1,
+  price: featuredProject.unitType.price,
+  features: featuredProject.features.map((feature) => feature.label),
+  priceIncludes: [...featuredProject.priceIncludes],
+  priceExcludes: [...featuredProject.priceExcludes],
+};
+const SAMPLE_NEARBY: NearbyPlace[] = featuredProject.nearby.map((place, index) => ({
+  id: place.key,
+  name: place.label,
+  category: ["transportasi", "tol", "bank", "belanja"][index] ?? "lainnya",
+  distanceKm: null,
+  travelMinutes: null,
+}));
 
 // Halaman review token dan komponen. Hanya aktif di development, atau di CI lewat ENABLE_DEV_UI=1.
 function isEnabled(): boolean {
@@ -202,7 +225,7 @@ export default function DevUiPage() {
         </DemoSection>
 
         <DemoSection title="Ringkasan unit">
-          <UnitHighlights project={featuredProject} />
+          <UnitHighlights unitType={SAMPLE_UNIT} nearby={SAMPLE_NEARBY} />
         </DemoSection>
 
         <DemoSection title="Simulasi KPR">

@@ -9,13 +9,13 @@ flowchart LR
   F[branch feat/fix/docs] -->|PR + CI hijau| M[main]
   M -->|Vercel otomatis| P[Vercel Production]
   M -->|deploy-db.yml| DB[(Supabase production)]
-  F -->|Vercel otomatis| PV[Vercel Preview tanpa portal]
+  F -->|Vercel otomatis| PV[Vercel Preview, baca saja, tanpa portal]
 ```
 
 Tanpa staging (keputusan owner, Fase 2, mengikuti pola prins dan kelola). Setiap merge ke `main` langsung tayang.
 
 1. Kerja di branch `feat/...`, `fix/...`, `chore/...`, `docs/...`, lalu buka PR ke `main`.
-2. Workflow `ci.yml` dan `security.yml` jalan di setiap PR. Vercel membuat Preview, lalu `preview.yml` menjalankan smoke E2E dan Lighthouse. Preview tidak punya env Supabase, jadi portal di preview tidak aktif dan tidak ada data percobaan yang masuk ke production.
+2. Workflow `ci.yml` dan `security.yml` jalan di setiap PR. Vercel membuat Preview, lalu `preview.yml` menjalankan smoke E2E dan Lighthouse. Preview hanya membaca konten publik dari Supabase production (publishable key, tanpa secret key). Portal di preview dimatikan `proxy.ts`, dan form publik tidak menulis, jadi tidak ada data percobaan yang masuk ke production.
 3. Merge hanya lewat `bash scripts/merge-pr.sh <nomor>`. Skrip menolak kalau ada check yang belum hijau, check wajib tidak ada, branch tertinggal dari `main`, atau judul PR bukan Conventional Commits.
 4. Setelah merge, Vercel men-deploy production otomatis dan `deploy-db.yml` menerapkan migrasi baru ke Supabase production. Keduanya berjalan bersamaan, jadi migrasi wajib backward compatible (expand lalu contract).
 5. Akhir fase: pasang label `e2e:full` di PR terakhir fase, lalu push, supaya E2E jalan di 3 browser x 3 shard.
@@ -68,7 +68,8 @@ Diisi di GitHub, menu Settings, Secrets and variables, Actions. Tidak pernah di 
 | `NEXT_PUBLIC_SENTRY_DSN` | Setelah akun Sentry ada | Sama |
 | `ENABLE_DEV_UI` | Jangan diisi | Jangan diisi |
 
-| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | Project production | Tidak diisi: portal di preview tidak aktif (503) |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Project production | Sama (baca konten publik saja). Portal di preview 503 |
+| `SUPABASE_SECRET_KEY` | Project production | Tidak diisi |
 
 Variabel Meta, Brevo, Turnstile, dan Gemini ditambah di fase masing-masing.
 

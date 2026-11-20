@@ -201,7 +201,8 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Referensi struktur: damaiputra.com (hero carousel lebar, strip statistik, kartu proyek, berita, promo, CTA penutup, footer lengkap, tombol WhatsApp melayang). Ambil polanya, jangan meniru visual atau kontennya.
 - Grid 12 kolom, container maks ~1280px, ritme spasi konsisten (kelipatan 4/8).
 - Radius kecil sampai sedang (4 sampai 8px). Bayangan tipis. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
-- Animasi halus dan fungsional (fade/slide pendek, maks ~250ms), hormati `prefers-reduced-motion`.
+- Website banyak gerak halus (keputusan owner, Fase 3): bagian halaman muncul saat di-scroll (`Reveal`, fade dan geser naik sekitar 600ms), banner bergeser otomatis dengan tombol jeda, kartu dan foto bereaksi saat disentuh atau di-hover, angka statistik berhitung naik. Interaksi kecil (hover, tombol) tetap pendek, maks ~250ms. Tanpa library animasi. Konten tidak boleh disembunyikan sebelum JavaScript jalan, LCP dan CLS tidak boleh terganggu, dan semua gerak berhenti kalau `prefers-reduced-motion` aktif.
+- Scrollbar minimalis: tipis, warna menyatu dengan palet, latar transparan (keputusan owner, Fase 3).
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
 
@@ -378,7 +379,7 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 
 ### Deploy (Vercel)
-- Integrasi Git Vercel: Preview untuk setiap PR, Production otomatis dari `main`. Preview tidak punya env Supabase, jadi portal di preview tidak aktif dan tidak ada data percobaan yang masuk ke production.
+- Integrasi Git Vercel: Preview untuk setiap PR, Production otomatis dari `main`. Preview hanya punya URL dan publishable key Supabase production untuk membaca konten publik (tanpa secret key). Portal di preview dimatikan oleh `proxy.ts` (`VERCEL_ENV=preview`) dan form publik tidak menulis, jadi tidak ada data percobaan yang masuk ke production.
 - `ignoreCommand` supaya perubahan yang hanya menyentuh `docs/` atau `*.md` tidak memicu build.
 - Env var dipisah per environment di Vercel. Secret CI disimpan sebagai repository secret GitHub berawalan `PRODUCTION_`, tidak pernah di file repo.
 - Migrasi harus backward compatible (pola expand lalu contract) karena deploy Vercel dan `deploy-db.yml` berjalan bersamaan setelah merge, sehingga app lama dan baru sempat memakai skema yang sama. Kolom dihapus paling cepat satu rilis setelah kode berhenti memakainya.

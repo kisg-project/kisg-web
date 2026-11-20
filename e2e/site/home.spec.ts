@@ -1,13 +1,19 @@
 import { expect, expectNoA11yViolations, expectResponsive, test } from "../fixtures/test";
 
 test.describe("Beranda", () => {
-  test("hero penuh satu layar di bawah navbar, dengan CTA WhatsApp", async ({ page }) => {
+  test("hero penuh satu layar di bawah navbar, dengan harga ringkas dan CTA WhatsApp", async ({
+    page,
+  }) => {
     await page.goto("/");
-    const hero = page.getByRole("region", { name: "Sejahtera Green Village" });
+    const hero = page.getByRole("region", { name: "Banner utama" });
     await expect(
       page.getByRole("heading", { level: 1, name: "Sejahtera Green Village" }),
     ).toBeVisible();
-    await expect(hero.getByRole("img", { name: /Deretan rumah Tipe 36\/60/ })).toBeVisible();
+    const firstSlide = hero.getByRole("group", { name: /^1 dari 3/ });
+    await expect(
+      firstSlide.getByRole("img", { name: /Deretan rumah Sejahtera Green Village/ }),
+    ).toBeVisible();
+    await expect(firstSlide.getByText("Mulai Rp 500 jutaan")).toBeVisible();
 
     const viewport = page.viewportSize();
     const header = await page.getByRole("banner").boundingBox();
@@ -18,11 +24,60 @@ test.describe("Beranda", () => {
       expect(heroBox.height).toBeCloseTo(Math.max(viewport.height - header.height, 448), 0);
     }
 
-    const href = await hero.getByRole("link", { name: "Hubungi marketing" }).getAttribute("href");
+    const href = await firstSlide
+      .getByRole("link", { name: "Hubungi marketing" })
+      .getAttribute("href");
     const url = new URL(href ?? "");
     expect(url.hostname).toBe("wa.me");
     expect(url.pathname).toBe("/6289673296881");
     expect(url.searchParams.get("text")).toContain("Sejahtera Green Village");
+  });
+
+  test("banner bergeser otomatis, bisa dijeda, dan bisa dikendalikan keyboard", async ({
+    page,
+  }) => {
+    await page.clock.install();
+    await page.goto("/");
+    const hero = page.getByRole("region", { name: "Banner utama" });
+    // Slide nonaktif ber-aria-hidden, jadi pencarian menyertakan elemen tersembunyi.
+    const slide = (n: number) =>
+      hero.getByRole("group", { name: new RegExp(`^${String(n)} dari 3`), includeHidden: true });
+    await expect(slide(1)).toHaveAttribute("aria-hidden", "false");
+
+    // Autoplay: 7 detik per slide.
+    await page.mouse.move(0, 0);
+    await page.clock.fastForward(7500);
+    await expect(slide(2)).toHaveAttribute("aria-hidden", "false");
+    await expect(slide(1)).toHaveAttribute("aria-hidden", "true");
+
+    // Jeda: slide tidak berganti lagi.
+    await hero.getByRole("button", { name: "Jeda banner otomatis" }).click();
+    await page.mouse.move(0, 0);
+    await page.clock.fastForward(15_000);
+    await expect(slide(2)).toHaveAttribute("aria-hidden", "false");
+    await expect(hero.getByRole("button", { name: "Putar banner otomatis" })).toBeVisible();
+
+    // Tombol dan keyboard.
+    await hero.getByRole("button", { name: "Banner berikutnya" }).click();
+    await expect(slide(3)).toHaveAttribute("aria-hidden", "false");
+    await page.keyboard.press("ArrowRight");
+    await expect(slide(1)).toHaveAttribute("aria-hidden", "false");
+    await hero.getByRole("button", { name: "Tampilkan banner 3" }).click();
+    await expect(slide(3)).toHaveAttribute("aria-hidden", "false");
+    // Tautan di slide yang tidak aktif tidak bisa dijangkau.
+    await expect(slide(1)).toHaveAttribute("inert", "");
+  });
+
+  test("banner tidak bergeser otomatis kalau pengunjung mematikan animasi", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.clock.install();
+    await page.goto("/");
+    const hero = page.getByRole("region", { name: "Banner utama" });
+    await page.clock.fastForward(20_000);
+    await expect(hero.getByRole("group", { name: /^1 dari 3/ })).toHaveAttribute(
+      "aria-hidden",
+      "false",
+    );
   });
 
   test("ringkasan unit menampilkan harga, spesifikasi, fasilitas, dan rincian biaya", async ({
