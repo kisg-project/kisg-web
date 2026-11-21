@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { CalendarDays } from "lucide-react";
 import { ROLE_LABELS, type AppRole } from "@/config/roles";
-import { firstName, greetingFor } from "@/lib/format/greeting";
+import { greetingName, greetingFor } from "@/lib/format/greeting";
 import { formatDateWIB } from "@/lib/format";
 
 export interface GreetingStat {
@@ -11,7 +11,7 @@ export interface GreetingStat {
 
 /**
  * Kartu sapaan beranda portal: foto proyek dengan gradasi warna brand, tanggal, lalu sapaan dua baris
- * ("Selamat malam," dan nama depan), semua role, dan ringkasan angka opsional. Foto profil tidak
+ * ("Selamat malam," dan dua kata pertama nama), semua role, dan ringkasan angka opsional. Foto profil tidak
  * diulang di sini karena sudah ada di header (keputusan owner, 21 November 2026). Halaman portal
  * dirender per request, jadi jam yang dipakai adalah jam saat halaman dibuka.
  */
@@ -27,7 +27,7 @@ export function PortalGreeting({
   stats?: readonly GreetingStat[];
 }) {
   const now = new Date();
-  const name = firstName(fullName) || "rekan KIS";
+  const name = greetingName(fullName) || "rekan KIS";
   return (
     <section className="relative isolate overflow-hidden rounded-[2rem] px-5 pt-5 pb-5 text-white shadow-[0_24px_48px_-28px_rgb(1_60_52/0.7)] sm:px-7 sm:pt-7">
       <Image

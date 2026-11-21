@@ -14,11 +14,15 @@ export function greetingFor(at: Date = new Date()): string {
 }
 
 /**
- * Nama depan untuk sapaan singkat di beranda portal. Gelar di depan (Ir., Dr., H., Hj.) dilewati
- * supaya sapaan tetap memakai nama orangnya.
+ * Nama untuk sapaan di beranda portal: dua kata pertama (keputusan owner, 22 November 2026, satu kata
+ * terlalu pendek). Gelar di depan (Ir., Dr., H., Hj.) dilewati supaya sapaan memakai nama orangnya.
  */
-export function firstName(fullName: string): string {
-  const words = fullName.trim().split(/\s+/).filter(Boolean);
-  const name = words.find((word) => !/^(ir|dr|drs|dra|h|hj|prof)\.?$/i.test(word));
-  return (name ?? words[0] ?? "").replace(/[,.]+$/, "");
+export function greetingName(fullName: string): string {
+  const words = fullName
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.replace(/[,.]+$/, ""));
+  const start = words.findIndex((word) => !/^(ir|dr|drs|dra|h|hj|prof)$/i.test(word));
+  return words.slice(start === -1 ? 0 : start, (start === -1 ? 0 : start) + 2).join(" ");
 }
