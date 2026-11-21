@@ -70,8 +70,16 @@ export const PORTAL_AREAS: readonly PortalArea[] = [
     shortLabel: "Lapangan",
   },
   {
+    // Semua karyawan yang wajib absen (owner tidak wajib, memantau dari dashboard owner).
     prefix: "/portal/absensi",
-    roles: ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor"],
+    roles: [
+      "admin",
+      "marketing_manager",
+      "marketing",
+      "site_manager",
+      "site_supervisor",
+      "finance",
+    ],
     label: "Absensi",
     shortLabel: "Absensi",
   },

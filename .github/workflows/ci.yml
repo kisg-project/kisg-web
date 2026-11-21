@@ -21,6 +21,9 @@ env:
   ENABLE_DEV_UI: "1"
   # Email aplikasi di E2E dikirim ke Mailpit milik Supabase lokal, bukan Brevo.
   MAILPIT_URL: http://127.0.0.1:54324
+  # Kamera palsu di E2E tidak berisi wajah asli: deteksi wajah dan kedip diganti tombol uji.
+  # Hanya build CI. Build production (deploy-production.yml) tidak memakai variabel ini.
+  NEXT_PUBLIC_E2E_FACE_STUB: "1"
 
 jobs:
   changes:

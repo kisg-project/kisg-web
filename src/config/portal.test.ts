@@ -31,7 +31,8 @@ describe("portalAccess", () => {
     ["/portal/lapangan", "site_supervisor", "allowed"],
     ["/portal/lapangan", "marketing", "denied"],
     ["/portal/absensi", "marketing", "allowed"],
-    ["/portal/absensi", "finance", "denied"],
+    ["/portal/absensi", "finance", "allowed"],
+    ["/portal/absensi", "owner", "denied"],
     ["/portal/akun", "finance", "allowed"],
     ["/portal/administrasi", "marketing", "allowed"],
   ] as const)("%s untuk %s: %s", (path, role, expected) => {
@@ -54,14 +55,17 @@ describe("safeNextPath", () => {
 });
 
 describe("portalAreasFor", () => {
-  it("owner melihat semua area kecuali area admin lama, marketing hanya area marketing", () => {
-    expect(portalAreasFor(["owner"])).toHaveLength(PORTAL_AREAS.length - 1);
+  it("owner melihat semua area kecuali area admin lama dan absensi, marketing hanya area marketing", () => {
+    expect(portalAreasFor(["owner"])).toHaveLength(PORTAL_AREAS.length - 2);
     expect(portalAreasFor(["marketing"]).map((area) => area.prefix)).toEqual([
       "/portal/crm",
       "/portal/marketing",
       "/portal/absensi",
     ]);
-    expect(portalAreasFor(["finance"]).map((area) => area.prefix)).toEqual(["/portal/crm"]);
+    expect(portalAreasFor(["finance"]).map((area) => area.prefix)).toEqual([
+      "/portal/crm",
+      "/portal/absensi",
+    ]);
   });
 });
 

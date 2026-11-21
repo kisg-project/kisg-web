@@ -43,3 +43,6 @@ Thumbs.db
 npm-debug.log*
 .pnpm-debug.log*
 /test-results-*/
+
+# File WASM MediaPipe disalin saat build (scripts/copy-mediapipe.mjs), tidak di-commit.
+public/vendor/mediapipe/wasm/
