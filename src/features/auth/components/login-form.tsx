@@ -71,7 +71,14 @@ export function LoginForm({
           {serverError}
         </p>
       ) : null}
-      <Button type="submit" size="lg" disabled={busy} aria-busy={busy}>
+      <Button
+        type="submit"
+        size="lg"
+        disabled={busy}
+        aria-busy={busy}
+        // Saat memproses tombol tetap berwarna penuh, bukan pudar seperti tombol nonaktif.
+        className="aria-busy:opacity-100"
+      >
         {busy ? <LoaderCircle aria-hidden="true" className="size-5 animate-spin" /> : null}
         {hasNavigated ? "Membuka beranda" : isPending ? "Sedang masuk" : "Masuk"}
       </Button>

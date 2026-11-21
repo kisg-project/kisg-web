@@ -8,23 +8,18 @@ import { Button } from "@/components/ui/button";
 import { whatsappLink } from "@/config/site";
 import { ContentBlocks, getPromoBySlug } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 export async function generateMetadata({ params }: PageProps<"/promo/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const promo = await getPromoBySlug(slug);
   if (!promo) return { title: "Promo tidak ditemukan", robots: { index: false } };
-  const path = `/promo/${promo.slug}`;
-  return {
+  return shareMetadata({
+    path: `/promo/${promo.slug}`,
     title: promo.title,
-    description: promo.summary ?? undefined,
-    alternates: { canonical: path },
-    openGraph: {
-      url: path,
-      title: promo.title,
-      description: promo.summary ?? undefined,
-      images: promo.cover ? [{ url: promo.cover.src, alt: promo.cover.alt }] : [],
-    },
-  };
+    description: promo.summary ?? promo.title,
+    imageAlt: promo.title,
+  });
 }
 
 export default async function PromoPage({ params }: PageProps<"/promo/[slug]">) {
@@ -44,14 +39,14 @@ export default async function PromoPage({ params }: PageProps<"/promo/[slug]">) 
         ]}
       >
         {promo.endsAt ? (
-          <p className="mt-4 inline-flex rounded-md bg-highlight px-3 py-1.5 text-sm font-bold text-highlight-foreground">
+          <p className="mt-4 inline-flex rounded-full bg-highlight px-3 py-1.5 text-sm font-bold text-highlight-foreground">
             Berlaku sampai {formatDateWIB(promo.endsAt)}
           </p>
         ) : null}
       </PageHero>
       <Container className="grid gap-8 py-10 sm:py-14">
         {promo.cover ? (
-          <div className="relative aspect-[16/9] max-w-3xl overflow-hidden rounded-lg">
+          <div className="relative aspect-[16/9] max-w-3xl overflow-hidden rounded-3xl">
             <Image
               src={promo.cover.src}
               alt={promo.cover.alt}
@@ -64,7 +59,7 @@ export default async function PromoPage({ params }: PageProps<"/promo/[slug]">) 
         ) : null}
         <ContentBlocks blocks={promo.body} />
         {promo.terms ? (
-          <section aria-labelledby="syarat-promo" className="max-w-3xl rounded-lg bg-surface p-5">
+          <section aria-labelledby="syarat-promo" className="max-w-3xl rounded-3xl bg-surface p-5">
             <h2 id="syarat-promo" className="text-lg font-bold">
               Syarat dan ketentuan promo
             </h2>

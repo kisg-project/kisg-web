@@ -50,7 +50,7 @@ export function ApplicationForm({
 
   if (state === "sent") {
     return (
-      <div role="status" className="flex flex-col items-start gap-3 rounded-lg bg-success-50 p-5">
+      <div role="status" className="flex flex-col items-start gap-3 rounded-3xl bg-success-50 p-5">
         <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
         <p className="font-semibold">
           Lamaran untuk {careerTitle} terkirim. Kami menghubungi kandidat yang sesuai lewat WhatsApp

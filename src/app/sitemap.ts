@@ -24,6 +24,9 @@ const STATIC_PAGES: {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const url = (path: string) => new URL(path, env.NEXT_PUBLIC_SITE_URL).toString();
+  // Gambar di sitemap membantu foto proyek dan berita muncul di Google Gambar.
+  const images = (...sources: (string | null | undefined)[]) =>
+    sources.filter((src): src is string => Boolean(src)).map((src) => url(src));
   const [projects, posts, promos, careers] = await Promise.all([
     getPublishedProjects(),
     getPublishedPosts(500),
@@ -36,14 +39,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: page.priority,
       changeFrequency: page.changeFrequency,
     })),
-    ...projects.map((project) => ({ url: url(`/proyek/${project.slug}`), priority: 0.9 })),
+    ...projects.map((project) => ({
+      url: url(`/proyek/${project.slug}`),
+      priority: 0.9,
+      images: images(project.cover?.src),
+    })),
     ...posts.map((post) => ({
       url: url(`/berita/${post.slug}`),
       lastModified: post.publishedAt,
       priority: 0.5,
+      images: images(post.cover?.src),
     })),
-    ...promos.map((promo) => ({ url: url(`/promo/${promo.slug}`), priority: 0.6 })),
-    ...CAREER_LEVELS.map((item) => ({ url: url(`/karir/jenjang/${item.slug}`), priority: 0.4 })),
+    ...promos.map((promo) => ({
+      url: url(`/promo/${promo.slug}`),
+      priority: 0.6,
+      images: images(promo.cover?.src),
+    })),
+    ...CAREER_LEVELS.map((item) => ({
+      url: url(`/karir/jenjang/${item.slug}`),
+      priority: 0.4,
+      images: images(item.image.src),
+    })),
     ...careers.map((career) => ({ url: url(`/karir/${career.slug}`), priority: 0.4 })),
   ];
 }

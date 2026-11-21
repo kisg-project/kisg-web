@@ -25,8 +25,8 @@ export default function ContactPage() {
       />
       <Section>
         <div className="grid gap-6 lg:grid-cols-3">
-          <Reveal className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-2">
-            <span className="icon-chip flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+          <Reveal className="flex lift flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-6 lg:col-span-2">
+            <span className="icon-chip flex size-12 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
               <MessageCircle aria-hidden="true" className="size-6" />
             </span>
             <div>
@@ -46,8 +46,11 @@ export default function ContactPage() {
             </div>
           </Reveal>
 
-          <Reveal delay={80} className="flex lift flex-col gap-4 rounded-lg border bg-card p-6">
-            <span className="icon-chip flex size-12 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+          <Reveal
+            delay={80}
+            className="flex lift flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-6"
+          >
+            <span className="icon-chip flex size-12 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
               <InstagramIcon aria-hidden="true" className="size-6" />
             </span>
             <div>
@@ -65,10 +68,10 @@ export default function ContactPage() {
 
           <Reveal
             delay={120}
-            className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-3"
+            className="flex lift flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-6 lg:col-span-3"
           >
             <div className="flex gap-4">
-              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
                 <Mail aria-hidden="true" className="size-6" />
               </span>
               <div>
@@ -93,10 +96,10 @@ export default function ContactPage() {
 
           <Reveal
             delay={160}
-            className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-3 lg:flex-row lg:items-center lg:justify-between"
+            className="flex lift flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-6 lg:col-span-3 lg:flex-row lg:items-center lg:justify-between"
           >
             <div className="flex gap-4">
-              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
                 <MapPin aria-hidden="true" className="size-6" />
               </span>
               <address className="not-italic">
@@ -121,7 +124,7 @@ export default function ContactPage() {
         title="Kirim pesan"
         description="Tinggalkan nama dan nomor WhatsApp. Marketing kami membalas di jam kerja."
       >
-        <Reveal className="max-w-3xl rounded-lg border bg-card p-5 shadow-xs sm:p-6">
+        <Reveal className="max-w-3xl rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6">
           <LeadForm formKind="kontak" idPrefix="kontak" />
         </Reveal>
       </Section>

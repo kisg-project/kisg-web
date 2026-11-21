@@ -21,7 +21,7 @@ export function WhatsAppFloat() {
           `Halo, saya dari halaman ${page} (${window.location.href}). Saya ingin bertanya.`,
         );
       }}
-      className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex size-14 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md transition-transform duration-200 hover:scale-105 focus-visible:scale-105 motion-safe:animate-[float-in_400ms_ease-out]"
+      className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform duration-200 hover:scale-105 focus-visible:scale-105 motion-safe:animate-[float-in_400ms_ease-out]"
     >
       <MessageCircle aria-hidden="true" className="size-7" />
     </a>

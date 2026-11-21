@@ -70,7 +70,7 @@ export async function SiteFooter() {
             </ul>
           </nav>
         ))}
-        <div className="min-w-0">
+        <div className="col-span-2 min-w-0 lg:col-span-1">
           <p className={headingClass}>Hubungi</p>
           <ul className="mt-1 flex flex-col">
             <li>
