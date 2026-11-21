@@ -27,7 +27,9 @@ export default function CmsAppLayout({ children }: { children: React.ReactNode }
               Panel CMS
             </span>
           </Link>
-          <CmsNav />
+          <Suspense fallback={<div className="order-last h-11 w-full sm:order-none sm:w-64" />}>
+            <CmsNav />
+          </Suspense>
           <div className="ml-auto">
             <Suspense fallback={null}>
               <CmsUserMenu />
