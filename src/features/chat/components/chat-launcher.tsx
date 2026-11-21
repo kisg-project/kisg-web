@@ -32,7 +32,6 @@ export function ChatLauncher() {
       {open ? null : (
         <button
           type="button"
-          aria-label={`Chat dengan ${CHAT_ASSISTANT.name}, asisten virtual KIS Group`}
           onClick={() => {
             setMounted(true);
             setOpen(true);
@@ -40,7 +39,8 @@ export function ChatLauncher() {
           className="fixed right-5 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 flex h-14 items-center gap-2 rounded-full bg-primary pr-5 pl-4 font-semibold text-primary-foreground shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:scale-105 motion-safe:animate-[float-in_400ms_ease-out]"
         >
           <MessageCircle aria-hidden="true" className="size-6" />
-          <span className="hidden sm:inline">Tanya {CHAT_ASSISTANT.name}</span>
+          {/* Teks tetap dibaca pembaca layar di HP walau hanya ikon yang tampil. */}
+          <span className="sr-only sm:not-sr-only">Tanya {CHAT_ASSISTANT.name}</span>
         </button>
       )}
       {mounted ? (

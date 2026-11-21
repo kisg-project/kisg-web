@@ -5,7 +5,7 @@ import { expect, expectNoA11yViolations, test } from "../fixtures/test";
 // Build CI memakai CHAT_MOCK=1: jawaban tiruan yang tetap, tanpa memanggil Gemini (CLAUDE.md bagian 12).
 
 async function openChat(page: Page) {
-  await page.getByRole("button", { name: /Chat dengan Jaka/ }).click();
+  await page.getByRole("button", { name: "Tanya Jaka" }).click();
   const dialog = page.getByRole("dialog", { name: "Chat dengan Jaka" });
   await expect(dialog).toBeVisible();
   return dialog;

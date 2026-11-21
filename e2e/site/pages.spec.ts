@@ -179,7 +179,7 @@ test.describe("SEO dan kontak", () => {
   test("tombol WhatsApp di panel chat menyebut halaman asal", async ({ page }) => {
     await page.goto("/kontak");
     // Satu tombol melayang: membuka chat Jaka, dan panel chat punya tombol WhatsApp.
-    await page.getByRole("button", { name: /Chat dengan Jaka/ }).click();
+    await page.getByRole("button", { name: "Tanya Jaka" }).click();
     // Navigasi ke wa.me dicegah supaya href yang disusun saat klik bisa diperiksa.
     await page.evaluate(() => {
       document.addEventListener("click", (event) => {
