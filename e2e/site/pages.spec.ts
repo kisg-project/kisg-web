@@ -273,6 +273,8 @@ test.describe("Berita", () => {
     // Test CMS bisa menerbitkan berita lain secara paralel, jadi jumlahnya minimal 10.
     await page.goto("/berita");
     const items = page.getByRole("list", { name: "Daftar berita" }).getByRole("listitem");
+    // Daftar di-stream setelah kerangka halaman: tunggu item pertama sebelum menghitung.
+    await expect(items.first()).toBeVisible();
     expect(await items.count()).toBeGreaterThanOrEqual(10);
     const bi = items.filter({ hasText: "BI-Rate naik ke 6 persen" });
     await expect(bi).toHaveCount(1);
