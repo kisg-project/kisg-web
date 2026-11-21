@@ -4,16 +4,26 @@ const state = {
   avatarPath: "user-1/foto.webp" as string | null,
   needsPassword: true,
   updateUserError: null as { code: string } | null,
+  reauthError: null as { message: string } | null,
   verifyError: null as { message: string } | null,
   allowed: true,
 };
 const profileUpdates: Record<string, unknown>[] = [];
 const adminUpdates: Record<string, unknown>[] = [];
-const updateUser = vi.fn<(attrs: { password: string }) => Promise<unknown>>(() =>
+const updateUser = vi.fn<(attrs: { password: string; nonce?: string }) => Promise<unknown>>(() =>
   Promise.resolve({ error: state.updateUserError }),
 );
-const verifierSignIn = vi.fn<(input: { email: string; password: string }) => Promise<unknown>>(() =>
-  Promise.resolve({ error: state.verifyError }),
+const resetPasswordForEmail = vi.fn<(email: string) => Promise<unknown>>(() =>
+  Promise.resolve({ error: state.reauthError }),
+);
+const verifyOtp = vi.fn<
+  (input: { email: string; token: string; type: string }) => Promise<unknown>
+>(() =>
+  Promise.resolve(
+    state.verifyError
+      ? { data: { user: null }, error: state.verifyError }
+      : { data: { user: { id: "user-1" } }, error: null },
+  ),
 );
 
 function from(target: Record<string, unknown>[]) {
@@ -56,9 +66,7 @@ vi.mock("@/lib/supabase/config", () => ({
   getSupabaseConfig: () => ({ url: "http://127.0.0.1:54321", publishableKey: "pk" }),
 }));
 vi.mock("@supabase/supabase-js", () => ({
-  createClient: () => ({
-    auth: { signInWithPassword: verifierSignIn, signOut: () => Promise.resolve({}) },
-  }),
+  createClient: () => ({ auth: { verifyOtp, signOut: () => Promise.resolve({}) } }),
 }));
 vi.mock("@/lib/security/rate-limit", () => ({
   hitRateLimit: () => Promise.resolve(state.allowed),
@@ -69,6 +77,7 @@ vi.mock("@/lib/supabase/server", () => ({
       auth: {
         getClaims: () => Promise.resolve({ data: { claims: { sub: "user-1" } } }),
         updateUser,
+        resetPasswordForEmail,
       },
       from: from(profileUpdates),
     }),
@@ -77,7 +86,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   createSupabaseAdminClient: () => ({ from: from(adminUpdates) }),
 }));
 
-const { activateAccountAction, changePasswordAction, updateProfileAction } =
+const { activateAccountAction, changePasswordAction, sendPasswordCodeAction, updateProfileAction } =
   await import("./account");
 
 function redirectTo(path: string): unknown {
@@ -97,12 +106,14 @@ beforeEach(() => {
   state.avatarPath = "user-1/foto.webp";
   state.needsPassword = true;
   state.updateUserError = null;
+  state.reauthError = null;
   state.verifyError = null;
   state.allowed = true;
   profileUpdates.length = 0;
   adminUpdates.length = 0;
   updateUser.mockClear();
-  verifierSignIn.mockClear();
+  resetPasswordForEmail.mockClear();
+  verifyOtp.mockClear();
 });
 
 describe("activateAccountAction", () => {
@@ -154,24 +165,51 @@ describe("updateProfileAction dan changePasswordAction", () => {
   });
 
   const change = {
-    current: "LamaRahasia2026",
+    code: "123456",
     password: "BaruRahasia2027",
     confirm: "BaruRahasia2027",
   };
 
-  it("password lama salah ditolak, password tidak diubah", async () => {
-    state.verifyError = { message: "Invalid login credentials" };
-    expect((await changePasswordAction(change)).serverError).toBe("Password saat ini salah.");
-    expect(verifierSignIn).toHaveBeenCalledWith({
+  it("kode dikirim ke email akun", async () => {
+    expect((await sendPasswordCodeAction()).data).toEqual({ sentTo: "budi@kis.test" });
+    expect(resetPasswordForEmail).toHaveBeenCalledWith("budi@kis.test");
+  });
+
+  it("kode gagal dikirim memberi pesan yang jelas", async () => {
+    state.reauthError = { message: "rate limit" };
+    expect((await sendPasswordCodeAction()).serverError).toBe(
+      "Kode belum terkirim. Coba lagi sebentar lagi.",
+    );
+  });
+
+  it("pengiriman kode dibatasi", async () => {
+    state.allowed = false;
+    expect((await sendPasswordCodeAction()).serverError).toMatch(/Coba lagi dalam 15 menit/);
+    expect(resetPasswordForEmail).not.toHaveBeenCalled();
+  });
+
+  it("kode dicek dulu, lalu password baru disimpan", async () => {
+    expect((await changePasswordAction(change)).data).toEqual({ ok: true });
+    expect(verifyOtp).toHaveBeenCalledWith({
       email: "budi@kis.test",
-      password: "LamaRahasia2026",
+      token: "123456",
+      type: "recovery",
     });
+    expect(updateUser).toHaveBeenCalledWith({ password: "BaruRahasia2027" });
+  });
+
+  it("kode salah ditolak dan password tidak diubah", async () => {
+    state.verifyError = { message: "Token has expired or is invalid" };
+    expect((await changePasswordAction(change)).serverError).toBe(
+      "Kode salah atau sudah tidak berlaku. Minta kode baru.",
+    );
     expect(updateUser).not.toHaveBeenCalled();
   });
 
-  it("password lama benar: password baru disimpan", async () => {
-    expect((await changePasswordAction(change)).data).toEqual({ ok: true });
-    expect(updateUser).toHaveBeenCalledWith({ password: "BaruRahasia2027" });
+  it("kode bukan 6 digit ditolak sebelum ke server", async () => {
+    const result = await changePasswordAction({ ...change, code: "12ab" });
+    expect(result.validationErrors?.code?._errors?.[0]).toBe("Masukkan 6 digit kode dari email.");
+    expect(updateUser).not.toHaveBeenCalled();
   });
 
   it("dibatasi percobaan", async () => {

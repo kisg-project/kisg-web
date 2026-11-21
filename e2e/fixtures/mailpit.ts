@@ -55,3 +55,12 @@ export function linkFrom(email: Email, pathname: string): string {
 export async function countEmails(to: string): Promise<number> {
   return (await search(to)).length;
 }
+
+/** Kode 6 digit (OTP Supabase Auth) di email lupa password atau ganti password. */
+export function codeFrom(email: Email): string {
+  const code =
+    /letter-spacing:10px[^>]*>(\d{6})</.exec(email.html)?.[1] ??
+    /\b(\d{6})\b/.exec(email.text)?.[1];
+  if (!code) throw new Error("Email tidak berisi kode 6 digit.");
+  return code;
+}

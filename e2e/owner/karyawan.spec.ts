@@ -1,7 +1,7 @@
 import path from "node:path";
 import type { Page } from "@playwright/test";
 import { completeProfile, createPortalUser, E2E_PASSWORD, uniqueEmail } from "../factories/users";
-import { linkFrom, waitForEmail } from "../fixtures/mailpit";
+import { codeFrom, linkFrom, waitForEmail } from "../fixtures/mailpit";
 import { adminClient } from "../fixtures/supabase";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, storageStateFor, test } from "../fixtures/portal";
@@ -233,15 +233,22 @@ test.describe("Aktivasi dan Akun saya", () => {
     await expect(page.getByText("Data diri tersimpan.")).toBeVisible();
     await expect.poll(async () => (await profileOf(user.email)).full_name).toBe("Fina Keuangan");
 
+    // Ganti password dengan kode dari email (OTP), bukan password lama.
+    await page.getByRole("button", { name: "Kirim kode ke email" }).click();
     const password = page.getByRole("form", { name: "Ganti password" });
+    await expect(password.getByRole("status")).toContainText(user.email);
+    const mail = await waitForEmail(user.email, "Kode password akun KIS Group");
+    const code = codeFrom(mail);
     const next = "BaruRahasia2027";
-    await password.getByLabel("Password saat ini", { exact: true }).fill("SalahSekali2026");
+    await password.getByLabel("Kode dari email").fill(code === "000000" ? "111111" : "000000");
     await password.getByLabel("Password baru", { exact: true }).fill(next);
     await password.getByLabel("Ulangi password baru", { exact: true }).fill(next);
     await password.getByRole("button", { name: "Ganti password" }).click();
-    await expect(password.getByRole("alert")).toHaveText("Password saat ini salah.");
+    await expect(password.getByRole("alert")).toHaveText(
+      "Kode salah atau sudah tidak berlaku. Minta kode baru.",
+    );
 
-    await password.getByLabel("Password saat ini", { exact: true }).fill(user.password);
+    await password.getByLabel("Kode dari email").fill(code);
     await password.getByRole("button", { name: "Ganti password" }).click();
     await expect(page.getByText(/Password diganti/)).toBeVisible();
 

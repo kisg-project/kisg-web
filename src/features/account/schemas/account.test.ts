@@ -46,12 +46,21 @@ describe("activationSchema", () => {
 });
 
 describe("changePasswordSchema", () => {
-  it("password baru tidak boleh sama dengan yang lama", () => {
+  it("wajib kode 6 digit dari email", () => {
     const result = changePasswordSchema.safeParse({
-      current: "Rahasia2026x",
+      code: "12345",
       password: "Rahasia2026x",
       confirm: "Rahasia2026x",
     });
-    expect(result.error?.issues[0]?.message).toMatch(/tidak boleh sama/);
+    expect(result.error?.issues[0]?.message).toBe("Masukkan 6 digit kode dari email.");
+  });
+
+  it("konfirmasi password harus sama", () => {
+    const result = changePasswordSchema.safeParse({
+      code: " 123456 ",
+      password: "Rahasia2026x",
+      confirm: "Rahasia2026y",
+    });
+    expect(result.error?.issues[0]?.message).toBe("Konfirmasi password tidak sama.");
   });
 });

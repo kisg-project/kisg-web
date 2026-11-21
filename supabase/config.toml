@@ -258,14 +258,15 @@ otp_expiry = 86400
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Template email berbahasa Indonesia. Tautan memakai token_hash ke /portal/auth/confirm.
+# Template email berbahasa Indonesia. Lupa password dan ganti password memakai kode 6 digit (OTP),
+# bukan tautan (keputusan owner, 21 November 2026). Undangan memakai email aplikasi (Brevo).
 # Staging dan production memakai file yang sama lewat scripts/supabase-auth-config.mjs.
 [auth.email.template.invite]
 subject = "Undangan portal KIS Group"
 content_path = "./supabase/templates/invite.html"
 
 [auth.email.template.recovery]
-subject = "Atur ulang password portal KIS Group"
+subject = "Kode password akun KIS Group"
 content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template
