@@ -41,7 +41,7 @@ export function ProjectGallery({
               onClick={() => {
                 setOpen(index);
               }}
-              className="group relative block aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface"
+              className="group relative block aspect-[4/3] w-full overflow-hidden rounded-3xl bg-surface"
               aria-label={`Perbesar foto: ${image.alt}`}
             >
               <Image
@@ -53,7 +53,7 @@ export function ProjectGallery({
                 }
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               />
-              <span className="absolute right-2 bottom-2 flex size-9 items-center justify-center rounded-md bg-primary-950/60 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span className="absolute right-2 bottom-2 flex size-9 items-center justify-center rounded-full bg-primary-950/60 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
                 <Expand aria-hidden="true" className="size-4" />
               </span>
             </button>
@@ -81,7 +81,7 @@ export function ProjectGallery({
                 Foto {(open ?? 0) + 1} dari {images.length}. Gunakan tombol panah untuk berpindah
                 foto.
               </DialogDescription>
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md bg-surface sm:aspect-[16/10]">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-surface sm:aspect-[16/10]">
                 <Image
                   key={current.id}
                   src={current.src}

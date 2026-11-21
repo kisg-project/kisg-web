@@ -8,26 +8,20 @@ import { env } from "@/env";
 import { ContentBlocks, getPostBySlug } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
 import { articleJsonLd, jsonLdGraph } from "@/lib/seo/structured-data";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 export async function generateMetadata({ params }: PageProps<"/berita/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Berita tidak ditemukan", robots: { index: false } };
-  const path = `/berita/${post.slug}`;
-  const images = post.cover ? [{ url: post.cover.src, alt: post.cover.alt }] : [];
-  return {
+  return shareMetadata({
+    path: `/berita/${post.slug}`,
     title: post.title,
-    description: post.excerpt ?? undefined,
-    alternates: { canonical: path },
-    openGraph: {
-      type: "article",
-      url: path,
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      publishedTime: post.publishedAt,
-      images,
-    },
-  };
+    description: post.excerpt ?? post.title,
+    imageAlt: post.title,
+    type: "article",
+    publishedTime: post.publishedAt,
+  });
 }
 
 export default async function PostPage({ params }: PageProps<"/berita/[slug]">) {
@@ -62,7 +56,7 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
       </PageHero>
       <Container className="py-10 sm:py-14">
         {post.cover ? (
-          <div className="relative mb-8 aspect-[16/9] max-w-3xl overflow-hidden rounded-lg">
+          <div className="relative mb-8 aspect-[16/9] max-w-3xl overflow-hidden rounded-3xl">
             <Image
               src={post.cover.src}
               alt={post.cover.alt}

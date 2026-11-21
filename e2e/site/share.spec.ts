@@ -35,8 +35,39 @@ test.describe("Judul tab, ikon, dan gambar share", () => {
     });
   }
 
-  test("gambar share hanya untuk halaman terdaftar", async ({ request }) => {
-    expect((await request.get("/og?p=%2Fteks-bebas")).status()).toBe(404);
+  test("gambar share hanya untuk halaman terdaftar atau konten yang ada", async ({ request }) => {
+    for (const path of [
+      "/teks-bebas",
+      "/berita/tidak-ada",
+      "/proyek/tidak-ada",
+      "/karir/jenjang/x",
+    ]) {
+      expect((await request.get(`/og?p=${encodeURIComponent(path)}`)).status(), path).toBe(404);
+    }
+  });
+
+  test("halaman konten (proyek, berita, jenjang karir) punya gambar share sendiri", async ({
+    page,
+    request,
+  }) => {
+    await page.goto("/berita");
+    await page.getByRole("list", { name: "Daftar berita" }).getByRole("link").first().click();
+    await expect(page).toHaveURL(/\/berita\/.+/);
+    const articlePath = new URL(page.url()).pathname;
+    for (const path of [
+      "/proyek/sejahtera-green-village",
+      articlePath,
+      "/karir/jenjang/lulusan-baru",
+    ]) {
+      await page.goto(path);
+      const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+      const ogUrl = new URL(og ?? "");
+      expect(ogUrl.pathname, path).toBe("/og");
+      expect(ogUrl.searchParams.get("p")).toBe(path);
+      const image = await request.get(`${ogUrl.pathname}${ogUrl.search}`);
+      expect(image.status(), path).toBe(200);
+      expect(image.headers()["content-type"]).toBe("image/png");
+    }
   });
 
   test("ikon tab, ikon aplikasi, dan apple touch icon tersedia", async ({ page, request }) => {

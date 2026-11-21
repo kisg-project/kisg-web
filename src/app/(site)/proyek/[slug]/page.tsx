@@ -25,6 +25,7 @@ import {
 } from "@/features/projects";
 import { formatRupiah, formatRupiahRange } from "@/lib/format";
 import { faqJsonLd, jsonLdGraph, listingJsonLd } from "@/lib/seo/structured-data";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 const STATUS_LABEL: Record<ProjectDetail["status"], string> = {
   segera: "Segera hadir",
@@ -48,23 +49,12 @@ export async function generateMetadata({ params }: PageProps<"/proyek/[slug]">):
   const project = await getProjectBySlug(slug);
   if (!project) return { title: "Proyek tidak ditemukan", robots: { index: false } };
   const description = describe(project);
-  const path = `/proyek/${project.slug}`;
-  const image = project.cover;
-  const images = image
-    ? [{ url: image.src, width: image.width, height: image.height, alt: image.alt }]
-    : [];
-  return {
+  return shareMetadata({
+    path: `/proyek/${project.slug}`,
     title: project.name,
     description,
-    alternates: { canonical: path },
-    openGraph: { type: "website", url: path, title: project.name, description, images },
-    twitter: {
-      card: "summary_large_image",
-      title: project.name,
-      description,
-      images: images.map((i) => i.url),
-    },
-  };
+    imageAlt: project.name,
+  });
 }
 
 function mapsUrl(project: ProjectDetail): string {
@@ -178,7 +168,7 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
       ) : null}
 
       <Section id="lokasi" tone="surface" title="Lokasi" className="scroll-mt-(--header-height)">
-        <Reveal className="flex flex-col gap-4 rounded-lg border bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <Reveal className="flex flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <p className="flex max-w-2xl gap-3 text-base">
             <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
             <span>
@@ -209,7 +199,7 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
           className="scroll-mt-(--header-height)"
         >
           <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
-            <Reveal className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-7">
+            <Reveal className="rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6 lg:col-span-7">
               <LeadForm
                 formKind="minat"
                 projectSlug={project.slug}
@@ -219,7 +209,7 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
             </Reveal>
             <Reveal
               delay={80}
-              className="rounded-lg border bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
+              className="rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
             >
               <h3 className="text-lg font-bold">Minta brosur</h3>
               <p className="mt-1 mb-4 text-sm text-subtle-foreground">

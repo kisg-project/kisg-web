@@ -8,6 +8,7 @@ import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
 import { CAREER_LEVELS, careerLevelBySlug } from "@/config/careers";
 import { CareerList, getOpenCareers } from "@/features/cms";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 export async function generateMetadata({
   params,
@@ -15,12 +16,12 @@ export async function generateMetadata({
   const { level } = await params;
   const info = careerLevelBySlug(level);
   if (!info) return { title: "Jenjang tidak ditemukan", robots: { index: false } };
-  return {
+  return shareMetadata({
+    path: `/karir/jenjang/${info.slug}`,
     title: `Karir ${info.title}`,
     description: `Lowongan jenjang ${info.title.toLowerCase()} di KIS Group. ${info.description}`,
-    alternates: { canonical: `/karir/jenjang/${info.slug}` },
-    openGraph: { images: [{ url: info.image.src, alt: info.image.alt }] },
-  };
+    imageAlt: `Karir ${info.title}`,
+  });
 }
 
 export default async function CareerLevelPage({ params }: PageProps<"/karir/jenjang/[level]">) {
@@ -42,7 +43,7 @@ export default async function CareerLevelPage({ params }: PageProps<"/karir/jenj
         ]}
       />
       <Container className="grid gap-10 py-10 sm:py-14 lg:grid-cols-12">
-        <div className="relative hidden aspect-[4/5] overflow-hidden rounded-lg bg-surface lg:col-span-4 lg:block">
+        <div className="relative hidden aspect-[4/5] overflow-hidden rounded-3xl bg-surface lg:col-span-4 lg:block">
           <Image
             src={info.image.src}
             alt={info.image.alt}

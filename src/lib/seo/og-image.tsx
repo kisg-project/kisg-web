@@ -43,11 +43,17 @@ export function clampTitle(title: string, max = 64): string {
 export async function renderOgImage({
   title,
   subtitle,
+  photo,
 }: {
   title: string;
   subtitle: string;
+  /** Foto halaman (JPEG atau PNG). Kosong: foto sampul proyek unggulan. */
+  photo?: { data: ArrayBuffer; type: string } | null;
 }): Promise<ImageResponse> {
   const [regular, bold, extraBold, logo, cover] = await assets;
+  const photoUri = photo
+    ? dataUri(Buffer.from(photo.data), photo.type)
+    : dataUri(cover, "image/jpeg");
   return new ImageResponse(
     <div
       style={{
@@ -107,13 +113,7 @@ export async function renderOgImage({
       </div>
       <div style={{ display: "flex", position: "relative", width: 540, height: 630 }}>
         {/* eslint-disable-next-line @next/next/no-img-element -- elemen gambar ImageResponse, bukan halaman */}
-        <img
-          src={dataUri(cover, "image/jpeg")}
-          width={540}
-          height={630}
-          alt=""
-          style={{ objectFit: "cover" }}
-        />
+        <img src={photoUri} width={540} height={630} alt="" style={{ objectFit: "cover" }} />
         <div
           style={{
             position: "absolute",

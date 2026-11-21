@@ -312,7 +312,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                 <li
                   key={product.id}
                   className={cn(
-                    "flex flex-col rounded-lg border bg-card p-4",
+                    "flex flex-col rounded-2xl border border-primary-100 bg-card p-4",
                     active && "border-primary ring-2 ring-primary/20",
                   )}
                 >
@@ -387,7 +387,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
         <form
           ref={formRef}
           noValidate
-          className="min-w-0 scroll-mt-24 rounded-lg border bg-card p-5 shadow-xs sm:p-6 xl:col-span-7"
+          className="min-w-0 scroll-mt-24 rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6 xl:col-span-7"
           onSubmit={(event) => {
             event.preventDefault();
           }}
@@ -729,7 +729,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       {result && costs ? (
         <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
           <div className="min-w-0 xl:col-span-5">
-            <div className="rounded-lg border bg-card p-5">
+            <div className="rounded-3xl border border-primary-100 bg-card p-5">
               <h3 className="text-base font-bold">Rincian biaya</h3>
               <ul className="mt-3 grid gap-4 text-sm">
                 {KPR_COST_GROUPS.map((group) => (
@@ -774,7 +774,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
             </div>
           </div>
           <div className="min-w-0 xl:col-span-7">
-            <details className="rounded-lg border bg-card p-5">
+            <details className="rounded-3xl border border-primary-100 bg-card p-5">
               <summary className="cursor-pointer font-bold">
                 Jadwal {terms.installmentLower} per tahun
               </summary>

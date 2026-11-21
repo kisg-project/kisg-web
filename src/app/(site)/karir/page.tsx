@@ -36,7 +36,7 @@ export default async function CareersPage() {
                 <Reveal delay={index * 80} className="h-full">
                   <Link
                     href={`/karir/jenjang/${item.slug}`}
-                    className="group flex h-full lift flex-col overflow-hidden rounded-lg border bg-card shadow-xs"
+                    className="group flex h-full lift flex-col overflow-hidden rounded-3xl border border-primary-100 bg-card shadow-xs"
                   >
                     <span className="relative block aspect-[4/5] overflow-hidden bg-surface">
                       <Image
