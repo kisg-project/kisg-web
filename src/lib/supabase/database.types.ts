@@ -5,7 +5,77 @@ export type Database = {
   
   "public": {
           Tables: {
-            "audit_log": {
+            "attendance_exceptions": {
+                  Row: {
+                    "accuracy_m": number | null,"created_at": string,"decided_at": string | null,"decided_by": string | null,"decision_note": string | null,"id": string,"kind": Database["public"]['Enums']["attendance_kind"],"lat": number,"lng": number,"nearest_distance_m": number | null,"nearest_location_id": string | null,"photo_path": string,"reason": string,"requested_at": string,"status": Database["public"]['Enums']["request_status"],"updated_at": string,"user_id": string,"work_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "accuracy_m"?: number | null,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"id"?: string,"kind": Database["public"]['Enums']["attendance_kind"],"lat": number,"lng": number,"nearest_distance_m"?: number | null,"nearest_location_id"?: string | null,"photo_path": string,"reason": string,"requested_at"?: string,"status"?: Database["public"]['Enums']["request_status"],"updated_at"?: string,"user_id": string,"work_date": string
+                  }
+                  Update: {
+                    "accuracy_m"?: number | null,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"decision_note"?: string | null,"id"?: string,"kind"?: Database["public"]['Enums']["attendance_kind"],"lat"?: number,"lng"?: number,"nearest_distance_m"?: number | null,"nearest_location_id"?: string | null,"photo_path"?: string,"reason"?: string,"requested_at"?: string,"status"?: Database["public"]['Enums']["request_status"],"updated_at"?: string,"user_id"?: string,"work_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_exceptions_nearest_location_id_fkey"
+      columns: ["nearest_location_id"]
+isOneToOne: false
+      referencedRelation: "work_locations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_exceptions_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"attendance_records": {
+                  Row: {
+                    "clock_in_accuracy_m": number | null,"clock_in_at": string,"clock_in_distance_m": number | null,"clock_in_exception_id": string | null,"clock_in_lat": number,"clock_in_lng": number,"clock_in_location_id": string | null,"clock_in_photo_path": string,"clock_out_accuracy_m": number | null,"clock_out_at": string | null,"clock_out_distance_m": number | null,"clock_out_exception_id": string | null,"clock_out_lat": number | null,"clock_out_lng": number | null,"clock_out_location_id": string | null,"clock_out_photo_path": string | null,"created_at": string,"early_minutes": number,"id": string,"late_minutes": number,"updated_at": string,"user_id": string,"work_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "clock_in_accuracy_m"?: number | null,"clock_in_at": string,"clock_in_distance_m"?: number | null,"clock_in_exception_id"?: string | null,"clock_in_lat": number,"clock_in_lng": number,"clock_in_location_id"?: string | null,"clock_in_photo_path": string,"clock_out_accuracy_m"?: number | null,"clock_out_at"?: string | null,"clock_out_distance_m"?: number | null,"clock_out_exception_id"?: string | null,"clock_out_lat"?: number | null,"clock_out_lng"?: number | null,"clock_out_location_id"?: string | null,"clock_out_photo_path"?: string | null,"created_at"?: string,"early_minutes"?: number,"id"?: string,"late_minutes"?: number,"updated_at"?: string,"user_id": string,"work_date": string
+                  }
+                  Update: {
+                    "clock_in_accuracy_m"?: number | null,"clock_in_at"?: string,"clock_in_distance_m"?: number | null,"clock_in_exception_id"?: string | null,"clock_in_lat"?: number,"clock_in_lng"?: number,"clock_in_location_id"?: string | null,"clock_in_photo_path"?: string,"clock_out_accuracy_m"?: number | null,"clock_out_at"?: string | null,"clock_out_distance_m"?: number | null,"clock_out_exception_id"?: string | null,"clock_out_lat"?: number | null,"clock_out_lng"?: number | null,"clock_out_location_id"?: string | null,"clock_out_photo_path"?: string | null,"created_at"?: string,"early_minutes"?: number,"id"?: string,"late_minutes"?: number,"updated_at"?: string,"user_id"?: string,"work_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_records_clock_in_location_id_fkey"
+      columns: ["clock_in_location_id"]
+isOneToOne: false
+      referencedRelation: "work_locations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_records_clock_out_location_id_fkey"
+      columns: ["clock_out_location_id"]
+isOneToOne: false
+      referencedRelation: "work_locations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_records_in_exception"
+      columns: ["clock_in_exception_id"]
+isOneToOne: false
+      referencedRelation: "attendance_exceptions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_records_out_exception"
+      columns: ["clock_out_exception_id"]
+isOneToOne: false
+      referencedRelation: "attendance_exceptions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_records_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"audit_log": {
                   Row: {
                     "action": Database["public"]['Enums']["audit_action"],"actor_id": string | null,"at": string,"id": number,"new_data": Json | null,"old_data": Json | null,"row_id": string,"table_name": string
                   }
@@ -529,7 +599,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["work_location_kind"],"lat": number,"lng": number,"name": string,"project_id"?: string | null,"radius_m": number,"updated_at"?: string
+                    "created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"is_active"?: boolean,"kind": Database["public"]['Enums']["work_location_kind"],"lat": number,"lng": number,"name": string,"project_id"?: string | null,"radius_m"?: number,"updated_at"?: string
                   }
                   Update: {
                     "created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"is_active"?: boolean,"kind"?: Database["public"]['Enums']["work_location_kind"],"lat"?: number,"lng"?: number,"name"?: string,"project_id"?: string | null,"radius_m"?: number,"updated_at"?: string
@@ -543,13 +613,42 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"work_schedules": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"end_time": string,"id": string,"late_tolerance_min": number,"scope": Database["public"]['Enums']["schedule_scope"],"start_time": string,"updated_at": string,"user_id": string | null,"work_location_id": string | null,"workdays": (number)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"end_time": string,"id"?: string,"late_tolerance_min"?: number,"scope": Database["public"]['Enums']["schedule_scope"],"start_time": string,"updated_at"?: string,"user_id"?: string | null,"work_location_id"?: string | null,"workdays"?: (number)[]
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"end_time"?: string,"id"?: string,"late_tolerance_min"?: number,"scope"?: Database["public"]['Enums']["schedule_scope"],"start_time"?: string,"updated_at"?: string,"user_id"?: string | null,"work_location_id"?: string | null,"workdays"?: (number)[]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "work_schedules_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "work_schedules_work_location_id_fkey"
+      columns: ["work_location_id"]
+isOneToOne: false
+      referencedRelation: "work_locations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "custom_access_token_hook":
+            "attendance_clock":
+{ Args: { "p_accuracy": number,"p_kind": Database["public"]['Enums']["attendance_kind"],"p_lat": number,"p_lng": number,"p_photo_path": string }; Returns: Json
+                           },
+"custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
 "normalize_phone_id":
@@ -557,6 +656,9 @@ isOneToOne: false
                            },
 "rate_limit_hit":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"request_attendance_exception":
+{ Args: { "p_accuracy": number,"p_kind": Database["public"]['Enums']["attendance_kind"],"p_lat": number,"p_lng": number,"p_photo_path": string,"p_reason": string }; Returns: string
                            },
 "set_user_active":
 { Args: { "p_active": boolean,"p_user": string }; Returns: undefined
@@ -574,7 +676,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek"
+            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -690,7 +792,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"]
+            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"]
           }
         }
 } as const

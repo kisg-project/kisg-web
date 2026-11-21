@@ -145,6 +145,20 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 | Lowongan berjenjang tampil di halaman jenjang karir dan detailnya | `cms/cms.spec.ts` | 4 | Ditulis |
 | RLS role cms: menulis konten, karyawan tidak; role cms tidak bisa digabung | `supabase/tests/database/06_cms_role.test.sql` | 4 | Ditulis |
 
+### Absensi (`e2e/absensi/absensi.spec.ts`, PWA)
+
+Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `context.setGeolocation`, build CI memakai `NEXT_PUBLIC_E2E_FACE_STUB=1` (deteksi wajah dan kedip diganti tombol uji). Setiap test membuat titik absensi di koordinat acak sendiri.
+
+| Skenario | Spec | Fase | Status |
+|---|---|---|---|
+| Clock in dan clock out di dalam radius: baris `attendance_records`, jarak 0 m, foto di bucket privat di bawah 150 KB, clock in kedua dialihkan, axe dan responsif | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Di luar radius: absen tidak tercatat, alasan pendek ditolak, pengajuan di luar lokasi tersimpan berstatus menunggu dan tampil di halaman absensi | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Izin lokasi ditolak: petunjuk tampil dan tombol kirim mati | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Owner tidak wajib absensi (akses ditolak), karyawan tidak bisa membuka pengaturan absensi | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Owner menambah titik absensi dengan "Pakai lokasi saya sekarang", validasi nama, data tersimpan | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Jam kerja: jam pulang sebelum jam masuk ditolak, jam khusus per titik disimpan lalu dihapus | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Database: jarak, titik terdekat, jam berlapis (karyawan, titik, perusahaan), foto milik sendiri, radius, pengajuan ganda, owner dan CMS tanpa absensi, RLS keuangan | `supabase/tests/database/07_attendance.test.sql` | PWA | Ditulis |
+
 ### Admin CMS (`e2e/admin/`, Fase 4)
 
 | Skenario | Profil | Fase | Status |

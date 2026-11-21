@@ -6,6 +6,9 @@ const PORT = Number(process.env.E2E_PORT ?? 3000);
 const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 const isCI = Boolean(process.env.CI);
 
+// Kamera palsu Chromium untuk alur absensi (pola uji bawaan Chromium, tanpa dialog izin).
+const FAKE_CAMERA = ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"];
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -31,8 +34,11 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], launchOptions: { args: FAKE_CAMERA } },
+    },
+    { name: "mobile-chrome", use: { ...devices["Pixel 7"], launchOptions: { args: FAKE_CAMERA } } },
     { name: "mobile-safari", use: { ...devices["iPhone 15"] } },
   ],
   // E2E_BASE_URL diisi saat menguji URL preview Vercel. Server lokal tidak dijalankan.

@@ -162,11 +162,13 @@ export const config = {
     // Host portal (PORTAL_HOST berawalan "company.") dan host CMS (CMS_HOST berawalan "cms."):
     // semua path kecuali aset statis.
     {
-      source: "/((?!_next/static|_next/image|images/|brand/|favicon.ico|robots.txt|sitemap.xml).*)",
+      source:
+        "/((?!_next/static|_next/image|images/|brand/|vendor/|favicon.ico|robots.txt|sitemap.xml).*)",
       has: [{ type: "host", value: "company\\..*" }],
     },
     {
-      source: "/((?!_next/static|_next/image|images/|brand/|favicon.ico|robots.txt|sitemap.xml).*)",
+      source:
+        "/((?!_next/static|_next/image|images/|brand/|vendor/|favicon.ico|robots.txt|sitemap.xml).*)",
       has: [{ type: "host", value: "cms\\..*" }],
     },
   ],

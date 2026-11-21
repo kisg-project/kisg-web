@@ -177,8 +177,10 @@ erDiagram
   daily_site_reports ||--o{ site_report_photos : "foto"
   daily_site_reports ||--o{ material_logs : "material"
   projects ||--o{ site_issues : "kendala"
-  profiles ||--o{ attendance : "absen"
-  work_locations ||--o{ attendance : "lokasi"
+  profiles ||--o{ attendance_records : "absen"
+  work_locations ||--o{ attendance_records : "lokasi"
+  profiles ||--o{ attendance_exceptions : "di luar lokasi"
+  work_locations ||--o{ work_schedules : "jam titik"
   projects ||--o| work_locations : "lokasi proyek"
 ```
 
@@ -191,7 +193,9 @@ erDiagram
 | `material_logs` | `report_id`, `project_id`, `material_name`, `unit_label` (sak, m3, batang), `qty_in`, `qty_used`, `note` | index (`project_id`, `created_at`) |
 | `site_issues` | `project_id`, `report_id null`, `title`, `description`, `priority`, `status`, `reported_by`, `assigned_to`, `photo_path`, `resolved_at` | index (`project_id`, `status`) |
 | `work_locations` | `name`, `kind` (kantor, proyek), `project_id null`, `lat`, `lng`, `radius_m int`, `is_active` | titik geofence absensi: kantor pemasaran dan lokasi proyek |
-| `attendance` | `user_id`, `work_location_id`, `project_id null`, `kind attendance_kind`, `captured_at`, `received_at`, `lat`, `lng`, `accuracy_m`, `distance_m`, `within_geofence bool`, `selfie_path` (bucket `attendance`), `status attendance_status`, `justification`, `reviewed_by`, `client_id` | index (`user_id`, `captured_at`), unique `client_id` |
+| `work_schedules` | `scope schedule_scope` (perusahaan, lokasi, karyawan), `work_location_id null`, `user_id null`, `start_time`, `end_time`, `workdays smallint[]` (1 Senin sampai 7 Minggu), `late_tolerance_min` | satu baris per lingkup dan target. Urutan berlaku: karyawan, lalu titik, lalu perusahaan (`private.effective_schedule`) |
+| `attendance_records` | `user_id`, `work_date` (tanggal WIB), `clock_in_at`, `clock_in_location_id`, `clock_in_lat/lng/accuracy_m/distance_m`, `clock_in_photo_path`, `late_minutes`, kolom `clock_out_*` yang sama, `early_minutes`, `clock_in_exception_id`, `clock_out_exception_id` | unique (`user_id`, `work_date`). Hanya ditulis lewat RPC `attendance_clock` (jarak dan waktu dihitung server) |
+| `attendance_exceptions` | `user_id`, `work_date`, `kind attendance_kind`, `lat`, `lng`, `accuracy_m`, `nearest_location_id`, `nearest_distance_m`, `reason` (10 sampai 500 karakter), `photo_path`, `status request_status`, `decided_by`, `decided_at`, `decision_note` | satu pengajuan terbuka per user, tanggal, dan jenis. Ditulis lewat RPC `request_attendance_exception` |
 
 Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per item. Dihitung lewat view `unit_progress` dan materialized view `project_progress`, disegarkan saat laporan disetujui.
 
@@ -268,7 +272,7 @@ Keterangan:
 | Laporan harian, item, foto, material | - | R S | R S | - | - | R P, W review | RW M (status draft/dikembalikan) di P | - |
 | `site_issues` | - | R S | R S | - | - | RW P | RW P | - |
 | `construction_updates` | R Pub | RW S | RW S | - | - | RW P | - | - |
-| `attendance` | - | R S | R S | R T, W review timnya | RW M (insert) | R P, W review | RW M (insert) | - |
+| `attendance_records` | - | R S | R S | R T | RW M (lewat RPC) | R T | RW M (lewat RPC) | R semua |
 | `work_locations` | - | RW S | RW S | R | R | R | R | - |
 | `marketing_activities` | - | R S | R S | R T | RW M | - | - | - |
 | KPI definisi dan target | - | RW S | RW S | R S, W target timnya | R M | R S, W target timnya | R M | - |
@@ -288,7 +292,7 @@ Semua role staf mensyaratkan `is_active = true`. Penulisan yang melibatkan beber
 |---|---|---|---|---|
 | `public-assets` | Ya | Foto proyek, berita, promo, banner, logo | 2 MB, gambar | Tulis: owner, admin |
 | `site-reports` | Tidak | Foto laporan lapangan | 1 MB, gambar | Tulis: pembuat laporan di folder `user_id`-nya. Baca: P dan owner/admin |
-| `attendance` | Tidak | Selfie absensi | 512 KB, gambar | Tulis: user sendiri. Baca: user sendiri, site_manager P, marketing_manager untuk timnya, owner/admin |
+| `attendance-photos` | Tidak | Selfie absensi `<user>/<tanggal WIB>/<jenis>-<uuid>` | 200 KB, WebP dan JPEG | Tulis: karyawan wajib absen di foldernya sendiri. Baca: pemilik, owner/admin, manajer timnya |
 | `customer-docs` | Tidak | KTP, slip gaji, dsb | 2 MB, gambar dan PDF | Tulis dan baca mengikuti RLS `leads` |
 | `job-applications` | Tidak | CV pelamar | 2 MB, PDF | Tulis: server action. Baca: owner, admin |
 | `avatars` | Tidak | Foto profil staf | 256 KB, gambar | Tulis: user sendiri. Baca: staf |
