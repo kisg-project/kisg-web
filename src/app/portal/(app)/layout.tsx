@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { NavigationProgress } from "@/components/shared/navigation-progress";
 import { siteConfig } from "@/config/site";
 import { InstallButton } from "@/features/pwa";
 import { StickyHeader } from "./_components/portal-nav";
@@ -20,7 +21,7 @@ function PortalBrand() {
         height={siteConfig.logo.height}
         loading="eager"
         sizes="112px"
-        className="h-9 w-auto"
+        className="h-8 w-auto"
       />
     </Link>
   );
@@ -32,7 +33,10 @@ function PortalBrand() {
  */
 export default function PortalAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-feel portal-field flex min-h-dvh flex-col">
+    <div className="app-feel portal-field portal-canvas flex min-h-dvh flex-col">
+      <Suspense fallback={null}>
+        <NavigationProgress />
+      </Suspense>
       <Suspense fallback={null}>
         <SidebarNavForUser />
       </Suspense>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, type LucideIcon } from "lucide-react";
 
 export interface PortalModule {
   href: string;
@@ -10,7 +10,10 @@ export interface PortalModule {
   ready: boolean;
 }
 
-/** Kartu modul di beranda portal. Satu tugas per kartu, target sentuh besar. */
+/**
+ * Kartu modul di beranda portal, bergaya ubin peluncur aplikasi: ikon di atas, judul, dan keterangan
+ * singkat. Dua kolom mulai lebar 420px, target sentuh besar.
+ */
 export function ModuleCards({
   label,
   modules,
@@ -19,32 +22,39 @@ export function ModuleCards({
   modules: readonly PortalModule[];
 }) {
   return (
-    <ul aria-label={label} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <ul aria-label={label} className="grid gap-3 min-[420px]:grid-cols-2 xl:grid-cols-3">
       {modules.map((module) => (
         <li key={module.title}>
           {module.ready ? (
             <Link
               href={module.href}
-              className="group flex h-full items-start gap-4 rounded-3xl bg-card p-5 shadow-[0_18px_40px_-30px_rgb(11_61_54/0.45)] ring-1 ring-foreground/5 transition-transform motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
+              className="group relative flex h-full flex-col gap-3 rounded-3xl bg-card p-4 shadow-[0_16px_36px_-28px_rgb(1_60_52/0.55)] ring-1 ring-primary-100/70 transition-[translate,box-shadow] duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98] sm:p-5"
             >
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 transition-colors group-hover:bg-primary-700 group-hover:text-white">
-                <module.icon aria-hidden="true" className="size-5" />
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 transition-colors duration-200 group-hover:bg-primary-900 group-hover:text-white">
+                <module.icon aria-hidden="true" className="size-[1.35rem]" />
               </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-bold group-hover:text-primary">{module.title}</span>
-                <span className="block text-sm text-muted-foreground">{module.description}</span>
+              <span className="min-w-0">
+                <span className="block font-bold text-primary-950">{module.title}</span>
+                <span className="mt-0.5 line-clamp-2 block text-sm text-muted-foreground">
+                  {module.description}
+                </span>
               </span>
-              <ArrowRight aria-hidden="true" className="size-5 text-primary" />
+              <ArrowUpRight
+                aria-hidden="true"
+                className="absolute top-4 right-4 size-5 text-primary-400 transition-colors group-hover:text-primary-800"
+              />
             </Link>
           ) : (
-            <div className="flex h-full items-start gap-4 rounded-3xl border border-dashed border-primary-200 bg-background/60 p-5">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-surface text-subtle-foreground">
-                <module.icon aria-hidden="true" className="size-5" />
+            <div className="flex h-full flex-col gap-3 rounded-3xl border border-dashed border-primary-200 bg-background p-4 sm:p-5">
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-white text-subtle-foreground ring-1 ring-primary-100">
+                <module.icon aria-hidden="true" className="size-[1.35rem]" />
               </span>
               <span className="min-w-0">
                 <span className="block font-bold">{module.title}</span>
-                <span className="block text-sm text-muted-foreground">{module.description}</span>
-                <span className="mt-2 inline-block rounded-full bg-gold-50 px-2.5 py-0.5 text-xs font-semibold text-gold-800">
+                <span className="mt-0.5 line-clamp-2 block text-sm text-muted-foreground">
+                  {module.description}
+                </span>
+                <span className="mt-2 inline-block rounded-full bg-gold-100 px-2.5 py-0.5 text-xs font-semibold text-gold-800">
                   Segera tersedia
                 </span>
               </span>

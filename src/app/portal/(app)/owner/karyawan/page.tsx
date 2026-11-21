@@ -12,6 +12,8 @@ export default async function EmployeesPage() {
   return (
     <div className="grid gap-8">
       <PageHeader
+        backHref="/portal/owner"
+        backLabel="Kembali ke beranda"
         title="Karyawan"
         description="Undang karyawan lewat email, atur role dan rangkap jabatan, nonaktifkan akun yang tidak dipakai."
       />

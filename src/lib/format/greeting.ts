@@ -12,3 +12,13 @@ export function greetingFor(at: Date = new Date()): string {
   if (hour >= 15 && hour < 18) return "Selamat sore";
   return "Selamat malam";
 }
+
+/**
+ * Nama depan untuk sapaan singkat di beranda portal. Gelar di depan (Ir., Dr., H., Hj.) dilewati
+ * supaya sapaan tetap memakai nama orangnya.
+ */
+export function firstName(fullName: string): string {
+  const words = fullName.trim().split(/\s+/).filter(Boolean);
+  const name = words.find((word) => !/^(ir|dr|drs|dra|h|hj|prof)\.?$/i.test(word));
+  return (name ?? words[0] ?? "").replace(/[,.]+$/, "");
+}

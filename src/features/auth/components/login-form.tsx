@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -29,7 +30,10 @@ export function LoginForm({
     resolver: zodResolver(loginSchema),
     defaultValues: { app, email: "", password: "", next },
   });
-  const { execute, result, isExecuting } = useAction(loginAction);
+  const { execute, result, isPending, hasNavigated } = useAction(loginAction);
+  // Setelah password benar, server mengalihkan ke beranda. Tombol tetap menampilkan proses sampai
+  // halaman tujuan tampil, supaya tidak terasa diam.
+  const busy = isPending || hasNavigated;
   const serverError = result.serverError;
   const pageMessage = message ? PAGE_MESSAGES[message] : undefined;
 
@@ -67,8 +71,9 @@ export function LoginForm({
           {serverError}
         </p>
       ) : null}
-      <Button type="submit" size="lg" disabled={isExecuting}>
-        {isExecuting ? "Memeriksa" : "Masuk"}
+      <Button type="submit" size="lg" disabled={busy} aria-busy={busy}>
+        {busy ? <LoaderCircle aria-hidden="true" className="size-5 animate-spin" /> : null}
+        {hasNavigated ? "Membuka beranda" : isPending ? "Sedang masuk" : "Masuk"}
       </Button>
       <Link
         href={app === "cms" ? "/cms/lupa-password" : "/portal/lupa-password"}

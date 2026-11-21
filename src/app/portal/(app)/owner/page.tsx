@@ -13,7 +13,6 @@ import {
 import { PageHeader } from "@/components/shared/page-header";
 import { ROLE_HOME } from "@/config/portal";
 import { requirePortalUser } from "@/features/auth";
-import { avatarUrl } from "@/features/users";
 import { ModuleCards, type PortalModule } from "../_components/module-cards";
 import { PortalGreeting } from "../_components/portal-greeting";
 
@@ -93,11 +92,7 @@ export default async function OwnerPage() {
     <div className="grid gap-6">
       {isHome ? (
         <>
-          <PortalGreeting
-            fullName={user.fullName}
-            roles={user.roles}
-            avatarUrl={await avatarUrl(user.avatarPath)}
-          />
+          <PortalGreeting fullName={user.fullName} roles={user.roles} />
           <h2 className="text-xl font-bold">Dashboard owner</h2>
         </>
       ) : (
