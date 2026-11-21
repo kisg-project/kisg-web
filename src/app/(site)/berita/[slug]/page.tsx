@@ -3,31 +3,27 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import { JsonLd } from "@/components/shared/json-ld";
+import { Section } from "@/components/shared/section";
+import { MediaCard } from "@/components/site/media-card";
 import { PageHero } from "@/components/site/page-hero";
 import { env } from "@/env";
-import { ContentBlocks, getPostBySlug } from "@/features/cms";
+import { ContentBlocks, getPostBySlug, getPublishedPosts } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
-import { articleJsonLd, jsonLdGraph } from "@/lib/seo/structured-data";
+import { articleJsonLd, jsonLdGraph, organizationJsonLd } from "@/lib/seo/structured-data";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 export async function generateMetadata({ params }: PageProps<"/berita/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: "Berita tidak ditemukan", robots: { index: false } };
-  const path = `/berita/${post.slug}`;
-  const images = post.cover ? [{ url: post.cover.src, alt: post.cover.alt }] : [];
-  return {
+  return shareMetadata({
+    path: `/berita/${post.slug}`,
     title: post.title,
-    description: post.excerpt ?? undefined,
-    alternates: { canonical: path },
-    openGraph: {
-      type: "article",
-      url: path,
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      publishedTime: post.publishedAt,
-      images,
-    },
-  };
+    description: post.excerpt ?? post.title,
+    imageAlt: post.title,
+    type: "article",
+    publishedTime: post.publishedAt,
+  });
 }
 
 export default async function PostPage({ params }: PageProps<"/berita/[slug]">) {
@@ -35,6 +31,8 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
   const post = await getPostBySlug(slug);
   if (!post) notFound();
   const path = `/berita/${post.slug}`;
+  // Tautan internal ke berita lain (SEO dan lama kunjungan).
+  const others = (await getPublishedPosts(4)).filter((item) => item.id !== post.id).slice(0, 3);
 
   return (
     <>
@@ -47,6 +45,8 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
             image: post.cover?.src ?? null,
             description: post.excerpt,
           }),
+          // Penulis dan penerbit artikel menunjuk ke node ini.
+          organizationJsonLd(env.NEXT_PUBLIC_SITE_URL),
         ])}
       />
       <PageHero
@@ -62,7 +62,7 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
       </PageHero>
       <Container className="py-10 sm:py-14">
         {post.cover ? (
-          <div className="relative mb-8 aspect-[16/9] max-w-3xl overflow-hidden rounded-lg">
+          <div className="relative mb-8 aspect-[16/9] max-w-3xl overflow-hidden rounded-3xl">
             <Image
               src={post.cover.src}
               alt={post.cover.alt}
@@ -75,6 +75,24 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
         ) : null}
         <ContentBlocks blocks={post.body} />
       </Container>
+      {others.length > 0 ? (
+        <Section id="berita-lainnya" tone="surface" title="Berita lainnya">
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {others.map((item) => (
+              <li key={item.id}>
+                <MediaCard
+                  href={`/berita/${item.slug}`}
+                  title={item.title}
+                  image={item.cover}
+                  meta={<time dateTime={item.publishedAt}>{formatDateWIB(item.publishedAt)}</time>}
+                >
+                  {item.excerpt}
+                </MediaCard>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
     </>
   );
 }

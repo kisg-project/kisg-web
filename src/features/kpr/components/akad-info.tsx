@@ -5,7 +5,7 @@ export function AkadInfo() {
   return (
     <dl className="grid gap-4 sm:grid-cols-2">
       {AKAD_INFO.map((akad) => (
-        <div key={akad.name} className="lift rounded-lg border bg-card p-5">
+        <div key={akad.name} className="lift rounded-3xl border border-primary-100 bg-card p-5">
           <dt className="font-bold">{akad.name}</dt>
           <dd className="mt-2 text-sm text-subtle-foreground">{akad.text}</dd>
         </div>

@@ -13,7 +13,7 @@ export function CareerList({ careers }: { careers: readonly CareerSummary[] }) {
           <Reveal delay={index * 60}>
             <Link
               href={`/karir/${career.slug}`}
-              className="group flex lift flex-col gap-3 rounded-lg border bg-card p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between"
+              className="group flex lift flex-col gap-3 rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:flex-row sm:items-center sm:justify-between"
             >
               <span>
                 <span className="block text-lg font-bold group-hover:text-primary">

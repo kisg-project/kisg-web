@@ -20,7 +20,7 @@ export function ConstructionUpdates({ items }: { items: readonly ConstructionUpd
             <h3 className="mt-1 text-lg font-bold">{item.title}</h3>
             {item.body ? <p className="mt-1 text-subtle-foreground">{item.body}</p> : null}
             {item.cover ? (
-              <div className="relative mt-3 aspect-[16/9] max-w-xl overflow-hidden rounded-lg">
+              <div className="relative mt-3 aspect-[16/9] max-w-xl overflow-hidden rounded-3xl">
                 <Image
                   src={item.cover.src}
                   alt={item.cover.alt}

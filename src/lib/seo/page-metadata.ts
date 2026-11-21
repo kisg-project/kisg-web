@@ -55,15 +55,57 @@ export function isOgPagePath(path: string): path is OgPagePath {
   return Object.hasOwn(OG_PAGES, path);
 }
 
-/** URL gambar share bermerek untuk path halaman statis. */
-export function ogImageUrl(path: OgPagePath): string {
+/** URL gambar share bermerek untuk path halaman (statis atau konten). */
+export function ogImageUrl(path: string): string {
   return `/og?p=${encodeURIComponent(path)}`;
 }
 
 /**
- * Metadata lengkap halaman statis: judul tab, deskripsi, canonical, Open Graph, dan Twitter card dengan
- * gambar share bermerek (CLAUDE.md bagian 6, SEO).
+ * Metadata share lengkap untuk satu halaman: deskripsi, canonical, Open Graph, dan Twitter card dengan
+ * gambar bermerek dari /og. Judul tab memakai templat root ("... | KIS Group").
  */
+export function shareMetadata({
+  path,
+  title,
+  description,
+  imageAlt,
+  type = "website",
+  publishedTime,
+}: {
+  path: string;
+  /** Judul tab. Kosongkan untuk beranda (judul default layout root). */
+  title?: string;
+  description: string;
+  imageAlt: string;
+  type?: "website" | "article";
+  publishedTime?: string;
+}): Metadata {
+  const shareTitle = `${title ?? imageAlt} | ${siteConfig.name}`;
+  const image = { url: ogImageUrl(path), width: 1200, height: 630, alt: imageAlt };
+  return {
+    ...(title ? { title } : {}),
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type,
+      locale: "id_ID",
+      url: path,
+      siteName: siteConfig.name,
+      title: shareTitle,
+      description,
+      images: [image],
+      ...(type === "article" && publishedTime ? { publishedTime } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: shareTitle,
+      description,
+      images: [image.url],
+    },
+  };
+}
+
+/** Metadata halaman statis yang terdaftar di OG_PAGES (CLAUDE.md bagian 6, SEO). */
 export function pageMetadata({
   path,
   title,
@@ -74,27 +116,5 @@ export function pageMetadata({
   title?: string;
   description: string;
 }): Metadata {
-  const og = OG_PAGES[path];
-  const shareTitle = title ? `${title} | ${siteConfig.name}` : `${og.title} | ${siteConfig.name}`;
-  const image = { url: ogImageUrl(path), width: 1200, height: 630, alt: og.title };
-  return {
-    ...(title ? { title } : {}),
-    description,
-    alternates: { canonical: path },
-    openGraph: {
-      type: "website",
-      locale: "id_ID",
-      url: path,
-      siteName: siteConfig.name,
-      title: shareTitle,
-      description,
-      images: [image],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: shareTitle,
-      description,
-      images: [image.url],
-    },
-  };
+  return shareMetadata({ path, title, description, imageAlt: OG_PAGES[path].title });
 }

@@ -39,6 +39,19 @@ export function organizationJsonLd(siteUrl: string): JsonLd {
   };
 }
 
+/** Situs web (WebSite), dihubungkan ke organisasi sebagai penerbit. */
+export function websiteJsonLd(siteUrl: string): JsonLd {
+  return {
+    "@type": "WebSite",
+    "@id": absoluteUrl(siteUrl, "/#situs"),
+    name: siteConfig.name,
+    alternateName: siteConfig.legalName,
+    url: absoluteUrl(siteUrl),
+    inLanguage: "id-ID",
+    publisher: { "@id": absoluteUrl(siteUrl, "/#organisasi") },
+  };
+}
+
 /** Alamat proyek (bentuknya sama dengan ProjectAddress di fitur projects). */
 export interface ListingAddress {
   street: string | null;

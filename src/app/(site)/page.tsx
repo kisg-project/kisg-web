@@ -30,7 +30,12 @@ import {
 } from "@/features/projects";
 import { formatDateWIB, formatRupiah, formatRupiahRange } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo/page-metadata";
-import { jsonLdGraph, listingJsonLd, organizationJsonLd } from "@/lib/seo/structured-data";
+import {
+  jsonLdGraph,
+  listingJsonLd,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo/structured-data";
 
 function describe(project: ProjectDetail | null): string {
   if (!project) return `${siteConfig.legalName}, developer perumahan di Kabupaten Bekasi.`;
@@ -83,6 +88,7 @@ export default async function HomePage() {
       <JsonLd
         data={jsonLdGraph([
           organizationJsonLd(env.NEXT_PUBLIC_SITE_URL),
+          websiteJsonLd(env.NEXT_PUBLIC_SITE_URL),
           ...(project && firstUnit
             ? [
                 listingJsonLd(env.NEXT_PUBLIC_SITE_URL, {
@@ -316,7 +322,7 @@ export default async function HomePage() {
         <Reveal className="relative isolate mx-auto flex w-full max-w-7xl flex-col items-start gap-6 overflow-hidden rounded-4xl bg-primary-900 px-6 py-10 text-white sm:px-10 sm:py-14 md:flex-row md:items-center md:justify-between lg:px-14">
           <RoofLine
             strokeWidth={4}
-            className="absolute -right-10 -bottom-6 -z-10 h-40 w-[28rem] text-gold-400/35"
+            className="absolute -right-24 -bottom-16 -z-10 h-32 w-[26rem] text-gold-400/25"
           />
           <div className="max-w-xl">
             <h2 id="cta-judul" className="text-3xl font-extrabold tracking-tight sm:text-4xl">

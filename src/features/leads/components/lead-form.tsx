@@ -80,7 +80,7 @@ export function LeadForm({
 
   if (hasSucceeded) {
     return (
-      <div role="status" className="flex flex-col items-start gap-4 rounded-lg bg-success-50 p-5">
+      <div role="status" className="flex flex-col items-start gap-4 rounded-3xl bg-success-50 p-5">
         <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
         <p className="font-semibold">{copy.success}</p>
         <Button asChild variant="outline">

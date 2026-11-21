@@ -5,16 +5,18 @@ import { PageHero } from "@/components/site/page-hero";
 import { ContentBlocks, getCareerBySlug } from "@/features/cms";
 import { ApplicationForm } from "@/features/leads";
 import { formatDateWIB } from "@/lib/format";
+import { shareMetadata } from "@/lib/seo/page-metadata";
 
 export async function generateMetadata({ params }: PageProps<"/karir/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const career = await getCareerBySlug(slug);
   if (!career) return { title: "Lowongan tidak ditemukan", robots: { index: false } };
-  return {
+  return shareMetadata({
+    path: `/karir/${career.slug}`,
     title: `Lowongan ${career.title}`,
     description: [career.title, career.department, career.location].filter(Boolean).join(", "),
-    alternates: { canonical: `/karir/${career.slug}` },
-  };
+    imageAlt: `Lowongan ${career.title}`,
+  });
 }
 
 export default async function CareerPage({ params }: PageProps<"/karir/[slug]">) {
@@ -58,7 +60,7 @@ export default async function CareerPage({ params }: PageProps<"/karir/[slug]">)
         ) : null}
         <section
           aria-labelledby="kirim-lamaran"
-          className="max-w-3xl rounded-lg border bg-card p-5 shadow-xs sm:p-6"
+          className="max-w-3xl rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6"
         >
           <h2 id="kirim-lamaran" className="mb-4 text-xl font-bold">
             Kirim lamaran
