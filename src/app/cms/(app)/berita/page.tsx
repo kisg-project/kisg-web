@@ -38,7 +38,7 @@ export default async function CmsPostsPage() {
           description="Tulis berita pertama lewat tombol di atas."
         />
       ) : (
-        <ul aria-label="Daftar berita CMS" className="grid gap-3">
+        <ul aria-label="Daftar berita CMS" className="grid grid-cols-[minmax(0,1fr)] gap-3">
           {posts.map((post) => (
             <li key={post.id}>
               <Link

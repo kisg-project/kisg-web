@@ -42,7 +42,7 @@ export default async function CmsCareersPage() {
           description="Buat lowongan pertama. Halaman karir menampilkannya di kartu jenjangnya."
         />
       ) : (
-        <ul aria-label="Daftar lowongan CMS" className="grid gap-3">
+        <ul aria-label="Daftar lowongan CMS" className="grid grid-cols-[minmax(0,1fr)] gap-3">
           {careers.map((career) => (
             <li key={career.id}>
               <Link

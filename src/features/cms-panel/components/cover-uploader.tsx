@@ -59,7 +59,7 @@ export function CoverUploader({
           // eslint-disable-next-line @next/next/no-img-element -- pratinjau di panel CMS, bukan halaman publik
           <img src={value} alt="Pratinjau sampul" className="size-full object-cover" />
         ) : (
-          <span className="flex size-full items-center justify-center text-sm text-muted-foreground">
+          <span className="flex size-full items-center justify-center text-sm text-subtle-foreground">
             Belum ada sampul
           </span>
         )}
