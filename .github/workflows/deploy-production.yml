@@ -67,8 +67,10 @@ jobs:
       - name: Pengaturan Auth production
         if: steps.changes.outputs.run == 'true'
         env:
-          # Ganti ke https://kisgroup.co.id saat domain sudah terhubung ke Vercel (docs/TODO-DATA.md).
-          SITE_URL: https://kisg-web.vercel.app
+          # Domain asli terhubung ke Vercel sejak 21 November 2026. Tautan Auth (undangan, lupa password)
+          # kembali ke portal company.* dan CMS cms.*, jadi keduanya masuk daftar redirect.
+          SITE_URL: https://kisgroup.co.id
+          ADDITIONAL_REDIRECT_URLS: https://company.kisgroup.co.id/**,https://cms.kisgroup.co.id/**,https://www.kisgroup.co.id/**,https://kisg-web.vercel.app/**
           BREVO_SMTP_LOGIN: ${{ secrets.BREVO_SMTP_LOGIN }}
           BREVO_SMTP_KEY: ${{ secrets.BREVO_SMTP_KEY }}
         run: node scripts/supabase-auth-config.mjs

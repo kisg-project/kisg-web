@@ -416,7 +416,7 @@ Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Su
 Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
 
 ### Branch dan alur
-- `main` = production (`kisgroup.co.id`, sementara `kisg-web.vercel.app` sampai domain terhubung). Tanpa branch dan database staging (keputusan owner, Fase 2, mengikuti pola prins dan kelola): setiap merge ke `main` langsung tayang.
+- `main` = production (`kisgroup.co.id`, portal `company.kisgroup.co.id`, CMS `cms.kisgroup.co.id`; domain terhubung 21 November 2026, DNS di Cloudflare tanpa proxy). Tanpa branch dan database staging (keputusan owner, Fase 2, mengikuti pola prins dan kelola): setiap merge ke `main` langsung tayang.
 - Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...`, `docs/...` lalu PR ke `main`. Pengecekan sebelum tayang: CI hijau dan Preview Vercel PR itu.
 - Aturan yang biasanya dipaksa branch protection tetap berlaku dan dijaga oleh pengaman di atas: tanpa push langsung ke `main`, tanpa force push, wajib PR, wajib semua status check lolos, branch harus up to date, squash merge.
 - Conventional Commits dipaksa dengan commitlint (hook `commit-msg`) dan judul PR dicek di CI.

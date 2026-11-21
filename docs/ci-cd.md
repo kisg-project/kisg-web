@@ -64,7 +64,9 @@ Diisi di GitHub, menu Settings, Secrets and variables, Actions. Tidak pernah di 
 
 | Variabel | Production | Preview |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | `https://kisg-web.vercel.app`, diganti `https://kisgroup.co.id` saat domain siap | Tidak diisi: otomatis memakai `NEXT_PUBLIC_VERCEL_URL` |
+| `NEXT_PUBLIC_SITE_URL` | `https://kisgroup.co.id` | Tidak diisi: otomatis memakai `NEXT_PUBLIC_VERCEL_URL` |
+| `PORTAL_HOST`, `CMS_HOST` | `company.kisgroup.co.id`, `cms.kisgroup.co.id` | Tidak diisi |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Widget "KIS website" (kisgroup.co.id dan kisg-web.vercel.app) | Tidak diisi: form di preview tidak menulis |
 | `NEXT_PUBLIC_SENTRY_DSN` | Setelah akun Sentry ada | Sama |
 | `ENABLE_DEV_UI` | Jangan diisi | Jangan diisi |
 
@@ -82,3 +84,17 @@ Variabel Meta, Brevo, Turnstile, dan Gemini ditambah di fase masing-masing.
 ## Anggaran menit Actions
 
 Lihat `docs/roadmap.md`. Pemakaian aktual dicatat di akhir setiap fase.
+
+## Domain dan DNS
+
+Domain `kisgroup.co.id` terdaftar di Rumahweb, nameserver diarahkan ke Cloudflare (21 November 2026). Semua record web berstatus DNS only (tanpa proxy Cloudflare, CLAUDE.md bagian 8).
+
+| Record | Isi | Untuk |
+|---|---|---|
+| `A @` | `216.198.79.1`, `64.29.17.1` | Website di Vercel |
+| `CNAME www` | `d23406d690f9b87e.vercel-dns-017.com` | Dialihkan Vercel ke `kisgroup.co.id` |
+| `CNAME company` | sama | Portal KIS Operasional |
+| `CNAME cms` | sama | Panel CMS |
+| `MX`, `TXT` SPF, DKIM `cf2024-1` | dibuat Cloudflare Email Routing | Email masuk `marketing@`, `corporate@`, `notifikasi@`, `cms@` diteruskan ke Gmail perusahaan |
+
+Record Brevo (DKIM, kode verifikasi, DMARC, tambahan `include:spf.brevo.com` di SPF yang sama) ditambahkan saat akun Brevo dibuat.
