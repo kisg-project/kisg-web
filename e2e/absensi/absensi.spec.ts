@@ -92,6 +92,17 @@ async function attendanceOf(userId: string) {
   return data ?? [];
 }
 
+async function workReportsOf(userId: string) {
+  const { data } = await adminClient()
+    .from("work_reports")
+    .select("kind, content, attachments")
+    .eq("user_id", userId);
+  return (data ?? []).map((row) => ({
+    ...row,
+    attachments: row.attachments as { path: string; name: string; type: string; size: number }[],
+  }));
+}
+
 test.describe("Absensi karyawan", () => {
   test("clock in dan clock out di dalam radius, foto tersimpan di bucket privat", async ({
     page,
@@ -136,11 +147,54 @@ test.describe("Absensi karyawan", () => {
     expect(stored, "Foto absensi ada di storage").toBeDefined();
     expect(Number(stored?.metadata?.size)).toBeLessThanOrEqual(150 * 1024);
 
-    // Clock in kedua di hari yang sama tidak bisa: halaman masuk kembali ke absensi.
+    // Setelah clock in: rencana kegiatan wajib sebelum modul lain bisa dibuka.
     await page.getByRole("link", { name: "Lanjut" }).click();
-    await expect(page).toHaveURL("/portal/absensi");
+    await expect(page).toHaveURL("/portal/absensi/rencana");
+    await page.goto("/portal/crm");
+    await expect(page).toHaveURL("/portal/absensi/rencana");
+    const plan = page.getByRole("form", { name: "Rencana kegiatan hari ini" });
+    await expect(plan).toBeVisible();
+    await expectNoA11yViolations(page);
+    await expectResponsive(page);
+
+    await plan.getByRole("button", { name: "Simpan rencana" }).click();
+    await expect(plan.getByText("Tulis minimal 10 karakter.")).toBeVisible();
+
+    // Format lain ditolak di HP sebelum diunggah. Foto kamera besar dikompres lalu diunggah.
+    await plan.getByLabel("Tambah file").setInputFiles({
+      name: "catatan.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("catatan"),
+    });
+    await expect(plan.getByText(/Format file tidak didukung/)).toBeVisible();
+    await plan.getByRole("button", { name: "Hapus lampiran catatan.txt" }).click();
+    await plan.getByLabel("Tambah foto").setInputFiles("e2e/fixtures/files/exif-gps-rotated.jpg");
+    const attachments = plan.getByRole("list", { name: "Lampiran" });
+    await expect(attachments.getByRole("listitem")).toHaveCount(1);
+    await expect(attachments.getByText(/\d+ KB$/)).toBeVisible();
+
+    await plan
+      .getByLabel("Rencana kegiatan")
+      .fill("Follow up 5 calon pembeli dan survei unit blok A bersama konsumen.");
+    await plan.getByRole("button", { name: "Simpan rencana" }).click();
+    await expect(page).toHaveURL("/portal/crm");
+
+    const reports = await workReportsOf(user.id);
+    expect(reports).toHaveLength(1);
+    expect(reports[0]?.kind).toBe("rencana");
+    const [photo] = reports[0]?.attachments ?? [];
+    expect(photo?.path).toMatch(
+      new RegExp(`^${user.id}/\\d{4}-\\d{2}-\\d{2}/[\\w-]+\\.(webp|jpg)$`),
+    );
+    const { data: photoFile } = await adminClient()
+      .storage.from("work-attachments")
+      .download(photo?.path ?? "");
+    expect(photoFile?.size ?? Infinity, "Foto lampiran dikompres").toBeLessThanOrEqual(300 * 1024);
+
+    // Clock in kedua di hari yang sama tidak bisa: halaman masuk kembali ke absensi.
     await page.goto("/portal/absensi/masuk");
     await expect(page).toHaveURL("/portal/absensi");
+    await expect(page.getByRole("link", { name: "Ubah rencana kegiatan" })).toBeVisible();
 
     await page.getByRole("link", { name: "Clock out sekarang" }).click();
     await expect(page).toHaveURL("/portal/absensi/pulang");
@@ -150,13 +204,39 @@ test.describe("Absensi karyawan", () => {
     await expect(
       page.getByRole("status").filter({ hasText: /Clock out tercatat pukul/ }),
     ).toBeVisible();
-    await page.getByRole("link", { name: "Lanjut" }).click();
-    await expect(page.getByText("Absensi hari ini lengkap.")).toBeVisible();
-
     const [done] = await attendanceOf(user.id);
     expect(done?.clock_out_at).not.toBeNull();
     expect(done?.clock_out_location_id).toBe(location.id);
     expect(done?.clock_out_photo_path).toMatch(/\/pulang-/);
+
+    // Setelah clock out: hasil kerja wajib, dengan lampiran PDF.
+    await page.getByRole("link", { name: "Lanjut" }).click();
+    await expect(page).toHaveURL("/portal/absensi/hasil");
+    await page.goto("/portal/crm");
+    await expect(page).toHaveURL("/portal/absensi/hasil");
+    const result = page.getByRole("form", { name: "Hasil kerja hari ini" });
+    await result.getByLabel("Tambah file").setInputFiles({
+      name: "laporan-survei.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("%PDF-1.4\n1 0 obj << >> endobj\ntrailer << >>\n%%EOF\n"),
+    });
+    await expect(result.getByText("laporan-survei.pdf")).toBeVisible();
+    await expect(result.getByRole("button", { name: "Kirim hasil kerja" })).toBeEnabled();
+    await result
+      .getByLabel("Hasil kerja")
+      .fill("3 calon pembeli dihubungi, 1 jadwal survei hari Sabtu. Kendala: hujan.");
+    await result.getByRole("button", { name: "Kirim hasil kerja" }).click();
+    await expect(page).toHaveURL("/portal/absensi");
+    await expect(page.getByText("Absensi dan laporan hari ini lengkap.")).toBeVisible();
+
+    const final = await workReportsOf(user.id);
+    const hasil = final.find((row) => row.kind === "hasil");
+    expect(hasil?.content).toContain("3 calon pembeli");
+    expect(hasil?.attachments).toEqual([
+      expect.objectContaining({ name: "laporan-survei.pdf", type: "application/pdf" }),
+    ]);
+    await page.goto("/portal/crm");
+    await expect(page).toHaveURL("/portal/crm");
   });
 
   test("di luar radius ditolak, lalu mengajukan absen di luar lokasi", async ({

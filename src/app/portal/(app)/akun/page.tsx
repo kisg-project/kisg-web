@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Akun saya" };
 
 /** Akun saya: foto profil, nama, nomor HP, dan password. Role hanya bisa diubah owner. */
 export default async function AccountPage() {
-  const user = await requirePortalUser();
+  const user = await requirePortalUser(undefined, { skipWorkReport: true });
   return (
     <div className="grid max-w-3xl gap-6">
       <PageHeader title="Akun saya" description={user.email} />

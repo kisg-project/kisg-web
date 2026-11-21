@@ -1,12 +1,16 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { z } from "zod";
+import { safeNextPath } from "@/config/portal";
+import type { Json } from "@/lib/supabase/database.types";
 import { ActionError, adminActionClient, authActionClient } from "@/lib/safe-action";
 import {
   clockSchema,
   deleteScheduleSchema,
   exceptionSchema,
   scheduleSchema,
+  workReportSchema,
   workLocationSchema,
 } from "../schemas/attendance";
 
@@ -143,4 +147,20 @@ export const deleteScheduleAction = adminActionClient
       .neq("scope", "perusahaan");
     if (error) throw new Error(`Jam kerja gagal dihapus: ${error.message}`);
     return { ok: true as const };
+  });
+
+/**
+ * Simpan rencana kegiatan (setelah clock in) atau hasil kerja (setelah clock out) hari ini. Aturan
+ * dicek fungsi database. Rencana tersimpan: ke beranda role. Hasil tersimpan: ke halaman absensi.
+ */
+export const submitWorkReportAction = authActionClient
+  .inputSchema(workReportSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { error } = await ctx.supabase.rpc("submit_work_report", {
+      p_kind: parsedInput.kind,
+      p_content: parsedInput.content,
+      p_attachments: parsedInput.attachments as unknown as Json,
+    });
+    if (error) throw rpcError(error);
+    redirect(parsedInput.kind === "rencana" ? safeNextPath(null, ctx.roles) : "/portal/absensi");
   });

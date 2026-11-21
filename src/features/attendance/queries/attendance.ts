@@ -196,3 +196,32 @@ export async function listEmployeeOptions(): Promise<EmployeeOption[]> {
     })
     .map((row) => ({ id: row.id, name: row.full_name || row.email }));
 }
+
+export interface WorkReport {
+  content: string;
+  attachments: { path: string; name: string; type: string; size: number }[];
+  updatedAt: string;
+}
+
+/** Rencana dan hasil kerja hari ini milik user. */
+export async function getMyWorkReports(
+  userId: string,
+): Promise<{ rencana: WorkReport | null; hasil: WorkReport | null }> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("work_reports")
+    .select("kind, content, attachments, updated_at")
+    .eq("user_id", userId)
+    .eq("work_date", todayWib());
+  const pick = (kind: "rencana" | "hasil"): WorkReport | null => {
+    const row = (data ?? []).find((item) => item.kind === kind);
+    return row
+      ? {
+          content: row.content,
+          attachments: row.attachments as unknown as WorkReport["attachments"],
+          updatedAt: row.updated_at,
+        }
+      : null;
+  };
+  return { rencana: pick("rencana"), hasil: pick("hasil") };
+}

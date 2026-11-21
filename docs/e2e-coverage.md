@@ -152,12 +152,14 @@ Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `conte
 | Skenario | Spec | Fase | Status |
 |---|---|---|---|
 | Clock in dan clock out di dalam radius: baris `attendance_records`, jarak 0 m, foto di bucket privat di bawah 150 KB, clock in kedua dialihkan, axe dan responsif | `absensi/absensi.spec.ts` | PWA | Ditulis |
+| Laporan harian: setelah clock in modul lain dialihkan ke rencana, isi kosong ditolak, file .txt ditolak di HP, foto kamera dikompres di bawah 300 KB di bucket `work-attachments`, rencana tersimpan lalu ke beranda role. Setelah clock out dialihkan ke hasil kerja, lampiran PDF tersimpan, lalu modul terbuka lagi | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Di luar radius: absen tidak tercatat, alasan pendek ditolak, pengajuan di luar lokasi tersimpan berstatus menunggu dan tampil di halaman absensi | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Izin lokasi ditolak: petunjuk tampil dan tombol kirim mati | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Owner tidak wajib absensi (akses ditolak), karyawan tidak bisa membuka pengaturan absensi | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Owner menambah titik absensi dengan "Pakai lokasi saya sekarang", validasi nama, data tersimpan | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Jam kerja: jam pulang sebelum jam masuk ditolak, jam khusus per titik disimpan lalu dihapus | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Database: jarak, titik terdekat, jam berlapis (karyawan, titik, perusahaan), foto milik sendiri, radius, pengajuan ganda, owner dan CMS tanpa absensi, RLS keuangan | `supabase/tests/database/07_attendance.test.sql` | PWA | Ditulis |
+| Database laporan harian: rencana sebelum clock in dan hasil sebelum clock out ditolak, isi pendek, lampiran orang lain, tulis langsung ke tabel ditolak, satu baris per hari, RLS pemilik, karyawan lain, dan owner | `supabase/tests/database/09_work_reports.test.sql` | PWA | Ditulis |
 
 ### Admin CMS (`e2e/admin/`, Fase 4)
 

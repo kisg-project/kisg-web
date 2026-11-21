@@ -84,3 +84,33 @@ export const deleteScheduleSchema = z.object({ id: z.uuid() });
 
 export type WorkLocationInput = z.input<typeof workLocationSchema>;
 export type ScheduleInput = z.input<typeof scheduleSchema>;
+
+/** Lampiran laporan harian yang sudah diunggah ke work-attachments/<user>/<tanggal>/. */
+export const workAttachmentSchema = z.object({
+  path: z
+    .string()
+    .regex(
+      /^[0-9a-f-]{36}\/[0-9]{4}-[0-9]{2}-[0-9]{2}\/[\w-]+\.(webp|jpg|pdf|docx|xlsx)$/,
+      "Lampiran tidak valid.",
+    ),
+  name: z.string().trim().min(1).max(120),
+  type: z.string().max(120),
+  size: z
+    .number()
+    .int()
+    .min(1)
+    .max(2 * 1024 * 1024),
+});
+
+export const workReportSchema = z.object({
+  kind: z.enum(["rencana", "hasil"]),
+  content: z
+    .string({ error: "Tulis isinya dulu." })
+    .trim()
+    .min(10, "Tulis minimal 10 karakter.")
+    .max(4000, "Maksimal 4.000 karakter."),
+  attachments: z.array(workAttachmentSchema).max(10, "Lampiran maksimal 10 file."),
+});
+
+export type WorkAttachment = z.infer<typeof workAttachmentSchema>;
+export type WorkReportInput = z.input<typeof workReportSchema>;

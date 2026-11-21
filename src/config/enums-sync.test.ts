@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { ATTENDANCE_ROLES, WORK_REPORT_LABEL } from "./attendance";
 import { APP_ROLES } from "./roles";
 import { UNIT_STATUSES } from "./units";
 
@@ -32,5 +33,15 @@ describe("enum Postgres sama dengan src/config", () => {
 
   it("unit_status", () => {
     expect(enumValues("unit_status")).toEqual([...UNIT_STATUSES]);
+  });
+
+  it("work_report_kind", () => {
+    expect(enumValues("work_report_kind")).toEqual(Object.keys(WORK_REPORT_LABEL));
+  });
+
+  it("role wajib absensi sama dengan private.must_attend", () => {
+    const match = /function private\.must_attend\(\)[\s\S]*?has_role\(([^)]*)\)/.exec(sql);
+    const roles = [...(match?.[1] ?? "").matchAll(/'([^']+)'/g)].map((value) => value[1]);
+    expect(roles).toEqual([...ATTENDANCE_ROLES]);
   });
 });

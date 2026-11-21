@@ -667,6 +667,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"work_reports": {
+                  Row: {
+                    "attachments": NonNullable<Json>,"content": string,"created_at": string,"id": string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at": string,"user_id": string,"work_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attachments"?: NonNullable<Json>,"content": string,"created_at"?: string,"id"?: string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id": string,"work_date": string
+                  }
+                  Update: {
+                    "attachments"?: NonNullable<Json>,"content"?: string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id"?: string,"work_date"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "work_reports_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"work_schedules": {
                   Row: {
                     "created_at": string,"created_by": string | null,"end_time": string,"id": string,"late_tolerance_min": number,"scope": Database["public"]['Enums']["schedule_scope"],"start_time": string,"updated_at": string,"user_id": string | null,"work_location_id": string | null,"workdays": (number)[]
@@ -726,6 +746,9 @@ isOneToOne: false
 "set_user_roles":
 { Args: { "p_primary": Database["public"]['Enums']["app_role"],"p_roles": (Database["public"]['Enums']["app_role"])[],"p_user": string }; Returns: undefined
                            },
+"submit_work_report":
+{ Args: { "p_attachments"?: Json,"p_content": string,"p_kind": Database["public"]['Enums']["work_report_kind"] }; Returns: string
+                           },
 "upsert_lead":
 { Args: { "p_consent_text_version": string,"p_email": string,"p_fbc"?: string,"p_fbp"?: string,"p_full_name": string,"p_note": string,"p_phone": string,"p_project_id": string,"p_source_detail": string,"p_source_kind": Database["public"]['Enums']["lead_source_kind"],"p_unit_type_id": string }; Returns: {
               "is_new": boolean,"lead_id": string
@@ -733,7 +756,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek"
+            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek","work_report_kind": "rencana"|"hasil"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -849,7 +872,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"]
+            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"],"work_report_kind": ["rencana", "hasil"]
           }
         }
 } as const
