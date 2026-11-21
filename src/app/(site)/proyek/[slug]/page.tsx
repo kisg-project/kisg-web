@@ -24,7 +24,12 @@ import {
   type ProjectDetail,
 } from "@/features/projects";
 import { formatRupiah, formatRupiahRange } from "@/lib/format";
-import { faqJsonLd, jsonLdGraph, listingJsonLd } from "@/lib/seo/structured-data";
+import {
+  faqJsonLd,
+  jsonLdGraph,
+  listingJsonLd,
+  organizationJsonLd,
+} from "@/lib/seo/structured-data";
 import { shareMetadata } from "@/lib/seo/page-metadata";
 
 const STATUS_LABEL: Record<ProjectDetail["status"], string> = {
@@ -96,6 +101,8 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
               ]
             : []),
           ...(project.faqs.length > 0 ? [faqJsonLd(project.faqs)] : []),
+          // Penjual di data listing menunjuk ke node ini.
+          organizationJsonLd(env.NEXT_PUBLIC_SITE_URL),
         ])}
       />
       <PageHero

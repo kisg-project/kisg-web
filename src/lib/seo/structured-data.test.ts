@@ -8,6 +8,7 @@ import {
   jsonLdGraph,
   organizationJsonLd,
   serializeJsonLd,
+  websiteJsonLd,
 } from "./structured-data";
 
 const SITE = "https://kisgroup.co.id";
@@ -119,6 +120,17 @@ describe("serializeJsonLd", () => {
     expect(text).not.toContain("</script>");
     expect(JSON.parse(text)).toMatchObject({
       "@graph": [{ name: "</script><script>alert(1)</script>" }],
+    });
+  });
+});
+
+describe("websiteJsonLd", () => {
+  it("menautkan situs ke organisasi sebagai penerbit", () => {
+    expect(websiteJsonLd(SITE)).toMatchObject({
+      "@type": "WebSite",
+      url: "https://kisgroup.co.id/",
+      inLanguage: "id-ID",
+      publisher: { "@id": "https://kisgroup.co.id/#organisasi" },
     });
   });
 });

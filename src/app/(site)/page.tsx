@@ -30,7 +30,12 @@ import {
 } from "@/features/projects";
 import { formatDateWIB, formatRupiah, formatRupiahRange } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo/page-metadata";
-import { jsonLdGraph, listingJsonLd, organizationJsonLd } from "@/lib/seo/structured-data";
+import {
+  jsonLdGraph,
+  listingJsonLd,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo/structured-data";
 
 function describe(project: ProjectDetail | null): string {
   if (!project) return `${siteConfig.legalName}, developer perumahan di Kabupaten Bekasi.`;
@@ -83,6 +88,7 @@ export default async function HomePage() {
       <JsonLd
         data={jsonLdGraph([
           organizationJsonLd(env.NEXT_PUBLIC_SITE_URL),
+          websiteJsonLd(env.NEXT_PUBLIC_SITE_URL),
           ...(project && firstUnit
             ? [
                 listingJsonLd(env.NEXT_PUBLIC_SITE_URL, {
