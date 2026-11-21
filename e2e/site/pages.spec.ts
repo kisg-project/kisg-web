@@ -278,7 +278,8 @@ test.describe("Karir per jenjang", () => {
   test("jenjang tanpa lowongan menampilkan keadaan kosong dan tautan ke jenjang lain", async ({
     page,
   }) => {
-    await page.goto("/karir/jenjang/magang");
+    // Jenjang yang tidak dipakai test lain (test CMS menerbitkan lowongan magang secara paralel).
+    await page.goto("/karir/jenjang/lulusan-baru");
     await expect(page.getByText("Belum ada lowongan untuk jenjang ini.")).toBeVisible();
     const status = page.getByRole("status");
     await expect(status.getByRole("link")).toHaveCount(3);

@@ -131,7 +131,7 @@ test.describe("Login portal", () => {
     await page.goto("/portal/crm");
     await expect(page).toHaveURL("/portal/login?error=nonaktif");
     await expect(page.getByRole("main").getByRole("alert")).toHaveText(
-      "Akun Anda sudah tidak aktif. Hubungi admin.",
+      "Akun Anda sudah tidak aktif. Hubungi owner.",
     );
     // Sesi sudah dihapus: halaman portal kembali meminta login.
     await page.goto("/portal/crm");

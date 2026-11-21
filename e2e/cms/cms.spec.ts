@@ -95,7 +95,7 @@ test.describe("Panel CMS: konten", () => {
     const title = `Uji CMS berita ${unique}`;
     await page.goto("/cms/berita/baru");
     const form = page.getByRole("form", { name: "Form berita" });
-    await form.getByLabel("Judul").fill(title);
+    await form.getByLabel("Judul", { exact: true }).fill(title);
     await expect(form.getByLabel("Slug (alamat halaman)")).toHaveValue(`uji-cms-berita-${unique}`);
     await form.getByLabel("Ringkasan").fill("Ringkasan berita uji dari panel CMS untuk pengujian.");
     await form.getByLabel("Pilih gambar sampul").setInputFiles(PHOTO);
@@ -136,7 +136,7 @@ test.describe("Panel CMS: konten", () => {
     );
 
     // Ubah judul.
-    await form.getByLabel("Judul").fill(`${title} revisi`);
+    await form.getByLabel("Judul", { exact: true }).fill(`${title} revisi`);
     await form.getByRole("button", { name: "Simpan berita" }).click();
     await expect(page.getByText("Perubahan berita tersimpan.")).toBeVisible();
     await site.reload();
@@ -159,7 +159,7 @@ test.describe("Panel CMS: konten", () => {
   test("slug yang sudah dipakai ditolak dengan pesan jelas", async ({ page }) => {
     await page.goto("/cms/berita/baru");
     const form = page.getByRole("form", { name: "Form berita" });
-    await form.getByLabel("Judul").fill("Judul berita dengan slug bentrok");
+    await form.getByLabel("Judul", { exact: true }).fill("Judul berita dengan slug bentrok");
     await form.getByLabel("Slug (alamat halaman)").fill("daftar-cek-saat-survei-rumah");
     await form.getByLabel("Ringkasan").fill("Ringkasan berita uji untuk slug yang sudah dipakai.");
     await form.getByLabel("Teks Paragraf 1").fill("Isi.");

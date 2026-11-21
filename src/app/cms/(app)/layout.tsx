@@ -6,7 +6,7 @@ import { CmsNav, CmsUserMenu } from "./_components/cms-shell";
 
 export default function CmsAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-surface">
+    <div className="flex min-h-dvh flex-col bg-background">
       <header className="sticky top-0 z-30 border-b bg-background pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 sm:px-6">
           <Link
