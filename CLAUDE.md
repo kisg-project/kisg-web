@@ -208,7 +208,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Referensi struktur: damaiputra.com (hero carousel lebar, strip statistik, kartu proyek, berita, promo, CTA penutup, footer lengkap, tombol WhatsApp melayang). Ambil polanya, jangan meniru visual atau kontennya.
 - Grid 12 kolom, container maks ~1280px, ritme spasi konsisten (kelipatan 4/8).
 - Website bergaya corporate, clean, playful, friendly (keputusan owner, 21 November 2026, menggantikan aturan radius 4 sampai 8px): kartu 20px, foto 28px, panel besar 40px, tombol berbentuk pil. Field isian dan komponen kecil tetap 4 sampai 8px. Bayangan lembut. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
-- Motif khas website adalah garis atap dari logo KIS (komponen `RoofLine`): di atas foto hero, di latar judul halaman, dan di panel ajakan. Hero beranda terang (latar mint, judul gelap, foto membulat dengan chip harga). Judul bagian tanpa garis emas di bawahnya.
+- Motif khas website adalah garis atap dari logo KIS (komponen `RoofLine`): di latar judul halaman dan di panel ajakan. Hero beranda terang tanpa garis atap (latar mint, judul gelap, foto membulat dengan chip harga, isi di tengah layar; keputusan owner 21 November 2026). Judul bagian tanpa garis emas di bawahnya.
 - Judul tab: `<halaman> | KIS Group`. Ikon tab dan ikon aplikasi dibuat dari logo (`src/app/favicon.ico`, `icon.png`, `apple-icon.png`). Setiap halaman publik punya gambar share bermerek 1200x630 dari route `/og` (`src/lib/seo/og-image.tsx`), lewat helper `pageMetadata` untuk halaman statis. Route `/og` hanya menerima path yang terdaftar.
 - Website banyak gerak halus (keputusan owner, Fase 3): bagian halaman muncul saat di-scroll (`Reveal`, fade dan geser naik sekitar 600ms), banner bergeser otomatis dengan indikator kecil saja (tanpa tombol panah dan jeda; autoplay berhenti saat disentuh, difokus, atau saat pengunjung memilih slide), kartu dan foto bereaksi saat disentuh atau di-hover, angka statistik berhitung naik. Interaksi kecil (hover, tombol) tetap pendek, maks ~250ms. Tanpa library animasi. Konten tidak boleh disembunyikan sebelum JavaScript jalan, LCP dan CLS tidak boleh terganggu, dan semua gerak berhenti kalau `prefers-reduced-motion` aktif.
 - Scrollbar minimalis: tipis, warna menyatu dengan palet, latar transparan (keputusan owner, Fase 3).
@@ -491,15 +491,17 @@ Asisten chat di website publik dan landing page. Tujuannya menjawab pertanyaan c
 **Serah ke manusia**
 - Pada jam kerja: percakapan muncul di inbox chat portal CRM (Supabase Realtime), marketing bisa mengambil alih dan membalas langsung dari portal.
 - Di luar jam kerja atau saat tidak ada yang online: tawarkan lanjut via WhatsApp dengan ringkasan percakapan di pesan pembuka, atau tinggalkan nomor untuk dihubungi.
-- Kalau Gemini error atau timeout: widget tetap berfungsi dengan tombol WhatsApp dan form singkat, tanpa pesan error teknis.
+- Kalau Gemini error, timeout, kuota atau batas biaya habis: Jaka menjawab "sedang tidak bisa membalas" dan menawarkan WhatsApp. Tidak pernah ada pesan error sistem (keputusan owner, 21 November 2026).
+- Implementasi tahap 1: route `/api/chat` (AI SDK v7, model dari env `GEMINI_MODEL`, default `gemini-3.5-flash`, tingkat berpikir `CHAT_THINKING`), widget hanya mengirim pesan terakhir dan server memuat riwayat dari `chat_messages`, batas token harian `CHAT_DAILY_TOKEN_LIMIT` lewat `chat_usage_daily`. Knowledge base pgvector, inbox handoff portal, dan statistik admin di tahap 2.
 
 **Gaya bahasa**
+- Nama asisten **Jaka** (keputusan owner, 21 November 2026). Gaya bicara seperti staf customer service sungguhan: hangat, luwes, tidak kaku. Tetap jujur sebagai asisten virtual kalau ditanya.
 - Persona: staf customer service KIS. Ramah, singkat, jelas. Aturan copywriting bagian 7 berlaku penuh untuk setiap jawaban.
 - Jawaban pendek (maksimal sekitar 3 kalimat kecuali pengunjung minta rincian), tanpa emoji, tanpa dash panjang. Output disaring di server sebelum dikirim sebagai pengaman terakhir.
 - Asisten tidak berpura-pura manusia. Kalau ditanya, jujur bahwa ini asisten virtual KIS.
 
 **UI**
-- Satu tombol melayang yang menggabungkan chat dan WhatsApp (tidak ada dua tombol yang bertumpuk). Di mobile terbuka sebagai layar penuh, di desktop sebagai panel.
+- Satu tombol melayang yang menggabungkan chat dan WhatsApp (tidak ada dua tombol yang bertumpuk). Di mobile terbuka sebagai layar penuh, di desktop sebagai panel dengan tombol layar penuh dan tombol WhatsApp di header.
 - Skrip widget dimuat setelah halaman siap (lazy), tidak boleh menurunkan skor Lighthouse.
 - Streaming jawaban, indikator mengetik, tombol saran pertanyaan singkat, aksesibel dengan keyboard dan screen reader.
 - Pemberitahuan singkat bahwa percakapan disimpan, dengan tautan kebijakan privasi.
