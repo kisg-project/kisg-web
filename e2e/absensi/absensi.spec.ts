@@ -207,8 +207,9 @@ test.describe("Absensi karyawan", () => {
     expect(requests?.[0]?.nearest_distance_m).toBeGreaterThan(1000);
 
     await page.getByRole("link", { name: "Kembali ke absensi" }).click();
-    await expect(page.getByRole("heading", { name: "Pengajuan di luar lokasi" })).toBeVisible();
-    await expect(page.getByText("Menunggu persetujuan")).toBeVisible();
+    const pendingSection = page.getByRole("region", { name: "Pengajuan di luar lokasi" });
+    await expect(pendingSection).toBeVisible();
+    await expect(pendingSection.getByText("Menunggu persetujuan", { exact: true })).toBeVisible();
   });
 
   test("izin lokasi ditolak: tombol kirim tetap mati dan ada petunjuk", async ({
