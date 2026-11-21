@@ -86,6 +86,8 @@ export const ROLE_HOME: Record<AppRole, string> = {
   site_manager: "/portal/lapangan",
   site_supervisor: "/portal/lapangan",
   finance: "/portal/crm",
+  // Akun CMS tidak memakai portal (ditolak di login dan proxy).
+  cms: "/portal/akses-ditolak",
 };
 
 export type PortalAccess = "public" | "allowed" | "login" | "denied";

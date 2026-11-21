@@ -15,7 +15,14 @@ const sql = readdirSync(migrationsDir)
 function enumValues(name: string): string[] {
   const match = new RegExp(`create type public\\.${name} as enum \\(([^)]*)\\)`, "i").exec(sql);
   if (!match?.[1]) throw new Error(`Enum ${name} tidak ditemukan di migrasi.`);
-  return [...match[1].matchAll(/'([^']+)'/g)].map((value) => value[1] ?? "");
+  const created = [...match[1].matchAll(/'([^']+)'/g)].map((value) => value[1] ?? "");
+  // Nilai yang ditambah di migrasi berikutnya (alter type ... add value), sesuai urutan migrasi.
+  const added = [
+    ...sql.matchAll(
+      new RegExp(`alter type public\.${name} add value (?:if not exists )?'([^']+)'`, "gi"),
+    ),
+  ].map((value) => value[1] ?? "");
+  return [...created, ...added];
 }
 
 describe("enum Postgres sama dengan src/config", () => {

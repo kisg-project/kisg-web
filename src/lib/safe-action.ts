@@ -43,3 +43,6 @@ export function roleActionClient(allowed: readonly AppRole[]) {
 
 /** Aksi pengelola akun dan pengaturan: owner (dan akun admin lama sampai dinonaktifkan). */
 export const adminActionClient = roleActionClient(["owner", "admin"]);
+
+/** Aksi panel CMS: hanya akun khusus CMS (owner dan karyawan memakai portal). */
+export const cmsActionClient = roleActionClient(["cms"]);

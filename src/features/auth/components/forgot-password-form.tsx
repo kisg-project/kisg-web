@@ -7,12 +7,12 @@ import { useAction } from "next-safe-action/hooks";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { forgotPasswordAction } from "../actions/auth";
-import { forgotPasswordSchema, type ForgotPasswordInput } from "../schemas/auth";
+import { forgotPasswordSchema, type AuthApp, type ForgotPasswordInput } from "../schemas/auth";
 
-export function ForgotPasswordForm() {
+export function ForgotPasswordForm({ app = "portal" }: { app?: AuthApp }) {
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
-    defaultValues: { email: "" },
+    defaultValues: { app, email: "" },
   });
   const { execute, result, isExecuting, hasSucceeded } = useAction(forgotPasswordAction);
 
@@ -21,10 +21,10 @@ export function ForgotPasswordForm() {
       <div role="status" className="grid gap-4">
         <p className="text-sm">
           Kalau email itu terdaftar, tautan atur ulang password sudah dikirim. Periksa kotak masuk
-          dan folder spam. Tautan berlaku 1 jam.
+          dan folder spam. Tautan berlaku 24 jam.
         </p>
         <Link
-          href="/portal/login"
+          href={app === "cms" ? "/cms/login" : "/portal/login"}
           className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary underline-offset-4 hover:underline"
         >
           Kembali ke halaman masuk

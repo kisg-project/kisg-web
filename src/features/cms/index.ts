@@ -3,6 +3,7 @@ export { CareerList } from "./components/career-list";
 export { ContentBlocks } from "./components/content-blocks";
 export { StatsStrip } from "./components/stats-strip";
 export type { HomeStat } from "./utils/stats";
+export { contentBlockSchema } from "./utils/map";
 export {
   getActiveBanners,
   getActivePromos,

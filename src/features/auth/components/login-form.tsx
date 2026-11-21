@@ -7,17 +7,26 @@ import { useAction } from "next-safe-action/hooks";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { loginAction } from "../actions/auth";
-import { loginSchema, type LoginInput } from "../schemas/auth";
+import { loginSchema, type AuthApp, type LoginInput } from "../schemas/auth";
 
 const PAGE_MESSAGES: Record<string, string> = {
   tautan: "Tautan sudah tidak berlaku. Minta tautan baru lewat lupa password.",
-  nonaktif: "Akun Anda sudah tidak aktif. Hubungi admin.",
+  nonaktif: "Akun Anda sudah tidak aktif. Hubungi owner.",
 };
 
-export function LoginForm({ next, message }: { next?: string; message?: string }) {
+export function LoginForm({
+  next,
+  message,
+  app = "portal",
+}: {
+  next?: string;
+  message?: string;
+  /** Portal karyawan atau panel CMS (akun terpisah). */
+  app?: AuthApp;
+}) {
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", next },
+    defaultValues: { app, email: "", password: "", next },
   });
   const { execute, result, isExecuting } = useAction(loginAction);
   const serverError = result.serverError;
@@ -62,7 +71,7 @@ export function LoginForm({ next, message }: { next?: string; message?: string }
         {isExecuting ? "Memeriksa" : "Masuk"}
       </Button>
       <Link
-        href="/portal/lupa-password"
+        href={app === "cms" ? "/cms/lupa-password" : "/portal/lupa-password"}
         className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary underline-offset-4 hover:underline"
       >
         Lupa password

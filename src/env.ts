@@ -23,6 +23,11 @@ export const env = createEnv({
       .string()
       .regex(/^company\.[a-z0-9.-]+(:\d+)?$/, "PORTAL_HOST harus berawalan company.")
       .optional(),
+    // Host panel CMS, misal cms.kisgroup.co.id (harus berawalan "cms."). Kosong: CMS di /cms.
+    CMS_HOST: z
+      .string()
+      .regex(/^cms\.[a-z0-9.-]+(:\d+)?$/, "CMS_HOST harus berawalan cms.")
+      .optional(),
     // Email aplikasi (undangan, slip gaji, notifikasi) lewat API Brevo. Kosong sampai Brevo siap:
     // tautan undangan ditampilkan untuk disalin. MAILPIT_URL hanya untuk lokal dan CI (E2E).
     BREVO_API_KEY: z.string().min(1).optional(),
@@ -46,6 +51,7 @@ export const env = createEnv({
     ENABLE_DEV_UI: process.env.ENABLE_DEV_UI,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     PORTAL_HOST: process.env.PORTAL_HOST,
+    CMS_HOST: process.env.CMS_HOST,
     BREVO_API_KEY: process.env.BREVO_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
     EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,

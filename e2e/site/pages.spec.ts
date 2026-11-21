@@ -232,12 +232,14 @@ test.describe("SEO dan kontak", () => {
 });
 
 test.describe("Berita", () => {
-  test("daftar berita berisi 10 artikel bersampul, terbaru di atas", async ({ page }) => {
+  test("daftar berita berisi artikel bersampul dari migrasi", async ({ page }) => {
+    // Test CMS bisa menerbitkan berita lain secara paralel, jadi jumlahnya minimal 10.
     await page.goto("/berita");
-    const list = page.getByRole("list", { name: "Daftar berita" });
-    await expect(list.getByRole("listitem")).toHaveCount(10);
-    await expect(list.getByRole("listitem").locator("img")).toHaveCount(10);
-    await expect(list.getByRole("listitem").first()).toContainText("BI-Rate naik ke 6 persen");
+    const items = page.getByRole("list", { name: "Daftar berita" }).getByRole("listitem");
+    expect(await items.count()).toBeGreaterThanOrEqual(10);
+    const bi = items.filter({ hasText: "BI-Rate naik ke 6 persen" });
+    await expect(bi).toHaveCount(1);
+    await expect(bi.locator("img")).toHaveCount(1);
   });
 
   test("detail berita: satu h1, Article JSON-LD, dan sumber berupa tautan keluar", async ({

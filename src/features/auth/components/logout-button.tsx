@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
  * sehingga cache router tidak menyimpan halaman portal untuk tombol back. POST (bukan tautan) supaya
  * situs lain tidak bisa mengeluarkan user, karena cookie SameSite=Lax tidak ikut di POST lintas situs.
  */
-export function LogoutButton() {
+export function LogoutButton({ action = "/portal/auth/keluar" }: { action?: string }) {
   return (
-    <form action="/portal/auth/keluar" method="post">
+    <form action={action} method="post">
       <Button type="submit" variant="ghost">
         <LogOut aria-hidden="true" />
         Keluar
