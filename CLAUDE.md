@@ -439,6 +439,7 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
 7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
 8. **`keepalive.yml`** (terjadwal harian): membaca satu baris data publik dari API Supabase production supaya project tidak dijeda, dan membuat issue kalau gagal.
+9. **`vercel-cleanup.yml`** (terjadwal setiap 3 hari, keputusan owner 21 November 2026): menghapus riwayat deployment Vercel. Tiga deployment production terbaru disimpan untuk Instant Rollback, preview di bawah 3 hari disimpan untuk PR yang masih terbuka.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 

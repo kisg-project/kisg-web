@@ -1,0 +1,39 @@
+name: vercel-cleanup
+
+# Membersihkan riwayat deployment Vercel setiap 3 hari (keputusan owner, 21 November 2026).
+# Tiga deployment production terbaru disimpan untuk Instant Rollback. Lihat scripts/vercel-cleanup.mjs.
+on:
+  schedule:
+    # 02.00 WIB setiap tanggal 1, 4, 7, ... (19.00 UTC hari sebelumnya).
+    - cron: "0 19 */3 * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Hanya tampilkan yang akan dihapus"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: cleanup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Hapus deployment lama
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: node scripts/vercel-cleanup.mjs
