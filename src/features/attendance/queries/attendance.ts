@@ -1,4 +1,5 @@
 import "server-only";
+import { mustAttend } from "@/config/attendance";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /** Tanggal kerja hari ini di Asia/Jakarta (YYYY-MM-DD), sama dengan private.today_wib(). */
@@ -224,4 +225,331 @@ export async function getMyWorkReports(
       : null;
   };
   return { rencana: pick("rencana"), hasil: pick("hasil") };
+}
+
+export interface OverviewAttachment {
+  name: string;
+  type: string;
+  size: number;
+  url: string | null;
+}
+
+export interface OverviewReport {
+  content: string;
+  updatedAt: string;
+  attachments: OverviewAttachment[];
+}
+
+export interface OverviewEmployee {
+  id: string;
+  name: string;
+  day:
+    | (AttendanceDay & { selfieIn: string | null; selfieOut: string | null; outside: boolean })
+    | null;
+  rencana: OverviewReport | null;
+  hasil: OverviewReport | null;
+}
+
+export interface OverviewException {
+  id: string;
+  userName: string;
+  kind: "masuk" | "pulang";
+  workDate: string;
+  requestedAt: string;
+  nearestName: string | null;
+  nearestDistanceM: number | null;
+  reason: string;
+  photoUrl: string | null;
+  status: "menunggu" | "disetujui" | "ditolak";
+  decidedAt: string | null;
+  decisionNote: string | null;
+  signerName: string | null;
+  verifyCode: string | null;
+}
+
+export interface AttendanceOverview {
+  date: string;
+  employees: OverviewEmployee[];
+  pending: OverviewException[];
+  decided: OverviewException[];
+  summary: { total: number; present: number; late: number; absent: number; pending: number };
+}
+
+const SIGNED_URL_SECONDS = 10 * 60;
+
+const EXCEPTION_SELECT =
+  "id, user_id, kind, work_date, requested_at, nearest_distance_m, reason, photo_path, status, decided_at, decision_note, nearest:work_locations!attendance_exceptions_nearest_location_id_fkey(name)";
+
+type ExceptionRow = {
+  id: string;
+  user_id: string;
+  kind: "masuk" | "pulang";
+  work_date: string;
+  requested_at: string;
+  nearest_distance_m: number | null;
+  reason: string;
+  photo_path: string;
+  status: "menunggu" | "disetujui" | "ditolak";
+  decided_at: string | null;
+  decision_note: string | null;
+  nearest: { name: string } | null;
+};
+
+type OverviewRecordRow = RecordRow & {
+  user_id: string;
+  clock_in_photo_path: string;
+  clock_out_photo_path: string | null;
+  clock_in_exception_id: string | null;
+  clock_out_exception_id: string | null;
+};
+
+type StoredAttachment = { path: string; name: string; type: string; size: number };
+
+async function signedUrls(bucket: string, paths: string[]): Promise<Map<string, string>> {
+  const unique = [...new Set(paths.filter(Boolean))];
+  if (unique.length === 0) return new Map();
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.storage.from(bucket).createSignedUrls(unique, SIGNED_URL_SECONDS);
+  return new Map(
+    (data ?? []).flatMap((item) =>
+      item.path && item.signedUrl ? [[item.path, item.signedUrl] as const] : [],
+    ),
+  );
+}
+
+/**
+ * Rekap kehadiran untuk owner: semua karyawan wajib absen di satu tanggal (WIB), rencana dan hasil
+ * kerja dengan lampiran, pengajuan di luar lokasi yang menunggu (semua tanggal), dan keputusan di
+ * tanggal itu beserta kode verifikasinya. Foto dan lampiran memakai signed URL 10 menit.
+ */
+export async function getAttendanceOverview(date: string): Promise<AttendanceOverview> {
+  const supabase = await createSupabaseServerClient();
+  const [people, records, reports, pendingRows, decidedRows] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, full_name, email, user_roles(role)")
+      .eq("is_active", true)
+      .is("deleted_at", null)
+      .order("full_name"),
+    supabase
+      .from("attendance_records")
+      .select(
+        RECORD_SELECT +
+          ", user_id, clock_in_photo_path, clock_out_photo_path, clock_in_exception_id, clock_out_exception_id",
+      )
+      .eq("work_date", date),
+    supabase
+      .from("work_reports")
+      .select("user_id, kind, content, attachments, updated_at")
+      .eq("work_date", date),
+    supabase
+      .from("attendance_exceptions")
+      .select(EXCEPTION_SELECT)
+      .eq("status", "menunggu")
+      .order("requested_at"),
+    supabase
+      .from("attendance_exceptions")
+      .select(EXCEPTION_SELECT)
+      .eq("work_date", date)
+      .neq("status", "menunggu")
+      .order("decided_at", { ascending: false }),
+  ]);
+  if (people.error) throw new Error(`Gagal memuat karyawan: ${people.error.message}`);
+  if (records.error) throw new Error(`Gagal memuat absensi: ${records.error.message}`);
+
+  const staff = people.data.filter((row) => mustAttend(row.user_roles.map((item) => item.role)));
+  const recordRows = records.data as unknown as OverviewRecordRow[];
+  const reportRows = (reports.data ?? []).map((row) => ({
+    ...row,
+    attachments: row.attachments as unknown as StoredAttachment[],
+  }));
+  const pendingList = (pendingRows.data ?? []) as unknown as ExceptionRow[];
+  const decidedList = (decidedRows.data ?? []) as unknown as ExceptionRow[];
+
+  const [selfies, files, stamps] = await Promise.all([
+    signedUrls("attendance-photos", [
+      ...recordRows.flatMap((row) => [row.clock_in_photo_path, row.clock_out_photo_path ?? ""]),
+      ...[...pendingList, ...decidedList].map((row) => row.photo_path),
+    ]),
+    signedUrls(
+      "work-attachments",
+      reportRows.flatMap((row) => row.attachments.map((item) => item.path)),
+    ),
+    decidedList.length > 0
+      ? supabase
+          .from("approval_stamps")
+          .select("doc_id, signer_name, verify_code")
+          .eq("doc_type", "absen_luar_lokasi")
+          .in(
+            "doc_id",
+            decidedList.map((row) => row.id),
+          )
+      : Promise.resolve({ data: [] }),
+  ]);
+  const stampOf = new Map((stamps.data ?? []).map((row) => [row.doc_id, row]));
+  const nameOf = new Map(people.data.map((row) => [row.id, row.full_name || row.email]));
+
+  const toReport = (userId: string, kind: "rencana" | "hasil"): OverviewReport | null => {
+    const row = reportRows.find((item) => item.user_id === userId && item.kind === kind);
+    return row
+      ? {
+          content: row.content,
+          updatedAt: row.updated_at,
+          attachments: row.attachments.map((item) => ({
+            name: item.name,
+            type: item.type,
+            size: item.size,
+            url: files.get(item.path) ?? null,
+          })),
+        }
+      : null;
+  };
+
+  const toException = (row: ExceptionRow): OverviewException => {
+    const stamp = stampOf.get(row.id);
+    return {
+      id: row.id,
+      userName: nameOf.get(row.user_id) ?? "Karyawan",
+      kind: row.kind,
+      workDate: row.work_date,
+      requestedAt: row.requested_at,
+      nearestName: row.nearest?.name ?? null,
+      nearestDistanceM: row.nearest_distance_m,
+      reason: row.reason,
+      photoUrl: selfies.get(row.photo_path) ?? null,
+      status: row.status,
+      decidedAt: row.decided_at,
+      decisionNote: row.decision_note,
+      signerName: stamp?.signer_name ?? null,
+      verifyCode: stamp?.verify_code ?? null,
+    };
+  };
+
+  const employees: OverviewEmployee[] = staff.map((person) => {
+    const record = recordRows.find((row) => row.user_id === person.id);
+    return {
+      id: person.id,
+      name: person.full_name || person.email,
+      day: record
+        ? {
+            ...toDay(record),
+            selfieIn: selfies.get(record.clock_in_photo_path) ?? null,
+            selfieOut: record.clock_out_photo_path
+              ? (selfies.get(record.clock_out_photo_path) ?? null)
+              : null,
+            outside: Boolean(record.clock_in_exception_id ?? record.clock_out_exception_id),
+          }
+        : null,
+      rencana: toReport(person.id, "rencana"),
+      hasil: toReport(person.id, "hasil"),
+    };
+  });
+  const pending = pendingList.map(toException);
+  const present = employees.filter((item) => item.day).length;
+  return {
+    date,
+    employees,
+    pending,
+    decided: decidedList.map(toException),
+    summary: {
+      total: employees.length,
+      present,
+      late: employees.filter((item) => (item.day?.lateMinutes ?? 0) > 0).length,
+      absent: employees.length - present,
+      pending: pending.length,
+    },
+  };
+}
+
+export interface AttendanceTrendDay {
+  /** Tanggal kerja WIB (YYYY-MM-DD). */
+  date: string;
+  /** Hari kerja menurut jam kerja perusahaan. Hari libur tidak menghitung yang belum absen. */
+  workday: boolean;
+  onTime: number;
+  late: number;
+  absent: number;
+  /** Persen karyawan hadir yang mengisi rencana dan hasil kerja. null kalau tidak ada yang hadir. */
+  reportsComplete: number | null;
+}
+
+function addDays(date: string, days: number): string {
+  const [year = 0, month = 1, day = 1] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+/** 1 Senin sampai 7 Minggu, sama dengan kolom workdays. */
+function isoWeekday(date: string): number {
+  const [year = 0, month = 1, day = 1] = date.split("-").map(Number);
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  return weekday === 0 ? 7 : weekday;
+}
+
+/**
+ * Tren kehadiran untuk grafik dashboard owner: per hari tepat waktu, terlambat, belum absen (karyawan
+ * wajib absen yang akunnya sudah ada di tanggal itu), dan persentase laporan harian lengkap.
+ */
+export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[]> {
+  const supabase = await createSupabaseServerClient();
+  const end = todayWib();
+  const start = addDays(end, -(days - 1));
+  const [people, records, reports, schedule] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, created_at, user_roles(role)")
+      .eq("is_active", true)
+      .is("deleted_at", null),
+    supabase
+      .from("attendance_records")
+      .select("user_id, work_date, late_minutes")
+      .gte("work_date", start)
+      .lte("work_date", end),
+    supabase
+      .from("work_reports")
+      .select("user_id, work_date, kind")
+      .gte("work_date", start)
+      .lte("work_date", end),
+    supabase.from("work_schedules").select("workdays").eq("scope", "perusahaan").maybeSingle(),
+  ]);
+  if (records.error) throw new Error(`Gagal memuat tren absensi: ${records.error.message}`);
+  const staff = (people.data ?? []).filter((row) =>
+    mustAttend(row.user_roles.map((item) => item.role)),
+  );
+  const staffIds = new Set(staff.map((row) => row.id));
+  const workdays = new Set(schedule.data?.workdays ?? [1, 2, 3, 4, 5, 6]);
+  const filed = new Set(
+    (reports.data ?? []).map((row) => `${row.user_id}|${row.work_date}|${row.kind}`),
+  );
+
+  return Array.from({ length: days }, (_, index) => {
+    const date = addDays(start, index);
+    const present = records.data.filter(
+      (row) => row.work_date === date && staffIds.has(row.user_id),
+    );
+    const late = present.filter((row) => row.late_minutes > 0).length;
+    const eligible = staff.filter((row) => todayWib(new Date(row.created_at)) <= date).length;
+    const workday = workdays.has(isoWeekday(date));
+    const complete = present.filter(
+      (row) =>
+        filed.has(`${row.user_id}|${date}|rencana`) && filed.has(`${row.user_id}|${date}|hasil`),
+    ).length;
+    return {
+      date,
+      workday,
+      onTime: present.length - late,
+      late,
+      absent: workday ? Math.max(0, eligible - present.length) : 0,
+      reportsComplete: present.length > 0 ? Math.round((complete / present.length) * 100) : null,
+    };
+  });
+}
+
+/** Jumlah pengajuan absen di luar lokasi yang menunggu keputusan (untuk ringkasan dashboard). */
+export async function countPendingExceptions(): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+  const { count } = await supabase
+    .from("attendance_exceptions")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "menunggu");
+  return count ?? 0;
 }

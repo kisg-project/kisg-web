@@ -6,6 +6,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { Copy, MailCheck, MessageCircle, UserPlus } from "lucide-react";
+import { FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { inviteUserAction } from "../actions/users";
@@ -25,9 +26,12 @@ export interface InviteResult {
 export function InviteResultCard({
   invited,
   onDone,
+  onClose,
 }: {
   invited: InviteResult;
   onDone?: () => void;
+  /** Di dialog: tombol Selesai menutup dialog. */
+  onClose?: () => void;
 }) {
   const [copied, setCopied] = useState(false);
   const message = `Halo, ini undangan akun KIS Operasional. Buka tautan ini untuk mengaktifkan akun: ${invited.link}`;
@@ -72,8 +76,13 @@ export function InviteResultCard({
           </a>
         </Button>
         {onDone ? (
-          <Button type="button" onClick={onDone}>
+          <Button type="button" variant="outline" onClick={onDone}>
             Undang lagi
+          </Button>
+        ) : null}
+        {onClose ? (
+          <Button type="button" variant="save" onClick={onClose}>
+            Selesai
           </Button>
         ) : null}
       </div>
@@ -82,7 +91,14 @@ export function InviteResultCard({
 }
 
 /** Undang karyawan: nama, email, satu atau beberapa role, dan role utama. */
-export function InviteForm({ allowOwner }: { allowOwner: boolean }) {
+export function InviteForm({
+  allowOwner,
+  onCancel,
+}: {
+  allowOwner: boolean;
+  /** Diisi saat form tampil di dialog: footer Batal dan Kirim undangan. */
+  onCancel?: () => void;
+}) {
   const router = useRouter();
   const form = useForm<InviteUserInput>({
     resolver: zodResolver(inviteUserSchema),
@@ -103,6 +119,7 @@ export function InviteForm({ allowOwner }: { allowOwner: boolean }) {
           reset();
           form.reset();
         }}
+        onClose={onCancel}
       />
     );
   }
@@ -159,12 +176,48 @@ export function InviteForm({ allowOwner }: { allowOwner: boolean }) {
           {result.serverError}
         </p>
       ) : null}
-      <div>
-        <Button type="submit" size="lg" disabled={isExecuting}>
-          <UserPlus aria-hidden="true" />
-          {isExecuting ? "Mengirim undangan" : "Kirim undangan"}
-        </Button>
-      </div>
+      {onCancel ? (
+        <FormDialogFooter
+          busy={isExecuting}
+          onCancel={onCancel}
+          saveLabel="Kirim undangan"
+          busyLabel="Mengirim"
+        />
+      ) : (
+        <div>
+          <Button type="submit" size="lg" disabled={isExecuting}>
+            <UserPlus aria-hidden="true" />
+            {isExecuting ? "Mengirim undangan" : "Kirim undangan"}
+          </Button>
+        </div>
+      )}
     </form>
+  );
+}
+
+/** Tombol Undang karyawan: form undangan di dialog (lembar bawah di HP). */
+export function InviteDialog({ allowOwner }: { allowOwner: boolean }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <FormDialog
+      open={open}
+      onOpenChange={setOpen}
+      title="Undang karyawan"
+      description="Karyawan menerima email berisi tautan aktivasi akun."
+      icon={UserPlus}
+      trigger={
+        <Button type="button" size="lg">
+          <UserPlus aria-hidden="true" />
+          Undang karyawan
+        </Button>
+      }
+    >
+      <InviteForm
+        allowOwner={allowOwner}
+        onCancel={() => {
+          setOpen(false);
+        }}
+      />
+    </FormDialog>
   );
 }

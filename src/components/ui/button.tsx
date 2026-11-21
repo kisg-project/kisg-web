@@ -19,6 +19,9 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-accent",
         ghost: "hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent",
         destructive: "bg-destructive text-destructive-foreground hover:bg-danger-700",
+        // Tombol dialog (keputusan owner, 22 November 2026): Simpan hijau, Batal merah, teks putih AA.
+        save: "bg-success-700 text-white hover:bg-success-800",
+        cancel: "bg-danger-600 text-white hover:bg-danger-700",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

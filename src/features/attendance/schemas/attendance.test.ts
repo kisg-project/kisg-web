@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mustAttend } from "@/config/attendance";
-import { workReportSchema } from "./attendance";
+import { decideExceptionSchema, workReportSchema } from "./attendance";
 
 const USER = "00000000-0000-4000-8000-000000000902";
 const photo = {
@@ -55,5 +55,31 @@ describe("mustAttend", () => {
     expect(mustAttend(["marketing"])).toBe(true);
     expect(mustAttend(["finance", "owner"])).toBe(false);
     expect(mustAttend(["cms"])).toBe(false);
+  });
+});
+
+describe("decideExceptionSchema", () => {
+  const base = { id: "00000000-0000-4000-8000-000000001021", password: "Rahasia2026" };
+
+  it("menyetujui tanpa catatan", () => {
+    expect(decideExceptionSchema.safeParse({ ...base, decision: "disetujui" }).success).toBe(true);
+  });
+
+  it("menolak wajib alasan minimal 5 karakter", () => {
+    const result = decideExceptionSchema.safeParse({ ...base, decision: "ditolak", note: "ok" });
+    expect(result.error?.issues[0]?.message).toBe("Tulis alasan penolakan minimal 5 karakter.");
+    expect(
+      decideExceptionSchema.safeParse({ ...base, decision: "ditolak", note: "Tidak ada jadwal." })
+        .success,
+    ).toBe(true);
+  });
+
+  it("password wajib diisi", () => {
+    const result = decideExceptionSchema.safeParse({
+      ...base,
+      password: "",
+      decision: "disetujui",
+    });
+    expect(result.error?.issues[0]?.message).toBe("Masukkan password akun Anda.");
   });
 });

@@ -25,10 +25,10 @@ test.describe("Login portal", () => {
       await page.goto("/portal/login");
       await loginViaForm(page, user);
       await expect(page).toHaveURL(ROLE_HOME[role]);
-      // Beranda role: sapaan dua baris sesuai jam WIB dengan nama depan, lalu label role dan modul.
-      const [firstName] = user.fullName.split(" ");
+      // Beranda role: sapaan dua baris sesuai jam WIB dengan dua kata pertama nama, lalu role dan modul.
+      const name = user.fullName.split(" ").slice(0, 2).join(" ");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-        new RegExp(`^Selamat (pagi|siang|sore|malam), ${firstName ?? ""}$`),
+        new RegExp(`^Selamat (pagi|siang|sore|malam), ${name}$`),
       );
       await expect(page.getByText(ROLE_LABELS[role], { exact: true }).first()).toBeVisible();
       await expect(

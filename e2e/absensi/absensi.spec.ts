@@ -328,8 +328,19 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     await expectNoA11yViolations(page);
     await expectResponsive(page);
 
-    const form = page.getByRole("form", { name: "Tambah titik absensi" });
-    await form.getByRole("button", { name: "Tambah titik" }).click();
+    // Tambah lewat dialog: tanpa tombol X, Batal dan Simpan, klik di luar tidak menutup.
+    await page.getByRole("button", { name: "Tambah titik absensi" }).click();
+    const dialog = page.getByRole("dialog", { name: "Tambah titik absensi" });
+    await expect(dialog).toBeVisible();
+    await expectNoA11yViolations(page);
+    await page.mouse.click(5, 5);
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Batal" }).click();
+    await expect(dialog).toBeHidden();
+
+    await page.getByRole("button", { name: "Tambah titik absensi" }).click();
+    const form = dialog.getByRole("form", { name: "Tambah titik absensi" });
+    await form.getByRole("button", { name: "Simpan" }).click();
     await expect(form.getByText("Nama titik minimal 3 karakter.")).toBeVisible();
 
     const name = `Kantor uji ${randomUUID().slice(0, 8)}`;
@@ -337,8 +348,9 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     await form.getByRole("button", { name: "Pakai lokasi saya sekarang" }).click();
     await expect(form.getByLabel("Lintang")).toHaveValue(String(point.latitude));
     await expect(form.getByLabel("Bujur")).toHaveValue(String(point.longitude));
-    await form.getByRole("button", { name: "Tambah titik" }).click();
+    await form.getByRole("button", { name: "Simpan" }).click();
     await expect(page.getByText("Titik absensi ditambahkan.")).toBeVisible();
+    await expect(dialog).toBeHidden();
     await expect(
       page.getByRole("list", { name: "Daftar titik absensi" }).getByText(name),
     ).toBeVisible();
@@ -370,13 +382,16 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     await company.getByRole("button", { name: "Simpan jam kerja" }).click();
     await expect(company.getByText("Jam pulang harus setelah jam masuk.")).toBeVisible();
 
-    const form = page.getByRole("form", { name: "Jam kerja khusus" });
+    await page.getByRole("button", { name: "Tambah jam khusus" }).click();
+    const form = page
+      .getByRole("dialog", { name: "Tambah jam khusus" })
+      .getByRole("form", { name: "Jam kerja khusus" });
     await form.getByRole("combobox", { name: "Titik absensi" }).click();
     await page.getByRole("option", { name: location.name }).click();
     await form.getByLabel("Jam masuk").fill("07:30");
     await form.getByLabel("Jam pulang").fill("16:30");
     await form.getByLabel("Minggu").check();
-    await form.getByRole("button", { name: "Simpan jam kerja" }).click();
+    await form.getByRole("button", { name: "Simpan" }).click();
     await expect(page.getByText("Jam kerja tersimpan.")).toBeVisible();
 
     const item = page
@@ -399,6 +414,10 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     });
 
     await item.getByRole("button", { name: `Hapus jam kerja ${location.name}` }).click();
+    await page
+      .getByRole("dialog", { name: `Hapus jam kerja ${location.name}?` })
+      .getByRole("button", { name: "Ya, hapus" })
+      .click();
     await expect(page.getByText("Jam kerja khusus dihapus.")).toBeVisible();
     const { data: gone } = await adminClient()
       .from("work_schedules")

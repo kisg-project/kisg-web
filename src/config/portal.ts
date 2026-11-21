@@ -48,8 +48,8 @@ export const PORTAL_AREAS: readonly PortalArea[] = [
   {
     prefix: "/portal/owner",
     roles: ["owner", "admin"],
-    label: "Dashboard owner",
-    shortLabel: "Owner",
+    label: "Dashboard direktur utama",
+    shortLabel: "Direktur",
   },
   {
     prefix: "/portal/crm",

@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { CalendarDays } from "lucide-react";
-import { RoofLine } from "@/components/shared/roof-line";
 import { ROLE_LABELS, type AppRole } from "@/config/roles";
-import { firstName, greetingFor } from "@/lib/format/greeting";
+import { greetingName, greetingFor } from "@/lib/format/greeting";
 import { formatDateWIB } from "@/lib/format";
 
 export interface GreetingStat {
@@ -12,7 +11,7 @@ export interface GreetingStat {
 
 /**
  * Kartu sapaan beranda portal: foto proyek dengan gradasi warna brand, tanggal, lalu sapaan dua baris
- * ("Selamat malam," dan nama depan), semua role, dan ringkasan angka opsional. Foto profil tidak
+ * ("Selamat malam," dan dua kata pertama nama), semua role, dan ringkasan angka opsional. Foto profil tidak
  * diulang di sini karena sudah ada di header (keputusan owner, 21 November 2026). Halaman portal
  * dirender per request, jadi jam yang dipakai adalah jam saat halaman dibuka.
  */
@@ -28,7 +27,7 @@ export function PortalGreeting({
   stats?: readonly GreetingStat[];
 }) {
   const now = new Date();
-  const name = firstName(fullName) || "rekan KIS";
+  const name = greetingName(fullName) || "rekan KIS";
   return (
     <section className="relative isolate overflow-hidden rounded-[2rem] px-5 pt-5 pb-5 text-white shadow-[0_24px_48px_-28px_rgb(1_60_52/0.7)] sm:px-7 sm:pt-7">
       <Image
@@ -42,10 +41,6 @@ export function PortalGreeting({
       <span
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-linear-to-br from-primary-950 via-primary-900/90 to-primary-800/55"
-      />
-      <RoofLine
-        strokeWidth={3}
-        className="absolute -right-8 bottom-10 -z-10 h-24 w-64 text-gold-300/40"
       />
       <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md">
         <CalendarDays aria-hidden="true" className="size-3.5" />

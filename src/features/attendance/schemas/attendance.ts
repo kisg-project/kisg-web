@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { APPROVAL_DECISIONS } from "@/config/approvals";
+import { signatureSchema } from "@/features/approvals";
 
 const kind = z.enum(["masuk", "pulang"]);
 const coordinate = {
@@ -114,3 +116,22 @@ export const workReportSchema = z.object({
 
 export type WorkAttachment = z.infer<typeof workAttachmentSchema>;
 export type WorkReportInput = z.input<typeof workReportSchema>;
+
+/** Keputusan pengajuan absen di luar lokasi, ditandatangani dengan password penyetuju. */
+export const decideExceptionSchema = signatureSchema
+  .extend({
+    id: z.uuid(),
+    decision: z.enum(APPROVAL_DECISIONS),
+    note: z.string().trim().max(500, "Catatan maksimal 500 karakter.").optional(),
+  })
+  .superRefine((value, context) => {
+    if (value.decision === "ditolak" && (value.note?.length ?? 0) < 5) {
+      context.addIssue({
+        code: "custom",
+        path: ["note"],
+        message: "Tulis alasan penolakan minimal 5 karakter.",
+      });
+    }
+  });
+
+export type DecideExceptionInput = z.input<typeof decideExceptionSchema>;
