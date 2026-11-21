@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { activateAccountAction } from "../actions/account";
 import { activationSchema, type ActivationInput } from "../schemas/account";
 import { AvatarUploader } from "./avatar-uploader";
-import { PasswordField } from "./password-field";
+import { PasswordField } from "@/components/shared/password-field";
 
 /**
  * Aktivasi akun: foto profil, nama, nomor HP, dan password. Satu layar, satu tombol utama.

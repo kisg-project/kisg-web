@@ -43,14 +43,16 @@ for (const role of PORTAL_ROLES) {
         exact: true,
       });
       await expect(nav.getByRole("link")).toHaveCount(allowed.length);
+      // Menu gaya aplikasi (rel di desktop, pil di HP) memakai label pendek.
       for (const area of allowed) {
-        await expect(
-          nav.getByRole("link", { name: desktop ? area.label : area.shortLabel, exact: true }),
-        ).toHaveAttribute("href", area.prefix);
+        await expect(nav.getByRole("link", { name: area.shortLabel, exact: true })).toHaveAttribute(
+          "href",
+          area.prefix,
+        );
       }
-      if (!desktop) return;
+      // Kartu sapaan beranda menampilkan role.
       await expect(
-        page.getByRole("banner").getByText(ROLE_LABELS[role], { exact: true }),
+        page.getByRole("list", { name: "Role" }).getByText(ROLE_LABELS[role], { exact: true }),
       ).toBeVisible();
     });
 

@@ -81,7 +81,7 @@ export function AccountList({
             <li
               key={account.id}
               aria-label={name}
-              className="grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-[1fr_auto] sm:items-center"
+              className="grid gap-3 app-card p-4 sm:grid-cols-[1fr_auto] sm:items-center"
             >
               <div className="flex min-w-0 items-start gap-3">
                 <Avatar src={account.avatarUrl} name={name} className="size-12" />

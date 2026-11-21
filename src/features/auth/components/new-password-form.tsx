@@ -1,9 +1,9 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { TextField } from "@/components/shared/text-field";
+import { PasswordField } from "@/components/shared/password-field";
 import { Button } from "@/components/ui/button";
 import { updatePasswordAction } from "../actions/auth";
 import { newPasswordSchema, type NewPasswordInput } from "../schemas/auth";
@@ -14,6 +14,7 @@ export function NewPasswordForm() {
     resolver: zodResolver(newPasswordSchema),
     defaultValues: { password: "", confirm: "" },
   });
+  const password = useWatch({ control: form.control, name: "password" });
   const { execute, result, isExecuting } = useAction(updatePasswordAction);
 
   return (
@@ -26,17 +27,17 @@ export function NewPasswordForm() {
         })(event);
       }}
     >
-      <TextField
+      <PasswordField
         label="Password baru"
-        type="password"
         autoComplete="new-password"
+        meter
+        currentValue={password}
         hint="Minimal 10 karakter, memuat huruf besar, huruf kecil, dan angka."
         error={form.formState.errors.password?.message}
         {...form.register("password")}
       />
-      <TextField
+      <PasswordField
         label="Ulangi password baru"
-        type="password"
         autoComplete="new-password"
         error={form.formState.errors.confirm?.message}
         {...form.register("confirm")}

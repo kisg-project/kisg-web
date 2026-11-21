@@ -143,11 +143,7 @@ test.describe("Login portal", () => {
     await page.goto("/portal/login");
     await loginViaForm(page, user);
     await expect(page).toHaveURL("/portal/crm");
-    await expect(
-      page.getByRole("banner").getByText(ROLE_LABELS.marketing, { exact: true }),
-    ).toBeVisible({
-      visible: (page.viewportSize()?.width ?? 0) >= 640,
-    });
+    await expect(page.getByRole("banner").getByRole("link", { name: /Akun saya/ })).toBeVisible();
     await page.goto("/portal/absensi");
     await expect(page.getByRole("heading", { level: 1, name: "Absensi" })).toBeVisible();
 

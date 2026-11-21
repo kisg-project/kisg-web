@@ -15,7 +15,7 @@ import {
   type ProfileInput,
 } from "../schemas/account";
 import { AvatarUploader } from "./avatar-uploader";
-import { PasswordField } from "./password-field";
+import { PasswordField } from "@/components/shared/password-field";
 
 /** Foto profil di halaman Akun saya. Tersimpan langsung setelah diunggah. */
 export function ProfilePhotoForm({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {

@@ -7,8 +7,10 @@ export const metadata: Metadata = { title: "Akses ditolak" };
 export default function CmsDeniedPage() {
   return (
     <>
-      <h1 className="text-xl font-bold">Akun ini tidak bisa membuka panel CMS</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
+        Akun ini tidak bisa membuka panel CMS
+      </h1>
+      <p className="mt-3 text-subtle-foreground">
         Panel CMS memakai akun khusus pengelola konten. Keluar dulu, lalu masuk dengan akun CMS.
       </p>
       <div className="mt-6">
