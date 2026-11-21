@@ -3,7 +3,6 @@ import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/state-message";
 import { PORTAL_AREAS, ROLE_HOME } from "@/config/portal";
 import { requirePortalUser } from "@/features/auth";
-import { avatarUrl } from "@/features/users";
 import { PortalGreeting } from "./portal-greeting";
 
 /**
@@ -20,11 +19,7 @@ export async function ModulePlaceholder({ prefix, phase }: { prefix: string; pha
     <div className="grid gap-6">
       {isHome ? (
         <>
-          <PortalGreeting
-            fullName={user.fullName}
-            roles={user.roles}
-            avatarUrl={await avatarUrl(user.avatarPath)}
-          />
+          <PortalGreeting fullName={user.fullName} roles={user.roles} />
           <h2 className="text-xl font-bold">{area.label}</h2>
         </>
       ) : (

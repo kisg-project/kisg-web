@@ -16,6 +16,8 @@ export default async function WorkLocationsPage() {
   return (
     <div className="grid gap-8">
       <PageHeader
+        backHref="/portal/owner"
+        backLabel="Kembali ke beranda"
         title="Titik absensi"
         description={`Karyawan hanya bisa absen dalam radius titik yang aktif. Radius default ${String(DEFAULT_RADIUS_M)} meter.`}
       />

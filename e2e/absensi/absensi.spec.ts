@@ -206,7 +206,7 @@ test.describe("Absensi karyawan", () => {
     });
     expect(requests?.[0]?.nearest_distance_m).toBeGreaterThan(1000);
 
-    await page.getByRole("link", { name: "Kembali ke absensi" }).click();
+    await page.getByRole("status").getByRole("link", { name: "Kembali ke absensi" }).click();
     const pendingSection = page.getByRole("region", { name: "Pengajuan di luar lokasi" });
     await expect(pendingSection).toBeVisible();
     await expect(pendingSection.getByText("Menunggu persetujuan", { exact: true })).toBeVisible();

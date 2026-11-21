@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { greetingFor } from "./greeting";
+import { firstName, greetingFor } from "./greeting";
 
 // Jam WIB = UTC + 7.
 const wib = (hour: number, minute = 0) => new Date(Date.UTC(2026, 10, 20, hour - 7, minute));
@@ -17,5 +17,21 @@ describe("greetingFor", () => {
     [3, 59, "Selamat malam"],
   ])("%i.%i WIB: %s", (hour, minute, expected) => {
     expect(greetingFor(wib(hour, minute))).toBe(expected);
+  });
+});
+
+describe("firstName", () => {
+  it("mengambil nama depan", () => {
+    expect(firstName("Bintan Salma Ratu")).toBe("Bintan");
+    expect(firstName("  Budi  ")).toBe("Budi");
+  });
+
+  it("melewati gelar di depan nama", () => {
+    expect(firstName("Ir. Ahmad Fauzi")).toBe("Ahmad");
+    expect(firstName("Hj. Siti Aminah")).toBe("Siti");
+  });
+
+  it("nama kosong menjadi string kosong", () => {
+    expect(firstName("   ")).toBe("");
   });
 });

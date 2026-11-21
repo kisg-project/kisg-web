@@ -37,6 +37,8 @@ export default async function SchedulesPage() {
   return (
     <div className="grid gap-8">
       <PageHeader
+        backHref="/portal/owner"
+        backLabel="Kembali ke beranda"
         title="Jam kerja"
         description="Clock in lewat dari jam masuk ditambah toleransi dicatat terlambat. Clock out sebelum jam pulang dicatat pulang awal."
       />
