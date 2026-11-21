@@ -108,7 +108,6 @@ create trigger set_updated_at before update on public.attendance_exceptions for 
 create trigger audit after insert or update or delete on public.work_schedules for each row execute function private.audit_row();
 create trigger audit after insert or update or delete on public.attendance_records for each row execute function private.audit_row();
 create trigger audit after insert or update or delete on public.attendance_exceptions for each row execute function private.audit_row();
-create trigger audit after insert or update or delete on public.work_locations for each row execute function private.audit_row();
 
 -- Fungsi bantu ------------------------------------------------------------------
 create or replace function private.today_wib()
