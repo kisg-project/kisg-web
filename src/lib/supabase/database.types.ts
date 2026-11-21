@@ -669,14 +669,14 @@ isOneToOne: false
                   ]
                 },"work_reports": {
                   Row: {
-                    "attachments": Json,"content": string,"created_at": string,"id": string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at": string,"user_id": string,"work_date": string
+                    "attachments": NonNullable<Json>,"content": string,"created_at": string,"id": string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at": string,"user_id": string,"work_date": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "attachments"?: Json,"content": string,"created_at"?: string,"id"?: string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id": string,"work_date": string
+                    "attachments"?: NonNullable<Json>,"content": string,"created_at"?: string,"id"?: string,"kind": Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id": string,"work_date": string
                   }
                   Update: {
-                    "attachments"?: Json,"content"?: string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id"?: string,"work_date"?: string
+                    "attachments"?: NonNullable<Json>,"content"?: string,"created_at"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["work_report_kind"],"updated_at"?: string,"user_id"?: string,"work_date"?: string
                   }
                   Relationships: [
                     {
