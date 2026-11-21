@@ -156,10 +156,13 @@ test.describe("Karyawan (owner)", () => {
       .getByRole("listitem", { name: "Undangan Ulang" })
       .getByRole("button", { name: "Batalkan undangan" })
       .click();
-    await page.getByRole("dialog").getByRole("button", { name: "Ya, batalkan" }).click();
+    const confirm = page.getByRole("dialog");
+    await confirm.getByRole("button", { name: "Ya, batalkan" }).click();
+    await expect(confirm).toBeHidden();
     await expect(page.getByRole("listitem", { name: "Undangan Ulang" })).toHaveCount(0);
-    const { data } = await adminClient().auth.admin.getUserById(id);
-    expect(data.user).toBeNull();
+    await expect
+      .poll(async () => (await adminClient().auth.admin.getUserById(id)).data.user)
+      .toBeNull();
   });
 
   test("ubah role menjadi rangkap jabatan, nonaktifkan, lalu aktifkan lagi", async ({ page }) => {

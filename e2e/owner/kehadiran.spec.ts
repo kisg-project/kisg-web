@@ -15,6 +15,8 @@ async function loginOwner(page: Page): Promise<TestUser> {
   await page.goto("/portal/login");
   await loginViaForm(page, owner);
   await expect(page).toHaveURL("/portal/owner");
+  // Muat ulang penuh: halaman login yang disimpan tersembunyi oleh router tidak ikut di DOM.
+  await page.goto("/portal/owner");
   return owner;
 }
 
@@ -117,13 +119,13 @@ test.describe("Kehadiran owner", () => {
     await expectNoA11yViolations(page);
 
     // Password salah: ditolak, tidak ada yang berubah.
-    await dialog.getByLabel("Password akun Anda").fill("PasswordSalah2026");
+    await dialog.getByLabel("Password akun Anda", { exact: true }).fill("PasswordSalah2026");
     await dialog.getByRole("button", { name: "Setujui" }).click();
     await expect(dialog.getByRole("alert")).toHaveText(
       "Password salah. Persetujuan belum disimpan.",
     );
 
-    await dialog.getByLabel("Password akun Anda").fill(owner.password);
+    await dialog.getByLabel("Password akun Anda", { exact: true }).fill(owner.password);
     await dialog.getByRole("button", { name: "Setujui" }).click();
     await expect(page.getByText("Pengajuan disetujui.")).toBeVisible();
     await expect(dialog).toBeHidden();
@@ -190,7 +192,7 @@ test.describe("Kehadiran owner", () => {
       });
     await pending.getByRole("button", { name: "Tolak" }).click();
     const dialog = page.getByRole("dialog", { name: "Tolak pengajuan" });
-    await dialog.getByLabel("Password akun Anda").fill(owner.password);
+    await dialog.getByLabel("Password akun Anda", { exact: true }).fill(owner.password);
     await dialog.getByRole("button", { name: "Tolak" }).click();
     await expect(dialog.getByText("Tulis alasan penolakan minimal 5 karakter.")).toBeVisible();
 
@@ -212,8 +214,12 @@ test.describe("Kehadiran owner", () => {
   });
 
   test("kode verifikasi tidak dikenal: halaman tidak ditemukan", async ({ page }) => {
-    const response = await page.goto(`/verifikasi/${"0".repeat(64)}`);
-    expect(response?.status()).toBe(404);
+    // Halaman di-stream, jadi status HTTP tetap 200. Yang dicek isi halamannya.
+    await page.goto(`/verifikasi/${"0".repeat(64)}`);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+    ).toBeAttached();
+    await expect(page.getByText("Cap persetujuan asli")).toHaveCount(0);
   });
 });
 

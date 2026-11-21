@@ -72,7 +72,7 @@ function SpecGrid({ items }: { items: Highlight[] }) {
             <IconChip icon={icon} size="lg" />
             <span className="min-w-0 leading-tight">
               <span className="block text-xl font-extrabold text-foreground tabular">{value}</span>
-              <span className="block text-sm text-muted-foreground">{label}</span>
+              <span className="block text-sm text-subtle-foreground">{label}</span>
             </span>
           </li>
         ))}
