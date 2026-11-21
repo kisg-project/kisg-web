@@ -618,7 +618,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
           className="grid min-w-0 content-start gap-4 xl:sticky xl:top-[calc(var(--header-height)+1.5rem)] xl:col-span-5"
           aria-live="polite"
         >
-          <div className="rounded-lg border bg-surface p-5">
+          <div className="rounded-3xl bg-surface p-4 sm:p-6">
             <h3 className="text-base font-bold">Hasil simulasi {terms.title}</h3>
             {result && costs && firstPeriod ? (
               <>
@@ -695,7 +695,11 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                     <Download aria-hidden="true" />
                     {pdfState === "busy" ? "Menyiapkan PDF" : "Unduh PDF"}
                   </Button>
-                  <Button asChild variant="highlight">
+                  <Button
+                    asChild
+                    variant="highlight"
+                    className="h-auto min-h-11 py-2.5 text-center whitespace-normal"
+                  >
                     <a href={whatsappLink(waMessage)} target="_blank" rel="noopener noreferrer">
                       <Phone aria-hidden="true" />
                       Konsultasi {terms.title}
