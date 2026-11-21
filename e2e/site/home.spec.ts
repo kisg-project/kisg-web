@@ -1,7 +1,7 @@
 import { expect, expectNoA11yViolations, expectResponsive, test } from "../fixtures/test";
 
 test.describe("Beranda", () => {
-  test("hero penuh satu layar di bawah navbar, dengan harga ringkas dan CTA WhatsApp", async ({
+  test("hero minimal satu layar di bawah navbar, dengan harga ringkas dan CTA WhatsApp", async ({
     page,
   }) => {
     await page.goto("/");
@@ -21,7 +21,10 @@ test.describe("Beranda", () => {
     expect(viewport && header && heroBox).toBeTruthy();
     if (viewport && header && heroBox) {
       expect(heroBox.y).toBeCloseTo(header.height, 0);
-      expect(heroBox.height).toBeCloseTo(Math.max(viewport.height - header.height, 448), 0);
+      // Minimal satu layar. Di HP kecil hero boleh lebih tinggi supaya foto dan teks tidak terpotong.
+      expect(heroBox.height).toBeGreaterThanOrEqual(
+        Math.max(viewport.height - header.height, 448) - 1,
+      );
     }
 
     const href = await firstSlide
@@ -156,11 +159,16 @@ test.describe("Beranda", () => {
   test("logo bank rekanan KPR tampil dan termuat", async ({ page }) => {
     await page.goto("/");
     const banks = page.getByRole("list", { name: "Bank rekanan KPR" });
-    for (const name of ["Bank BTN", "Bank Mandiri", "Bank Syariah Indonesia (BSI)"]) {
+    for (const name of [
+      "Bank BTN",
+      "Bank Mandiri",
+      "Bank Syariah Indonesia (BSI)",
+      "Bank Syariah Nasional (BSN)",
+    ]) {
       const logo = banks.getByRole("img", { name });
       await logo.scrollIntoViewIfNeeded();
       await expect(logo).toBeVisible();
-      // Gambar memakai lazy loading: tunggu sampai selesai dimuat, lalu pastikan file SVG terbaca.
+      // Gambar memakai lazy loading: tunggu sampai selesai dimuat, lalu pastikan filenya terbaca.
       await expect
         .poll(() =>
           logo.evaluate((image: HTMLImageElement) => (image.complete ? image.naturalWidth : 0)),
@@ -189,9 +197,11 @@ test.describe("SEO", () => {
     expect(await page.locator('meta[name="description"]').getAttribute("content")).toContain(
       "Rp 571.250.000",
     );
-    // Gambar Open Graph = foto sampul proyek unggulan dari database.
-    expect(await page.locator('meta[property="og:image"]').getAttribute("content")).toContain(
-      "sgv-1.webp",
+    // Gambar share bermerek dari route /og (judul, logo, dan foto proyek).
+    const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(new URL(ogImage ?? "").pathname).toBe("/og");
+    expect(await page.locator('meta[name="twitter:card"]').getAttribute("content")).toBe(
+      "summary_large_image",
     );
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
 

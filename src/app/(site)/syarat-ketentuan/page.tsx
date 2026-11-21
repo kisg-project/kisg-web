@@ -5,13 +5,14 @@ import { PageHero } from "@/components/site/page-hero";
 import { TERMS_UPDATED } from "@/config/legal";
 import { siteConfig } from "@/config/site";
 import { formatDateWIB } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/syarat-ketentuan",
   title: "Syarat dan ketentuan",
   description:
     "Syarat pemakaian website KIS Group, termasuk sifat informasi harga, promo, dan simulasi KPR.",
-  alternates: { canonical: "/syarat-ketentuan" },
-};
+});
 
 export default function TermsPage() {
   return (

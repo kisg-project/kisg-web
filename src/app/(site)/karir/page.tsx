@@ -7,13 +7,14 @@ import { Section } from "@/components/shared/section";
 import { PageHero } from "@/components/site/page-hero";
 import { CAREER_LEVELS } from "@/config/careers";
 import { CareerList, getOpenCareers } from "@/features/cms";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/karir",
   title: "Karir",
   description:
     "Karir di KIS Group, developer perumahan di Bekasi: jenjang berpengalaman, lulusan baru, staf lapangan, dan magang.",
-  alternates: { canonical: "/karir" },
-};
+});
 
 export default async function CareersPage() {
   const careers = await getOpenCareers();

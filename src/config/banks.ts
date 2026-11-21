@@ -34,7 +34,8 @@ export const PARTNER_BANKS: readonly PartnerBank[] = [
   {
     key: "bsn",
     name: "Bank Syariah Nasional (BSN)",
-    logo: null,
+    // Logo resmi dari owner (21 November 2026).
+    logo: { src: "/images/banks/bank-bsn.png", width: 297, height: 229 },
     schemes: ["syariah"],
   },
 ];

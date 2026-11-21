@@ -31,7 +31,7 @@ export function MobileNav({ items }: { items: readonly NavItem[] }) {
           <SheetDescription className="sr-only">Navigasi {siteConfig.name}</SheetDescription>
         </SheetHeader>
         <nav aria-label="Navigasi utama" className="px-4">
-          <ul className="flex flex-col">
+          <ul className="flex flex-col gap-1">
             {items.map((item) => (
               <li key={item.label}>
                 <Link
@@ -39,7 +39,7 @@ export function MobileNav({ items }: { items: readonly NavItem[] }) {
                   onClick={() => {
                     setOpen(false);
                   }}
-                  className="flex h-12 items-center rounded-md px-3 text-base font-semibold hover:bg-accent"
+                  className="flex h-12 items-center rounded-full px-4 text-base font-semibold transition-colors hover:bg-primary-50 hover:text-primary-800"
                 >
                   {item.label}
                 </Link>
@@ -48,7 +48,7 @@ export function MobileNav({ items }: { items: readonly NavItem[] }) {
           </ul>
         </nav>
         <div className="mt-auto p-4 pb-safe">
-          <Button asChild className="w-full">
+          <Button asChild size="lg" className="w-full">
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">
               <Phone aria-hidden="true" />
               Hubungi marketing

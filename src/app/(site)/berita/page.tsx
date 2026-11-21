@@ -6,13 +6,14 @@ import { MediaCard } from "@/components/site/media-card";
 import { PageHero } from "@/components/site/page-hero";
 import { getPublishedPosts } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
-  title: "Berita",
+export const metadata: Metadata = pageMetadata({
+  path: "/berita",
+  title: "Berita dan panduan",
   description:
     "Kabar terbaru dari KIS Group: progres proyek, kegiatan, dan informasi untuk pembeli rumah.",
-  alternates: { canonical: "/berita" },
-};
+});
 
 export default async function NewsPage() {
   const posts = await getPublishedPosts();

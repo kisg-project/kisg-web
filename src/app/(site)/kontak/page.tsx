@@ -7,12 +7,13 @@ import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
 import { formatOfficeAddress, officeMapsUrl, siteConfig, whatsappLink } from "@/config/site";
 import { LeadForm } from "@/features/leads";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/kontak",
   title: "Kontak",
   description: `Hubungi KIS Group lewat WhatsApp ${siteConfig.whatsapp.display}, email hallo@kisgroup.co.id, atau datang ke kantor pemasaran di Bekasi Utara.`,
-  alternates: { canonical: "/kontak" },
-};
+});
 
 export default function ContactPage() {
   return (

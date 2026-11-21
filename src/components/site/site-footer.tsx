@@ -14,7 +14,7 @@ const linkClass =
 export async function SiteFooter() {
   const projectsHref = await getProjectsHref();
   return (
-    <footer className="bg-footer pb-safe text-footer-foreground">
+    <footer className="rounded-t-4xl bg-footer pb-safe text-footer-foreground">
       <Container className="grid gap-8 border-b border-primary-800 py-12 lg:grid-cols-12 lg:items-center lg:py-16">
         <div className="min-w-0 lg:col-span-7">
           <Logo tone="light" imageClassName="h-16 w-auto min-w-24" />
@@ -75,8 +75,8 @@ export async function SiteFooter() {
               </a>
             </li>
             {siteConfig.emails.map((item) => (
-              <li key={item.address} className="mt-2">
-                <span className="block text-xs">{item.label}</span>
+              <li key={item.address} className="mt-3">
+                <span className="block text-xs text-primary-200">{item.label}</span>
                 <a href={`mailto:${item.address}`} className={`${linkClass} gap-2`}>
                   <Mail aria-hidden="true" className="size-4 shrink-0" />
                   <span className="min-w-0 break-all">{item.address}</span>

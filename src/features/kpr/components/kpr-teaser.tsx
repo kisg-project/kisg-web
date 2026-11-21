@@ -25,12 +25,12 @@ function lowestInstallment(price: number): { product: KprProduct; monthly: numbe
 export function KprTeaser({ price }: { price: number }) {
   const lowest = lowestInstallment(price);
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+    <div className="grid gap-6 rounded-4xl bg-gold-50 p-6 ring-1 ring-gold-200 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
       <div>
         {lowest ? (
           <>
             <p className="text-sm text-subtle-foreground">Angsuran mulai</p>
-            <p className="text-3xl font-extrabold text-primary tabular">
+            <p className="mt-1 text-4xl font-extrabold tracking-tight text-primary-900 tabular sm:text-5xl">
               {formatRupiah(lowest.monthly)}
               <span className="text-base font-semibold text-subtle-foreground"> per bulan</span>
             </p>
@@ -41,7 +41,7 @@ export function KprTeaser({ price }: { price: number }) {
           </>
         ) : null}
       </div>
-      <Button asChild size="lg">
+      <Button asChild size="lg" className="shadow-md">
         <Link href="/simulasi-kpr">
           Hitung simulasi lengkap
           <ArrowRight aria-hidden="true" />

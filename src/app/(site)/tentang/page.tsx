@@ -16,14 +16,15 @@ import { PageHero } from "@/components/site/page-hero";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { formatAddress, getPublishedProjects, lowestPrice } from "@/features/projects";
 import { formatRupiahRange } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
 const SERVICE_ICONS = [House, Handshake, MessageSquareText] as const;
 
-export const metadata: Metadata = {
-  title: "Tentang KIS Group",
+export const metadata: Metadata = pageMetadata({
+  path: "/tentang",
+  title: "Tentang kami",
   description: `${siteConfig.legalName}, developer perumahan di Bekasi. Profil, proyek, dan kontak kantor pemasaran.`,
-  alternates: { canonical: "/tentang" },
-};
+});
 
 // Isi dari Company Profile PT KISG (2024) dan data owner. Legalitas ditambah saat datanya ada
 // (docs/TODO-DATA.md bagian 2). Proyek lama tidak disebut (keputusan owner, Fase 1).

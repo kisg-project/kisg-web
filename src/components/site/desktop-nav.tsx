@@ -11,7 +11,7 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${base}/`) || pathname === base;
 }
 
-/** Menu lengkap di layar lebar. Garis emas tumbuh di bawah menu saat di-hover dan pada halaman aktif. */
+/** Menu lengkap di layar lebar. Latar pil mint muncul saat di-hover dan pada halaman aktif. */
 export function DesktopNav({ items }: { items: readonly NavItem[] }) {
   return <NavLinks items={items} pathname={usePathname()} />;
 }
@@ -29,18 +29,11 @@ export function NavLinks({ items, pathname }: { items: readonly NavItem[]; pathn
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group relative inline-flex h-11 items-center px-3 text-sm font-semibold text-foreground transition-colors hover:text-primary",
-                  active && "text-primary",
+                  "inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold text-neutral-800 transition-colors duration-200 hover:bg-primary-50 hover:text-primary-800",
+                  active && "bg-primary-50 text-primary-800",
                 )}
               >
                 {item.label}
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute inset-x-3 bottom-1.5 h-0.5 origin-left scale-x-0 rounded-sm bg-highlight transition-transform duration-200 group-hover:scale-x-100",
-                    active && "scale-x-100",
-                  )}
-                />
               </Link>
             </li>
           );
