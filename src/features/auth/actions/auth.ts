@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { isAppRole } from "@/config/roles";
 import { safeNextPath } from "@/config/portal";
 import { env } from "@/env";
+import { loadAccountRoles } from "@/lib/auth/account-roles";
 import { ActionError, actionClient, authActionClient } from "@/lib/safe-action";
 import { clientIp, hitRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -28,18 +28,15 @@ export const loginAction = actionClient.inputSchema(loginSchema).action(async ({
   });
   if (error) throw new ActionError(GENERIC_LOGIN_ERROR);
 
-  const [roleResult, profileResult] = await Promise.all([
-    supabase.from("user_roles").select("role").eq("user_id", data.user.id).maybeSingle(),
-    supabase.from("profiles").select("is_active").eq("id", data.user.id).maybeSingle(),
-  ]);
-  const role = roleResult.data?.role;
-  if (!role || !isAppRole(role) || !profileResult.data?.is_active) {
+  const { roles } = await loadAccountRoles(supabase, data.user.id);
+  if (roles.length === 0) {
     await supabase.auth.signOut();
-    throw new ActionError("Akun Anda tidak aktif. Hubungi admin.");
+    throw new ActionError("Akun Anda tidak aktif. Hubungi owner.");
   }
   // Redirect dari server: cookie sesi dan navigasi dikirim dalam satu response, tanpa refresh
-  // halaman login yang bisa terputus di Safari.
-  redirect(safeNextPath(parsedInput.next, role));
+  // halaman login yang bisa terputus di Safari. Akun yang belum lengkap diarahkan ke aktivasi oleh
+  // layout portal.
+  redirect(safeNextPath(parsedInput.next, roles));
 });
 
 /** Selalu menjawab sukses yang sama, supaya tidak membocorkan email mana yang terdaftar. */
@@ -77,5 +74,5 @@ export const updatePasswordAction = authActionClient
           : "Password gagal disimpan. Buka lagi tautan dari email, lalu coba lagi.",
       );
     }
-    redirect(safeNextPath(null, ctx.role));
+    redirect(safeNextPath(null, ctx.roles));
   });

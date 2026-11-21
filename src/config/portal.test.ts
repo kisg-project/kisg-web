@@ -3,25 +3,26 @@ import { PORTAL_AREAS, portalAccess, portalAreasFor, ROLE_HOME, safeNextPath } f
 
 describe("portalAccess", () => {
   it("halaman login dan lupa password publik", () => {
-    expect(portalAccess("/portal/login", null, false)).toBe("public");
-    expect(portalAccess("/portal/lupa-password", null, false)).toBe("public");
-    expect(portalAccess("/portal/auth/confirm", null, false)).toBe("public");
-    expect(portalAccess("/portal/auth/keluar", "marketing", true)).toBe("public");
+    expect(portalAccess("/portal/login", [], false)).toBe("public");
+    expect(portalAccess("/portal/lupa-password", [], false)).toBe("public");
+    expect(portalAccess("/portal/auth/confirm", [], false)).toBe("public");
+    expect(portalAccess("/portal/auth/keluar", ["marketing"], true)).toBe("public");
   });
 
   it("halaman portal lain butuh login", () => {
-    expect(portalAccess("/portal", null, false)).toBe("login");
-    expect(portalAccess("/portal/admin", null, false)).toBe("login");
+    expect(portalAccess("/portal", [], false)).toBe("login");
+    expect(portalAccess("/portal/admin", [], false)).toBe("login");
   });
 
   it("login tanpa role aktif ditolak, tetapi halaman penolakan tetap bisa dibuka", () => {
-    expect(portalAccess("/portal", null, true)).toBe("denied");
-    expect(portalAccess("/portal/akses-ditolak", null, true)).toBe("allowed");
+    expect(portalAccess("/portal", [], true)).toBe("denied");
+    expect(portalAccess("/portal/akses-ditolak", [], true)).toBe("allowed");
   });
 
   it.each([
     ["/portal/admin", "admin", "allowed"],
-    ["/portal/admin/pengguna", "owner", "allowed"],
+    ["/portal/admin/pengguna", "owner", "denied"],
+    ["/portal/owner/karyawan", "owner", "allowed"],
     ["/portal/admin", "marketing", "denied"],
     ["/portal/owner", "site_manager", "denied"],
     ["/portal/crm/leads", "marketing", "allowed"],
@@ -34,32 +35,52 @@ describe("portalAccess", () => {
     ["/portal/akun", "finance", "allowed"],
     ["/portal/administrasi", "marketing", "allowed"],
   ] as const)("%s untuk %s: %s", (path, role, expected) => {
-    expect(portalAccess(path, role, true)).toBe(expected);
+    expect(portalAccess(path, [role], true)).toBe(expected);
   });
 });
 
 describe("safeNextPath", () => {
   it("memakai beranda role kalau next kosong atau bukan path portal", () => {
-    expect(safeNextPath(null, "marketing")).toBe(ROLE_HOME.marketing);
-    expect(safeNextPath("https://evil.example/portal", "admin")).toBe(ROLE_HOME.admin);
-    expect(safeNextPath("//evil.example", "admin")).toBe(ROLE_HOME.admin);
-    expect(safeNextPath("/portal/login", "admin")).toBe(ROLE_HOME.admin);
+    expect(safeNextPath(null, ["marketing"])).toBe(ROLE_HOME.marketing);
+    expect(safeNextPath("https://evil.example/portal", ["admin"])).toBe(ROLE_HOME.admin);
+    expect(safeNextPath("//evil.example", ["admin"])).toBe(ROLE_HOME.admin);
+    expect(safeNextPath("/portal/login", ["admin"])).toBe(ROLE_HOME.admin);
   });
 
   it("meneruskan ke path yang diizinkan, menolak yang tidak", () => {
-    expect(safeNextPath("/portal/crm/leads", "marketing")).toBe("/portal/crm/leads");
-    expect(safeNextPath("/portal/admin", "marketing")).toBe(ROLE_HOME.marketing);
+    expect(safeNextPath("/portal/crm/leads", ["marketing"])).toBe("/portal/crm/leads");
+    expect(safeNextPath("/portal/admin", ["marketing"])).toBe(ROLE_HOME.marketing);
   });
 });
 
 describe("portalAreasFor", () => {
-  it("owner melihat semua area, marketing hanya area marketing", () => {
-    expect(portalAreasFor("owner")).toHaveLength(PORTAL_AREAS.length);
-    expect(portalAreasFor("marketing").map((area) => area.prefix)).toEqual([
+  it("owner melihat semua area kecuali area admin lama, marketing hanya area marketing", () => {
+    expect(portalAreasFor(["owner"])).toHaveLength(PORTAL_AREAS.length - 1);
+    expect(portalAreasFor(["marketing"]).map((area) => area.prefix)).toEqual([
       "/portal/crm",
       "/portal/marketing",
       "/portal/absensi",
     ]);
-    expect(portalAreasFor("finance").map((area) => area.prefix)).toEqual(["/portal/crm"]);
+    expect(portalAreasFor(["finance"]).map((area) => area.prefix)).toEqual(["/portal/crm"]);
+  });
+});
+
+describe("multi role (rangkap jabatan)", () => {
+  it("akses adalah gabungan semua role", () => {
+    const roles = ["finance", "site_supervisor"] as const;
+    expect(portalAccess("/portal/crm", roles, true)).toBe("allowed");
+    expect(portalAccess("/portal/lapangan", roles, true)).toBe("allowed");
+    expect(portalAccess("/portal/owner", roles, true)).toBe("denied");
+  });
+
+  it("menu gabungan tanpa duplikat, beranda mengikuti role utama", () => {
+    expect(portalAreasFor(["marketing", "site_supervisor"]).map((area) => area.prefix)).toEqual([
+      "/portal/crm",
+      "/portal/marketing",
+      "/portal/lapangan",
+      "/portal/absensi",
+    ]);
+    expect(safeNextPath(null, ["site_supervisor", "marketing"])).toBe(ROLE_HOME.site_supervisor);
+    expect(safeNextPath(null, [])).toBe("/portal/akses-ditolak");
   });
 });

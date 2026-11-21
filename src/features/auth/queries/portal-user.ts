@@ -2,15 +2,23 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
-import { isAppRole, type AppRole } from "@/config/roles";
+import type { AppRole } from "@/config/roles";
+import { loadAccountRoles } from "@/lib/auth/account-roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface PortalUser {
   id: string;
   email: string;
   fullName: string;
+  /** Role utama: menentukan beranda dan label utama. */
   role: AppRole;
-  aal: string;
+  /** Semua role (multi role). Hak akses adalah gabungan semuanya. */
+  roles: AppRole[];
+  phone: string | null;
+  avatarPath: string | null;
+  /** true kalau aktivasi lengkap: password, foto profil, dan nomor HP. */
+  complete: boolean;
+  needsPassword: boolean;
 }
 
 interface PortalSession {
@@ -30,27 +38,23 @@ const getPortalSession = cache(async (): Promise<PortalSession> => {
   const userId = data?.claims.sub;
   if (!userId) return { signedIn: false, user: null };
 
-  const [roleResult, profileResult] = await Promise.all([
-    supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
-    supabase
-      .from("profiles")
-      .select("email, full_name, is_active, deleted_at")
-      .eq("id", userId)
-      .maybeSingle(),
-  ]);
-  const role = roleResult.data?.role;
-  const profile = profileResult.data;
-  if (!role || !isAppRole(role) || !profile?.is_active || profile.deleted_at) {
-    return { signedIn: true, user: null };
-  }
+  const { roles, profile } = await loadAccountRoles(supabase, userId);
+  const [role] = roles;
+  if (!role || !profile) return { signedIn: true, user: null };
   return {
     signedIn: true,
     user: {
       id: userId,
       email: profile.email,
-      fullName: profile.full_name,
+      fullName: profile.fullName,
       role,
-      aal: typeof data.claims.aal === "string" ? data.claims.aal : "aal1",
+      roles,
+      phone: profile.phone,
+      avatarPath: profile.avatarPath,
+      needsPassword: profile.needsPassword,
+      complete: Boolean(
+        profile.activatedAt && profile.avatarPath && profile.phone && !profile.needsPassword,
+      ),
     },
   };
 });
@@ -61,14 +65,19 @@ export async function getPortalUser(): Promise<PortalUser | null> {
 }
 
 /**
- * Wajib login dengan salah satu role. Belum login: ke halaman masuk. Akun nonaktif atau tanpa role:
- * sesi diakhiri lewat /portal/auth/keluar (Server Component tidak bisa menghapus cookie sendiri).
- * Role tidak cocok: ke halaman akses ditolak.
+ * Wajib login dengan salah satu role (multi role: cukup salah satu cocok). Belum login: ke halaman
+ * masuk. Akun nonaktif atau tanpa role: sesi diakhiri lewat /portal/auth/keluar (Server Component
+ * tidak bisa menghapus cookie sendiri). Role tidak cocok: ke halaman akses ditolak. Aktivasi belum
+ * lengkap (password, foto profil, nomor HP): ke /portal/aktivasi, kecuali halaman itu sendiri.
  */
-export async function requirePortalUser(roles?: readonly AppRole[]): Promise<PortalUser> {
+export async function requirePortalUser(
+  roles?: readonly AppRole[],
+  options: { allowIncomplete?: boolean } = {},
+): Promise<PortalUser> {
   const { signedIn, user } = await getPortalSession();
   if (!signedIn) redirect("/portal/login");
   if (!user) redirect("/portal/auth/keluar?alasan=nonaktif");
-  if (roles && !roles.includes(user.role)) redirect("/portal/akses-ditolak");
+  if (!user.complete && !options.allowIncomplete) redirect("/portal/aktivasi");
+  if (roles && !roles.some((role) => user.roles.includes(role))) redirect("/portal/akses-ditolak");
   return user;
 }

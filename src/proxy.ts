@@ -1,11 +1,28 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isAppRole } from "@/config/roles";
+import { isAppRole, type AppRole } from "@/config/roles";
 import { portalAccess, ROLE_HOME } from "@/config/portal";
+import { resolvePortalRoute, toPublicPath } from "@/config/portal-host";
 
-// Proxy hanya untuk portal: menyegarkan sesi Supabase dan menolak rute di luar hak role.
-// Pengaman utama tetap RLS di database dan cek role di server action.
+// Proxy untuk portal: memilih host (subdomain portal), menyegarkan sesi Supabase, dan menolak rute di
+// luar hak role. Pengaman utama tetap RLS di database dan cek role di server action.
 export async function proxy(request: NextRequest) {
+  const route = resolvePortalRoute({
+    host: request.headers.get("host") ?? request.nextUrl.host,
+    pathname: request.nextUrl.pathname,
+    portalHost: process.env.PORTAL_HOST,
+  });
+  if (route.kind === "passthrough") return NextResponse.next();
+  if (route.kind === "not-found") {
+    // Path yang tidak ada: Next merender halaman 404 website dengan status 404.
+    return NextResponse.rewrite(new URL("/_portal-tidak-di-sini", request.url));
+  }
+  if (route.kind === "redirect") {
+    const destination = new URL(route.location, request.url);
+    destination.search = request.nextUrl.search;
+    return NextResponse.redirect(destination, 308);
+  }
+
   // Preview Vercel membaca konten publik dari database production (read-only), tetapi portal dimatikan
   // supaya kode yang belum di-merge tidak bisa mengubah data production.
   if (process.env.VERCEL_ENV === "preview") {
@@ -17,7 +34,13 @@ export async function proxy(request: NextRequest) {
     return new NextResponse("Portal belum dikonfigurasi untuk lingkungan ini.", { status: 503 });
   }
 
-  let response = NextResponse.next({ request });
+  const { internalPath, onPortalHost } = route;
+  const rewriteUrl = new URL(internalPath, request.url);
+  rewriteUrl.search = request.nextUrl.search;
+  const pass = () =>
+    onPortalHost ? NextResponse.rewrite(rewriteUrl, { request }) : NextResponse.next({ request });
+
+  let response = pass();
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll() {
@@ -25,7 +48,7 @@ export async function proxy(request: NextRequest) {
       },
       setAll(cookiesToSet, headers) {
         for (const { name, value } of cookiesToSet) request.cookies.set(name, value);
-        response = NextResponse.next({ request });
+        response = pass();
         for (const { name, value, options } of cookiesToSet) {
           response.cookies.set(name, value, options);
         }
@@ -37,13 +60,12 @@ export async function proxy(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  const role =
-    claims && isAppRole(claims.app_role) && claims.is_active === true ? claims.app_role : null;
-  const { pathname } = request.nextUrl;
-  const access = portalAccess(pathname, role, Boolean(claims));
+  const roles = claimRoles(claims);
+  const [role] = roles;
+  const access = portalAccess(internalPath, roles, Boolean(claims));
 
-  const redirectTo = (target: string, params?: Record<string, string>) => {
-    const destination = new URL(target, request.url);
+  const redirectTo = (internalTarget: string, params?: Record<string, string>) => {
+    const destination = new URL(toPublicPath(internalTarget, onPortalHost), request.url);
     for (const [name, value] of Object.entries(params ?? {}))
       destination.searchParams.set(name, value);
     const redirect = NextResponse.redirect(destination);
@@ -56,14 +78,31 @@ export async function proxy(request: NextRequest) {
     return redirect;
   };
 
-  if (access === "login") return redirectTo("/portal/login", { next: pathname });
+  if (access === "login") return redirectTo("/portal/login", { next: internalPath });
   if (access === "denied") return redirectTo("/portal/akses-ditolak");
-  if ((pathname === "/portal/login" || pathname === "/portal") && role) {
+  if ((internalPath === "/portal/login" || internalPath === "/portal") && role) {
     return redirectTo(ROLE_HOME[role]);
   }
   return response;
 }
 
+/**
+ * Role dari JWT: app_roles (multi role, role utama di depan). Token lama hanya punya app_role.
+ * Kosong kalau akun nonaktif.
+ */
+function claimRoles(claims: Record<string, unknown> | undefined): AppRole[] {
+  if (!claims || claims.is_active !== true) return [];
+  const list = Array.isArray(claims.app_roles) ? claims.app_roles : [claims.app_role];
+  return list.filter(isAppRole);
+}
+
 export const config = {
-  matcher: ["/portal/:path*"],
+  matcher: [
+    "/portal/:path*",
+    // Host portal (PORTAL_HOST harus berawalan "company."): semua path kecuali aset statis.
+    {
+      source: "/((?!_next/static|_next/image|images/|brand/|favicon.ico|robots.txt|sitemap.xml).*)",
+      has: [{ type: "host", value: "company\\..*" }],
+    },
+  ],
 };

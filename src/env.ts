@@ -17,6 +17,19 @@ export const env = createEnv({
     // Cloudflare Turnstile. Kosong sampai akun Cloudflare siap: verifikasi dilewati, form tetap dijaga
     // honeypot dan rate limit (src/lib/security/turnstile.ts).
     TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
+    // Host portal karyawan, misal company.kisgroup.co.id (harus berawalan "company.", lihat proxy.ts).
+    // Kosong sampai domain terhubung: portal tetap di /portal.
+    PORTAL_HOST: z
+      .string()
+      .regex(/^company\.[a-z0-9.-]+(:\d+)?$/, "PORTAL_HOST harus berawalan company.")
+      .optional(),
+    // Email aplikasi (undangan, slip gaji, notifikasi) lewat API Brevo. Kosong sampai Brevo siap:
+    // tautan undangan ditampilkan untuk disalin. MAILPIT_URL hanya untuk lokal dan CI (E2E).
+    BREVO_API_KEY: z.string().min(1).optional(),
+    EMAIL_FROM: z.email().default("notifikasi@kisgroup.co.id"),
+    EMAIL_FROM_NAME: z.string().min(1).default("KIS Group"),
+    EMAIL_REPLY_TO: z.email().default("corporate@kisgroup.co.id"),
+    MAILPIT_URL: z.url().optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.url(),
@@ -32,6 +45,12 @@ export const env = createEnv({
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     ENABLE_DEV_UI: process.env.ENABLE_DEV_UI,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
+    PORTAL_HOST: process.env.PORTAL_HOST,
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
+    EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
+    EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
+    MAILPIT_URL: process.env.MAILPIT_URL,
     // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
     // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
     NEXT_PUBLIC_SITE_URL:

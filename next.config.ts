@@ -7,11 +7,21 @@ const isDev = process.env.NODE_ENV === "development";
 // sedangkan halaman publik harus statis. Ditinjau ulang di Fase 9.
 // Tanpa upgrade-insecure-requests: Vercel selalu HTTPS (ditambah HSTS), dan direktif itu membuat
 // WebKit memaksa HTTPS ke server E2E lokal http://127.0.0.1 sehingga semua aset gagal dimuat.
+// Foto profil portal dibaca lewat signed URL Supabase Storage (bucket privat), jadi origin Supabase
+// diizinkan untuk gambar. Diambil dari env saat build (CI: Supabase lokal, Vercel: production).
+const supabaseOrigin = (() => {
+  try {
+    return process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).origin : "";
+  } catch {
+    return "";
+  }
+})();
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  `img-src 'self' data: blob:${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
   "font-src 'self'",
   "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
   // Cloudflare Turnstile (form publik) memakai iframe dari domain ini.

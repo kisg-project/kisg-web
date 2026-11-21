@@ -122,9 +122,9 @@ select lives_ok(
   $$insert into public.projects (slug, name) values ('uji-admin', 'Uji admin')$$,
   'admin bisa membuat proyek'
 );
-select lives_ok(
+select throws_ok(
   $$select public.set_user_role('00000000-0000-4000-8000-000000000001', 'owner')$$,
-  'admin bisa menetapkan role owner (undangan owner)'
+  '42501', null, 'admin tidak bisa mengatur role owner (sejak multi role, hanya owner)'
 );
 select throws_ok(
   $$select public.set_user_active('00000000-0000-4000-8000-000000000002', false)$$,

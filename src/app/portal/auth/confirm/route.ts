@@ -3,7 +3,14 @@ import type { EmailOtpType } from "@supabase/supabase-js";
 import { relativeRedirect } from "@/lib/http/redirect";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-const ALLOWED_TYPES: readonly EmailOtpType[] = ["invite", "recovery", "email", "email_change"];
+// magiclink: tautan undangan yang dikirim ulang (akun sudah ada, belum aktivasi).
+const ALLOWED_TYPES: readonly EmailOtpType[] = [
+  "invite",
+  "magiclink",
+  "recovery",
+  "email",
+  "email_change",
+];
 
 function isAllowedType(value: string | null): value is EmailOtpType {
   return (ALLOWED_TYPES as readonly (string | null)[]).includes(value);

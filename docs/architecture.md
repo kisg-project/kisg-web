@@ -81,7 +81,9 @@ A/B variant: `proxy.ts` memilih variant berdasarkan bobot traffic, menyimpan coo
 
 ### 2.3 Portal: `src/app/portal/` (PWA, scope `/portal/`)
 
-Domain portal (keputusan owner, 20 November 2026): portal karyawan hanya di `company.kisgroup.co.id`. `proxy.ts` me-rewrite path bersih di host itu (misal `/login`, `/crm`) ke `src/app/portal/...`, dan `/portal` di host lain (termasuk `kisgroup.co.id/portal`) menjadi 404. Aktif lewat env `PORTAL_HOST`. Sebelum domain terhubung, portal sementara di `kisg-web.vercel.app/portal`. Dikerjakan di tahap PWA.
+Domain portal (keputusan owner, 20 November 2026): portal karyawan hanya di `company.kisgroup.co.id`. `proxy.ts` me-rewrite path bersih di host itu (misal `/login`, `/crm`) ke `src/app/portal/...`, dan `/portal` di host lain (termasuk `kisgroup.co.id/portal`) menjadi 404. Aktif lewat env `PORTAL_HOST` (`src/config/portal-host.ts`). Sebelum domain terhubung, portal sementara di `kisg-web.vercel.app/portal`.
+
+Service worker ditulis manual (`src/features/pwa/service-worker.ts`, disajikan route `/portal/sw.js`), karena Serwist belum mendukung build Turbopack Next 16. Manifest dan service worker disajikan per request supaya `start_url` dan scope mengikuti host (`/` di subdomain, `/portal/` di host lain). Strategi: halaman selalu dari jaringan dengan halaman offline sebagai cadangan, aset `/_next/static` dan ikon dari cache, data dan request selain GET tidak pernah di-cache. Antrian laporan offline (Dexie) ditambah di Fase 8.
 
 | Route | Role | Rendering |
 |---|---|---|

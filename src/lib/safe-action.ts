@@ -1,6 +1,7 @@
 import "server-only";
 import { createSafeActionClient } from "next-safe-action";
-import { isAppRole, type AppRole } from "@/config/roles";
+import type { AppRole } from "@/config/roles";
+import { loadAccountRoles } from "@/lib/auth/account-roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 /** Error yang pesannya aman ditampilkan ke pengguna. Error lain diganti pesan umum. */
@@ -16,7 +17,7 @@ export const actionClient = createSafeActionClient({
 
 /**
  * Wajib sesi aktif. Role dan status aktif dibaca dari database (bukan JWT) supaya perubahan role
- * atau penonaktifan akun berlaku seketika.
+ * atau penonaktifan akun berlaku seketika. `role` adalah role utama, `roles` semua role akun.
  */
 export const authActionClient = actionClient.use(async ({ next }) => {
   const supabase = await createSupabaseServerClient();
@@ -24,26 +25,21 @@ export const authActionClient = actionClient.use(async ({ next }) => {
   const userId = data?.claims.sub;
   if (!userId) throw new ActionError("Sesi berakhir. Silakan masuk lagi.");
 
-  const [roleResult, profileResult] = await Promise.all([
-    supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
-    supabase.from("profiles").select("is_active, deleted_at").eq("id", userId).maybeSingle(),
-  ]);
-  const role = roleResult.data?.role;
-  const profile = profileResult.data;
-  if (!role || !isAppRole(role) || !profile?.is_active || profile.deleted_at) {
-    throw new ActionError("Akun Anda tidak aktif. Hubungi admin.");
-  }
-  return next({
-    ctx: { supabase, userId, role, aal: data.claims.aal },
-  });
+  const { roles, profile } = await loadAccountRoles(supabase, userId);
+  const [role] = roles;
+  if (!role || !profile) throw new ActionError("Akun Anda tidak aktif. Hubungi owner.");
+  return next({ ctx: { supabase, userId, role, roles, email: profile.email } });
 });
 
-/** Wajib salah satu role. Dipakai untuk aksi admin, owner, dan modul per divisi. */
-export function roleActionClient(roles: readonly AppRole[]) {
+/** Wajib salah satu role (multi role: cukup salah satu role akun cocok). */
+export function roleActionClient(allowed: readonly AppRole[]) {
   return authActionClient.use(async ({ next, ctx }) => {
-    if (!roles.includes(ctx.role)) {
+    if (!ctx.roles.some((role) => allowed.includes(role))) {
       throw new ActionError("Anda tidak punya akses untuk aksi ini.");
     }
     return next({ ctx });
   });
 }
+
+/** Aksi pengelola akun dan pengaturan: owner (dan akun admin lama sampai dinonaktifkan). */
+export const adminActionClient = roleActionClient(["owner", "admin"]);

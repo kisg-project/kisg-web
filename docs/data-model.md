@@ -56,7 +56,7 @@ Enum yang sama ada di `src/config/` (`roles.ts`, `pipeline.ts`, `units.ts`). Tes
 
 ```mermaid
 erDiagram
-  profiles ||--|| user_roles : "punya role"
+  profiles ||--|{ user_roles : "punya role (multi role)"
   teams ||--o{ team_members : "berisi"
   profiles ||--o{ team_members : "anggota"
   profiles ||--o{ project_assignments : "ditugaskan"
@@ -66,8 +66,8 @@ erDiagram
 
 | Tabel | Kolom utama | Index dan constraint |
 |---|---|---|
-| `profiles` | `id` (= `auth.users.id`), `full_name`, `phone`, `avatar_path`, `is_active bool`, `last_seen_at` | |
-| `user_roles` | `user_id` PK, `role app_role` | satu role per user |
+| `profiles` | `id` (= `auth.users.id`), `full_name`, `phone`, `avatar_path`, `is_active bool`, `last_seen_at`, `invited_at`, `invited_by`, `activated_at`, `needs_password` | foto profil dan nomor HP wajib sebelum memakai portal; `activated_at` dan `needs_password` hanya diisi server |
+| `user_roles` | PK (`user_id`, `role`), `is_primary` (unik per user) | multi role untuk rangkap jabatan (20 November 2026). Hak akses gabungan semua role, role utama untuk beranda. Diubah lewat `set_user_roles` (role owner hanya oleh owner) |
 | `teams` | `name`, `kind` (marketing, lapangan), `leader_id` | unique `name` |
 | `team_members` | `team_id`, `user_id`, `receives_leads bool`, `lead_project_ids uuid[]` (kosong = semua proyek) | PK (`team_id`, `user_id`), satu tim aktif per user |
 | `project_assignments` | `project_id`, `user_id`, `role_on_project` (supervisor, manager, marketing) | unique (`project_id`, `user_id`) |

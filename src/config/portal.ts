@@ -8,6 +8,10 @@ export const PORTAL_PUBLIC_PATHS = [
   "/portal/lupa-password",
   "/portal/auth/confirm",
   "/portal/auth/keluar",
+  // PWA: manifest, service worker, dan halaman offline harus bisa dimuat sebelum login.
+  "/portal/manifest.webmanifest",
+  "/portal/sw.js",
+  "/portal/offline",
 ] as const;
 
 /** Halaman yang butuh sesi tetapi tidak butuh role tertentu. */
@@ -16,6 +20,8 @@ export const PORTAL_SESSION_ONLY_PATHS = [
   "/portal/akses-ditolak",
   "/portal/reset-password",
   "/portal/akun",
+  "/portal/aktivasi",
+  "/portal/foto-profil",
 ] as const;
 
 const ALL_STAFF: readonly AppRole[] = [
@@ -37,7 +43,8 @@ export interface PortalArea {
 }
 
 export const PORTAL_AREAS: readonly PortalArea[] = [
-  { prefix: "/portal/admin", roles: ["owner", "admin"], label: "Admin", shortLabel: "Admin" },
+  // Area akun admin lama (role admin tidak dipakai lagi). Owner memakai area owner.
+  { prefix: "/portal/admin", roles: ["admin"], label: "Admin", shortLabel: "Admin" },
   {
     prefix: "/portal/owner",
     roles: ["owner", "admin"],
@@ -87,32 +94,40 @@ function matches(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
-/** Menentukan akses ke path portal untuk role (null kalau belum login atau tanpa role aktif). */
+/**
+ * Menentukan akses ke path portal. `roles` berisi semua role akun (multi role, hak akses gabungan),
+ * kosong kalau belum login atau akun tanpa role aktif.
+ */
 export function portalAccess(
   pathname: string,
-  role: AppRole | null,
+  roles: readonly AppRole[],
   signedIn: boolean,
 ): PortalAccess {
   if (PORTAL_PUBLIC_PATHS.some((path) => matches(pathname, path))) return "public";
   if (!signedIn) return "login";
   // Halaman penolakan selalu bisa dibuka setelah login, supaya tidak terjadi redirect berputar.
   if (pathname === "/portal/akses-ditolak") return "allowed";
-  if (!role || !ALL_STAFF.includes(role)) return "denied";
+  if (!roles.some((role) => ALL_STAFF.includes(role))) return "denied";
   if ((PORTAL_SESSION_ONLY_PATHS as readonly string[]).includes(pathname)) return "allowed";
   const area = PORTAL_AREAS.find((item) => matches(pathname, item.prefix));
   if (!area) return "allowed";
-  return area.roles.includes(role) ? "allowed" : "denied";
+  return area.roles.some((role) => roles.includes(role)) ? "allowed" : "denied";
 }
 
-/** Path tujuan setelah login: hanya path portal internal (cegah open redirect). */
-export function safeNextPath(next: string | null | undefined, role: AppRole): string {
+/**
+ * Path tujuan setelah login: hanya path portal internal (cegah open redirect). Beranda mengikuti
+ * role utama (elemen pertama `roles`).
+ */
+export function safeNextPath(next: string | null | undefined, roles: readonly AppRole[]): string {
+  const [primary] = roles;
+  const home = primary ? ROLE_HOME[primary] : "/portal/akses-ditolak";
   if (next && /^\/portal(\/[\w\-/]*)?$/.test(next) && !next.startsWith("/portal/login")) {
-    return portalAccess(next, role, true) === "allowed" ? next : ROLE_HOME[role];
+    return portalAccess(next, roles, true) === "allowed" ? next : home;
   }
-  return ROLE_HOME[role];
+  return home;
 }
 
-/** Area portal yang boleh dibuka role ini, dalam urutan navigasi. */
-export function portalAreasFor(role: AppRole): readonly PortalArea[] {
-  return PORTAL_AREAS.filter((area) => area.roles.includes(role));
+/** Area portal yang boleh dibuka akun dengan role-role ini (gabungan), dalam urutan navigasi. */
+export function portalAreasFor(roles: readonly AppRole[]): readonly PortalArea[] {
+  return PORTAL_AREAS.filter((area) => area.roles.some((role) => roles.includes(role)));
 }

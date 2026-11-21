@@ -16,6 +16,7 @@ const PROFILE_LABELS: Record<ImageProfileName, string> = {
   content: "Konten website",
   siteReport: "Laporan lapangan",
   attendance: "Selfie absensi",
+  avatar: "Foto profil",
   document: "Dokumen konsumen",
 };
 

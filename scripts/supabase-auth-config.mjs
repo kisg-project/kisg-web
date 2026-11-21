@@ -36,8 +36,11 @@ const payload = {
   mailer_secure_email_change_enabled: true,
   refresh_token_rotation_enabled: true,
   // 2FA TOTP (wajib untuk owner dan admin, dipaksa di aplikasi).
-  mfa_totp_enroll_enabled: true,
-  mfa_totp_verify_enabled: true,
+  // Verifikasi dua langkah tidak dipakai (keputusan owner, 20 November 2026).
+  // Tautan undangan dan lupa password berlaku 24 jam (sama dengan supabase/config.toml).
+  mailer_otp_exp: 86400,
+  mfa_totp_enroll_enabled: false,
+  mfa_totp_verify_enabled: false,
   hook_custom_access_token_enabled: true,
   hook_custom_access_token_uri: "pg-functions://postgres/public/custom_access_token_hook",
   // Batas ketat per IP per 5 menit untuk login dan verifikasi.
