@@ -91,7 +91,16 @@ function timeWib(date: Date): string {
  * Alur clock in atau clock out: lokasi GPS, foto wajah dengan kedip, lalu kirim. Jarak dan waktu
  * dihitung server. Di luar radius: tawarkan pengajuan absen di luar lokasi dengan alasan.
  */
-export function ClockFlow({ kind, homeHref }: { kind: AttendanceKind; homeHref: string }) {
+export function ClockFlow({
+  kind,
+  homeHref,
+  nextHref,
+}: {
+  kind: AttendanceKind;
+  homeHref: string;
+  /** Tujuan tombol Lanjut setelah absen tercatat: formulir rencana atau hasil kerja. */
+  nextHref: string;
+}) {
   const geo = useGeolocation();
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPath, setPhotoPath] = useState<string | null>(null);
@@ -157,7 +166,7 @@ export function ClockFlow({ kind, homeHref }: { kind: AttendanceKind; homeHref: 
             : ""}
         </p>
         <Button asChild size="lg">
-          <Link href={homeHref}>Lanjut</Link>
+          <Link href={nextHref}>Lanjut</Link>
         </Button>
       </div>
     );

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Aktifkan akun" };
  * nomor HP). Akun yang sudah lengkap langsung ke berandanya.
  */
 export default async function ActivationPage() {
-  const user = await requirePortalUser(undefined, { allowIncomplete: true });
+  const user = await requirePortalUser(undefined, { allowIncomplete: true, skipWorkReport: true });
   if (user.complete) redirect(safeNextPath(null, user.roles));
   return (
     <>

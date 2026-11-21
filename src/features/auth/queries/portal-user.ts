@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { mustAttend } from "@/config/attendance";
 import type { AppRole } from "@/config/roles";
 import { loadAccountRoles } from "@/lib/auth/account-roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -72,12 +73,39 @@ export async function getPortalUser(): Promise<PortalUser | null> {
  */
 export async function requirePortalUser(
   roles?: readonly AppRole[],
-  options: { allowIncomplete?: boolean } = {},
+  options: { allowIncomplete?: boolean; skipWorkReport?: boolean } = {},
 ): Promise<PortalUser> {
   const { signedIn, user } = await getPortalSession();
   if (!signedIn) redirect("/portal/login");
   if (!user) redirect("/portal/auth/keluar?alasan=nonaktif");
   if (!user.complete && !options.allowIncomplete) redirect("/portal/aktivasi");
   if (roles && !roles.some((role) => user.roles.includes(role))) redirect("/portal/akses-ditolak");
+  if (!options.skipWorkReport && mustAttend(user.roles)) {
+    const target = await pendingWorkReport(user.id);
+    if (target) redirect(target);
+  }
   return user;
 }
+
+/**
+ * Laporan harian wajib (keputusan owner, 20 November 2026): sudah clock in tapi belum ada rencana,
+ * ke formulir rencana. Sudah clock out tapi belum ada hasil, ke formulir hasil. Selain itu null.
+ */
+const pendingWorkReport = cache(async (userId: string): Promise<string | null> => {
+  const supabase = await createSupabaseServerClient();
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date());
+  const [{ data: record }, { data: reports }] = await Promise.all([
+    supabase
+      .from("attendance_records")
+      .select("clock_out_at")
+      .eq("user_id", userId)
+      .eq("work_date", today)
+      .maybeSingle(),
+    supabase.from("work_reports").select("kind").eq("user_id", userId).eq("work_date", today),
+  ]);
+  if (!record) return null;
+  const kinds = new Set((reports ?? []).map((row) => row.kind));
+  if (!kinds.has("rencana")) return "/portal/absensi/rencana";
+  if (record.clock_out_at && !kinds.has("hasil")) return "/portal/absensi/hasil";
+  return null;
+});

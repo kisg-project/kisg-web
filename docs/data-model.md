@@ -40,6 +40,7 @@ Disusun di Fase 0, diimplementasikan sebagai migrasi di Fase 2 (dan fase fitur t
 | `issue_priority` | rendah, sedang, tinggi, kritis |
 | `issue_status` | terbuka, ditangani, selesai |
 | `attendance_kind` | masuk, pulang |
+| `work_report_kind` | rencana, hasil |
 | `attendance_status` | valid, di_luar_radius, disetujui, ditolak, perlu_tinjau |
 | `marketing_activity_type` | follow_up, survei, canvassing, open_table, konten, lainnya |
 | `kpi_period` | mingguan, bulanan |
@@ -180,6 +181,7 @@ erDiagram
   profiles ||--o{ attendance_records : "absen"
   work_locations ||--o{ attendance_records : "lokasi"
   profiles ||--o{ attendance_exceptions : "di luar lokasi"
+  profiles ||--o{ work_reports : "laporan harian"
   work_locations ||--o{ work_schedules : "jam titik"
   projects ||--o| work_locations : "lokasi proyek"
 ```
@@ -196,6 +198,7 @@ erDiagram
 | `work_schedules` | `scope schedule_scope` (perusahaan, lokasi, karyawan), `work_location_id null`, `user_id null`, `start_time`, `end_time`, `workdays smallint[]` (1 Senin sampai 7 Minggu), `late_tolerance_min` | satu baris per lingkup dan target. Urutan berlaku: karyawan, lalu titik, lalu perusahaan (`private.effective_schedule`) |
 | `attendance_records` | `user_id`, `work_date` (tanggal WIB), `clock_in_at`, `clock_in_location_id`, `clock_in_lat/lng/accuracy_m/distance_m`, `clock_in_photo_path`, `late_minutes`, kolom `clock_out_*` yang sama, `early_minutes`, `clock_in_exception_id`, `clock_out_exception_id` | unique (`user_id`, `work_date`). Hanya ditulis lewat RPC `attendance_clock` (jarak dan waktu dihitung server) |
 | `attendance_exceptions` | `user_id`, `work_date`, `kind attendance_kind`, `lat`, `lng`, `accuracy_m`, `nearest_location_id`, `nearest_distance_m`, `reason` (10 sampai 500 karakter), `photo_path`, `status request_status`, `decided_by`, `decided_at`, `decision_note` | satu pengajuan terbuka per user, tanggal, dan jenis. Ditulis lewat RPC `request_attendance_exception` |
+| `work_reports` | `user_id`, `work_date` (tanggal WIB), `kind work_report_kind`, `content` (10 sampai 4.000 karakter), `attachments jsonb` (maksimal 10: `path`, `name`, `type`, `size`) | unique (`user_id`, `work_date`, `kind`). Rencana butuh clock in hari itu, hasil butuh clock out. Hanya ditulis lewat RPC `submit_work_report` (lampiran harus milik user dan ada di bucket). Portal mengalihkan ke formulir yang belum diisi sebelum modul lain bisa dibuka |
 
 Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per item. Dihitung lewat view `unit_progress` dan materialized view `project_progress`, disegarkan saat laporan disetujui.
 
@@ -294,6 +297,7 @@ Semua role staf mensyaratkan `is_active = true`. Penulisan yang melibatkan beber
 | `public-assets` | Ya | Foto proyek, berita, promo, banner, logo | 2 MB, gambar | Tulis: owner, admin |
 | `site-reports` | Tidak | Foto laporan lapangan | 1 MB, gambar | Tulis: pembuat laporan di folder `user_id`-nya. Baca: P dan owner/admin |
 | `attendance-photos` | Tidak | Selfie absensi `<user>/<tanggal WIB>/<jenis>-<uuid>` | 200 KB, WebP dan JPEG | Tulis: karyawan wajib absen di foldernya sendiri. Baca: pemilik, owner/admin, manajer timnya |
+| `work-attachments` | Tidak | Lampiran rencana dan hasil kerja `<user>/<tanggal WIB>/<uuid>.<ext>` | 2 MB, WebP, JPEG, PDF, DOCX, XLSX (foto dikompres ke 300 KB, server menolak foto di atas 400 KB) | Tulis: karyawan wajib absen di foldernya sendiri. Baca: pemilik, owner/admin, manajer timnya |
 | `customer-docs` | Tidak | KTP, slip gaji, dsb | 2 MB, gambar dan PDF | Tulis dan baca mengikuti RLS `leads` |
 | `job-applications` | Tidak | CV pelamar | 2 MB, PDF | Tulis: server action. Baca: owner, admin |
 | `avatars` | Tidak | Foto profil staf | 256 KB, gambar | Tulis: user sendiri. Baca: staf |
