@@ -30,7 +30,7 @@ test.describe("Lupa password", () => {
 
     // Aturan password dicek sebelum dikirim.
     await page.getByLabel("Password baru", { exact: true }).fill("pendek");
-    await page.getByLabel("Ulangi password baru").fill("lain");
+    await page.getByLabel("Ulangi password baru", { exact: true }).fill("lain");
     await page.getByRole("button", { name: "Simpan password" }).click();
     await expect(page.getByText("Password minimal 10 karakter.")).toBeVisible();
     await expect(page.getByText("Konfirmasi password tidak sama.")).toBeVisible();
@@ -38,7 +38,7 @@ test.describe("Lupa password", () => {
     // Dibuat saat test berjalan (bukan literal) supaya tidak dianggap rahasia oleh gitleaks.
     const newPassword = `Baru${randomUUID().slice(0, 8)}X9`;
     await page.getByLabel("Password baru", { exact: true }).fill(newPassword);
-    await page.getByLabel("Ulangi password baru").fill(newPassword);
+    await page.getByLabel("Ulangi password baru", { exact: true }).fill(newPassword);
     await page.getByRole("button", { name: "Simpan password" }).click();
     await expect(page).toHaveURL("/portal/lapangan");
 

@@ -15,7 +15,7 @@ export default async function EmployeesPage() {
         title="Karyawan"
         description="Undang karyawan lewat email, atur role dan rangkap jabatan, nonaktifkan akun yang tidak dipakai."
       />
-      <section aria-labelledby="undang-judul" className="rounded-lg border bg-card p-5 sm:p-6">
+      <section aria-labelledby="undang-judul" className="app-card p-5 sm:p-6">
         <h2 id="undang-judul" className="mb-4 text-lg font-bold">
           Undang karyawan
         </h2>

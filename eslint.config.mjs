@@ -97,6 +97,8 @@ export default defineConfig([
     "playwright-report/**",
     "test-results/**",
     "next-env.d.ts",
+    // Aset statis, termasuk WASM MediaPipe hasil salinan scripts/copy-mediapipe.mjs.
+    "public/**",
     // Hasil generate Supabase CLI, diperiksa sama persis oleh db.yml.
     "src/lib/supabase/database.types.ts",
   ]),

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
+import { PasswordField } from "@/components/shared/password-field";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { loginAction } from "../actions/auth";
@@ -55,9 +56,8 @@ export function LoginForm({
         error={form.formState.errors.email?.message}
         {...form.register("email")}
       />
-      <TextField
+      <PasswordField
         label="Password"
-        type="password"
         autoComplete="current-password"
         error={form.formState.errors.password?.message}
         {...form.register("password")}

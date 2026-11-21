@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Avatar } from "@/components/shared/avatar";
 import { portalAreasFor } from "@/config/portal";
-import { ROLE_LABELS } from "@/config/roles";
 import { getPortalUser, LogoutButton } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
 import { PortalBottomNav, PortalSidebarNav, type PortalNavItem } from "./portal-nav";
@@ -28,22 +27,14 @@ export async function UserMenu() {
   const user = await getPortalUser();
   if (!user) return null;
   const photo = await avatarUrl(user.avatarPath);
-  const extra = user.roles.length - 1;
   return (
-    <div className="flex min-w-0 items-center gap-2">
+    <div className="flex items-center gap-1">
       <Link
         href="/portal/akun"
-        className="flex min-h-11 min-w-0 items-center gap-2 rounded-md px-1 hover:bg-accent"
+        className="inline-flex size-11 items-center justify-center rounded-full ring-2 ring-background transition-transform hover:ring-primary-200 motion-safe:active:scale-95"
       >
         <span className="sr-only">Akun saya, </span>
-        <Avatar src={photo} name={user.fullName} className="size-9" />
-        <span className="hidden min-w-0 text-right sm:block">
-          <span className="block truncate text-sm font-semibold">{user.fullName}</span>
-          <span className="block truncate text-xs text-subtle-foreground">
-            {ROLE_LABELS[user.role]}
-            {extra > 0 ? ` +${String(extra)}` : ""}
-          </span>
-        </span>
+        <Avatar src={photo} name={user.fullName} className="size-10" />
       </Link>
       <LogoutButton />
     </div>

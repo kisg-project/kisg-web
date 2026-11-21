@@ -9,8 +9,10 @@ export default async function LoginPage({ searchParams }: PageProps<"/portal/log
   const message = typeof params.error === "string" ? params.error : undefined;
   return (
     <>
-      <h1 className="text-xl font-bold">Masuk ke portal</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Khusus karyawan KIS Group.</p>
+      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
+        Masuk ke portal
+      </h1>
+      <p className="mt-3 text-subtle-foreground">Khusus karyawan KIS Group.</p>
       <div className="mt-6">
         <LoginForm next={next} message={message} />
       </div>

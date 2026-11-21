@@ -119,9 +119,13 @@ test.describe("Karyawan (owner)", () => {
     expect(stored?.size ?? Infinity).toBeLessThanOrEqual(100 * 1024);
 
     // Menu gabungan dua role.
-    const nav = invitee.getByRole("navigation").first();
-    await expect(nav.getByRole("link", { name: /Lapangan|Laporan lapangan/ })).toBeVisible();
-    await expect(nav.getByRole("link", { name: "CRM" })).toBeVisible();
+    const desktop = (invitee.viewportSize()?.width ?? 0) >= 1024;
+    const nav = invitee.getByRole("navigation", {
+      name: desktop ? "Menu portal" : "Menu portal bawah",
+      exact: true,
+    });
+    await expect(nav.getByRole("link", { name: "Lapangan", exact: true })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "CRM", exact: true })).toBeVisible();
     await context.close();
   });
 

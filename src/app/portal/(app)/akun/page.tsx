@@ -14,21 +14,21 @@ export default async function AccountPage() {
     <div className="grid max-w-3xl gap-6">
       <PageHeader title="Akun saya" description={user.email} />
 
-      <section aria-labelledby="akun-foto" className="rounded-lg border bg-card p-5 sm:p-6">
+      <section aria-labelledby="akun-foto" className="app-card p-5 sm:p-6">
         <h2 id="akun-foto" className="sr-only">
           Foto profil
         </h2>
         <ProfilePhotoForm name={user.fullName} avatarUrl={await avatarUrl(user.avatarPath)} />
       </section>
 
-      <section aria-labelledby="akun-data" className="rounded-lg border bg-card p-5 sm:p-6">
+      <section aria-labelledby="akun-data" className="app-card p-5 sm:p-6">
         <h2 id="akun-data" className="mb-4 text-lg font-bold">
           Data diri
         </h2>
         <ProfileForm fullName={user.fullName} phone={user.phone} />
       </section>
 
-      <section aria-labelledby="akun-role" className="rounded-lg border bg-card p-5 sm:p-6">
+      <section aria-labelledby="akun-role" className="app-card p-5 sm:p-6">
         <h2 id="akun-role" className="text-lg font-bold">
           Role
         </h2>
@@ -46,7 +46,7 @@ export default async function AccountPage() {
         </ul>
       </section>
 
-      <section aria-labelledby="akun-password" className="rounded-lg border bg-card p-5 sm:p-6">
+      <section aria-labelledby="akun-password" className="app-card p-5 sm:p-6">
         <h2 id="akun-password" className="mb-4 text-lg font-bold">
           Ganti password
         </h2>

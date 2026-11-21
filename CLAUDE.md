@@ -214,6 +214,16 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Foto stok orang (bukan rumah) boleh untuk bagian yang tidak menggambarkan proyek: banner konsultasi, karir, ilustrasi berita (keputusan owner, 20 November 2026). Hanya lisensi bebas pakai komersial, sumber dicatat di `docs/brand.md`. Satu foto tidak tampil dua kali di halaman yang sama.
 - Semua kartu dan tombol punya efek hover (kartu naik dan ikon berubah warna, panah tombol bergeser ke kanan). Footer memakai logo versi terang dan peta Indonesia bergaya titik dengan penanda kantor yang berdenyut.
 - Portal internal: padat informasi tapi rapi, mobile first (dipakai di lapangan), target sentuh minimal 44px, mendukung dark mode.
+- Tampilan portal PWA, halaman masuk portal, dan halaman masuk CMS mengikuti gaya aplikasi Shaflow (keputusan owner, 21 November 2026), menggantikan aturan radius kecil dan tanpa glassmorphism khusus untuk area itu:
+  - halaman masuk: foto proyek besar dengan lembar form bersudut lebar;
+  - header lengket yang buram saat digulir;
+  - menu pil melayang di bawah (HP) dan rel melayang di kiri (desktop);
+  - kartu sapaan berfoto dengan chip semi-transparan;
+  - kartu `app-card` (radius 1,5 rem, bayangan lembut);
+  - rasa aplikasi lewat kelas `app-feel` (tanpa highlight tap dan tanpa seleksi teks kecuali di field isian).
+
+  Website publik tetap bergaya corporate.
+- Semua isian gambar di CMS memakai unggahan file (dikompres di browser), bukan menempel tautan.
 - Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis.
 
 ### Responsif di semua perangkat (wajib)

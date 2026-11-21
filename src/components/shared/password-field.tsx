@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { passwordStrength, type PasswordStrength } from "../utils/password-strength";
+import { passwordStrength, type PasswordStrength } from "@/lib/auth/password-strength";
 
 const STRENGTH: Record<
   Exclude<PasswordStrength, "kosong">,
