@@ -11,6 +11,7 @@ import {
   Shuffle,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
+import { EmptyState } from "@/components/shared/state-message";
 import { Button } from "@/components/ui/button";
 import { PORTAL_AREAS } from "@/config/portal";
 import { getMyAttendance, getMyWorkReports, type AttendanceDay } from "@/features/attendance";
@@ -239,7 +240,10 @@ export default async function AttendancePage() {
           <Clock aria-hidden="true" className="size-5" />7 hari terakhir
         </h2>
         {history.length === 0 ? (
-          <p className="text-sm text-subtle-foreground">Belum ada riwayat absensi.</p>
+          <EmptyState
+            title="Belum ada riwayat absensi"
+            description="Riwayat 7 hari terakhir tampil di sini setelah Anda clock in."
+          />
         ) : (
           <ul aria-label="Riwayat absensi" className="grid gap-2">
             {history.map((day) => (

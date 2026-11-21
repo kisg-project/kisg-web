@@ -159,6 +159,11 @@ Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `conte
 | Owner menambah titik absensi dengan "Pakai lokasi saya sekarang", validasi nama, data tersimpan | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Jam kerja: jam pulang sebelum jam masuk ditolak, jam khusus per titik disimpan lalu dihapus | `absensi/absensi.spec.ts` | PWA | Ditulis |
 | Database: jarak, titik terdekat, jam berlapis (karyawan, titik, perusahaan), foto milik sendiri, radius, pengajuan ganda, owner dan CMS tanpa absensi, RLS keuangan | `supabase/tests/database/07_attendance.test.sql` | PWA | Ditulis |
+| Dashboard owner: grafik kehadiran 14 hari dan laporan harian, tombol Lihat tabel menampilkan 14 baris, rekap kehadiran per tanggal dengan terlambat dan rencana kerja, axe dan responsif | `owner/kehadiran.spec.ts` | PWA | Ditulis |
+| Persetujuan absen di luar lokasi: password salah ditolak, password benar menyetujui (absen tercatat dari pengajuan, cap tersimpan), halaman verifikasi cocok lalu tidak cocok setelah isi diubah | `owner/kehadiran.spec.ts` | PWA | Ditulis |
+| Penolakan wajib alasan dan tidak mencatat absen, kode verifikasi tidak dikenal 404, karyawan biasa ditolak dari rekap | `owner/kehadiran.spec.ts` | PWA | Ditulis |
+| Dialog tambah titik absensi (klik di luar tidak menutup, Batal, Simpan), tambah jam khusus lewat dialog, hapus lewat konfirmasi, undang karyawan lewat dialog, nonaktifkan dan batalkan undangan lewat konfirmasi | `absensi/absensi.spec.ts`, `owner/karyawan.spec.ts` | PWA | Ditulis |
+| Database persetujuan digital: fungsi keputusan tertutup untuk client, cap tidak bisa ditulis, diubah, atau dihapus, pengaju tidak memutuskan sendiri, wewenang owner dan manajer tim, penolakan wajib alasan, verifikasi anon cocok lalu tidak cocok | `supabase/tests/database/10_approvals.test.sql` | PWA | Ditulis |
 | Database laporan harian: rencana sebelum clock in dan hasil sebelum clock out ditolak, isi pendek, lampiran orang lain, tulis langsung ke tabel ditolak, satu baris per hari, RLS pemilik, karyawan lain, dan owner | `supabase/tests/database/09_work_reports.test.sql` | PWA | Ditulis |
 
 ### Admin CMS (`e2e/admin/`, Fase 4)

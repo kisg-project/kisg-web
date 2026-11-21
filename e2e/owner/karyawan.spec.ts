@@ -31,6 +31,7 @@ async function profileOf(email: string) {
 /** Owner mengisi form undangan: nama, email, dan daftar role (role pertama jadi role utama). */
 async function invite(page: Page, input: { name: string; email: string; roles: string[] }) {
   await page.goto("/portal/owner/karyawan");
+  await page.getByRole("button", { name: "Undang karyawan" }).click();
   const form = page.getByRole("form", { name: "Undang karyawan" });
   await form.getByLabel("Nama lengkap").fill(input.name);
   await form.getByLabel("Email").fill(input.email);
@@ -155,6 +156,7 @@ test.describe("Karyawan (owner)", () => {
       .getByRole("listitem", { name: "Undangan Ulang" })
       .getByRole("button", { name: "Batalkan undangan" })
       .click();
+    await page.getByRole("dialog").getByRole("button", { name: "Ya, batalkan" }).click();
     await expect(page.getByRole("listitem", { name: "Undangan Ulang" })).toHaveCount(0);
     const { data } = await adminClient().auth.admin.getUserById(id);
     expect(data.user).toBeNull();
@@ -178,6 +180,9 @@ test.describe("Karyawan (owner)", () => {
     );
 
     await card.getByRole("button", { name: "Nonaktifkan" }).click();
+    const confirm = page.getByRole("dialog", { name: `Nonaktifkan akun ${target.fullName}?` });
+    await confirm.getByRole("button", { name: "Ya, nonaktifkan" }).click();
+    await expect(confirm).toBeHidden();
     await expect(card.getByText("Nonaktif", { exact: true })).toBeVisible();
     const { data: banned } = await adminClient().auth.admin.getUserById(target.id);
     expect(banned.user?.banned_until).toBeTruthy();
@@ -193,9 +198,10 @@ test.describe("Karyawan (owner)", () => {
     const self = page.getByRole("listitem").filter({ hasText: "Anda" });
     await expect(self.getByRole("button", { name: "Nonaktifkan" })).toBeDisabled();
     await expect(self.getByRole("button", { name: "Ubah role" })).toBeDisabled();
+    await page.getByRole("button", { name: "Undang karyawan" }).click();
     const form = page.getByRole("form", { name: "Undang karyawan" });
     await expect(form.getByLabel("Admin", { exact: true })).toHaveCount(0);
-    await expect(form.getByLabel("Owner", { exact: true })).toBeVisible();
+    await expect(form.getByLabel("Direktur Utama", { exact: true })).toBeVisible();
   });
 });
 

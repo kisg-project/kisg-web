@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { Clock, Plus, Trash2 } from "lucide-react";
+import { ConfirmDialog, FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
+import { toast } from "@/components/shared/toast";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -38,12 +40,17 @@ export function ScheduleForm({
   locations,
   employees,
   fixedScope,
+  onDone,
+  onCancel,
 }: {
   initial?: ScheduleInput;
   locations: readonly Choice[];
   employees: readonly Choice[];
   /** Untuk jam kerja perusahaan: lingkup tidak bisa diganti. */
   fixedScope?: boolean;
+  onDone?: () => void;
+  /** Diisi saat form tampil di dialog: footer Batal dan Simpan. */
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const form = useForm<ScheduleInput>({
@@ -62,6 +69,7 @@ export function ScheduleForm({
     onSuccess() {
       toast.success("Jam kerja tersimpan.");
       if (!fixedScope) form.reset();
+      onDone?.();
       router.refresh();
     },
   });
@@ -208,11 +216,15 @@ export function ScheduleForm({
           {result.serverError}
         </p>
       ) : null}
-      <div>
-        <Button type="submit" disabled={isExecuting}>
-          {isExecuting ? "Menyimpan" : "Simpan jam kerja"}
-        </Button>
-      </div>
+      {onCancel ? (
+        <FormDialogFooter busy={isExecuting} onCancel={onCancel} />
+      ) : (
+        <div>
+          <Button type="submit" variant="save" disabled={isExecuting}>
+            {isExecuting ? "Menyimpan" : "Simpan jam kerja"}
+          </Button>
+        </div>
+      )}
     </form>
   );
 }
@@ -220,24 +232,64 @@ export function ScheduleForm({
 /** Hapus jam kerja khusus (kembali ke jam kerja perusahaan). */
 export function DeleteScheduleButton({ id, name }: { id: string; name: string }) {
   const router = useRouter();
-  const { execute, isExecuting } = useAction(deleteScheduleAction, {
+  const [open, setOpen] = useState(false);
+  const { execute, isExecuting, result } = useAction(deleteScheduleAction, {
     onSuccess() {
+      setOpen(false);
       toast.success("Jam kerja khusus dihapus.");
       router.refresh();
     },
   });
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      aria-label={`Hapus jam kerja ${name}`}
-      disabled={isExecuting}
-      onClick={() => {
+    <ConfirmDialog
+      open={open}
+      onOpenChange={setOpen}
+      title={`Hapus jam kerja ${name}?`}
+      description="Jam kerja kembali mengikuti jam kerja perusahaan."
+      confirmLabel="Ya, hapus"
+      busyLabel="Menghapus"
+      icon={Trash2}
+      busy={isExecuting}
+      error={result.serverError}
+      onConfirm={() => {
         execute({ id });
       }}
+      trigger={
+        <Button type="button" variant="ghost" size="icon" aria-label={`Hapus jam kerja ${name}`}>
+          <Trash2 aria-hidden="true" />
+        </Button>
+      }
+    />
+  );
+}
+
+/** Tombol Tambah jam khusus: form jam per titik absensi atau per karyawan di dialog. */
+export function ScheduleDialog({
+  locations,
+  employees,
+}: {
+  locations: readonly Choice[];
+  employees: readonly Choice[];
+}) {
+  const [open, setOpen] = useState(false);
+  const close = () => {
+    setOpen(false);
+  };
+  return (
+    <FormDialog
+      open={open}
+      onOpenChange={setOpen}
+      title="Tambah jam khusus"
+      icon={Clock}
+      description="Jam karyawan mengalahkan jam titik absensi. Jam titik mengalahkan jam perusahaan."
+      trigger={
+        <Button type="button" size="lg">
+          <Plus aria-hidden="true" />
+          Tambah jam khusus
+        </Button>
+      }
     >
-      <Trash2 aria-hidden="true" />
-    </Button>
+      <ScheduleForm locations={locations} employees={employees} onDone={close} onCancel={close} />
+    </FormDialog>
   );
 }

@@ -16,7 +16,7 @@ export const APP_ROLES = [
 export type AppRole = (typeof APP_ROLES)[number];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  owner: "Owner",
+  owner: "Direktur Utama",
   admin: "Admin",
   marketing_manager: "Manajer marketing",
   marketing: "Marketing",

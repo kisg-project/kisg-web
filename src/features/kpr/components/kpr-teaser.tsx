@@ -32,7 +32,13 @@ export function KprTeaser({ price }: { price: number }) {
             <p className="text-sm text-subtle-foreground">Angsuran mulai</p>
             <p className="mt-1 text-4xl font-extrabold tracking-tight text-primary-900 tabular sm:text-5xl">
               {formatRupiah(lowest.monthly)}
-              <span className="text-base font-semibold text-subtle-foreground"> per bulan</span>
+              <span
+                aria-hidden="true"
+                className="ml-1 align-baseline text-base font-semibold tracking-normal text-subtle-foreground sm:text-lg"
+              >
+                /bulan
+              </span>
+              <span className="sr-only"> per bulan</span>
             </p>
             <p className="mt-1 text-sm text-subtle-foreground">
               {lowest.product.name}, uang muka {KPR_DEFAULTS.downPaymentPercent}%,{" "}

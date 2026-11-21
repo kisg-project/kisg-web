@@ -4,16 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/shared/toast";
+import { ConfirmDialog } from "@/components/shared/form-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { deleteCareerAction, deletePostAction } from "../actions/content";
 
 /** Hapus konten dengan konfirmasi. Konten hilang dari website, data tetap tersimpan untuk audit. */
@@ -39,53 +32,25 @@ export function DeleteContentButton({
   const action = kind === "berita" ? post : career;
 
   return (
-    <>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <Trash2 aria-hidden="true" />
-        Hapus {kind}
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Hapus {kind} ini?</DialogTitle>
-            <DialogDescription>
-              {`"${title}" hilang dari website. Tindakan ini tidak bisa dibatalkan dari panel CMS.`}
-            </DialogDescription>
-          </DialogHeader>
-          {action.result.serverError ? (
-            <p role="alert" className="text-sm text-destructive">
-              {action.result.serverError}
-            </p>
-          ) : null}
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-              }}
-            >
-              Batal
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={action.isExecuting}
-              onClick={() => {
-                action.execute({ id });
-              }}
-            >
-              {action.isExecuting ? "Menghapus" : "Ya, hapus"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={setOpen}
+      title={`Hapus ${kind} ini?`}
+      description={`"${title}" hilang dari website. Tindakan ini tidak bisa dibatalkan dari panel CMS.`}
+      confirmLabel="Ya, hapus"
+      icon={Trash2}
+      busyLabel="Menghapus"
+      busy={action.isExecuting}
+      error={action.result.serverError}
+      onConfirm={() => {
+        action.execute({ id });
+      }}
+      trigger={
+        <Button type="button" variant="outline">
+          <Trash2 aria-hidden="true" />
+          Hapus {kind}
+        </Button>
+      }
+    />
   );
 }

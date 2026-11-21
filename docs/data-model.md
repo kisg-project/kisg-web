@@ -41,6 +41,8 @@ Disusun di Fase 0, diimplementasikan sebagai migrasi di Fase 2 (dan fase fitur t
 | `issue_status` | terbuka, ditangani, selesai |
 | `attendance_kind` | masuk, pulang |
 | `work_report_kind` | rencana, hasil |
+| `approval_decision` | disetujui, ditolak |
+| `approval_doc_type` | absen_luar_lokasi (bertambah per modul: pengajuan dana, izin, gaji) |
 | `attendance_status` | valid, di_luar_radius, disetujui, ditolak, perlu_tinjau |
 | `marketing_activity_type` | follow_up, survei, canvassing, open_table, konten, lainnya |
 | `kpi_period` | mingguan, bulanan |
@@ -199,6 +201,14 @@ erDiagram
 | `attendance_records` | `user_id`, `work_date` (tanggal WIB), `clock_in_at`, `clock_in_location_id`, `clock_in_lat/lng/accuracy_m/distance_m`, `clock_in_photo_path`, `late_minutes`, kolom `clock_out_*` yang sama, `early_minutes`, `clock_in_exception_id`, `clock_out_exception_id` | unique (`user_id`, `work_date`). Hanya ditulis lewat RPC `attendance_clock` (jarak dan waktu dihitung server) |
 | `attendance_exceptions` | `user_id`, `work_date`, `kind attendance_kind`, `lat`, `lng`, `accuracy_m`, `nearest_location_id`, `nearest_distance_m`, `reason` (10 sampai 500 karakter), `photo_path`, `status request_status`, `decided_by`, `decided_at`, `decision_note` | satu pengajuan terbuka per user, tanggal, dan jenis. Ditulis lewat RPC `request_attendance_exception` |
 | `work_reports` | `user_id`, `work_date` (tanggal WIB), `kind work_report_kind`, `content` (10 sampai 4.000 karakter), `attachments jsonb` (maksimal 10: `path`, `name`, `type`, `size`) | unique (`user_id`, `work_date`, `kind`). Rencana butuh clock in hari itu, hasil butuh clock out. Hanya ditulis lewat RPC `submit_work_report` (lampiran harus milik user dan ada di bucket). Portal mengalihkan ke formulir yang belum diisi sebelum modul lain bisa dibuka |
+
+### Persetujuan digital
+
+| Tabel | Kolom utama | Index dan constraint |
+|---|---|---|
+| `approval_stamps` | `doc_type approval_doc_type`, `doc_id`, `subject_user_id`, `decision approval_decision`, `signer_id`, `signer_name`, `signer_role app_role`, `signed_at`, `user_agent`, `lat`, `lng`, `note`, `content_hash` (SHA-256 isi dokumen), `verify_code` (SHA-256 dari hash isi, penyetuju, dan waktu) | `verify_code` unique, index (`doc_type`, `doc_id`). Tanpa policy tulis untuk client. Trigger `immutable` menolak update dan delete (juga untuk superuser). Ditulis RPC `decide_attendance_exception` (khusus service role, dipanggil server setelah password diperiksa). Dibaca owner/admin, penyetuju, dan pemilik dokumen. Verifikasi publik lewat RPC `verify_approval(kode)` |
+
+Isi dokumen yang di-hash dibentuk `private.document_content(doc_type, doc_id)` sebagai jsonb kanonik. Modul baru menambah cabang di fungsi itu.
 
 Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per item. Dihitung lewat view `unit_progress` dan materialized view `project_progress`, disegarkan saat laporan disetujui.
 

@@ -5,6 +5,7 @@ import { WEEKDAYS } from "@/config/attendance";
 import { requirePortalUser } from "@/features/auth";
 import {
   DeleteScheduleButton,
+  ScheduleDialog,
   ScheduleForm,
   listEmployeeOptions,
   listWorkLocations,
@@ -63,22 +64,16 @@ export default async function SchedulesPage() {
           }}
         />
       </section>
-      <section aria-labelledby="jam-khusus-judul" className="app-card p-5 sm:p-6">
-        <h2 id="jam-khusus-judul" className="mb-1 text-lg font-bold">
-          Tambah jam khusus
-        </h2>
-        <p className="mb-4 text-sm text-subtle-foreground">
-          Jam karyawan mengalahkan jam titik absensi. Jam titik mengalahkan jam perusahaan.
-        </p>
-        <ScheduleForm locations={locationChoices} employees={employees} />
-      </section>
       <section aria-labelledby="daftar-jam-khusus" className="grid gap-3">
-        <h2 id="daftar-jam-khusus" className="text-lg font-bold">
-          Jam khusus
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="daftar-jam-khusus" className="text-lg font-bold">
+            Jam khusus
+          </h2>
+          <ScheduleDialog locations={locationChoices} employees={employees} />
+        </div>
         {overrides.length === 0 ? (
           <EmptyState
-            title="Belum ada jam khusus."
+            title="Belum ada jam khusus"
             description="Semua karyawan memakai jam kerja perusahaan."
           />
         ) : (

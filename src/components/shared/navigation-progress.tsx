@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { prefetchLottie } from "./lottie-player";
 
 /** Klik yang membuka halaman lain di aplikasi yang sama (bukan tab baru, unduhan, atau situs lain). */
 function internalNavigation(event: MouseEvent): boolean {
@@ -28,6 +29,13 @@ export function NavigationProgress() {
     setSeenPath(pathname);
     setFrom(null);
   }
+
+  // Unduh animasi Lottie di waktu senggang sekali saja, supaya layar memuat berikutnya langsung bergerak.
+  useEffect(() => {
+    // Safari belum punya requestIdleCallback.
+    if ("requestIdleCallback" in window) window.requestIdleCallback(prefetchLottie);
+    else setTimeout(prefetchLottie, 1500);
+  }, []);
 
   useEffect(() => {
     const onClick = (event: MouseEvent) => {

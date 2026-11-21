@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { APPROVAL_DECISIONS, APPROVAL_DOC_TYPES } from "./approvals";
 import { ATTENDANCE_ROLES, WORK_REPORT_LABEL } from "./attendance";
 import { APP_ROLES } from "./roles";
 import { UNIT_STATUSES } from "./units";
@@ -43,5 +44,10 @@ describe("enum Postgres sama dengan src/config", () => {
     const match = /function private\.must_attend\(\)[\s\S]*?has_role\(([^)]*)\)/.exec(sql);
     const roles = [...(match?.[1] ?? "").matchAll(/'([^']+)'/g)].map((value) => value[1]);
     expect(roles).toEqual([...ATTENDANCE_ROLES]);
+  });
+
+  it("approval_decision dan approval_doc_type", () => {
+    expect(enumValues("approval_decision")).toEqual([...APPROVAL_DECISIONS]);
+    expect(enumValues("approval_doc_type")).toEqual([...APPROVAL_DOC_TYPES]);
   });
 });

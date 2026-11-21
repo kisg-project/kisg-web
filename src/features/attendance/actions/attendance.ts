@@ -4,9 +4,17 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { safeNextPath } from "@/config/portal";
 import type { Json } from "@/lib/supabase/database.types";
-import { ActionError, adminActionClient, authActionClient } from "@/lib/safe-action";
+import { confirmSignerPassword, signerUserAgent } from "@/features/approvals/server";
+import {
+  ActionError,
+  adminActionClient,
+  authActionClient,
+  roleActionClient,
+} from "@/lib/safe-action";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   clockSchema,
+  decideExceptionSchema,
   deleteScheduleSchema,
   exceptionSchema,
   scheduleSchema,
@@ -163,4 +171,42 @@ export const submitWorkReportAction = authActionClient
     });
     if (error) throw rpcError(error);
     redirect(parsedInput.kind === "rencana" ? safeNextPath(null, ctx.roles) : "/portal/absensi");
+  });
+
+/**
+ * Setujui atau tolak pengajuan absen di luar lokasi (owner, atau manajer tim karyawan itu). Password
+ * penyetuju diperiksa dulu sebagai tanda tangan elektronik, lalu fungsi database (khusus server)
+ * memeriksa wewenang, mencatat absen kalau disetujui, dan menyimpan cap permanen.
+ */
+export const decideExceptionAction = roleActionClient([
+  "owner",
+  "admin",
+  "marketing_manager",
+  "site_manager",
+])
+  .inputSchema(decideExceptionSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    await confirmSignerPassword({
+      userId: ctx.userId,
+      email: ctx.email,
+      password: parsedInput.password,
+    });
+    const userAgent = await signerUserAgent();
+    const { data, error } = await createSupabaseAdminClient().rpc("decide_attendance_exception", {
+      p_actor: ctx.userId,
+      p_id: parsedInput.id,
+      p_decision: parsedInput.decision,
+      ...(parsedInput.note ? { p_note: parsedInput.note } : {}),
+      ...(userAgent ? { p_user_agent: userAgent } : {}),
+      ...(parsedInput.lat !== undefined && parsedInput.lng !== undefined
+        ? { p_lat: parsedInput.lat, p_lng: parsedInput.lng }
+        : {}),
+    });
+    if (error) {
+      if (error.code === "22023" || error.code === "42501") throw new ActionError(error.message);
+      throw new Error(`Keputusan gagal disimpan: ${error.message}`);
+    }
+    const parsed = z.object({ verify_code: z.string() }).safeParse(data);
+    if (!parsed.success) throw new Error("Respons keputusan tidak dikenal.");
+    return { verifyCode: parsed.data.verify_code };
   });

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { CalendarDays } from "lucide-react";
-import { RoofLine } from "@/components/shared/roof-line";
 import { ROLE_LABELS, type AppRole } from "@/config/roles";
 import { firstName, greetingFor } from "@/lib/format/greeting";
 import { formatDateWIB } from "@/lib/format";
@@ -42,10 +41,6 @@ export function PortalGreeting({
       <span
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-linear-to-br from-primary-950 via-primary-900/90 to-primary-800/55"
-      />
-      <RoofLine
-        strokeWidth={3}
-        className="absolute -right-8 bottom-10 -z-10 h-24 w-64 text-gold-300/40"
       />
       <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md">
         <CalendarDays aria-hidden="true" className="size-3.5" />

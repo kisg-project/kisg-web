@@ -1,6 +1,9 @@
+import Link from "next/link";
 import {
+  ArrowRight,
   Bath,
   BedDouble,
+  Calculator,
   CarFront,
   CircleCheck,
   CircleMinus,
@@ -27,11 +30,11 @@ const FEATURE_ICONS: [RegExp, LucideIcon][] = [
   [/smart|kunci|door lock/i, LockKeyhole],
 ];
 
-const NEARBY_ICONS: Record<string, LucideIcon> = {
-  transportasi: TrainFront,
-  tol: Route,
-  bank: Landmark,
-  belanja: ShoppingCart,
+const NEARBY: Record<string, { icon: LucideIcon; label: string }> = {
+  transportasi: { icon: TrainFront, label: "Transportasi umum" },
+  tol: { icon: Route, label: "Akses tol" },
+  bank: { icon: Landmark, label: "Perbankan" },
+  belanja: { icon: ShoppingCart, label: "Belanja" },
 };
 
 function featureIcon(name: string): LucideIcon {
@@ -42,42 +45,59 @@ interface Highlight {
   icon: LucideIcon;
   label: string;
   value?: string;
+  detail?: string;
 }
 
-function HighlightItem({ icon: Icon, label, value }: Highlight) {
+function IconChip({ icon: Icon, size = "md" }: { icon: LucideIcon; size?: "md" | "lg" }) {
   return (
-    <li className="flex items-center gap-3">
-      <span className="icon-chip flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-        <Icon aria-hidden="true" className="size-5" />
-      </span>
-      <span className="min-w-0 text-sm leading-tight">
-        {value ? <span className="block font-semibold text-foreground">{value}</span> : null}
-        <span
-          className={cn("block", value ? "text-muted-foreground" : "font-semibold text-foreground")}
-        >
-          {label}
-        </span>
-      </span>
-    </li>
+    <span
+      className={cn(
+        "flex shrink-0 items-center justify-center bg-primary-700 text-white",
+        size === "lg" ? "size-12 rounded-2xl" : "size-11 rounded-xl",
+      )}
+    >
+      <Icon aria-hidden="true" className={size === "lg" ? "size-6" : "size-5"} />
+    </span>
   );
 }
 
-function HighlightList({
-  label,
-  items,
-  className,
-}: {
-  label: string;
-  items: Highlight[];
-  className?: string;
-}) {
-  if (items.length === 0) return null;
+/** Empat angka utama unit sebagai kartu yang sama besar. */
+function SpecGrid({ items }: { items: Highlight[] }) {
   return (
     <div>
+      <h3 className="text-sm font-semibold text-muted-foreground">Spesifikasi</h3>
+      <ul aria-label="Spesifikasi" className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {items.map(({ icon, value, label }) => (
+          <li key={label} className="flex items-center gap-3 rounded-2xl bg-surface p-4">
+            <IconChip icon={icon} size="lg" />
+            <span className="min-w-0 leading-tight">
+              <span className="block text-xl font-extrabold text-foreground tabular">{value}</span>
+              <span className="block text-sm text-muted-foreground">{label}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Panel daftar dengan baris sejajar: ikon, nama, dan keterangan singkat. */
+function DetailPanel({ label, items }: { label: string; items: Highlight[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="rounded-2xl border border-border p-4 sm:p-5">
       <h3 className="text-sm font-semibold text-muted-foreground">{label}</h3>
-      <ul aria-label={label} className={cn("mt-3 grid gap-4", className)}>
-        {items.map((item) => (
-          <HighlightItem key={item.label} {...item} />
+      <ul aria-label={label} className="mt-2 divide-y divide-border">
+        {items.map(({ icon, label: name, detail }) => (
+          <li key={name} className="flex min-h-16 items-center gap-3 py-2.5">
+            <IconChip icon={icon} />
+            <span className="min-w-0 leading-tight">
+              <span className="block font-semibold text-foreground">{name}</span>
+              {detail ? (
+                <span className="mt-0.5 block text-sm text-muted-foreground">{detail}</span>
+              ) : null}
+            </span>
+          </li>
         ))}
       </ul>
     </div>
@@ -115,7 +135,10 @@ function CostList({
   );
 }
 
-/** Ringkasan spesifikasi unit, fasilitas, dan tempat sekitar dengan ikon, gaya situs listing rumah. */
+/**
+ * Ringkasan tipe unit: harga, empat angka spesifikasi, fasilitas unit, akses sekitar (kategori dan
+ * jarak kalau sudah diisi), dan rincian biaya. Tanpa efek hover (keputusan owner, 22 November 2026).
+ */
 export function UnitHighlights({
   unitType,
   nearby,
@@ -131,45 +154,66 @@ export function UnitHighlights({
     { icon: House, value: `${String(unitType.buildingArea)} m²`, label: "Luas bangunan" },
     { icon: LandPlot, value: `${String(unitType.landArea)} m²`, label: "Luas tanah" },
   ];
-  const features = unitType.features.map((name) => ({ icon: featureIcon(name), label: name }));
-  const places = nearby.map((place) => ({
-    icon: NEARBY_ICONS[place.category] ?? MapPin,
-    label: place.name,
-    value: formatNearbyDistance(place) ?? undefined,
+  const features: Highlight[] = unitType.features.map((name) => ({
+    icon: featureIcon(name),
+    label: name,
+    detail: "Termasuk di unit",
   }));
+  const places: Highlight[] = nearby.map((place) => {
+    const meta = NEARBY[place.category];
+    const detail = [meta?.label, formatNearbyDistance(place)].filter(Boolean).join(", ");
+    return { icon: meta?.icon ?? MapPin, label: place.name, detail: detail || undefined };
+  });
   const hasCosts = unitType.priceIncludes.length > 0 || unitType.priceExcludes.length > 0;
 
   return (
     <div
       className={cn(
-        "lift rounded-3xl border border-primary-100 bg-card p-5 shadow-sm sm:p-8",
+        "rounded-[2rem] border border-primary-100 bg-card p-5 shadow-sm sm:p-8",
         className,
       )}
     >
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-        <h2 className="text-2xl font-extrabold tracking-tight text-primary-950">{unitType.name}</h2>
-        <p className="text-2xl font-extrabold text-highlight-text tabular">
-          {unitType.price === null ? "Hubungi marketing" : formatRupiah(unitType.price)}
-        </p>
-      </div>
-      {hasCosts ? (
-        <div className="mt-5 grid gap-4 rounded-2xl bg-surface p-5 sm:grid-cols-2">
-          {unitType.priceIncludes.length > 0 ? (
-            <CostList title="Harga sudah termasuk" items={unitType.priceIncludes} included />
-          ) : null}
-          {unitType.priceExcludes.length > 0 ? (
-            <CostList title="Belum termasuk" items={unitType.priceExcludes} included={false} />
-          ) : null}
+      <div className="flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-muted-foreground">Tipe unit</p>
+          <h2 className="text-2xl font-extrabold tracking-tight text-primary-950 dark:text-primary-50">
+            {unitType.name}
+          </h2>
         </div>
-      ) : null}
+        <div className="sm:text-right">
+          <p className="text-sm font-semibold text-muted-foreground">Harga</p>
+          <p className="text-2xl font-extrabold text-highlight-text tabular">
+            {unitType.price === null ? "Hubungi marketing" : formatRupiah(unitType.price)}
+          </p>
+        </div>
+      </div>
+
       <div className="mt-6 grid gap-6">
-        <HighlightList label="Spesifikasi" items={specs} className="grid-cols-2 lg:grid-cols-4" />
-        <HighlightList label="Fasilitas" items={features} className="grid-cols-1 sm:grid-cols-3" />
-        <HighlightList
-          label="Akses dan sekitar"
-          items={places}
-          className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-        />
+        <SpecGrid items={specs} />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <DetailPanel label="Fasilitas" items={features} />
+          <DetailPanel label="Akses dan sekitar" items={places} />
+        </div>
+        {hasCosts ? (
+          <div className="grid gap-4 rounded-2xl bg-surface p-5 sm:grid-cols-2">
+            {unitType.priceIncludes.length > 0 ? (
+              <CostList title="Harga sudah termasuk" items={unitType.priceIncludes} included />
+            ) : null}
+            {unitType.priceExcludes.length > 0 ? (
+              <CostList title="Belum termasuk" items={unitType.priceExcludes} included={false} />
+            ) : null}
+          </div>
+        ) : null}
+        {unitType.price !== null ? (
+          <Link
+            href="/simulasi-kpr"
+            className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-full bg-primary-50 px-5 text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-100"
+          >
+            <Calculator aria-hidden="true" className="size-4" />
+            Hitung cicilan KPR tipe ini
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
+        ) : null}
       </div>
     </div>
   );

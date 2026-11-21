@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Crosshair, LoaderCircle } from "lucide-react";
-import { toast } from "sonner";
+import { Crosshair, LoaderCircle, MapPin, Plus } from "lucide-react";
+import { toast } from "@/components/shared/toast";
+import { FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,10 +36,13 @@ export function WorkLocationForm({
   projects,
   initial,
   onDone,
+  onCancel,
 }: {
   projects: readonly ProjectChoice[];
   initial?: WorkLocationInput & { id: string };
   onDone?: () => void;
+  /** Diisi saat form tampil di dialog: footer Batal dan Simpan. */
+  onCancel?: () => void;
 }) {
   const router = useRouter();
   const [locating, setLocating] = useState(false);
@@ -227,11 +231,57 @@ export function WorkLocationForm({
           {result.serverError}
         </p>
       ) : null}
-      <div>
-        <Button type="submit" disabled={isExecuting}>
-          {isExecuting ? "Menyimpan" : initial ? "Simpan perubahan" : "Tambah titik"}
-        </Button>
-      </div>
+      {onCancel ? (
+        <FormDialogFooter busy={isExecuting} onCancel={onCancel} />
+      ) : (
+        <div>
+          <Button type="submit" disabled={isExecuting}>
+            {isExecuting ? "Menyimpan" : "Simpan"}
+          </Button>
+        </div>
+      )}
     </form>
+  );
+}
+
+/** Tombol Tambah titik absensi atau Ubah, membuka form di dialog (lembar bawah di HP). */
+export function WorkLocationDialog({
+  projects,
+  initial,
+}: {
+  projects: readonly ProjectChoice[];
+  initial?: WorkLocationInput & { id: string };
+}) {
+  const [open, setOpen] = useState(false);
+  const close = () => {
+    setOpen(false);
+  };
+  return (
+    <FormDialog
+      open={open}
+      onOpenChange={setOpen}
+      title={initial ? `Ubah titik ${initial.name}` : "Tambah titik absensi"}
+      description="Karyawan hanya bisa absen dalam radius titik yang aktif."
+      icon={MapPin}
+      trigger={
+        initial ? (
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-primary-700"
+            aria-label={`Ubah titik ${initial.name}`}
+          >
+            Ubah
+          </Button>
+        ) : (
+          <Button type="button" size="lg">
+            <Plus aria-hidden="true" />
+            Tambah titik absensi
+          </Button>
+        )
+      }
+    >
+      <WorkLocationForm projects={projects} initial={initial} onDone={close} onCancel={close} />
+    </FormDialog>
   );
 }

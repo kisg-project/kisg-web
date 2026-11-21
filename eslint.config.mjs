@@ -62,6 +62,12 @@ export default defineConfig([
               ],
               message: FORBIDDEN_ICON_MESSAGE,
             },
+            {
+              name: "sonner",
+              importNames: ["toast"],
+              message:
+                "Pakai toast dari @/components/shared/toast (toast custom yang menyaring bahasa sistem).",
+            },
           ],
           patterns: [
             {

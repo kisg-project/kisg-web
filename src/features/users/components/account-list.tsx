@@ -3,17 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
+import { MailX, ShieldCheck, UserX } from "lucide-react";
 import { Avatar } from "@/components/shared/avatar";
+import { ConfirmDialog, FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { isInvitableRole, ROLE_LABELS, type AppRole } from "@/config/roles";
 import { formatDateWIB } from "@/lib/format";
 import {
@@ -46,7 +40,12 @@ export function AccountList({
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState<PortalAccount | null>(null);
+  const [confirming, setConfirming] = useState<{
+    kind: "nonaktifkan" | "batalkan";
+    account: PortalAccount;
+  } | null>(null);
   const onSuccess = () => {
+    setConfirming(null);
     router.refresh();
   };
   const activeAction = useAction(setUserActiveAction, { onSuccess });
@@ -141,7 +140,7 @@ export function AccountList({
                       variant="ghost"
                       disabled={locked || busy}
                       onClick={() => {
-                        cancelAction.execute({ userId: account.id });
+                        setConfirming({ kind: "batalkan", account });
                       }}
                     >
                       Batalkan undangan
@@ -153,7 +152,8 @@ export function AccountList({
                     variant={account.isActive ? "outline" : "default"}
                     disabled={locked || busy}
                     onClick={() => {
-                      activeAction.execute({ userId: account.id, active: !account.isActive });
+                      if (account.isActive) setConfirming({ kind: "nonaktifkan", account });
+                      else activeAction.execute({ userId: account.id, active: true });
                     }}
                   >
                     {account.isActive ? "Nonaktifkan" : "Aktifkan"}
@@ -164,6 +164,35 @@ export function AccountList({
           );
         })}
       </ul>
+      {confirming ? (
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) setConfirming(null);
+          }}
+          title={
+            confirming.kind === "nonaktifkan"
+              ? `Nonaktifkan akun ${confirming.account.fullName || confirming.account.email}?`
+              : `Batalkan undangan ${confirming.account.fullName || confirming.account.email}?`
+          }
+          description={
+            confirming.kind === "nonaktifkan"
+              ? "Akun langsung keluar dari semua perangkat dan tidak bisa masuk sampai diaktifkan lagi."
+              : "Tautan aktivasi tidak berlaku lagi dan akun dihapus dari daftar."
+          }
+          confirmLabel={confirming.kind === "nonaktifkan" ? "Ya, nonaktifkan" : "Ya, batalkan"}
+          icon={confirming.kind === "nonaktifkan" ? UserX : MailX}
+          busy={busy}
+          error={error}
+          onConfirm={() => {
+            if (confirming.kind === "nonaktifkan") {
+              activeAction.execute({ userId: confirming.account.id, active: false });
+            } else {
+              cancelAction.execute({ userId: confirming.account.id });
+            }
+          }}
+        />
+      ) : null}
       {editing ? (
         <EditRolesDialog
           account={editing}
@@ -201,19 +230,24 @@ function EditRolesDialog({
   const name = account.fullName || account.email;
 
   return (
-    <Dialog
+    <FormDialog
       open
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
+      title={`Ubah role ${name}`}
+      description="Hak akses adalah gabungan semua role yang dipilih. Perubahan berlaku saat itu juga."
+      busy={action.isExecuting}
+      icon={ShieldCheck}
     >
-      <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Ubah role {name}</DialogTitle>
-          <DialogDescription>
-            Hak akses adalah gabungan semua role yang dipilih. Perubahan berlaku saat itu juga.
-          </DialogDescription>
-        </DialogHeader>
+      <form
+        noValidate
+        className="grid gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (value.roles.length > 0) action.execute({ userId: account.id, ...value });
+        }}
+      >
         <RolePicker
           idPrefix="ubah"
           allowOwner={allowOwner}
@@ -227,21 +261,13 @@ function EditRolesDialog({
             {action.result.serverError}
           </p>
         ) : null}
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
-            Batal
-          </Button>
-          <Button
-            type="button"
-            disabled={action.isExecuting || value.roles.length === 0}
-            onClick={() => {
-              action.execute({ userId: account.id, ...value });
-            }}
-          >
-            {action.isExecuting ? "Menyimpan" : "Simpan role"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <FormDialogFooter
+          busy={action.isExecuting}
+          disabled={value.roles.length === 0}
+          saveLabel="Simpan role"
+          onCancel={onClose}
+        />
+      </form>
+    </FormDialog>
   );
 }
