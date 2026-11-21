@@ -226,8 +226,9 @@ Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per ite
 
 | Tabel | Kolom utama | Index dan constraint |
 |---|---|---|
-| `chat_sessions` | `visitor_user_id` (user anonim Supabase), `page_path`, `landing_page_id`, `status chat_session_status`, `assigned_to`, `lead_id`, `started_at`, `last_message_at`, `handoff_at`, `closed_at`, `tokens_in`, `tokens_out`, `cost_micro_usd bigint`, `summary` | index (`status`, `last_message_at`), index `visitor_user_id` |
-| `chat_messages` | `session_id`, `role chat_role`, `content`, `tool_name`, `tool_payload jsonb`, `tokens int`, `flagged_wrong bool`, `flagged_by`, `is_unanswered bool` | index (`session_id`, `created_at`) |
+| `chat_sessions` | `id` (UUID dari widget), `ip_hash`, `page_path`, `user_agent`, `message_count`, `lead_id null`, `status` (aktif, diserahkan, selesai), `last_message_at` | index `last_message_at`. Ditulis server saja (tahap 1, migrasi `20261121001300_chat.sql`) |
+| `chat_messages` | `session_id`, `role` (user, assistant), `content` (1 sampai 4000 karakter), `input_tokens`, `output_tokens` | index (`session_id`, `created_at`). Dibaca owner, admin, dan tim marketing |
+| `chat_usage_daily` | `usage_date` (WIB), `requests`, `input_tokens`, `output_tokens` | dicatat RPC `chat_record_usage` (service role saja) untuk batas biaya harian |
 | `cs_knowledge` | `title`, `content`, `project_id null`, `embedding vector(N)`, `embedding_model`, `embedded_at`, `is_active` | index HNSW `embedding vector_cosine_ops`. Dimensi `N` ditetapkan di Fase 7 sesuai model embedding |
 | `cs_settings` | `id` (satu baris), `working_hours jsonb` (per hari, WIB), `greeting`, `suggestions text[]`, `daily_cost_limit_micro_usd bigint`, `max_messages_per_session int`, `max_message_chars int`, `retention_days int` | check satu baris |
 

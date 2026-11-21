@@ -24,6 +24,8 @@ env:
   # Kamera palsu di E2E tidak berisi wajah asli: deteksi wajah dan kedip diganti tombol uji.
   # Hanya build CI. Build production (deploy-production.yml) tidak memakai variabel ini.
   NEXT_PUBLIC_E2E_FACE_STUB: "1"
+  # Chat Jaka memakai model tiruan di E2E: jawaban tetap, tanpa memanggil Gemini.
+  CHAT_MOCK: "1"
 
 jobs:
   changes:

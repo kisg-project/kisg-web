@@ -117,6 +117,60 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"chat_messages": {
+                  Row: {
+                    "content": string,"created_at": string,"id": string,"input_tokens": number | null,"output_tokens": number | null,"role": string,"session_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "content": string,"created_at"?: string,"id"?: string,"input_tokens"?: number | null,"output_tokens"?: number | null,"role": string,"session_id": string
+                  }
+                  Update: {
+                    "content"?: string,"created_at"?: string,"id"?: string,"input_tokens"?: number | null,"output_tokens"?: number | null,"role"?: string,"session_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "chat_messages_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "chat_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"chat_sessions": {
+                  Row: {
+                    "created_at": string,"id": string,"ip_hash": string,"last_message_at": string,"lead_id": string | null,"message_count": number,"page_path": string | null,"status": string,"updated_at": string,"user_agent": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id": string,"ip_hash": string,"last_message_at"?: string,"lead_id"?: string | null,"message_count"?: number,"page_path"?: string | null,"status"?: string,"updated_at"?: string,"user_agent"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"ip_hash"?: string,"last_message_at"?: string,"lead_id"?: string | null,"message_count"?: number,"page_path"?: string | null,"status"?: string,"updated_at"?: string,"user_agent"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "chat_sessions_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"chat_usage_daily": {
+                  Row: {
+                    "input_tokens": number,"output_tokens": number,"requests": number,"updated_at": string,"usage_date": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "input_tokens"?: number,"output_tokens"?: number,"requests"?: number,"updated_at"?: string,"usage_date": string
+                  }
+                  Update: {
+                    "input_tokens"?: number,"output_tokens"?: number,"requests"?: number,"updated_at"?: string,"usage_date"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"construction_updates": {
                   Row: {
                     "body": string | null,"content_status": Database["public"]['Enums']["content_status"],"cover_alt": string | null,"cover_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"id": string,"photo_ids": (string)[],"project_id": string,"published_at": string | null,"source_report_id": string | null,"title": string,"updated_at": string
@@ -647,6 +701,9 @@ isOneToOne: false
           Functions: {
             "attendance_clock":
 { Args: { "p_accuracy": number,"p_kind": Database["public"]['Enums']["attendance_kind"],"p_lat": number,"p_lng": number,"p_photo_path": string }; Returns: Json
+                           },
+"chat_record_usage":
+{ Args: { "p_input_tokens": number,"p_output_tokens": number }; Returns: undefined
                            },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json

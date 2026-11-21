@@ -4,7 +4,6 @@ import { z } from "zod";
 // Variabel env divalidasi saat build dan saat server mulai (CLAUDE.md bagian 3).
 // Kunci Supabase dibaca saat runtime oleh server (bukan NEXT_PUBLIC), supaya satu build bisa dipakai
 // di CI (Supabase lokal) dan di Vercel (production). Halaman publik tidak memakainya.
-// Variabel fase berikutnya (Meta, Gemini, Brevo, Turnstile) ditambah saat dibutuhkan.
 export const env = createEnv({
   server: {
     SUPABASE_URL: z.url().optional(),
@@ -35,6 +34,13 @@ export const env = createEnv({
     EMAIL_FROM_NAME: z.string().min(1).default("KIS Group"),
     EMAIL_REPLY_TO: z.email().default("corporate@kisgroup.co.id"),
     MAILPIT_URL: z.url().optional(),
+    // Chat customer service "Jaka" (CLAUDE.md bagian 12). Tanpa GEMINI_API_KEY widget tetap tampil
+    // dan langsung menawarkan WhatsApp. CHAT_MOCK=1 hanya untuk E2E di CI (jawaban tiruan, tanpa Gemini).
+    GEMINI_API_KEY: z.string().min(1).optional(),
+    GEMINI_MODEL: z.string().min(1).default("gemini-3.5-flash"),
+    CHAT_THINKING: z.enum(["minimal", "low", "medium"]).default("low"),
+    CHAT_DAILY_TOKEN_LIMIT: z.coerce.number().int().positive().default(2_000_000),
+    CHAT_MOCK: z.enum(["0", "1"]).optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.url(),
@@ -57,6 +63,11 @@ export const env = createEnv({
     EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     MAILPIT_URL: process.env.MAILPIT_URL,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    GEMINI_MODEL: process.env.GEMINI_MODEL,
+    CHAT_THINKING: process.env.CHAT_THINKING,
+    CHAT_DAILY_TOKEN_LIMIT: process.env.CHAT_DAILY_TOKEN_LIMIT,
+    CHAT_MOCK: process.env.CHAT_MOCK,
     // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
     // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
     NEXT_PUBLIC_SITE_URL:

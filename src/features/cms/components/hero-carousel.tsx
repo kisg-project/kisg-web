@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
-import { RoofLine } from "@/components/shared/roof-line";
 import { cn } from "@/lib/utils";
 
 export interface HeroSlide {
@@ -40,7 +39,7 @@ function useReducedMotion(): boolean {
 }
 
 /**
- * Hero Banner beranda: teks di kiri, foto berbingkai garis atap logo KIS di kanan (di HP foto di atas).
+ * Hero Banner beranda: teks di kiri, foto membulat di kanan (di HP foto di atas), tengah secara vertikal.
  * Slide bertumpuk di satu sel grid sehingga tinggi hero mengikuti slide tertinggi, lalu berganti dengan
  * transisi pudar. Kontrolnya hanya indikator kecil (keputusan owner). Autoplay berhenti saat kursor atau
  * fokus ada di dalam, berhenti permanen begitu pengunjung memilih slide lewat indikator atau tombol panah
@@ -97,11 +96,6 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         }
       }}
     >
-      {/* Garis atap besar yang samar di latar, motif dari logo KIS. */}
-      <RoofLine
-        strokeWidth={2}
-        className="absolute top-[12%] -left-40 -z-10 hidden h-80 w-[56rem] text-primary-100 lg:block"
-      />
       <div
         aria-live={autoplay ? "off" : "polite"}
         className="mx-auto grid w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8"
@@ -117,7 +111,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               aria-hidden={!active}
               inert={!active}
               className={cn(
-                "col-start-1 row-start-1 grid content-center items-center gap-10 pt-10 pb-6 transition-opacity duration-700 ease-out sm:pt-14 lg:grid-cols-12 lg:gap-14 lg:py-14",
+                "col-start-1 row-start-1 grid content-center items-center gap-8 pt-6 pb-4 transition-opacity duration-700 ease-out sm:pt-10 lg:grid-cols-12 lg:gap-14 lg:py-10",
                 active ? "z-10 opacity-100" : "z-0 opacity-0",
               )}
             >
@@ -129,11 +123,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               >
                 {slide.content}
               </div>
-              <div className="relative order-1 pt-6 sm:pt-9 lg:order-2 lg:col-span-6">
-                <RoofLine
-                  strokeWidth={5}
-                  className="absolute top-0 -left-3 h-12 w-[calc(100%+1.5rem)] text-highlight sm:h-16"
-                />
+              <div className="relative order-1 lg:order-2 lg:col-span-6">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-primary-100 shadow-lg lg:aspect-[5/4]">
                   <picture>
                     <source
