@@ -57,7 +57,7 @@ if (smtpReady) {
   Object.assign(payload, {
     mailer_subjects_invite: "Undangan portal KIS Group",
     mailer_templates_invite_content: readFileSync("supabase/templates/invite.html", "utf8"),
-    mailer_subjects_recovery: "Atur ulang password portal KIS Group",
+    mailer_subjects_recovery: "Kode password akun KIS Group",
     mailer_templates_recovery_content: readFileSync("supabase/templates/recovery.html", "utf8"),
     smtp_host: "smtp-relay.brevo.com",
     smtp_port: "587",

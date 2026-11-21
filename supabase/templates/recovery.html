@@ -1,5 +1,46 @@
-<h2>Atur ulang password portal KIS Group</h2>
-<p>Ada permintaan atur ulang password untuk akun portal KIS Group dengan email ini.</p>
-<p><a href="{{ .SiteURL }}/portal/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/portal/reset-password">Atur password baru</a></p>
-<p>Tautan berlaku 1 jam. Kalau Anda tidak meminta ini, abaikan email ini. Password lama tetap berlaku.</p>
-<p>PT Kreatif Inovatif Sejahtera Group</p>
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Kode password akun KIS Group</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f1f9f7;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;color:#1c2422;">
+    <div style="display:none;max-height:0;overflow:hidden;">Kode password akun Anda: {{ .Token }}</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f9f7;padding:32px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #def2ed;">
+            <tr>
+              <td style="background:#013c34;padding:22px 28px;">
+                <img src="{{ .SiteURL }}/brand/logo-kis-light.png" width="96" alt="KIS Group" style="display:block;border:0;height:auto;" />
+              </td>
+            </tr>
+            <tr><td style="height:4px;background:#d7ae5f;font-size:0;line-height:0;">&nbsp;</td></tr>
+            <tr>
+              <td style="padding:32px 28px 8px;">
+                <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;color:#013c34;">Kode password akun</h1>
+                <p style="margin:0 0 20px;font-size:15px;line-height:1.6;">Ada permintaan atur ulang atau ganti password untuk akun KIS Group dengan email ini. Masukkan kode berikut di halaman yang sedang Anda buka.</p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+                  <tr>
+                    <td style="background:#ebfbf7;border:1px solid #c5e0d9;border-radius:14px;padding:16px 28px;font-size:32px;font-weight:800;letter-spacing:10px;color:#013c34;font-family:'Courier New',Courier,monospace;">{{ .Token }}</td>
+                  </tr>
+                </table>
+                <p style="margin:0 0 8px;font-size:14px;line-height:1.6;color:#57605e;">Jangan berikan kode ini kepada siapa pun, termasuk yang mengaku dari KIS Group.</p>
+                <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#57605e;">Kalau Anda tidak meminta ini, abaikan email ini. Password lama tetap berlaku.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:18px 28px;background:#f1f9f7;border-top:1px solid #def2ed;font-size:12px;line-height:1.6;color:#57605e;">
+                PT Kreatif Inovatif Sejahtera Group<br />
+                Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, Harapan Baru, Bekasi Utara, Kota Bekasi 17123
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

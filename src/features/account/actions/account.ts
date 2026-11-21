@@ -73,8 +73,22 @@ export const updateProfileAction = authActionClient
   });
 
 /**
- * Ganti password dengan memasukkan password saat ini. Password lama dicek lewat klien Supabase
- * terpisah tanpa cookie, supaya sesi yang sedang dipakai tidak berubah. Dibatasi 5 kali per 15 menit.
+ * Ganti password di Akun saya dengan kode email (OTP, keputusan owner): langkah pertama mengirim kode
+ * 6 digit ke email akun (template kode password Supabase Auth). Dibatasi 3 kali per 15 menit.
+ */
+export const sendPasswordCodeAction = authActionClient.action(async ({ ctx }) => {
+  const allowed = await hitRateLimit("kode-password", ctx.userId, 15 * 60, 3);
+  if (!allowed)
+    throw new ActionError("Kode sudah dikirim beberapa kali. Coba lagi dalam 15 menit.");
+  const { error } = await ctx.supabase.auth.resetPasswordForEmail(ctx.email);
+  if (error) throw new ActionError("Kode belum terkirim. Coba lagi sebentar lagi.");
+  return { sentTo: ctx.email };
+});
+
+/**
+ * Langkah kedua: kode diverifikasi lewat klien Supabase terpisah tanpa cookie (sesi yang dipakai tidak
+ * berubah), lalu password baru disimpan. Kode selalu dicek, termasuk untuk sesi yang baru masuk.
+ * Dibatasi 5 kali per 15 menit.
  */
 export const changePasswordAction = authActionClient
   .inputSchema(changePasswordSchema)
@@ -86,11 +100,14 @@ export const changePasswordAction = authActionClient
     const verifier = createClient<Database>(url, publishableKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { error: wrong } = await verifier.auth.signInWithPassword({
+    const { data, error: wrong } = await verifier.auth.verifyOtp({
       email: ctx.email,
-      password: parsedInput.current,
+      token: parsedInput.code,
+      type: "recovery",
     });
-    if (wrong) throw new ActionError("Password saat ini salah.");
+    if (wrong || data.user?.id !== ctx.userId) {
+      throw new ActionError("Kode salah atau sudah tidak berlaku. Minta kode baru.");
+    }
     await verifier.auth.signOut({ scope: "local" });
 
     const { error } = await ctx.supabase.auth.updateUser({ password: parsedInput.password });

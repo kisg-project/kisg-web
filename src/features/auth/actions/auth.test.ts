@@ -11,6 +11,7 @@ const state = {
   claims: null as Record<string, unknown> | null,
   signInError: null as { message: string } | null,
   updateError: null as { code: string } | null,
+  verifyError: null as { message: string } | null,
   role: "marketing" as string | null,
   profile: { is_active: true, deleted_at: null } as Row | null,
 };
@@ -27,6 +28,13 @@ const auth = {
   resetPasswordForEmail: vi.fn(() => Promise.resolve({ data: {}, error: null })),
   getClaims: vi.fn(() => Promise.resolve({ data: state.claims ? { claims: state.claims } : null })),
   updateUser: vi.fn(() => Promise.resolve({ error: state.updateError })),
+  verifyOtp: vi.fn(() =>
+    Promise.resolve(
+      state.verifyError
+        ? { data: { user: null }, error: state.verifyError }
+        : { data: { user: { id: "user-1" } }, error: null },
+    ),
+  ),
 };
 
 /** Profil lengkap untuk loadAccountRoles. Role dibaca sebagai daftar (multi role). */
@@ -67,7 +75,8 @@ vi.mock("@/lib/security/rate-limit", () => ({
 }));
 vi.mock("@/env", () => ({ env: { NEXT_PUBLIC_SITE_URL: "https://kisgroup.co.id" } }));
 
-const { forgotPasswordAction, loginAction, updatePasswordAction } = await import("./auth");
+const { forgotPasswordAction, loginAction, resetPasswordWithCodeAction, updatePasswordAction } =
+  await import("./auth");
 
 /** Error redirect asli Next (next/navigation) yang diteruskan next-safe-action. */
 function redirectTo(path: string): unknown {
@@ -80,6 +89,7 @@ beforeEach(() => {
   state.claims = { sub: "user-1", aal: "aal1" };
   state.signInError = null;
   state.updateError = null;
+  state.verifyError = null;
   state.role = "marketing";
   state.profile = { is_active: true, deleted_at: null };
   vi.spyOn(console, "error").mockImplementation(() => undefined);
@@ -146,6 +156,53 @@ describe("forgotPasswordAction", () => {
     state.allowed = false;
     const result = await forgotPasswordAction({ email: "a@kisgroup.co.id" });
     expect(result.serverError).toBe("Terlalu banyak permintaan. Coba lagi dalam 1 jam.");
+  });
+});
+
+describe("resetPasswordWithCodeAction", () => {
+  const input = {
+    email: "a@kisgroup.co.id",
+    code: "123456",
+    password: "Rahasia2026",
+    confirm: "Rahasia2026",
+  };
+
+  it("kode benar: password disimpan lalu langsung ke beranda role", async () => {
+    await expect(resetPasswordWithCodeAction(input)).rejects.toEqual(redirectTo("/portal/crm"));
+    expect(auth.verifyOtp).toHaveBeenCalledWith({
+      email: "a@kisgroup.co.id",
+      token: "123456",
+      type: "recovery",
+    });
+    expect(auth.updateUser).toHaveBeenCalledWith({ password: "Rahasia2026" });
+  });
+
+  it("akun CMS kembali ke panel CMS", async () => {
+    await expect(resetPasswordWithCodeAction({ ...input, app: "cms" })).rejects.toEqual(
+      redirectTo("/cms"),
+    );
+  });
+
+  it("kode salah: pesan jelas tanpa membedakan akun", async () => {
+    state.verifyError = { message: "Token has expired or is invalid" };
+    const result = await resetPasswordWithCodeAction(input);
+    expect(result.serverError).toBe(
+      "Kode salah atau sudah tidak berlaku. Periksa email, atau minta kode baru.",
+    );
+    expect(auth.updateUser).not.toHaveBeenCalled();
+  });
+
+  it("password sama dengan yang lama ditolak", async () => {
+    state.updateError = { code: "same_password" };
+    const result = await resetPasswordWithCodeAction(input);
+    expect(result.serverError).toBe("Password baru tidak boleh sama dengan password lama.");
+  });
+
+  it("percobaan kode dibatasi", async () => {
+    state.allowed = false;
+    const result = await resetPasswordWithCodeAction(input);
+    expect(result.serverError).toBe("Terlalu banyak percobaan kode. Minta kode baru dalam 1 jam.");
+    expect(auth.verifyOtp).not.toHaveBeenCalled();
   });
 });
 

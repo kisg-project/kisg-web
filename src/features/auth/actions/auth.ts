@@ -8,7 +8,12 @@ import { loadAccountRoles } from "@/lib/auth/account-roles";
 import { ActionError, actionClient, authActionClient } from "@/lib/safe-action";
 import { clientIp, hitRateLimit } from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { forgotPasswordSchema, loginSchema, newPasswordSchema } from "../schemas/auth";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  newPasswordSchema,
+  resetWithCodeSchema,
+} from "../schemas/auth";
 
 const LOGIN_WINDOW = 15 * 60;
 
@@ -85,6 +90,46 @@ export const forgotPasswordAction = actionClient
       ).toString(),
     });
     return { sent: true };
+  });
+
+/**
+ * Lupa password langkah kedua (OTP, keputusan owner): kode 6 digit dari email diverifikasi ke Supabase
+ * Auth, password baru disimpan, lalu pengguna langsung masuk ke berandanya. Pesan salah kode tidak
+ * membedakan email terdaftar atau tidak.
+ */
+export const resetPasswordWithCodeAction = actionClient
+  .inputSchema(resetWithCodeSchema)
+  .action(async ({ parsedInput }) => {
+    const ip = await clientIp();
+    const [ipAllowed, accountAllowed] = await Promise.all([
+      hitRateLimit("reset-kode-ip", ip, 60 * 60, 20),
+      hitRateLimit("reset-kode-akun", parsedInput.email, 60 * 60, 5),
+    ]);
+    if (!ipAllowed || !accountAllowed) {
+      throw new ActionError("Terlalu banyak percobaan kode. Minta kode baru dalam 1 jam.");
+    }
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: parsedInput.email,
+      token: parsedInput.code,
+      type: "recovery",
+    });
+    if (error || !data.user) {
+      throw new ActionError(
+        "Kode salah atau sudah tidak berlaku. Periksa email, atau minta kode baru.",
+      );
+    }
+    const { error: saveError } = await supabase.auth.updateUser({ password: parsedInput.password });
+    if (saveError) {
+      throw new ActionError(
+        saveError.code === "same_password"
+          ? "Password baru tidak boleh sama dengan password lama."
+          : "Password gagal disimpan. Minta kode baru, lalu coba lagi.",
+      );
+    }
+    if (parsedInput.app === "cms") redirect("/cms");
+    const { roles } = await loadAccountRoles(supabase, data.user.id);
+    redirect(safeNextPath(null, roles));
   });
 
 export const updatePasswordAction = authActionClient

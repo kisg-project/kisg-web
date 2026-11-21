@@ -71,22 +71,19 @@ export const activationSchema = z
     }
   });
 
+/** Ganti password di Akun saya: kode dari email (bukan password lama, keputusan owner). */
 export const changePasswordSchema = z
   .object({
-    current: z
-      .string({ error: "Isi password saat ini." })
-      .min(1, "Isi password saat ini.")
-      .max(128),
+    code: z
+      .string({ error: "Masukkan kode dari email." })
+      .trim()
+      .regex(/^\d{6}$/, "Masukkan 6 digit kode dari email."),
     password: passwordRule,
     confirm: z.string({ error: "Ulangi password baru." }),
   })
   .refine((value) => value.password === value.confirm, {
     path: ["confirm"],
     message: "Konfirmasi password tidak sama.",
-  })
-  .refine((value) => value.password !== value.current, {
-    path: ["password"],
-    message: "Password baru tidak boleh sama dengan password saat ini.",
   });
 
 export type ProfileInput = z.input<typeof profileSchema>;

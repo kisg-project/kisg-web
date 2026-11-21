@@ -41,6 +41,27 @@ export const newPasswordSchema = z
     message: "Konfirmasi password tidak sama.",
   });
 
+/** Kode 6 digit dari email (OTP Supabase Auth). */
+export const otpCode = z
+  .string({ error: "Masukkan kode dari email." })
+  .trim()
+  .regex(/^\d{6}$/, "Masukkan 6 digit kode dari email.");
+
+/** Lupa password langkah kedua: kode dari email dan password baru (keputusan owner, OTP). */
+export const resetWithCodeSchema = z
+  .object({
+    app: authApp,
+    email,
+    code: otpCode,
+    password: newPasswordSchema.shape.password,
+    confirm: z.string({ error: "Ulangi password baru." }),
+  })
+  .refine((value) => value.password === value.confirm, {
+    path: ["confirm"],
+    message: "Konfirmasi password tidak sama.",
+  });
+
 export type LoginInput = z.input<typeof loginSchema>;
+export type ResetWithCodeInput = z.input<typeof resetWithCodeSchema>;
 export type ForgotPasswordInput = z.input<typeof forgotPasswordSchema>;
 export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
