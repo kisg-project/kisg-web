@@ -1,4 +1,4 @@
-import { APP_ROLES, ROLE_LABELS } from "../../src/config/roles";
+import { PORTAL_ROLES, ROLE_LABELS } from "../../src/config/roles";
 import { PORTAL_AREAS, ROLE_HOME } from "../../src/config/portal";
 import { createPortalUser, setUserActive } from "../factories/users";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
@@ -19,7 +19,7 @@ test.describe("Login portal", () => {
     await expectResponsive(page);
   });
 
-  for (const role of APP_ROLES) {
+  for (const role of PORTAL_ROLES) {
     test(`login ${role} masuk ke beranda role-nya`, async ({ page }) => {
       const user = await createPortalUser({ role });
       await page.goto("/portal/login");
@@ -131,7 +131,7 @@ test.describe("Login portal", () => {
     await page.goto("/portal/crm");
     await expect(page).toHaveURL("/portal/login?error=nonaktif");
     await expect(page.getByRole("main").getByRole("alert")).toHaveText(
-      "Akun Anda sudah tidak aktif. Hubungi admin.",
+      "Akun Anda sudah tidak aktif. Hubungi owner.",
     );
     // Sesi sudah dihapus: halaman portal kembali meminta login.
     await page.goto("/portal/crm");

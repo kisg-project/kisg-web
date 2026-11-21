@@ -1,4 +1,4 @@
-import { APP_ROLES, ROLE_LABELS, type AppRole } from "../../src/config/roles";
+import { PORTAL_ROLES, ROLE_LABELS, type AppRole } from "../../src/config/roles";
 import { PORTAL_AREAS, portalAreasFor, ROLE_HOME } from "../../src/config/portal";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
 import { expect, storageStateFor, test } from "../fixtures/portal";
@@ -18,7 +18,7 @@ test.describe("Tanpa login", () => {
 });
 
 // Satu describe per role, memakai sesi dari global-setup.ts.
-for (const role of APP_ROLES) {
+for (const role of PORTAL_ROLES) {
   test.describe(`Role ${role}`, () => {
     test.use({ storageState: storageStateFor(role) });
 

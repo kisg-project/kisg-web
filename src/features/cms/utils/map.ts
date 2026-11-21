@@ -27,7 +27,8 @@ export function toBanner(row: Tables["banners"]["Row"]): Banner {
 }
 
 const text = z.string().trim().min(1);
-const blockSchema = z.discriminatedUnion("type", [
+/** Skema satu blok isi. Dipakai juga editor panel CMS, jadi isi tersimpan selalu bisa dirender. */
+export const contentBlockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("paragraph"), text }),
   z.object({ type: z.literal("heading"), text }),
   z.object({ type: z.literal("list"), items: z.array(text).min(1) }),
@@ -42,7 +43,7 @@ const blockSchema = z.discriminatedUnion("type", [
 export function parseBlocks(value: unknown): ContentBlock[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item) => {
-    const parsed = blockSchema.safeParse(item);
+    const parsed = contentBlockSchema.safeParse(item);
     return parsed.success ? [parsed.data] : [];
   });
 }

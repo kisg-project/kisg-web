@@ -8,7 +8,12 @@ const email = z
   .max(254, "Email terlalu panjang.")
   .pipe(z.email("Format email tidak valid. Contoh: nama@kisgroup.co.id."));
 
+/** Aplikasi tujuan: portal karyawan atau panel CMS (akun terpisah, keputusan owner). */
+export const authApp = z.enum(["portal", "cms"]).default("portal");
+export type AuthApp = z.infer<typeof authApp>;
+
 export const loginSchema = z.object({
+  app: authApp,
   email,
   password: z
     .string({ error: "Isi password." })
@@ -17,7 +22,7 @@ export const loginSchema = z.object({
   next: z.string().max(200).optional(),
 });
 
-export const forgotPasswordSchema = z.object({ email });
+export const forgotPasswordSchema = z.object({ app: authApp, email });
 
 /** Sama dengan aturan Supabase Auth (scripts/supabase-auth-config.mjs dan config.toml). */
 export const newPasswordSchema = z
@@ -36,6 +41,6 @@ export const newPasswordSchema = z
     message: "Konfirmasi password tidak sama.",
   });
 
-export type LoginInput = z.infer<typeof loginSchema>;
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type LoginInput = z.input<typeof loginSchema>;
+export type ForgotPasswordInput = z.input<typeof forgotPasswordSchema>;
 export type NewPasswordInput = z.infer<typeof newPasswordSchema>;

@@ -134,6 +134,17 @@ Akun test dibuat lewat API admin Supabase lokal (`e2e/factories/users.ts`). Sesi
 | Form minat, kontak, brosur, lamaran: sukses sampai database, validasi, PDP, honeypot, rate limit, Turnstile | | 3c | Belum |
 | Visual regression beranda dan detail proyek | | 3c | Belum |
 
+### Panel CMS (`e2e/cms/cms.spec.ts`, akun khusus CMS)
+
+| Skenario | Spec | Fase | Status |
+|---|---|---|---|
+| Halaman masuk CMS noindex, axe, responsif; belum masuk diarahkan ke masuk CMS | `cms/cms.spec.ts` | 4 | Ditulis |
+| Akun CMS ditolak di login portal, akun owner ditolak di login CMS, sesi owner di CMS ke halaman ditolak | `cms/cms.spec.ts` | 4 | Ditulis |
+| Berita: validasi, sampul diunggah dan dikompres, blok isi dan sumber, terbit, website langsung berubah, ubah judul, hapus (404 dan soft delete) | `cms/cms.spec.ts` | 4 | Ditulis |
+| Slug bentrok ditolak dengan pesan jelas | `cms/cms.spec.ts` | 4 | Ditulis |
+| Lowongan berjenjang tampil di halaman jenjang karir dan detailnya | `cms/cms.spec.ts` | 4 | Ditulis |
+| RLS role cms: menulis konten, karyawan tidak; role cms tidak bisa digabung | `supabase/tests/database/06_cms_role.test.sql` | 4 | Ditulis |
+
 ### Admin CMS (`e2e/admin/`, Fase 4)
 
 | Skenario | Profil | Fase | Status |

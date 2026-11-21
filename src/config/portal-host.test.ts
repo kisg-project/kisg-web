@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolvePortalRoute, toPublicPath } from "./portal-host";
+import { resolveCmsRoute, resolvePortalRoute, toPublicPath } from "./portal-host";
 
 const PORTAL = "company.kisgroup.co.id";
 
@@ -83,5 +83,40 @@ describe("toPublicPath", () => {
     expect(toPublicPath("/portal", true)).toBe("/");
     expect(toPublicPath("/portal/crm", false)).toBe("/portal/crm");
     expect(toPublicPath("/api/lamaran", true)).toBe("/api/lamaran");
+  });
+});
+
+describe("resolveCmsRoute", () => {
+  it("tanpa CMS_HOST: /cms di domain mana pun", () => {
+    expect(
+      resolveCmsRoute({ host: "kisgroup.co.id", pathname: "/cms/berita", cmsHost: undefined }),
+    ).toEqual({ kind: "cms", internalPath: "/cms/berita", onCmsHost: false });
+    expect(
+      resolveCmsRoute({ host: "kisgroup.co.id", pathname: "/berita", cmsHost: undefined }),
+    ).toEqual({ kind: "passthrough" });
+  });
+
+  it("dengan CMS_HOST: path bersih di host CMS, /cms di host lain 404", () => {
+    const cmsHost = "cms.kisgroup.co.id";
+    expect(resolveCmsRoute({ host: "cms.kisgroup.co.id", pathname: "/", cmsHost })).toEqual({
+      kind: "cms",
+      internalPath: "/cms",
+      onCmsHost: true,
+    });
+    expect(
+      resolveCmsRoute({ host: "cms.kisgroup.co.id", pathname: "/berita/baru", cmsHost }),
+    ).toEqual({ kind: "cms", internalPath: "/cms/berita/baru", onCmsHost: true });
+    expect(
+      resolveCmsRoute({ host: "cms.kisgroup.co.id", pathname: "/cms/login", cmsHost }),
+    ).toEqual({ kind: "redirect", location: "/login" });
+    expect(resolveCmsRoute({ host: "kisgroup.co.id", pathname: "/cms", cmsHost })).toEqual({
+      kind: "not-found",
+    });
+  });
+
+  it("alamat publik CMS tanpa awalan di host CMS", () => {
+    expect(toPublicPath("/cms/lowongan", true, "/cms")).toBe("/lowongan");
+    expect(toPublicPath("/cms", true, "/cms")).toBe("/");
+    expect(toPublicPath("/cms/lowongan", false, "/cms")).toBe("/cms/lowongan");
   });
 });

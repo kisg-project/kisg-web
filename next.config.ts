@@ -49,8 +49,31 @@ const securityHeaders = [
   },
 ];
 
+// Gambar konten yang diunggah lewat panel CMS disimpan di bucket publik Supabase Storage.
+const supabaseImages = (() => {
+  try {
+    if (!process.env.SUPABASE_URL) return [];
+    const url = new URL(process.env.SUPABASE_URL);
+    return [
+      {
+        protocol: url.protocol.replace(":", "") as "http" | "https",
+        hostname: url.hostname,
+        port: url.port,
+        pathname: "/storage/v1/object/public/**",
+      },
+    ];
+  } catch {
+    return [];
+  }
+})();
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  images: {
+    remotePatterns: supabaseImages,
+    // Hanya build E2E di CI: Supabase lokal berjalan di 127.0.0.1. Production memakai host publik.
+    dangerouslyAllowLocalIP: process.env.E2E_SUPABASE === "1",
+  },
   partialPrefetching: true,
   poweredByHeader: false,
   reactStrictMode: true,

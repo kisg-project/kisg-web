@@ -35,7 +35,7 @@ Satu codebase Next.js, empat area:
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
 3. **PWA Manajemen Operasional Bisnis Pengembang Properti** ("KIS Operasional", `company.kisgroup.co.id`, route `src/app/portal/`): aplikasi kerja lengkap untuk setiap role (absensi dengan scan wajah, rencana dan hasil kerja harian, CRM dan penjualan, lapangan dan progres, keuangan, izin), dashboard owner yang memantau semuanya, HR dan penggajian. Pengganti aplikasi seperti Odoo atau Mekari (keputusan owner, 20 November 2026). Beranda setiap role memakai sapaan sesuai jam WIB dengan nama dan role. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
-   **Panel CMS** terpisah di `cms.kisgroup.co.id` (route `src/app/cms/`, env `CMS_HOST`) dan hanya bisa dipakai akun owner (keputusan owner, 20 November 2026).
+   **Panel CMS** terpisah di `cms.kisgroup.co.id` (route `src/app/cms/`, env `CMS_HOST`, sebelum DNS siap di `/cms`). Hanya akun khusus CMS (role `cms`) yang bisa masuk. Akun CMS tidak bisa masuk portal, dan owner maupun karyawan tidak bisa masuk CMS (keputusan owner, 21 November 2026).
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
 
@@ -162,7 +162,7 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 - Spec E2E tetap ditulis bersama fitur. Spec yang ditulis tanpa dijalankan di lokal harus lolos `typecheck` dan `lint`, dan baru dianggap lolos setelah CI hijau.
 - Browser: Chromium desktop, Mobile Chrome (Pixel), Mobile Safari (iPhone). Portal wajib lolos di profil mobile.
 - Kapan tiga browser jalan (keputusan owner, Fase 2, opsi B): setiap PR cukup Chromium (tetap termasuk cek responsif 320 sampai 1440 px dan axe). Tiga browser x 3 shard wajib untuk PR akhir fase (label `e2e:full`, dipasang sebelum push terakhir). `e2e-weekly.yml` menjalankan tiga browser tiap minggu. `scripts/merge-pr.sh` menolak merge kalau set E2E yang wajib belum hijau.
-- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor, finance).
+- Login per role pakai `storageState` yang disiapkan di global setup (owner, admin, marketing_manager, marketing, site_manager, site_supervisor, finance, cms).
 - Selector pakai `getByRole`, `getByLabel`, `getByText`. `data-testid` hanya kalau tidak ada alternatif. Dilarang selector CSS rapuh dan `waitForTimeout`.
 - Setiap test mandiri: menyiapkan datanya sendiri (lewat helper/factory ke Supabase lokal) dan tidak bergantung urutan. Bisa jalan paralel.
 - Assertion sampai ke hasil akhir, bukan cuma UI. Contoh: submit form lead dicek sampai baris `leads` dan `meta_event_outbox` benar-benar ada di database.
@@ -286,7 +286,7 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 ## 8. Data, keamanan, dan akses
 
 - Semua tabel di schema `public` wajib RLS aktif dan punya policy eksplisit. Tidak ada tabel tanpa policy.
-- Role: `owner`, `admin`, `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance`. Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
+- Role: `owner`, `admin` (tidak dipakai lagi), `marketing_manager`, `marketing`, `site_manager`, `site_supervisor`, `finance`, dan `cms` (akun khusus panel CMS, tidak bisa digabung role lain, tidak bisa masuk portal). Disimpan di tabel `user_roles`, disuntikkan ke JWT lewat Supabase Custom Access Token Hook, dicek di RLS dan di server action.
 - Multi role (keputusan owner, 20 November 2026, karena ada rangkap jabatan): satu akun boleh memegang beberapa role sekaligus. Satu baris `user_roles` per role, salah satunya ditandai role utama (`is_primary`). Hak akses adalah gabungan semua role (RLS `private.has_role` dan server action memeriksa irisan). Role utama menentukan beranda dan urutan menu. Beranda menampilkan semua role sebagai badge. Akun yang memegang `owner` tidak wajib absensi.
 - Marketing hanya melihat lead miliknya. Manager melihat timnya. Owner dan admin melihat semua.
 - Service role key hanya dipakai di server (webhook, cron, admin task) dan tidak pernah sampai ke client.
