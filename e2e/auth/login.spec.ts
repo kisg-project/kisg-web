@@ -25,9 +25,10 @@ test.describe("Login portal", () => {
       await page.goto("/portal/login");
       await loginViaForm(page, user);
       await expect(page).toHaveURL(ROLE_HOME[role]);
-      // Beranda role: sapaan sesuai jam WIB dengan nama, lalu label role dan nama modul.
+      // Beranda role: sapaan dua baris sesuai jam WIB dengan nama depan, lalu label role dan modul.
+      const [firstName] = user.fullName.split(" ");
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-        new RegExp(`^Selamat (pagi|siang|sore|malam), ${user.fullName}$`),
+        new RegExp(`^Selamat (pagi|siang|sore|malam), ${firstName ?? ""}$`),
       );
       await expect(page.getByText(ROLE_LABELS[role], { exact: true }).first()).toBeVisible();
       await expect(
@@ -147,7 +148,10 @@ test.describe("Login portal", () => {
     await page.goto("/portal/absensi");
     await expect(page.getByRole("heading", { level: 1, name: "Absensi" })).toBeVisible();
 
-    await page.getByRole("button", { name: "Keluar" }).click();
+    // Tombol keluar di header cukup ikon, tetapi namanya tetap terbaca pembaca layar.
+    const logout = page.getByRole("banner").getByRole("button", { name: "Keluar" });
+    await expect(logout).toHaveText("");
+    await logout.click();
     await expect(page).toHaveURL("/portal/login");
     // Logout adalah POST biasa, jadi back kembali ke halaman portal terakhir (absensi), yang sekarang
     // dialihkan ke halaman masuk.

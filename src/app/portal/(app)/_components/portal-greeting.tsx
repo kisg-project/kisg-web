@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Avatar } from "@/components/shared/avatar";
+import { CalendarDays } from "lucide-react";
+import { RoofLine } from "@/components/shared/roof-line";
 import { ROLE_LABELS, type AppRole } from "@/config/roles";
-import { greetingFor } from "@/lib/format/greeting";
+import { firstName, greetingFor } from "@/lib/format/greeting";
 import { formatDateWIB } from "@/lib/format";
 
 export interface GreetingStat {
@@ -10,27 +11,26 @@ export interface GreetingStat {
 }
 
 /**
- * Kartu sapaan beranda portal (gaya aplikasi, mengikuti Shaflow): foto proyek dengan gradasi warna
- * brand, tanggal, sapaan sesuai jam WIB dengan nama, semua role, dan ringkasan angka opsional.
- * Halaman portal dirender per request, jadi jam yang dipakai adalah jam saat halaman dibuka.
+ * Kartu sapaan beranda portal: foto proyek dengan gradasi warna brand, tanggal, lalu sapaan dua baris
+ * ("Selamat malam," dan nama depan), semua role, dan ringkasan angka opsional. Foto profil tidak
+ * diulang di sini karena sudah ada di header (keputusan owner, 21 November 2026). Halaman portal
+ * dirender per request, jadi jam yang dipakai adalah jam saat halaman dibuka.
  */
 export function PortalGreeting({
   fullName,
   roles,
-  avatarUrl,
   description,
   stats = [],
 }: {
   fullName: string;
   roles: readonly AppRole[];
-  avatarUrl?: string | null;
   description?: string;
   stats?: readonly GreetingStat[];
 }) {
   const now = new Date();
-  const name = fullName || "rekan KIS";
+  const name = firstName(fullName) || "rekan KIS";
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] px-5 pt-6 pb-5 text-white sm:px-7 sm:pt-8">
+    <section className="relative isolate overflow-hidden rounded-[2rem] px-5 pt-5 pb-5 text-white shadow-[0_24px_48px_-28px_rgb(1_60_52/0.7)] sm:px-7 sm:pt-7">
       <Image
         src="/images/projects/sejahtera-green-village/sgv-3.webp"
         alt=""
@@ -41,16 +41,23 @@ export function PortalGreeting({
       />
       <span
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-linear-to-r from-primary-950/95 via-primary-900/85 to-primary-900/45"
+        className="absolute inset-0 -z-10 bg-linear-to-br from-primary-950 via-primary-900/90 to-primary-800/55"
       />
-      <div className="flex items-start justify-between gap-4">
-        <p className="text-sm font-medium text-white/85">{formatDateWIB(now)}</p>
-        <Avatar src={avatarUrl ?? null} name={name} className="size-12 ring-2 ring-white/40" />
-      </div>
-      <h1 className="mt-2 text-[2rem] leading-[1.1] font-semibold tracking-tight [overflow-wrap:anywhere] sm:text-5xl">
-        {greetingFor(now)}, {name}
+      <RoofLine
+        strokeWidth={3}
+        className="absolute -right-8 bottom-10 -z-10 h-24 w-64 text-gold-300/40"
+      />
+      <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md">
+        <CalendarDays aria-hidden="true" className="size-3.5" />
+        {formatDateWIB(now)}
+      </p>
+      <h1 className="mt-4 tracking-tight [overflow-wrap:anywhere]">
+        <span className="block text-lg font-medium text-white/85 sm:text-xl">
+          {greetingFor(now)},
+        </span>{" "}
+        <span className="block text-[2.25rem] leading-[1.05] font-bold sm:text-5xl">{name}</span>
       </h1>
-      <ul aria-label="Role" className="mt-3 flex flex-wrap gap-1.5">
+      <ul aria-label="Role" className="mt-4 flex flex-wrap gap-1.5">
         {roles.map((role) => (
           <li
             key={role}

@@ -22,6 +22,8 @@ export default async function ClockPage({ params }: PageProps<"/portal/absensi/[
   return (
     <div className="mx-auto grid w-full max-w-lg gap-6">
       <PageHeader
+        backHref="/portal/absensi"
+        backLabel="Kembali ke absensi"
         title={label}
         description="Pastikan GPS aktif dan wajah terlihat jelas. Foto hanya dari kamera."
       />

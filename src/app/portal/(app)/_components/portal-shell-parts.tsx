@@ -36,7 +36,7 @@ export async function UserMenu() {
         <span className="sr-only">Akun saya, </span>
         <Avatar src={photo} name={user.fullName} className="size-10" />
       </Link>
-      <LogoutButton />
+      <LogoutButton iconOnly />
     </div>
   );
 }
