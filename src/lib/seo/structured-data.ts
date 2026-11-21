@@ -19,6 +19,13 @@ export function organizationJsonLd(siteUrl: string): JsonLd {
     logo: absoluteUrl(siteUrl, siteConfig.logo.src),
     image: absoluteUrl(siteUrl, siteConfig.logo.src),
     telephone: siteConfig.whatsapp.e164,
+    email: siteConfig.emails[0].address,
+    contactPoint: siteConfig.emails.map((item) => ({
+      "@type": "ContactPoint",
+      contactType: item.label,
+      email: item.address,
+      availableLanguage: "id",
+    })),
     sameAs: [siteConfig.instagram.url],
     address: {
       "@type": "PostalAddress",

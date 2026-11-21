@@ -20,6 +20,12 @@ export const siteConfig = {
     e164: "+6288290957177",
     url: "https://wa.me/6288290957177",
   },
+  /** Email untuk publik (keputusan owner, 21 November 2026). Masuk lewat Cloudflare Email Routing. */
+  emails: [
+    { label: "Keluhan dan layanan pelanggan", address: "hallo@kisgroup.co.id" },
+    { label: "Informasi unit dan pembelian", address: "marketing@kisgroup.co.id" },
+    { label: "Kerja sama, bank, dan lamaran kerja", address: "corporate@kisgroup.co.id" },
+  ],
   instagram: {
     handle: "@kreatifsejahteraproject",
     url: "https://instagram.com/kreatifsejahteraproject",

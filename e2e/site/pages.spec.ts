@@ -203,6 +203,39 @@ test.describe("SEO dan kontak", () => {
     );
     await expect(instagram.locator("svg")).toHaveCount(1);
     await expect(footer.getByRole("link", { name: "WhatsApp +62 882-9095-7177" })).toBeVisible();
+    for (const address of [
+      "hallo@kisgroup.co.id",
+      "marketing@kisgroup.co.id",
+      "corporate@kisgroup.co.id",
+    ]) {
+      await expect(footer.getByRole("link", { name: address })).toHaveAttribute(
+        "href",
+        `mailto:${address}`,
+      );
+    }
+  });
+
+  test("halaman kontak menampilkan tiga email publik dan JSON-LD beranda memuat email", async ({
+    page,
+  }) => {
+    await page.goto("/kontak");
+    const list = page.getByRole("list", { name: "Alamat email" });
+    await expect(list.getByRole("listitem")).toHaveCount(3);
+    await expect(list.getByText("Keluhan dan layanan pelanggan")).toBeVisible();
+    for (const address of [
+      "hallo@kisgroup.co.id",
+      "marketing@kisgroup.co.id",
+      "corporate@kisgroup.co.id",
+    ]) {
+      await expect(list.getByRole("link", { name: address })).toHaveAttribute(
+        "href",
+        `mailto:${address}`,
+      );
+    }
+    // JSON-LD organisasi ada di beranda.
+    await page.goto("/");
+    const jsonLd = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(jsonLd.join(" ")).toContain('"email":"hallo@kisgroup.co.id"');
   });
 
   test("footer memakai logo terang tanpa kotak dan peta kantor yang menaut ke Google Maps", async ({

@@ -28,6 +28,7 @@ describe("organizationJsonLd", () => {
       "@type": "RealEstateAgent",
       legalName: "PT Kreatif Inovatif Sejahtera Group",
       telephone: "+6288290957177",
+      email: "hallo@kisgroup.co.id",
       address: { postalCode: "17123", addressCountry: "ID" },
     });
   });
