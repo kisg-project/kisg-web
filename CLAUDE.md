@@ -490,15 +490,17 @@ Asisten chat di website publik dan landing page. Tujuannya menjawab pertanyaan c
 **Serah ke manusia**
 - Pada jam kerja: percakapan muncul di inbox chat portal CRM (Supabase Realtime), marketing bisa mengambil alih dan membalas langsung dari portal.
 - Di luar jam kerja atau saat tidak ada yang online: tawarkan lanjut via WhatsApp dengan ringkasan percakapan di pesan pembuka, atau tinggalkan nomor untuk dihubungi.
-- Kalau Gemini error atau timeout: widget tetap berfungsi dengan tombol WhatsApp dan form singkat, tanpa pesan error teknis.
+- Kalau Gemini error, timeout, kuota atau batas biaya habis: Jaka menjawab "sedang tidak bisa membalas" dan menawarkan WhatsApp. Tidak pernah ada pesan error sistem (keputusan owner, 21 November 2026).
+- Implementasi tahap 1: route `/api/chat` (AI SDK v7, model dari env `GEMINI_MODEL`, default `gemini-3.5-flash`, tingkat berpikir `CHAT_THINKING`), widget hanya mengirim pesan terakhir dan server memuat riwayat dari `chat_messages`, batas token harian `CHAT_DAILY_TOKEN_LIMIT` lewat `chat_usage_daily`. Knowledge base pgvector, inbox handoff portal, dan statistik admin di tahap 2.
 
 **Gaya bahasa**
+- Nama asisten **Jaka** (keputusan owner, 21 November 2026). Gaya bicara seperti staf customer service sungguhan: hangat, luwes, tidak kaku. Tetap jujur sebagai asisten virtual kalau ditanya.
 - Persona: staf customer service KIS. Ramah, singkat, jelas. Aturan copywriting bagian 7 berlaku penuh untuk setiap jawaban.
 - Jawaban pendek (maksimal sekitar 3 kalimat kecuali pengunjung minta rincian), tanpa emoji, tanpa dash panjang. Output disaring di server sebelum dikirim sebagai pengaman terakhir.
 - Asisten tidak berpura-pura manusia. Kalau ditanya, jujur bahwa ini asisten virtual KIS.
 
 **UI**
-- Satu tombol melayang yang menggabungkan chat dan WhatsApp (tidak ada dua tombol yang bertumpuk). Di mobile terbuka sebagai layar penuh, di desktop sebagai panel.
+- Satu tombol melayang yang menggabungkan chat dan WhatsApp (tidak ada dua tombol yang bertumpuk). Di mobile terbuka sebagai layar penuh, di desktop sebagai panel dengan tombol layar penuh dan tombol WhatsApp di header.
 - Skrip widget dimuat setelah halaman siap (lazy), tidak boleh menurunkan skor Lighthouse.
 - Streaming jawaban, indikator mengetik, tombol saran pertanyaan singkat, aksesibel dengan keyboard dan screen reader.
 - Pemberitahuan singkat bahwa percakapan disimpan, dengan tautan kebijakan privasi.

@@ -176,15 +176,19 @@ test.describe("SEO dan kontak", () => {
     expect(xml).not.toContain("kedaluwarsa-dummy");
   });
 
-  test("tombol WhatsApp melayang menyebut halaman asal", async ({ page }) => {
+  test("tombol WhatsApp di panel chat menyebut halaman asal", async ({ page }) => {
     await page.goto("/kontak");
+    // Satu tombol melayang: membuka chat Jaka, dan panel chat punya tombol WhatsApp.
+    await page.getByRole("button", { name: /Chat dengan Jaka/ }).click();
     // Navigasi ke wa.me dicegah supaya href yang disusun saat klik bisa diperiksa.
     await page.evaluate(() => {
       document.addEventListener("click", (event) => {
         event.preventDefault();
       });
     });
-    const button = page.getByRole("link", { name: "Chat marketing lewat WhatsApp" });
+    const button = page
+      .getByRole("dialog", { name: "Chat dengan Jaka" })
+      .getByRole("link", { name: "Chat marketing lewat WhatsApp" });
     await button.click();
     const url = new URL((await button.getAttribute("href")) ?? "");
     expect(url.hostname).toBe("wa.me");

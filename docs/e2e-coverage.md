@@ -221,16 +221,18 @@ Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `conte
 | Skenario | Profil | Fase | Status |
 |---|---|---|---|
 | Widget tidak dimuat sebelum halaman siap (chunk tidak diminta sebelum interaksi atau idle) | D, MC | 7 | Belum |
-| Tanya jawab streaming tampil benar. Panel di desktop, layar penuh di mobile. Bisa dipakai dengan keyboard, pengumuman screen reader benar | D, MC, MS | 7 | Belum |
+| Tanya jawab streaming tampil benar. Panel di desktop, layar penuh di mobile. Bisa dipakai dengan keyboard, pengumuman screen reader benar | D, MC, MS | 7 | Ditulis (`site/chat.spec.ts`) |
 | Pertanyaan harga tipe tanpa harga dijawab tanpa angka dan menawarkan sambung ke marketing | D | 7 | Belum |
 | `create_lead`: lead masuk CRM sumber chat, ditugaskan, outbox Meta terbentuk. Tanpa persetujuan PDP ditolak | D | 7 | Belum |
 | Handoff jam kerja: marketing menerima di inbox portal, balasannya muncul di widget secara realtime | D | 7 | Belum |
 | Handoff di luar jam kerja: tombol WhatsApp berisi ringkasan percakapan | D, MC | 7 | Belum |
-| Provider error atau timeout: widget menampilkan WhatsApp dan form, tanpa pesan error teknis | D | 7 | Belum |
+| Provider error atau timeout: widget menampilkan WhatsApp, tanpa pesan error teknis | D | 7 | Ditulis (`site/chat.spec.ts`) |
 | Rate limit dan batas pesan bekerja. Pengunjung tidak bisa membaca sesi chat orang lain | D | 7 | Belum |
 | Output model berisi dash panjang atau emoji tersaring sebelum tampil | D | 7 | Belum |
 | Admin mengubah knowledge base lalu jawaban berikutnya memakai data baru | D | 7 | Belum |
-| Satu tombol melayang (chat + WhatsApp), tidak ada dua tombol bertumpuk | D, MC | 7 | Belum |
+| Satu tombol melayang (chat + WhatsApp), tidak ada dua tombol bertumpuk | D, MC | 7 | Ditulis (`site/chat.spec.ts`, `site/pages.spec.ts`) |
+| Percakapan tersimpan di database, panel ditutup lalu dibuka tetap utuh, layar penuh di desktop | D, MC | 7 | Ditulis (`site/chat.spec.ts`) |
+| RLS chat: anon tanpa akses, marketing membaca transkrip, pemakaian hanya dicatat server | DB | 7 | Ditulis (`08_chat.test.sql`) |
 
 ### Lapangan (`e2e/lapangan/`, Fase 8)
 
