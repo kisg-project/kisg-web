@@ -36,7 +36,7 @@ export function ChatLauncher() {
             setMounted(true);
             setOpen(true);
           }}
-          className="fixed right-5 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 flex h-14 items-center gap-2 rounded-full bg-primary pr-5 pl-4 font-semibold text-primary-foreground shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:scale-105 motion-safe:animate-[float-in_400ms_ease-out]"
+          className="fixed right-5 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 flex size-14 items-center justify-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:scale-105 motion-safe:animate-[float-in_400ms_ease-out] sm:w-auto sm:pr-5 sm:pl-4"
         >
           <MessageCircle aria-hidden="true" className="size-6" />
           {/* Teks tetap dibaca pembaca layar di HP walau hanya ikon yang tampil. */}
