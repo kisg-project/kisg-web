@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { AkadInfo, KprSimulatorTabs, PartnerBanks } from "@/features/kpr";
 import { getFeaturedProject } from "@/features/projects";
 import { formatRupiah } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
 /** Harga contoh kalkulator kalau belum ada tipe unit berharga di database. */
 const EXAMPLE_PRICE = 500_000_000;
@@ -13,20 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const project = await getFeaturedProject();
   const name = project?.name ?? siteConfig.name;
   const description = `Simulasi KPR konvensional dan KPR syariah ${name}: pilih produk bank, atur uang muka dan jangka waktu, lihat angsuran, rincian biaya, dan jadwal, lalu unduh PDF.`;
-  return {
+  return pageMetadata({
+    path: "/simulasi-kpr",
     title: "Simulasi KPR",
     description: description.slice(0, 160),
-    alternates: { canonical: "/simulasi-kpr" },
-    openGraph: {
-      type: "website",
-      locale: "id_ID",
-      url: "/simulasi-kpr",
-      siteName: siteConfig.name,
-      title: `Simulasi KPR ${name}`,
-      description,
-      images: project?.cover ? [{ url: project.cover.src, alt: project.cover.alt }] : [],
-    },
-  };
+  });
 }
 
 export default async function SimulasiKprPage() {
@@ -44,8 +36,8 @@ export default async function SimulasiKprPage() {
           project && unit ? (
             <>
               {project.name}, rumah {unit.name} seharga{" "}
-              <span className="font-semibold text-white tabular">{formatRupiah(price)}</span>. Pilih
-              produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF.
+              <span className="font-semibold text-primary-950 tabular">{formatRupiah(price)}</span>.
+              Pilih produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF.
             </>
           ) : (
             "Pilih produk bank, atur uang muka dan jangka waktu, lalu unduh hasilnya dalam PDF."

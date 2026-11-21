@@ -120,11 +120,11 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
         ]}
       >
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="rounded-md bg-white/10 px-3 py-1.5 text-sm font-semibold">
+          <span className="rounded-full bg-primary-100 px-3.5 py-1.5 text-sm font-semibold text-primary-900">
             {STATUS_LABEL[project.status]}
           </span>
           {fromPrice ? (
-            <span className="rounded-md bg-highlight px-3 py-1.5 text-sm font-bold text-highlight-foreground">
+            <span className="rounded-full bg-highlight px-3.5 py-1.5 text-sm font-bold text-highlight-foreground">
               Mulai {formatRupiahRange(fromPrice)}
             </span>
           ) : null}

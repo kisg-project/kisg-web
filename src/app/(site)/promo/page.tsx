@@ -6,13 +6,14 @@ import { MediaCard } from "@/components/site/media-card";
 import { PageHero } from "@/components/site/page-hero";
 import { getActivePromos, type PromoSummary } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
-  title: "Promo",
+export const metadata: Metadata = pageMetadata({
+  path: "/promo",
+  title: "Promo rumah",
   description:
     "Promo pembelian rumah KIS Group yang sedang berlaku, lengkap dengan masa berlaku dan syaratnya.",
-  alternates: { canonical: "/promo" },
-};
+});
 
 function promoPeriod(promo: Pick<PromoSummary, "startsAt" | "endsAt">): string | null {
   if (promo.endsAt) return `Berlaku sampai ${formatDateWIB(promo.endsAt)}`;

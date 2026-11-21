@@ -53,19 +53,24 @@ function CountUp({ stat }: { stat: HomeStat }) {
   );
 }
 
-/** Strip statistik beranda. Disembunyikan kalau belum ada angka asli (CLAUDE.md: tanpa data karangan). */
+/**
+ * Fakta singkat di bawah hero dalam tiga kartu. Disembunyikan kalau belum ada angka asli (CLAUDE.md:
+ * tanpa data karangan).
+ */
 export function StatsStrip({ stats }: { stats: readonly HomeStat[] }) {
   if (stats.length === 0) return null;
   return (
-    <section aria-label="KIS Group dalam angka" className="border-b bg-background">
-      <dl className="mx-auto grid w-full max-w-7xl grid-cols-1 divide-y px-4 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-6 lg:px-8">
+    <section aria-label="KIS Group dalam angka" className="bg-background">
+      <dl className="mx-auto grid w-full max-w-7xl gap-3 px-4 pt-10 sm:grid-cols-3 sm:gap-4 sm:px-6 sm:pt-14 lg:px-8">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="flex flex-col items-center gap-1 py-6 text-center sm:py-8"
+            className="flex items-center gap-4 rounded-2xl bg-surface px-5 py-5 sm:flex-col sm:items-start sm:gap-1 sm:px-6 sm:py-6"
           >
-            <dt className="order-2 text-sm text-muted-foreground">{stat.label}</dt>
-            <dd className="order-1 text-3xl font-extrabold text-primary sm:text-4xl">
+            <dt className="order-2 text-sm font-medium text-subtle-foreground sm:text-base">
+              {stat.label}
+            </dt>
+            <dd className="order-1 min-w-20 text-3xl font-extrabold tracking-tight text-primary-800 sm:text-4xl">
               <CountUp stat={stat} />
             </dd>
           </div>

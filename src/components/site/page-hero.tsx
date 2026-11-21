@@ -3,12 +3,13 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { JsonLd } from "@/components/shared/json-ld";
+import { RoofLine } from "@/components/shared/roof-line";
 import { env } from "@/env";
 import { breadcrumbJsonLd, jsonLdGraph, type Crumb } from "@/lib/seo/structured-data";
 
 /**
- * Judul halaman dalam (bukan beranda): jejak halaman, h1, dan deskripsi singkat di pita hijau gelap.
- * Jejak halaman juga dikirim sebagai JSON-LD BreadcrumbList. Item terakhir adalah halaman ini.
+ * Judul halaman dalam (bukan beranda): jejak halaman, h1, dan deskripsi singkat di latar mint terang,
+ * dengan garis atap logo KIS di sisi kanan. Jejak halaman juga dikirim sebagai JSON-LD BreadcrumbList.
  */
 export function PageHero({
   title,
@@ -23,22 +24,29 @@ export function PageHero({
 }) {
   const trail: Crumb[] = [{ name: "Beranda", path: "/" }, ...crumbs];
   return (
-    <section className="bg-primary-900 text-white">
+    <section className="relative isolate overflow-hidden bg-surface text-surface-foreground">
       <JsonLd data={jsonLdGraph([breadcrumbJsonLd(env.NEXT_PUBLIC_SITE_URL, trail)])} />
-      <Container className="py-10 sm:py-14">
+      <RoofLine
+        strokeWidth={3}
+        className="absolute -right-24 bottom-6 -z-10 hidden h-48 w-[34rem] text-primary-200 md:block lg:right-0"
+      />
+      <Container className="py-10 sm:py-14 lg:py-16">
         <nav aria-label="Jejak halaman">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-primary-100">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-subtle-foreground">
             {trail.map((crumb, index) => {
               const last = index === trail.length - 1;
               return (
                 <li key={crumb.path} className="flex items-center gap-1">
                   {last ? (
-                    <span aria-current="page" className="font-semibold text-white">
+                    <span aria-current="page" className="font-semibold text-primary-900">
                       {crumb.name}
                     </span>
                   ) : (
                     <>
-                      <Link href={crumb.path} className="underline-offset-4 hover:underline">
+                      <Link
+                        href={crumb.path}
+                        className="inline-flex min-h-6 items-center underline-offset-4 hover:text-primary hover:underline"
+                      >
                         {crumb.name}
                       </Link>
                       <ChevronRight aria-hidden="true" className="size-4" />
@@ -49,12 +57,13 @@ export function PageHero({
             })}
           </ol>
         </nav>
-        <h1 className="mt-4 max-w-3xl text-3xl font-extrabold tracking-tight text-balance sm:text-4xl lg:text-5xl">
+        <h1 className="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-primary-950 sm:text-5xl">
           {title}
         </h1>
-        <span aria-hidden="true" className="mt-4 block h-1 w-12 rounded-sm bg-highlight" />
         {description ? (
-          <p className="mt-4 max-w-2xl text-base text-primary-100 sm:text-lg">{description}</p>
+          <p className="mt-4 max-w-2xl text-base text-subtle-foreground sm:text-lg">
+            {description}
+          </p>
         ) : null}
         {children}
       </Container>

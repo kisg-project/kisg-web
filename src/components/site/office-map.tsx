@@ -12,12 +12,7 @@ const MARKER = { left: "26.62%", top: "71.37%" } as const;
 
 export function OfficeMap() {
   return (
-    <a
-      href={officeMapsUrl()}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block rounded-lg border border-primary-800 bg-primary-950/40 p-4 transition-colors hover:border-primary-600"
-    >
+    <a href={officeMapsUrl()} target="_blank" rel="noopener noreferrer" className="group block">
       <span className="sr-only">Buka lokasi kantor pemasaran di Google Maps</span>
       <div className="relative aspect-[1000/373] w-full">
         <Image
@@ -26,7 +21,7 @@ export function OfficeMap() {
           width={1000}
           height={373}
           unoptimized
-          className="size-full opacity-30 transition-opacity duration-500 group-hover:opacity-45"
+          className="size-full opacity-35 transition-opacity duration-500 group-hover:opacity-55"
         />
         <span
           aria-hidden="true"
@@ -40,7 +35,7 @@ export function OfficeMap() {
           </span>
         </span>
       </div>
-      <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-white">
+      <span className="mt-3 inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-white underline-offset-4 group-hover:underline">
         Petunjuk arah
         <ArrowUpRight aria-hidden="true" className="size-4" />
       </span>

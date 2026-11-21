@@ -37,7 +37,9 @@ export default async function CareerPage({ params }: PageProps<"/karir/[slug]">)
         ]}
       >
         {career.closesOn ? (
-          <p className="mt-4 text-sm text-primary-100">Ditutup {formatDateWIB(career.closesOn)}</p>
+          <p className="mt-4 text-sm text-subtle-foreground">
+            Ditutup {formatDateWIB(career.closesOn)}
+          </p>
         ) : null}
       </PageHero>
       <Container className="grid gap-8 py-10 sm:py-14">

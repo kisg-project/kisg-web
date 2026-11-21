@@ -207,7 +207,9 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 
 - Referensi struktur: damaiputra.com (hero carousel lebar, strip statistik, kartu proyek, berita, promo, CTA penutup, footer lengkap, tombol WhatsApp melayang). Ambil polanya, jangan meniru visual atau kontennya.
 - Grid 12 kolom, container maks ~1280px, ritme spasi konsisten (kelipatan 4/8).
-- Radius kecil sampai sedang (4 sampai 8px). Bayangan tipis. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
+- Website bergaya corporate, clean, playful, friendly (keputusan owner, 21 November 2026, menggantikan aturan radius 4 sampai 8px): kartu 20px, foto 28px, panel besar 40px, tombol berbentuk pil. Field isian dan komponen kecil tetap 4 sampai 8px. Bayangan lembut. Tanpa glassmorphism, tanpa gradien neon, tanpa blob dekoratif.
+- Motif khas website adalah garis atap dari logo KIS (komponen `RoofLine`): di atas foto hero, di latar judul halaman, dan di panel ajakan. Hero beranda terang (latar mint, judul gelap, foto membulat dengan chip harga). Judul bagian tanpa garis emas di bawahnya.
+- Judul tab: `<halaman> | KIS Group`. Ikon tab dan ikon aplikasi dibuat dari logo (`src/app/favicon.ico`, `icon.png`, `apple-icon.png`). Setiap halaman publik punya gambar share bermerek 1200x630 dari route `/og` (`src/lib/seo/og-image.tsx`), lewat helper `pageMetadata` untuk halaman statis. Route `/og` hanya menerima path yang terdaftar.
 - Website banyak gerak halus (keputusan owner, Fase 3): bagian halaman muncul saat di-scroll (`Reveal`, fade dan geser naik sekitar 600ms), banner bergeser otomatis dengan indikator kecil saja (tanpa tombol panah dan jeda; autoplay berhenti saat disentuh, difokus, atau saat pengunjung memilih slide), kartu dan foto bereaksi saat disentuh atau di-hover, angka statistik berhitung naik. Interaksi kecil (hover, tombol) tetap pendek, maks ~250ms. Tanpa library animasi. Konten tidak boleh disembunyikan sebelum JavaScript jalan, LCP dan CLS tidak boleh terganggu, dan semua gerak berhenti kalau `prefers-reduced-motion` aktif.
 - Scrollbar minimalis: tipis, warna menyatu dengan palet, latar transparan (keputusan owner, Fase 3).
 - Dropdown selalu memakai komponen custom `src/components/ui/select.tsx` (Radix), tidak memakai `<select>` bawaan browser, supaya tampilannya seragam (keputusan owner, Fase 3). Dipaksa aturan ESLint `no-restricted-syntax`.
@@ -437,6 +439,7 @@ Semua workflow: pnpm dengan cache, cache browser Playwright, `concurrency` yang 
 6. **`release.yml`** (push ke `main`): release-please untuk versi, tag, dan CHANGELOG.
 7. **`e2e-weekly.yml`** (terjadwal tiap Minggu malam WIB): suite E2E penuh 3 kali berturut-turut tanpa retry untuk mendeteksi test flaky, buka issue otomatis kalau ada yang gagal. Mingguan, bukan tiap malam, karena kuota menit Actions.
 8. **`keepalive.yml`** (terjadwal harian): membaca satu baris data publik dari API Supabase production supaya project tidak dijeda, dan membuat issue kalau gagal.
+9. **`vercel-cleanup.yml`** (terjadwal setiap 3 hari, keputusan owner 21 November 2026): menghapus riwayat deployment Vercel. Tiga deployment production terbaru disimpan untuk Instant Rollback, preview di bawah 3 hari disimpan untuk PR yang masih terbuka.
 
 Renovate (atau Dependabot) mingguan, update dikelompokkan, tanpa automerge untuk versi major. PR dependency tetap wajib CI hijau.
 

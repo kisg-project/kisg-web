@@ -24,8 +24,8 @@ export function MediaCard({
   children?: ReactNode;
 }) {
   return (
-    <article className="group relative flex h-full lift flex-col overflow-hidden rounded-lg border bg-card shadow-xs">
-      <div className="relative aspect-[16/10] overflow-hidden bg-surface">
+    <article className="group relative flex h-full lift flex-col overflow-hidden rounded-3xl bg-card shadow-xs ring-1 ring-primary-100">
+      <div className="relative m-2 mb-0 aspect-[16/10] overflow-hidden rounded-2xl bg-surface">
         {image ? (
           <Image
             src={image.src}
@@ -40,14 +40,14 @@ export function MediaCard({
           </div>
         )}
         {badge ? (
-          <span className="absolute top-3 left-3 rounded-md bg-primary-950/85 px-2.5 py-1 text-xs font-bold tracking-wide text-white uppercase">
+          <span className="absolute top-3 left-3 rounded-full bg-primary-950/85 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
             {badge}
           </span>
         ) : null}
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-5">
+      <div className="flex flex-1 flex-col gap-2 p-5 sm:p-6">
         {meta ? <p className="text-xs font-semibold text-muted-foreground">{meta}</p> : null}
-        <h3 className="text-lg font-bold">
+        <h3 className="text-lg leading-snug font-bold text-primary-950">
           <Link
             href={href}
             className="group-hover:text-primary after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"

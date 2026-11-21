@@ -4,13 +4,14 @@ import { PageHero } from "@/components/site/page-hero";
 import { PRIVACY_POLICY_UPDATED } from "@/config/legal";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { formatDateWIB } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/kebijakan-privasi",
   title: "Kebijakan privasi",
   description:
     "Cara KIS Group mengumpulkan, memakai, dan melindungi data pribadi pengunjung website dan calon pembeli.",
-  alternates: { canonical: "/kebijakan-privasi" },
-};
+});
 
 export default function PrivacyPage() {
   return (

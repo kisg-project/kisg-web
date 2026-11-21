@@ -6,13 +6,14 @@ import { MediaCard } from "@/components/site/media-card";
 import { PageHero } from "@/components/site/page-hero";
 import { formatAddress, getPublishedProjects, lowestPrice } from "@/features/projects";
 import { formatRupiahRange } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
-export const metadata: Metadata = {
-  title: "Proyek",
+export const metadata: Metadata = pageMetadata({
+  path: "/proyek",
+  title: "Proyek perumahan",
   description:
     "Proyek perumahan KIS Group di Bekasi dan Depok: Sejahtera Green Village yang sedang dipasarkan dan proyek yang sudah terjual habis.",
-  alternates: { canonical: "/proyek" },
-};
+});
 
 export default async function ProjectsPage() {
   const projects = await getPublishedProjects();

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, Phone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal } from "@/components/shared/reveal";
+import { RoofLine } from "@/components/shared/roof-line";
 import { Section } from "@/components/shared/section";
 import { EmptyState } from "@/components/shared/state-message";
 import { MediaCard } from "@/components/site/media-card";
@@ -28,9 +29,8 @@ import {
   type ProjectDetail,
 } from "@/features/projects";
 import { formatDateWIB, formatRupiah, formatRupiahRange } from "@/lib/format";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 import { jsonLdGraph, listingJsonLd, organizationJsonLd } from "@/lib/seo/structured-data";
-
-const OG_FALLBACK = "/images/hero/sgv-hero-desktop.webp";
 
 function describe(project: ProjectDetail | null): string {
   if (!project) return `${siteConfig.legalName}, developer perumahan di Kabupaten Bekasi.`;
@@ -49,29 +49,8 @@ function describe(project: ProjectDetail | null): string {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const project = await getFeaturedProject();
-  const description = describe(project);
-  const title = project
-    ? `${project.name}${shortArea(project.address) ? `, ${shortArea(project.address) ?? ""}` : ""}`
-    : siteConfig.name;
-  const image = project?.cover;
-  const images = image
-    ? [{ url: image.src, width: image.width, height: image.height, alt: image.alt }]
-    : [{ url: OG_FALLBACK }];
-  return {
-    description,
-    alternates: { canonical: "/" },
-    openGraph: {
-      type: "website",
-      locale: "id_ID",
-      url: "/",
-      siteName: siteConfig.name,
-      title,
-      description,
-      images,
-    },
-    twitter: { card: "summary_large_image", title, description, images: images.map((i) => i.url) },
-  };
+  // Judul tab memakai default layout root. Gambar share bermerek dari /og.
+  return pageMetadata({ path: "/", description: describe(await getFeaturedProject()) });
 }
 
 function mapsUrl(project: ProjectDetail): string {
@@ -133,29 +112,46 @@ export default async function HomePage() {
 
       {project ? (
         <>
-          <Section id="sorotan" title="Sorotan proyek" className="scroll-mt-(--header-height)">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+          <Section
+            id="sorotan"
+            title="Proyek unggulan"
+            description="Rumah yang sedang dipasarkan, lengkap dengan harga dan spesifikasi."
+            className="scroll-mt-(--header-height)"
+          >
+            <div className="grid gap-8 rounded-4xl bg-surface p-5 sm:p-8 lg:grid-cols-12 lg:items-center lg:gap-12 lg:p-10">
               <Reveal className="lg:col-span-5">
-                <h3 className="text-2xl font-bold">{project.name}</h3>
-                <p className="mt-3 flex gap-2 text-subtle-foreground">
+                <h3 className="text-3xl font-extrabold tracking-tight text-primary-950 sm:text-4xl">
+                  {project.name}
+                </h3>
+                <p className="mt-4 flex gap-2 text-subtle-foreground">
                   <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
                   {formatAddress(project.address)}
                 </p>
                 {lowestPrice(project.unitTypes) ? (
-                  <p className="mt-4 text-lg font-bold text-highlight-text">
+                  <p className="mt-5 inline-flex rounded-full bg-white px-4 py-2 text-lg font-extrabold text-highlight-text shadow-xs ring-1 ring-gold-200">
                     Mulai {formatRupiahRange(lowestPrice(project.unitTypes) ?? 0)}
                   </p>
                 ) : null}
-                <Button asChild className="mt-6">
-                  <Link href={projectPath}>
-                    Lihat detail proyek
-                    <ArrowRight aria-hidden="true" />
-                  </Link>
-                </Button>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <Button asChild size="lg">
+                    <Link href={projectPath}>
+                      Lihat detail proyek
+                      <ArrowRight aria-hidden="true" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="border-primary-200 bg-white hover:bg-primary-50"
+                  >
+                    <Link href="/simulasi-kpr">Hitung cicilan</Link>
+                  </Button>
+                </div>
               </Reveal>
               {homeGallery.length > 0 ? (
                 <ul
-                  className="grid grid-cols-2 gap-3 lg:col-span-7"
+                  className="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-7"
                   aria-label={`Foto ${project.name}`}
                 >
                   {homeGallery.map((image, index) => (
@@ -163,7 +159,7 @@ export default async function HomePage() {
                       <Reveal delay={index * 80}>
                         <Link
                           href={`${projectPath}#galeri`}
-                          className="group relative block aspect-[4/3] overflow-hidden rounded-lg bg-surface"
+                          className="group relative block aspect-[4/3] overflow-hidden rounded-2xl bg-primary-100"
                         >
                           <Image
                             src={image.src}
@@ -204,20 +200,48 @@ export default async function HomePage() {
             </Section>
           ) : null}
 
-          <Section id="lokasi" title="Lokasi" className="scroll-mt-(--header-height)">
-            <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <p className="flex max-w-2xl gap-3 text-base">
-                <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
-                <span>
-                  <span className="block font-semibold">{project.name}</span>
-                  {formatAddress(project.address)}
-                </span>
-              </p>
-              <Button asChild variant="outline">
-                <a href={mapsUrl(project)} target="_blank" rel="noopener noreferrer">
-                  Buka di Google Maps
-                </a>
-              </Button>
+          <Section
+            id="lokasi"
+            title="Lokasi"
+            description="Alamat proyek dan tempat penting di sekitarnya."
+            tone="surface"
+            className="scroll-mt-(--header-height)"
+          >
+            <Reveal className="grid gap-6 rounded-4xl bg-white p-6 shadow-sm sm:p-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:p-10">
+              <div className="lg:col-span-5">
+                <p className="flex gap-3 text-base">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
+                    <MapPin aria-hidden="true" className="size-5" />
+                  </span>
+                  <span>
+                    <span className="block text-lg font-bold text-primary-950">{project.name}</span>
+                    <span className="text-subtle-foreground">{formatAddress(project.address)}</span>
+                  </span>
+                </p>
+                <Button asChild variant="outline" className="mt-6 border-primary-200">
+                  <a href={mapsUrl(project)} target="_blank" rel="noopener noreferrer">
+                    Buka di Google Maps
+                    <ArrowUpRight aria-hidden="true" />
+                  </a>
+                </Button>
+              </div>
+              {project.nearby.length > 0 ? (
+                <ul aria-label="Tempat terdekat" className="flex flex-wrap gap-2.5 lg:col-span-7">
+                  {project.nearby.map((place) => (
+                    <li
+                      key={place.id}
+                      className="rounded-full bg-surface px-4 py-2.5 text-sm font-semibold text-primary-900"
+                    >
+                      {place.name}
+                      {place.travelMinutes !== null ? (
+                        <span className="font-medium text-subtle-foreground">
+                          {` ${String(place.travelMinutes)} menit`}
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </Reveal>
           </Section>
         </>
@@ -254,7 +278,19 @@ export default async function HomePage() {
       ) : null}
 
       {posts.length > 0 ? (
-        <Section id="berita" title="Berita terbaru">
+        <Section
+          id="berita"
+          title="Berita terbaru"
+          description="Kabar KPR, kebijakan perumahan, dan panduan membeli rumah."
+          action={
+            <Button asChild variant="outline" className="border-primary-200">
+              <Link href="/berita">
+                Semua berita
+                <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
+          }
+        >
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <li key={post.id}>
@@ -273,24 +309,26 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
-          <Button asChild variant="outline" className="mt-8">
-            <Link href="/berita">Semua berita</Link>
-          </Button>
         </Section>
       ) : null}
 
-      <section aria-labelledby="cta-judul" className="bg-primary-900 py-12 text-white sm:py-16">
-        <Reveal className="mx-auto flex w-full max-w-7xl flex-col items-start gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <div>
-            <h2 id="cta-judul" className="text-2xl font-bold sm:text-3xl">
+      <section aria-labelledby="cta-judul" className="px-4 pb-14 sm:px-6 sm:pb-20 lg:px-8 lg:pb-24">
+        <Reveal className="relative isolate mx-auto flex w-full max-w-7xl flex-col items-start gap-6 overflow-hidden rounded-4xl bg-primary-900 px-6 py-10 text-white sm:px-10 sm:py-14 md:flex-row md:items-center md:justify-between lg:px-14">
+          <RoofLine
+            strokeWidth={4}
+            className="absolute -right-10 -bottom-6 -z-10 h-40 w-[28rem] text-gold-400/35"
+          />
+          <div className="max-w-xl">
+            <h2 id="cta-judul" className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               Jadwalkan survei lokasi
             </h2>
-            <p className="mt-2 text-primary-100">
-              Marketing kami mengatur jadwal kunjungan
+            <p className="mt-3 text-lg text-primary-100">
+              Lihat rumah contoh dan lingkungannya langsung. Marketing kami mengatur jadwal
+              kunjungan
               {project ? ` ke ${project.name}` : ""}.
             </p>
           </div>
-          <Button asChild variant="highlight" size="lg">
+          <Button asChild variant="highlight" size="lg" className="shadow-lg">
             <a
               href={whatsappLink(
                 project

@@ -100,16 +100,21 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  /* Radius maksimal 8px (CLAUDE.md bagian 6). Ukuran besar dari komponen shadcn dibatasi ke 8px. */
-  --radius-xl: 8px;
-  --radius-2xl: 8px;
-  --radius-3xl: 8px;
-  --radius-4xl: 8px;
+  /*
+   * Skala besar untuk tampilan ramah (keputusan owner, 21 November 2026): kartu 20px, foto 28px,
+   * panel besar 40px. Field dan komponen kecil tetap 4 sampai 8px.
+   */
+  --radius-xl: 12px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+  --radius-4xl: 40px;
 
   --shadow-xs: 0 1px 2px 0 rgb(28 36 34 / 0.06);
   --shadow-sm: 0 1px 3px 0 rgb(28 36 34 / 0.08), 0 1px 2px -1px rgb(28 36 34 / 0.06);
   /* Bayangan tipis saat kartu di-hover (CLAUDE.md bagian 6: bayangan tipis). */
   --shadow-md: 0 6px 16px -4px rgb(28 36 34 / 0.12), 0 2px 4px -2px rgb(28 36 34 / 0.08);
+  /* Bayangan lembut bernuansa hijau untuk kartu besar dan foto hero. */
+  --shadow-lg: 0 28px 56px -24px rgb(1 60 52 / 0.28), 0 8px 16px -8px rgb(1 60 52 / 0.1);
 
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
@@ -355,6 +360,11 @@
   height: calc(100svh - var(--header-height));
 }
 
+/* Hero beranda: minimal satu layar di bawah navbar, boleh lebih tinggi kalau isinya panjang (HP kecil). */
+@utility min-h-hero {
+  min-height: max(28rem, calc(100svh - var(--header-height)));
+}
+
 /*
  * Gerak halus saat bagian halaman masuk layar (keputusan owner, Fase 3). Elemen hanya disembunyikan
  * oleh komponen Reveal setelah halaman jalan di browser dan kalau posisinya di bawah layar, jadi konten
@@ -391,7 +401,7 @@
   @media (hover: hover) {
     &:hover {
       translate: 0 -0.25rem;
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-lg);
       border-color: var(--color-primary-200);
     }
   }

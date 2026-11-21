@@ -56,7 +56,7 @@ export default async function PostPage({ params }: PageProps<"/berita/[slug]">) 
           { name: post.title, path },
         ]}
       >
-        <p className="mt-4 text-sm text-primary-100">
+        <p className="mt-4 text-sm text-subtle-foreground">
           <time dateTime={post.publishedAt}>{formatDateWIB(post.publishedAt)}</time>
         </p>
       </PageHero>

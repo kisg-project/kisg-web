@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { RoofLine } from "@/components/shared/roof-line";
 import { cn } from "@/lib/utils";
 
 export interface HeroSlide {
@@ -14,7 +15,10 @@ export interface HeroSlide {
     sizes: string | undefined;
     alt: string;
   };
+  /** Teks slide (kolom kiri di layar lebar, di bawah foto di HP). */
   content: ReactNode;
+  /** Chip yang melayang di atas foto, misal harga. */
+  aside?: ReactNode;
 }
 
 const INTERVAL_MS = 7000;
@@ -36,10 +40,11 @@ function useReducedMotion(): boolean {
 }
 
 /**
- * Hero Banner beranda: beberapa slide yang bergeser otomatis dengan transisi pudar dan zoom halus.
- * Kontrolnya hanya indikator kecil (keputusan owner). Autoplay berhenti saat kursor atau fokus ada di
- * dalam, berhenti permanen begitu pengunjung memilih slide lewat indikator atau tombol panah keyboard
- * (mekanisme jeda WCAG 2.2.2), dan tidak jalan kalau pengunjung mematikan animasi. Slide nonaktif
+ * Hero Banner beranda: teks di kiri, foto berbingkai garis atap logo KIS di kanan (di HP foto di atas).
+ * Slide bertumpuk di satu sel grid sehingga tinggi hero mengikuti slide tertinggi, lalu berganti dengan
+ * transisi pudar. Kontrolnya hanya indikator kecil (keputusan owner). Autoplay berhenti saat kursor atau
+ * fokus ada di dalam, berhenti permanen begitu pengunjung memilih slide lewat indikator atau tombol panah
+ * keyboard (mekanisme jeda WCAG 2.2.2), dan tidak jalan kalau pengunjung mematikan animasi. Slide nonaktif
  * ditandai inert supaya tautannya tidak terjangkau.
  */
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
@@ -72,7 +77,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
     <section
       aria-roledescription="carousel"
       aria-label="Banner utama"
-      className="relative isolate h-hero min-h-[28rem] overflow-hidden bg-primary-950"
+      className="relative isolate flex min-h-hero flex-col overflow-hidden bg-surface"
       onMouseEnter={() => {
         setHovered(true);
       }}
@@ -92,7 +97,15 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         }
       }}
     >
-      <div aria-live={autoplay ? "off" : "polite"}>
+      {/* Garis atap besar yang samar di latar, motif dari logo KIS. */}
+      <RoofLine
+        strokeWidth={2}
+        className="absolute top-[12%] -left-40 -z-10 hidden h-80 w-[56rem] text-primary-100 lg:block"
+      />
+      <div
+        aria-live={autoplay ? "off" : "polite"}
+        className="mx-auto grid w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8"
+      >
         {slides.map((slide, slideIndex) => {
           const active = slideIndex === index;
           return (
@@ -104,42 +117,46 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               aria-hidden={!active}
               inert={!active}
               className={cn(
-                "absolute inset-0 transition-opacity duration-1000 ease-out",
+                "col-start-1 row-start-1 grid content-center items-center gap-10 pt-10 pb-6 transition-opacity duration-700 ease-out sm:pt-14 lg:grid-cols-12 lg:gap-14 lg:py-14",
                 active ? "z-10 opacity-100" : "z-0 opacity-0",
               )}
             >
-              <picture>
-                <source
-                  media="(min-width: 768px), (orientation: landscape)"
-                  srcSet={slide.image.desktopSrcSet}
-                  sizes={slide.image.sizes}
-                />
-                <source srcSet={slide.image.mobileSrcSet} sizes={slide.image.sizes} />
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  sizes={slide.image.sizes}
-                  fetchPriority={slideIndex === 0 ? "high" : "low"}
-                  loading={slideIndex === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  className={cn(
-                    "absolute inset-0 -z-20 size-full object-cover object-[50%_60%] transition-transform duration-[8000ms] ease-out",
-                    active ? "scale-105" : "scale-100",
-                  )}
-                />
-              </picture>
-              {/* Lapisan gelap di bagian bawah supaya teks putih terbaca di atas foto. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 -z-10 bg-linear-to-t from-primary-950/90 via-primary-950/45 to-primary-950/0"
-              />
               <div
                 className={cn(
-                  "h-full transition-[opacity,translate] delay-200 duration-700 ease-out",
-                  active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
+                  "order-2 transition-[opacity,translate] delay-150 duration-700 ease-out lg:order-1 lg:col-span-6",
+                  active ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
                 )}
               >
                 {slide.content}
+              </div>
+              <div className="relative order-1 pt-6 sm:pt-9 lg:order-2 lg:col-span-6">
+                <RoofLine
+                  strokeWidth={5}
+                  className="absolute top-0 -left-3 h-12 w-[calc(100%+1.5rem)] text-highlight sm:h-16"
+                />
+                <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-primary-100 shadow-lg lg:aspect-[5/4]">
+                  <picture>
+                    <source
+                      media="(min-width: 768px), (orientation: landscape)"
+                      srcSet={slide.image.desktopSrcSet}
+                      sizes={slide.image.sizes}
+                    />
+                    <source srcSet={slide.image.mobileSrcSet} sizes={slide.image.sizes} />
+                    <img
+                      src={slide.image.src}
+                      alt={slide.image.alt}
+                      sizes={slide.image.sizes}
+                      fetchPriority={slideIndex === 0 ? "high" : "low"}
+                      loading={slideIndex === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      className={cn(
+                        "absolute inset-0 size-full object-cover object-[50%_60%] transition-transform duration-[8000ms] ease-out",
+                        active ? "scale-105" : "scale-100",
+                      )}
+                    />
+                  </picture>
+                </div>
+                {slide.aside}
               </div>
             </div>
           );
@@ -147,8 +164,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       </div>
 
       {count > 1 ? (
-        <div className="absolute inset-x-0 bottom-3 z-20 mx-auto flex w-full max-w-7xl items-center px-4 sm:bottom-5 sm:px-6 lg:px-8">
-          <div className="flex items-center rounded-full bg-primary-950/35 px-1.5">
+        <div className="mx-auto flex w-full max-w-7xl items-center px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8">
+          <div className="-ml-1 flex items-center">
             {slides.map((slide, slideIndex) => (
               <button
                 key={slide.id}
@@ -164,10 +181,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "block h-1.5 rounded-full transition-[width,background-color] duration-300",
+                    "block h-2 rounded-full transition-[width,background-color] duration-300",
                     slideIndex === index
-                      ? "w-6 bg-gold-300"
-                      : "w-1.5 bg-white/70 group-hover:bg-white",
+                      ? "w-7 bg-primary-700"
+                      : "w-2 bg-primary-200 group-hover:bg-primary-400",
                   )}
                 />
               </button>
