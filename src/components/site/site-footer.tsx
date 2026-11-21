@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Container } from "@/components/shared/container";
 import { Logo } from "@/components/shared/logo";
@@ -74,6 +74,15 @@ export async function SiteFooter() {
                 <span className="min-w-0 break-all">{siteConfig.instagram.handle}</span>
               </a>
             </li>
+            {siteConfig.emails.map((item) => (
+              <li key={item.address} className="mt-2">
+                <span className="block text-xs">{item.label}</span>
+                <a href={`mailto:${item.address}`} className={`${linkClass} gap-2`}>
+                  <Mail aria-hidden="true" className="size-4 shrink-0" />
+                  <span className="min-w-0 break-all">{item.address}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </Container>

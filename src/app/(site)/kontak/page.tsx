@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MapPin, MessageCircle } from "lucide-react";
+import { Mail, MapPin, MessageCircle } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -10,7 +10,7 @@ import { LeadForm } from "@/features/leads";
 
 export const metadata: Metadata = {
   title: "Kontak",
-  description: `Hubungi marketing KIS Group lewat WhatsApp ${siteConfig.whatsapp.display} atau datang ke kantor pemasaran di Bekasi Utara.`,
+  description: `Hubungi KIS Group lewat WhatsApp ${siteConfig.whatsapp.display}, email hallo@kisgroup.co.id, atau datang ke kantor pemasaran di Bekasi Utara.`,
   alternates: { canonical: "/kontak" },
 };
 
@@ -60,6 +60,34 @@ export default function ContactPage() {
                 </a>
               </Button>
             </div>
+          </Reveal>
+
+          <Reveal
+            delay={120}
+            className="flex lift flex-col gap-4 rounded-lg border bg-card p-6 lg:col-span-3"
+          >
+            <div className="flex gap-4">
+              <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
+                <Mail aria-hidden="true" className="size-6" />
+              </span>
+              <div>
+                <h2 className="text-xl font-bold">Email</h2>
+                <p className="mt-1 text-muted-foreground">Kami membalas di jam kerja.</p>
+              </div>
+            </div>
+            <ul aria-label="Alamat email" className="grid gap-4 sm:grid-cols-3">
+              {siteConfig.emails.map((item) => (
+                <li key={item.address} className="min-w-0">
+                  <p className="text-sm text-muted-foreground">{item.label}</p>
+                  <a
+                    href={`mailto:${item.address}`}
+                    className="inline-flex min-h-11 items-center font-semibold break-all text-primary-700 underline-offset-4 hover:underline"
+                  >
+                    {item.address}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </Reveal>
 
           <Reveal

@@ -18,7 +18,8 @@ KIS Group adalah developer perumahan.
 - Badan usaha: PT Kreatif Inovatif Sejahtera Group
 - Domain: `kisgroup.co.id`
 - Alamat kantor: Ruko D'Smart, Jl. Telaga Mas No. 55 Blok H, RT 012/RW 014, Harapan Baru, Bekasi Utara, Kota Bekasi, Jawa Barat 17123
-- WhatsApp marketing: `+62 882-9095-7177` (link: `https://wa.me/6288290957177`), menggantikan nomor lama sejak 20 November 2026 (keputusan owner). Satu-satunya kontak yang tampil di website. NIB, telepon, dan email dari NIB tidak ditampilkan.
+- WhatsApp marketing: `+62 882-9095-7177` (link: `https://wa.me/6288290957177`), menggantikan nomor lama sejak 20 November 2026 (keputusan owner). NIB, telepon, dan email dari NIB tidak ditampilkan.
+- Email publik di website (keputusan owner, 21 November 2026): `hallo@` (keluhan dan layanan pelanggan), `marketing@` (informasi unit dan pembelian), `corporate@` (kerja sama, bank, lamaran kerja). Tampil di halaman Kontak, footer, dan JSON-LD.
 - Instagram: `@kreatifsejahteraproject` (`https://instagram.com/kreatifsejahteraproject`)
 - Logo: `public/brand/` (lihat bagian 6 untuk ekstraksi warna)
 
@@ -358,8 +359,10 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 | `notifikasi@kisgroup.co.id` | Email otomatis sistem (undangan, lupa password, notifikasi internal). Balasan diteruskan ke `corporate@` |
 | `marketing@kisgroup.co.id` | Email ke calon pembeli (konfirmasi form, brosur, jadwal survei) |
 | `corporate@kisgroup.co.id` | Urusan resmi perusahaan (mitra, bank, lamaran kerja) |
+| `hallo@kisgroup.co.id` | Keluhan dan layanan pelanggan (tampil di website) |
+| `cms@kisgroup.co.id` | Akun panel CMS (tidak tampil di website) |
 
-Pengiriman lewat Brevo dengan domain terautentikasi (SPF, DKIM, DMARC). Email masuk ke `marketing@` dan `corporate@` diteruskan ke Gmail lewat Cloudflare Email Routing.
+Pengiriman lewat Brevo dengan domain terautentikasi (SPF, DKIM, DMARC). Email masuk ke `hallo@`, `marketing@`, `corporate@`, `notifikasi@`, dan `cms@` diteruskan ke Gmail perusahaan lewat Cloudflare Email Routing.
 - Semua migrasi lewat `supabase/migrations` (Supabase CLI). Tidak ada perubahan schema manual lewat dashboard.
 
 ### Kompresi gambar (wajib)
