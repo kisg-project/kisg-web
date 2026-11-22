@@ -76,6 +76,8 @@ Dependency tambahan yang sudah disetujui owner:
 - Email: `@react-email/components` dan `@react-email/render` untuk template email HTML (keputusan owner, 20 November 2026).
 - Absensi: `@mediapipe/tasks-vision` (Google, Apache 2.0) untuk deteksi wajah dan kedip di browser, dimuat hanya di halaman absensi. Model dan file WASM disajikan dari domain sendiri, bukan CDN (keputusan owner, 20 November 2026).
 - Grafik: `recharts` (sudah di tech stack), dipasang 22 November 2026 untuk grafik dashboard owner.
+- Tanda tangan: `@simplewebauthn/browser` dan `@simplewebauthn/server` untuk sidik jari WebAuthn (keputusan owner, 22 November 2026).
+- Notifikasi: `web-push` untuk Web Push (persetujuan owner, 23 November 2026).
 - Animasi: `lottie-web` (Airbnb, MIT) versi ringan `lottie_light` (SVG, tanpa eval dan WASM) untuk layar memuat dan keadaan kosong (keputusan owner, 22 November 2026). File animasi dibuat sendiri oleh `scripts/build-lottie.mjs` dengan warna brand, dimuat lewat dynamic import dan di-cache.
 
 ---
@@ -252,7 +254,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Lanjutan rombakan PWA (keputusan owner, 22 November 2026):
   - colorful pastel konsisten, tidak ada bagian polos: setiap modul punya satu warna pastel (kelas `tone-*`, sama dengan warna ikonnya di menu) untuk pita judul (`--band`), baris judul tabel dan panel grid (`--band-soft`); kartu KPI berlatar pastel sesuai ikonnya; isi tabel dan grafik tetap putih;
   - HP tanpa sidebar dan hamburger: bottom bar (Beranda, dua fitur utama, Akun) dan grid fitur di beranda; desktop tanpa grid, rel kiri berisi semua fitur, bisa dilebarkan dengan nama menu, sakelar mode terang/gelap di bawah (bawaan terang, pilihan disimpan di perangkat);
-  - sapaan di header dengan ikon waktu pastel di kanan nama (bukan emoji);
+  - sapaan di header dengan emoji waktu di kanan nama (pengecualian aturan emoji atas keputusan owner, 23 November 2026, hanya di `src/config/greeting-emoji.ts` yang dikecualikan `check:copy`); di HP nama depan saja, di layar lebih besar dua kata;
   - tabel: teks rata kiri, jam, tanggal, dan status di tengah, angka dan aksi rata kanan; judul kolom mengikuti isinya;
   - semua tombol punya efek ditekan dan semua panah bergerak saat disentuh kursor; tata letak konsisten: aksi halaman di pita judul kanan, judul bagian di kiri dengan tombol di kanan;
   - maskot kartun (ilustrasi buatan AI, bukan foto proyek, tanpa bangunan) dipotong setengah badan dari paha, di `public/images/maskot/`: kartu langkah berikutnya di beranda, halaman masuk, lupa password, dan aktivasi;
@@ -379,6 +381,8 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Setiap persetujuan atau penolakan menyimpan cap permanen: nama, role, waktu (timestamptz, tampil WIB), user agent, lokasi kalau diizinkan, dan kode verifikasi berupa hash SHA-256 dari isi dokumen saat disetujui, penyetuju, dan waktu. Cap tidak bisa diubah atau dihapus (tabel tanpa policy update/delete, tercatat di audit).
 - Cap tampil di halaman dokumen dan di PDF ("Disetujui secara digital oleh ..."), dengan QR code ke halaman verifikasi. Kalau isi dokumen berubah setelah disetujui, verifikasi menunjukkan tidak cocok.
 - Implementasi (Absensi D3, 22 November 2026): tabel `approval_stamps` (tanpa policy tulis, trigger menolak update dan delete), fungsi keputusan hanya bisa dipanggil server (service role) setelah password diperiksa lewat klien Supabase tanpa cookie, dan halaman publik `/verifikasi/[kode]` (noindex) yang menghitung ulang hash isi dokumen.
+- Tanda tangan sidik jari (keputusan owner, 22 November 2026): WebAuthn (`@simplewebauthn`), satu perangkat terdaftar per akun, didaftarkan sekali di Akun saya dan hanya Direktur Utama yang bisa mereset (tercatat di audit). Setiap persetujuan wajib memakai akun yang sudah mendaftarkan sidik jari: tanpa itu server menolak dan layar mengarahkan ke pendaftaran. Urutan cadangan: Face ID atau PIN perangkat (bagian dari WebAuthn), QR lintas perangkat, lalu password akun (tercatat sebagai metode cadangan). Tantangan terikat ke hash isi dokumen dan keputusan.
+- Cap KIS hanya untuk keputusan disetujui oleh atasan (`carriesCompanyStamp`), tidak pada penolakan. Pengaju menandatangani dengan sidik jari atau QR saja tanpa cap.
 - Ini tanda tangan elektronik tidak tersertifikasi (UU ITE). Tanda tangan tersertifikasi (PSrE) di luar cakupan.
 - Stempel perusahaan: gambar stempel KIS bergaya tinta basah (warna dan tekstur seperti stempel asli, sedikit miring) dipasang di PDF resmi yang sudah disetujui owner (pengajuan, slip gaji, surat). Stempel hanya muncul bersama cap persetujuan digital, tidak pernah di dokumen draf.
 

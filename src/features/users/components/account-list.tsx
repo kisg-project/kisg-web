@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { Avatar } from "@/components/shared/avatar";
 import { ConfirmDialog, FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
+import { ResetFingerprintButton } from "@/features/approvals";
 import { isInvitableRole, ROLE_LABELS, type AppRole } from "@/config/roles";
 import { formatDateWIB } from "@/lib/format";
 import {
@@ -172,6 +173,9 @@ export function AccountList({
                   >
                     <Icon icon={PencilEdit01Icon} className="size-4" />
                   </button>
+                  {!pending && account.hasFingerprint && !locked ? (
+                    <ResetFingerprintButton userId={account.id} name={name} />
+                  ) : null}
                   {pending ? (
                     <>
                       <button

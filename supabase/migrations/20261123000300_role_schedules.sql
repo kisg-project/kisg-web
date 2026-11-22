@@ -26,7 +26,7 @@ as $$
      or (s.scope = 'lokasi' and s.work_location_id = p_location)
      or s.scope = 'perusahaan'
   order by
-    case s.scope when 'karyawan' then 1 when 'role' then 2 when 'lokasi' then 3 else 4 end,
+    case s.scope when 'karyawan' then 1 when 'lokasi' then 2 when 'role' then 3 else 4 end,
     r.is_primary desc nulls last
   limit 1
 $$;

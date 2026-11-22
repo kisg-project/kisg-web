@@ -24,6 +24,7 @@ const TEXT_EXTENSIONS = new Set([
   ".svg",
 ]);
 const CODE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".mjs"]);
+const EMOJI_ALLOWED = new Set(["src/config/greeting-emoji.ts"]);
 
 /** @param {string} path @returns {string[]} */
 function collect(path) {
@@ -52,7 +53,9 @@ for (const file of files) {
   const issues = findCopyIssues(readFileSync(file, "utf8"), {
     isCode: CODE_EXTENSIONS.has(extname(file)),
   });
+  const path = relative(ROOT, file).replaceAll("\\", "/");
   for (const issue of issues) {
+    if (issue.rule === "emoji" && EMOJI_ALLOWED.has(path)) continue;
     total += 1;
     console.log(
       `${relative(ROOT, file).replaceAll("\\", "/")}:${issue.line}:${issue.column} [${issue.rule}] ${issue.message}`,

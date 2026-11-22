@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { safeNextPath } from "@/config/portal";
 import type { Json } from "@/lib/supabase/database.types";
-import { confirmSignerPassword, signerUserAgent } from "@/features/approvals/server";
+import { confirmSignature, signerUserAgent } from "@/features/approvals/server";
 import {
   ActionError,
   adminActionClient,
@@ -170,11 +170,11 @@ export const decideExceptionAction = roleActionClient([
 ])
   .inputSchema(decideExceptionSchema)
   .action(async ({ parsedInput, ctx }) => {
-    await confirmSignerPassword({
-      userId: ctx.userId,
-      email: ctx.email,
-      password: parsedInput.password,
-    });
+    const signature = await confirmSignature(
+      { userId: ctx.userId, email: ctx.email },
+      parsedInput,
+      { docType: "absen_luar_lokasi", docId: parsedInput.id, decision: parsedInput.decision },
+    );
     const userAgent = await signerUserAgent();
     const { data, error } = await createSupabaseAdminClient().rpc("decide_attendance_exception", {
       p_actor: ctx.userId,
@@ -182,6 +182,8 @@ export const decideExceptionAction = roleActionClient([
       p_decision: parsedInput.decision,
       ...(parsedInput.note ? { p_note: parsedInput.note } : {}),
       ...(userAgent ? { p_user_agent: userAgent } : {}),
+      p_method: signature.method,
+      ...(signature.credentialId ? { p_credential_id: signature.credentialId } : {}),
       ...(parsedInput.lat !== undefined && parsedInput.lng !== undefined
         ? { p_lat: parsedInput.lat, p_lng: parsedInput.lng }
         : {}),

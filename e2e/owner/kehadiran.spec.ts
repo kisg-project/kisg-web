@@ -12,15 +12,16 @@ function todayWib(): string {
 /** Owner baru per test: rate limit tanda tangan dihitung per akun, jadi test paralel tidak saling ganggu. */
 async function loginOwner(page: Page): Promise<TestUser> {
   const owner = await createPortalUser({ role: "owner", prefix: "owner-hadir" });
+  await adminClient()
+    .from("webauthn_credentials")
+    .insert({ user_id: owner.id, credential_id: `uji-${randomUUID()}`, public_key: "eA" });
   await page.goto("/portal/login");
   await loginViaForm(page, owner);
   await expect(page).toHaveURL("/portal/owner");
-  // Muat ulang penuh: halaman login yang disimpan tersembunyi oleh router tidak ikut di DOM.
   await page.goto("/portal/owner");
   return owner;
 }
 
-/** Karyawan yang mengajukan clock in di luar lokasi hari ini (foto dan data langsung lewat admin). */
 async function pendingException(reason: string) {
   const employee = await createPortalUser({ role: "marketing", prefix: "luar-hadir" });
   const photo = `${employee.id}/${todayWib()}/masuk-${randomUUID()}.webp`;
@@ -116,6 +117,7 @@ test.describe("Kehadiran owner", () => {
       });
     await pending.getByRole("button", { name: "Setujui" }).click();
     const dialog = page.getByRole("dialog", { name: "Setujui pengajuan" });
+    await dialog.getByRole("button", { name: "Pakai password" }).click();
     await expect(dialog.getByText(employee.fullName)).toBeVisible();
     await expectNoA11yViolations(page);
 
@@ -193,6 +195,7 @@ test.describe("Kehadiran owner", () => {
       });
     await pending.getByRole("button", { name: "Tolak" }).click();
     const dialog = page.getByRole("dialog", { name: "Tolak pengajuan" });
+    await dialog.getByRole("button", { name: "Pakai password" }).click();
     await dialog.getByLabel("Password akun Anda", { exact: true }).fill(owner.password);
     await dialog.getByRole("button", { name: "Tolak" }).click();
     await expect(dialog.getByText("Tulis alasan penolakan minimal 5 karakter.")).toBeVisible();

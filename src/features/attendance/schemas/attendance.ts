@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { SCHEDULE_ROLES } from "@/config/attendance";
 import { APPROVAL_DECISIONS } from "@/config/approvals";
-import { signatureSchema } from "@/features/approvals";
+import { refineSignature, signatureFields } from "@/features/approvals/schemas";
 
 const kind = z.enum(["masuk", "pulang"]);
 const coordinate = {
@@ -122,13 +122,15 @@ export const workReportSchema = z.object({
 export type WorkAttachment = z.infer<typeof workAttachmentSchema>;
 export type WorkReportInput = z.input<typeof workReportSchema>;
 
-export const decideExceptionSchema = signatureSchema
-  .extend({
+export const decideExceptionSchema = z
+  .object({
+    ...signatureFields,
     id: z.uuid(),
     decision: z.enum(APPROVAL_DECISIONS),
     note: z.string().trim().max(500, "Catatan maksimal 500 karakter.").optional(),
   })
   .superRefine((value, context) => {
+    refineSignature(value, context);
     if (value.decision === "ditolak" && (value.note?.length ?? 0) < 5) {
       context.addIssue({
         code: "custom",

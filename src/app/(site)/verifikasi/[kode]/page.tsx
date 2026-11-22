@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
-import { APPROVAL_DECISION_LABEL, APPROVAL_DOC_LABEL } from "@/config/approvals";
+import {
+  APPROVAL_DECISION_LABEL,
+  APPROVAL_DOC_LABEL,
+  SIGNATURE_METHOD_LABEL,
+  carriesCompanyStamp,
+} from "@/config/approvals";
 import { ROLE_LABELS } from "@/config/roles";
 import { siteConfig } from "@/config/site";
 import { verifyApproval } from "@/features/approvals/server";
@@ -27,6 +32,11 @@ export default async function VerificationPage({ params }: PageProps<"/verifikas
     { label: "Keputusan", value: APPROVAL_DECISION_LABEL[result.decision] },
     { label: "Oleh", value: `${result.signer_name} (${ROLE_LABELS[result.signer_role]})` },
     { label: "Waktu", value: `${formatDateTimeWIB(result.signed_at)} WIB` },
+    { label: "Metode", value: SIGNATURE_METHOD_LABEL[result.method] },
+    {
+      label: "Cap KIS",
+      value: carriesCompanyStamp(result.decision) ? "Ada, disetujui atasan" : "Tidak ada",
+    },
   ];
 
   return (

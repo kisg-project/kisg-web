@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(9);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000001301', 'marketing-jadwal@kis.test'),
@@ -52,6 +52,17 @@ select is(
   (private.effective_schedule('00000000-0000-4000-8000-000000001304', null)).scope,
   'karyawan'::public.schedule_scope,
   'jadwal per karyawan mengalahkan jadwal role'
+);
+
+insert into public.work_locations (id, name, kind, lat, lng, radius_m) values
+  ('00000000-0000-4000-8000-000000001311', 'Titik uji jadwal role', 'proyek', -2.5, 121.5, 100);
+insert into public.work_schedules (scope, work_location_id, start_time, end_time, workdays, late_tolerance_min)
+values ('lokasi', '00000000-0000-4000-8000-000000001311', '07:00', '16:00', '{1,2,3,4,5,6}', 10);
+
+select is(
+  (private.effective_schedule('00000000-0000-4000-8000-000000001301', '00000000-0000-4000-8000-000000001311')).scope,
+  'lokasi'::public.schedule_scope,
+  'jadwal titik absensi mengalahkan jadwal role'
 );
 
 select throws_ok(
