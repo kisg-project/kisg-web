@@ -20,18 +20,20 @@ export default async function ClockPage({ params }: PageProps<"/portal/absensi/[
   if (jenis === "pulang" && (!today || today.clockOutAt)) redirect("/portal/absensi");
   const label = ATTENDANCE_KIND_LABEL[jenis];
   return (
-    <div className="mx-auto grid w-full max-w-lg gap-6">
+    <div className="tone-green grid gap-4">
       <PageHeader
         backHref="/portal/absensi"
         backLabel="Kembali ke absensi"
         title={label}
-        description="Pastikan GPS aktif dan wajah terlihat jelas. Foto hanya dari kamera."
+        description="Pastikan GPS aktif dan wajah terlihat jelas."
       />
-      <ClockFlow
-        kind={jenis}
-        homeHref="/portal/absensi"
-        nextHref={jenis === "masuk" ? "/portal/absensi/rencana" : "/portal/absensi/hasil"}
-      />
+      <div className="mx-auto grid w-full max-w-lg">
+        <ClockFlow
+          kind={jenis}
+          homeHref="/portal/absensi"
+          nextHref={jenis === "masuk" ? "/portal/absensi/rencana" : "/portal/absensi/hasil"}
+        />
+      </div>
     </div>
   );
 }

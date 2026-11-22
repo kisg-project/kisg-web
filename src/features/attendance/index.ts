@@ -23,4 +23,4 @@ export {
 export { WorkLocationDialog, WorkLocationForm } from "./components/work-location-form";
 export { DeleteScheduleButton, ScheduleDialog, ScheduleForm } from "./components/schedule-form";
 export { ExceptionDecision } from "./components/exception-decision";
-export { AttendanceCharts } from "./components/attendance-charts";
+export { AttendanceTrendCard, ReportTrendCard } from "./components/attendance-charts";

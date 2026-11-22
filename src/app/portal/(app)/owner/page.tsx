@@ -13,21 +13,42 @@ import { StatCard } from "@/components/shared/stat-card";
 import { ROLE_HOME } from "@/config/portal";
 import { featuresFor } from "@/config/portal-nav";
 import {
-  AttendanceCharts,
-  countPendingExceptions,
+  AttendanceTrendCard,
+  getAttendanceOverview,
   getAttendanceTrend,
+  listWorkSchedules,
+  todayWib,
 } from "@/features/attendance";
 import { requirePortalUser } from "@/features/auth";
 import { ModuleCards } from "../_components/module-cards";
 import { HomeHeader } from "../_components/home-header";
 import { NextStepCard } from "../_components/next-step-card";
+import { AttendanceTable, type AttendanceRow } from "./_components/attendance-table";
+import { ScheduleWidget } from "./_components/schedule-widget";
+import { ApprovalsWidget, WorkHoursWidget } from "./_components/today-widgets";
 
 export const metadata: Metadata = { title: "Dashboard direktur utama" };
 
 export default async function OwnerPage() {
   const user = await requirePortalUser(["owner", "admin"]);
   const isHome = ROLE_HOME[user.role] === "/portal/owner";
-  const [trend, pending] = await Promise.all([getAttendanceTrend(14), countPendingExceptions()]);
+  const [trend, overview, schedules] = await Promise.all([
+    getAttendanceTrend(14),
+    getAttendanceOverview(todayWib()),
+    listWorkSchedules(),
+  ]);
+  const pending = overview.pending.length;
+  const company = schedules.find((item) => item.scope === "perusahaan") ?? null;
+  const rows: AttendanceRow[] = overview.employees.map((employee) => ({
+    id: employee.id,
+    name: employee.name,
+    location: employee.day?.clockInLocation ?? null,
+    present: Boolean(employee.day),
+    late: employee.day?.lateMinutes ?? 0,
+    outside: employee.day?.outside ?? false,
+    rencana: Boolean(employee.rencana),
+    hasil: Boolean(employee.hasil),
+  }));
   const today = trend.at(-1);
   const present = today ? today.onTime + today.late : 0;
   const expected = today ? present + today.absent : 0;
@@ -124,7 +145,17 @@ export default async function OwnerPage() {
             <Icon icon={ArrowRight01Icon} className="arrow-nudge size-4" />
           </Link>
         </div>
-        <AttendanceCharts days={trend} />
+        <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+          <WorkHoursWidget
+            schedule={company}
+            workday={today?.workday ?? true}
+            summary={overview.summary}
+          />
+          <ApprovalsWidget pending={overview.pending} decided={overview.decided} />
+          <AttendanceTrendCard days={trend} className="lg:col-span-2 xl:col-span-1" />
+          <AttendanceTable rows={rows} className="lg:col-span-2" />
+          <ScheduleWidget days={trend} schedule={company} />
+        </div>
       </section>
     </div>
   );

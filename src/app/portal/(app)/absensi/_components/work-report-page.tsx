@@ -21,14 +21,14 @@ export async function WorkReportPage({ kind }: { kind: WorkReportKind }) {
   if (!today || (kind === "hasil" && !today.clockOutAt)) redirect("/portal/absensi");
   const current = reports[kind];
   return (
-    <div className="mx-auto grid w-full max-w-lg gap-6">
+    <div className="tone-violet grid gap-4">
       <PageHeader
         backHref="/portal/absensi"
         backLabel="Kembali ke absensi"
         title={WORK_REPORT_LABEL[kind].title}
         description={formatDateWIB(new Date())}
       />
-      <section className="app-card p-5 sm:p-6">
+      <section className="mx-auto w-full max-w-lg rounded-xl border border-(--line-strong) bg-card p-4">
         <WorkReportForm
           kind={kind}
           initial={current ? { content: current.content, attachments: current.attachments } : null}
