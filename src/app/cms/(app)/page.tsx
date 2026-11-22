@@ -27,7 +27,7 @@ export default async function CmsHomePage() {
     },
   ] as const;
   return (
-    <div className="grid gap-6">
+    <div className="tone-mint grid gap-4">
       <PageHeader
         title="Panel CMS"
         description={`Masuk sebagai ${user.fullName || user.email}. Perubahan yang diterbitkan langsung tampil di website.`}

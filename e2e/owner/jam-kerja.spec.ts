@@ -42,11 +42,16 @@ test.describe("Jam kerja per role", () => {
       .getByRole("dialog", { name: "Hapus jam kerja Keuangan?" })
       .getByRole("button", { name: "Ya, hapus" })
       .click();
+    await expect(page.getByText("Jam kerja khusus dihapus.")).toBeVisible();
     await expect(finance).toHaveCount(0);
-    const { data: gone } = await adminClient()
-      .from("work_schedules")
-      .select("id")
-      .eq("role", "finance");
-    expect(gone).toEqual([]);
+    await expect
+      .poll(async () => {
+        const { data: gone } = await adminClient()
+          .from("work_schedules")
+          .select("id")
+          .eq("role", "finance");
+        return gone;
+      })
+      .toEqual([]);
   });
 });

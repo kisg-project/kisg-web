@@ -18,6 +18,10 @@ const PAGES: Record<string, { role: AppRole; path: string }[]> = {
     { role: "marketing", path: "/portal/absensi" },
   ],
   lapangan: [{ role: "site_supervisor", path: "/portal/lapangan" }],
+  cms: [
+    { role: "cms", path: "/cms" },
+    { role: "cms", path: "/cms/berita" },
+  ],
 };
 
 const slug = (path: string) => path.replace(/^\/portal\/?/, "").replaceAll("/", "-") || "beranda";

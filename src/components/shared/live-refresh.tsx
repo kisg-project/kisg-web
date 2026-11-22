@@ -16,6 +16,22 @@ const TABLES = [
   "notifications",
 ] as const;
 
+const PAUSE_ATTRIBUTE = "data-tahan-langsung";
+
+function paused(): boolean {
+  return document.documentElement.hasAttribute(PAUSE_ATTRIBUTE);
+}
+
+export function PauseLiveRefresh() {
+  useEffect(() => {
+    document.documentElement.setAttribute(PAUSE_ATTRIBUTE, "");
+    return () => {
+      document.documentElement.removeAttribute(PAUSE_ATTRIBUTE);
+    };
+  }, []);
+  return null;
+}
+
 export function LiveRefresh({ url, publishableKey }: { url: string; publishableKey: string }) {
   const router = useRouter();
 
@@ -25,7 +41,7 @@ export function LiveRefresh({ url, publishableKey }: { url: string; publishableK
     const refresh = () => {
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
-        if (document.visibilityState === "visible") router.refresh();
+        if (document.visibilityState === "visible" && !paused()) router.refresh();
       }, 400);
     };
     const channel = supabase.channel("portal-langsung");
@@ -37,7 +53,7 @@ export function LiveRefresh({ url, publishableKey }: { url: string; publishableK
       if (status === "SUBSCRIBED") document.documentElement.setAttribute("data-langsung", "siap");
     });
     const onVisible = () => {
-      if (document.visibilityState === "visible") router.refresh();
+      if (document.visibilityState === "visible" && !paused()) router.refresh();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
