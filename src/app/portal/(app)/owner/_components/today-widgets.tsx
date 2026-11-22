@@ -98,11 +98,11 @@ export function ApprovalsWidget({
       {items.length === 0 ? (
         <EmptyState title="Belum ada pengajuan hari ini" className="py-4" />
       ) : (
-        <ul aria-label="Daftar persetujuan" className="grid gap-2">
+        <ul aria-label="Daftar persetujuan" className="grid grid-cols-[minmax(0,1fr)] gap-2">
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-2.5 rounded-lg border border-(--line-strong) px-2.5 py-2"
+              className="flex min-w-0 items-center gap-2.5 rounded-lg border border-(--line-strong) px-2.5 py-2"
             >
               <Avatar src={null} name={item.userName} className="size-7 text-[0.625rem]" />
               <span className="min-w-0 flex-1">

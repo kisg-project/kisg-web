@@ -121,7 +121,7 @@ export function ScheduleWidget({
           <p className="text-xs font-medium text-muted-foreground">
             {LONG.format(asDate(day.date))}, {MONTH.format(asDate(day.date)).split(" ")[1]}
           </p>
-          <ul aria-label="Agenda hari ini" className="grid gap-2">
+          <ul aria-label="Agenda hari ini" className="grid grid-cols-[minmax(0,1fr)] gap-2">
             {day.workday ? (
               <Agenda
                 tone="green"
