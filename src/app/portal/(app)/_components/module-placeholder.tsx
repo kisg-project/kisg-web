@@ -10,13 +10,12 @@ import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/state-message";
 import { mustAttend } from "@/config/attendance";
 import { PORTAL_AREAS, ROLE_HOME } from "@/config/portal";
-import { featuresFor } from "@/config/portal-nav";
 import { getMyAttendance, getMyWorkReports } from "@/features/attendance";
 import { requirePortalUser } from "@/features/auth";
 import { formatTimeWIB } from "@/lib/format";
 import { HomeHeader } from "./home-header";
-import { ModuleCards } from "./module-cards";
 import { NextStepCard, type NextStep } from "./next-step-card";
+import { ShortcutSection } from "./shortcut-section";
 
 const clock = (value: string) => formatTimeWIB(value).replace(" WIB", "");
 
@@ -126,12 +125,7 @@ export async function ModulePlaceholder({ prefix }: { prefix: string }) {
     <div className="grid gap-5">
       <HomeHeader roles={user.roles} description={area.label} />
       {mustAttend(user.roles) ? <AttendanceStats userId={user.id} /> : null}
-      <section aria-labelledby="fitur" className="grid gap-3 lg:hidden">
-        <h2 id="fitur" className="text-sm font-semibold">
-          Fitur
-        </h2>
-        <ModuleCards label={`Modul ${area.label}`} modules={featuresFor(user.roles, user.role)} />
-      </section>
+      <ShortcutSection roles={user.roles} primary={user.role} label={`Modul ${area.label}`} />
     </div>
   );
 }
