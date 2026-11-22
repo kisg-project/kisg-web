@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { Moon02Icon, Sun03Icon, SunriseIcon, SunsetIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 import { Avatar } from "@/components/shared/avatar";
 import { bottomItems, railItems } from "@/config/portal-nav";
 import { getPortalUser, LogoutButton } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
 import { greetingFor, greetingName } from "@/lib/format/greeting";
+import { cn } from "@/lib/utils";
 import { PortalBottomNav, PortalSidebarNav } from "./portal-nav";
 
 export async function SidebarNavForUser() {
@@ -16,12 +19,31 @@ export async function BottomNavForUser() {
   return <PortalBottomNav items={user ? bottomItems(user.roles, user.role) : []} />;
 }
 
+const TIME_ICON = {
+  "Selamat pagi": { icon: SunriseIcon, tone: "bg-gold-100 text-gold-800 ring-gold-200" },
+  "Selamat siang": { icon: Sun03Icon, tone: "bg-orange-100 text-orange-700 ring-orange-200" },
+  "Selamat sore": { icon: SunsetIcon, tone: "bg-violet-100 text-violet-700 ring-violet-200" },
+  "Selamat malam": { icon: Moon02Icon, tone: "bg-info-100 text-info-700 ring-info-200" },
+} as const;
+
 export async function HeaderGreeting() {
   const user = await getPortalUser();
   if (!user) return null;
+  const greeting = greetingFor(new Date());
+  const time = TIME_ICON[greeting];
   return (
-    <p className="truncate text-[0.9375rem] font-medium tracking-tight lg:text-lg">
-      {greetingFor(new Date())}, {greetingName(user.fullName) || "rekan KIS"}
+    <p className="flex min-w-0 items-center gap-2">
+      <span className="truncate text-[0.9375rem] font-medium tracking-tight lg:text-lg">
+        {greeting}, {greetingName(user.fullName) || "rekan KIS"}
+      </span>
+      <span
+        className={cn(
+          "flex size-7 shrink-0 items-center justify-center rounded-full ring-1",
+          time.tone,
+        )}
+      >
+        <Icon icon={time.icon} className="size-4" />
+      </span>
     </p>
   );
 }

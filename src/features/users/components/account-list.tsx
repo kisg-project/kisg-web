@@ -86,12 +86,12 @@ export function AccountList({
       <div className="overflow-hidden rounded-xl border border-(--line-strong) bg-card">
         <div
           aria-hidden="true"
-          className="hidden grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_8.5rem_8rem_8.5rem] items-center gap-4 border-b border-(--line-strong) bg-(--band,var(--color-neutral-100)) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300"
+          className="hidden grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_8.5rem_8rem_8.5rem] items-center gap-4 border-b border-(--line-strong) bg-(--band-soft,var(--color-neutral-100)) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300"
         >
           <span>Nama karyawan</span>
           <span>Role</span>
-          <span>Status</span>
-          <span>Bergabung</span>
+          <span className="text-center">Status</span>
+          <span className="text-center">Bergabung</span>
           <span className="text-right">Aksi</span>
         </div>
         <ul aria-label="Daftar karyawan" className="divide-y divide-(--line-soft)">
@@ -147,14 +147,14 @@ export function AccountList({
                 </ul>
                 <span
                   className={cn(
-                    "col-start-2 row-start-1 inline-flex w-fit items-center gap-1.5 justify-self-end rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold lg:col-start-auto lg:row-start-auto lg:justify-self-start",
+                    "col-start-2 row-start-1 inline-flex w-fit items-center gap-1.5 justify-self-end rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold lg:col-start-auto lg:row-start-auto lg:justify-self-center",
                     status.tone,
                   )}
                 >
                   <span aria-hidden="true" className={cn("size-1.5 rounded-full", status.dot)} />
                   {status.label}
                 </span>
-                <span className="hidden text-xs text-muted-foreground tabular-nums lg:block">
+                <span className="hidden text-center text-xs text-muted-foreground tabular-nums lg:block">
                   {formatDateWIB(
                     pending && account.invitedAt ? account.invitedAt : account.createdAt,
                   )}

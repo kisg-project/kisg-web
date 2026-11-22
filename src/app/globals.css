@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *, [data-tema="gelap"], [data-tema="gelap"] *));
 
 @theme static {
   --color-*: initial;
@@ -227,7 +227,8 @@
   --header-height: 4.5rem;
 }
 
-.dark {
+.dark,
+[data-tema="gelap"] {
   --background: var(--color-neutral-950);
   --foreground: var(--color-neutral-50);
   --surface: var(--color-neutral-900);
@@ -326,7 +327,8 @@
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-primary-400);
   }
-  .dark {
+  .dark,
+  [data-tema="gelap"] {
     scrollbar-color: var(--color-neutral-700) transparent;
   }
 
@@ -481,7 +483,8 @@
 
 .portal-canvas {
   --background: oklch(1 0 0);
-  --band: oklch(0.957 0.002 250);
+  --band: var(--color-primary-100);
+  --band-soft: var(--color-primary-50);
   --muted-foreground: var(--color-neutral-700);
   --line-strong: var(--color-neutral-800);
   --line-soft: var(--color-neutral-200);
@@ -489,9 +492,10 @@
   font-family: var(--font-work-sans), var(--font-sans);
 }
 
-.dark .portal-canvas {
+:is(.dark, [data-tema="gelap"]) .portal-canvas {
   --background: var(--color-neutral-950);
   --band: var(--color-neutral-900);
+  --band-soft: var(--color-neutral-900);
   --line-strong: var(--color-neutral-600);
   --line-soft: var(--color-neutral-800);
 }
@@ -796,5 +800,123 @@
     content: "";
     position: absolute;
     inset: -4px;
+  }
+}
+
+.tone-mint {
+  --band: var(--color-primary-100);
+  --band-soft: var(--color-primary-50);
+}
+
+.tone-green {
+  --band: var(--color-success-100);
+  --band-soft: var(--color-success-50);
+}
+
+.tone-violet {
+  --band: var(--color-violet-100);
+  --band-soft: var(--color-violet-50);
+}
+
+.tone-blue {
+  --band: var(--color-info-100);
+  --band-soft: var(--color-info-50);
+}
+
+.tone-orange {
+  --band: var(--color-orange-100);
+  --band-soft: var(--color-orange-50);
+}
+
+.tone-gold {
+  --band: var(--color-gold-100);
+  --band-soft: var(--color-gold-50);
+}
+
+.tone-amber {
+  --band: var(--color-warning-100);
+  --band-soft: var(--color-warning-50);
+}
+
+:is(.dark, [data-tema="gelap"])
+  :is(.tone-mint, .tone-green, .tone-violet, .tone-blue, .tone-orange, .tone-gold, .tone-amber) {
+  --band: var(--color-neutral-900);
+  --band-soft: var(--color-neutral-900);
+}
+
+.portal-shell {
+  --rail-w: 4rem;
+}
+
+[data-rel="lebar"] .portal-shell {
+  --rail-w: 15rem;
+}
+
+.rail-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+[data-rel="lebar"] .rail-label {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+}
+
+:is(.portal-canvas, .portal-layer)
+  :is(button, a[href], summary, [role="switch"], [role="button"]):not(
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  transition-property: transform, background-color, border-color, color, box-shadow;
+  transition-duration: 150ms;
+}
+
+:is(.portal-canvas, .portal-layer)
+  :is(button, a[href], summary, [role="switch"], [role="button"]):not(
+    :disabled,
+    [aria-disabled="true"]
+  ):active {
+  transform: scale(0.96);
+}
+
+:is(.portal-canvas, .portal-layer)
+  :is(button, a[href])[class*="border"]:not(:disabled, [aria-disabled="true"]):hover {
+  box-shadow: 0 2px 0 0 var(--line-strong, var(--color-neutral-800));
+}
+
+:is(.portal-canvas, .portal-layer) nav :is(a[href]):hover,
+:is(.portal-canvas, .portal-layer) :is(a[href], button):where([aria-current="page"]):hover {
+  box-shadow: none;
+}
+
+.arrow-nudge,
+.arrow-nudge-up,
+.arrow-nudge-back {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:is(a, button):hover .arrow-nudge {
+  transform: translateX(3px);
+}
+
+:is(a, button):hover .arrow-nudge-up {
+  transform: translate(2px, -2px);
+}
+
+:is(a, button):hover .arrow-nudge-back {
+  transform: translateX(-3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.portal-canvas, .portal-layer) :is(button, a[href], summary, [role="switch"]):active,
+  :is(a, button):hover :is(.arrow-nudge, .arrow-nudge-up, .arrow-nudge-back) {
+    transform: none;
   }
 }

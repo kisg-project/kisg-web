@@ -26,7 +26,7 @@ export function ModuleCards({
     <ul
       aria-label={label}
       className={cn(
-        "grid grid-cols-4 gap-x-2 gap-y-4 rounded-xl border border-(--line-strong) bg-card p-4 sm:grid-cols-6",
+        "grid grid-cols-4 gap-x-2 gap-y-4 rounded-xl border border-(--line-strong) bg-(--band-soft) p-4 sm:grid-cols-6",
         className,
       )}
     >

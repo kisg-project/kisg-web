@@ -11,7 +11,7 @@ import {
 
 export default function PortalAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-feel portal-field portal-canvas flex min-h-dvh flex-col text-sm lg:pl-16">
+    <div className="app-feel portal-field portal-canvas portal-shell flex min-h-dvh flex-col text-sm transition-[padding] duration-200 lg:pl-(--rail-w)">
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>

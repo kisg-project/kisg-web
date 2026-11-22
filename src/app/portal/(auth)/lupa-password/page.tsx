@@ -6,12 +6,8 @@ export const metadata: Metadata = { title: "Lupa password" };
 export default function ForgotPasswordPage() {
   return (
     <>
-      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
-        Lupa password
-      </h1>
-      <p className="mt-3 text-subtle-foreground">
-        Masukkan email akun portal. Kami kirim tautan untuk membuat password baru.
-      </p>
+      <h1 className="text-2xl leading-tight font-semibold tracking-tight">Lupa password</h1>
+      <p className="mt-1.5 text-sm text-muted-foreground">Kode 6 digit dikirim ke email Anda.</p>
       <div className="mt-6">
         <ForgotPasswordForm />
       </div>

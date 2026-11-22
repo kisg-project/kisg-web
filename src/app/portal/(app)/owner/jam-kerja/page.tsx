@@ -36,7 +36,7 @@ export default async function SchedulesPage() {
   const locationChoices = locations.map((item) => ({ id: item.id, name: item.name }));
 
   return (
-    <div className="grid gap-4">
+    <div className="tone-orange grid gap-4">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke beranda"

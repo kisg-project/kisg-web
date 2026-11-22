@@ -10,7 +10,7 @@ export default async function EmployeesPage() {
   const user = await requirePortalUser(["owner", "admin"]);
   const accounts = await listPortalAccounts();
   return (
-    <div className="grid gap-4">
+    <div className="tone-violet grid gap-4">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke beranda"

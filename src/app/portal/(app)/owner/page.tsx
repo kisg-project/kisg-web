@@ -20,6 +20,7 @@ import {
 import { requirePortalUser } from "@/features/auth";
 import { ModuleCards } from "../_components/module-cards";
 import { HomeHeader } from "../_components/home-header";
+import { NextStepCard } from "../_components/next-step-card";
 
 export const metadata: Metadata = { title: "Dashboard direktur utama" };
 
@@ -32,7 +33,7 @@ export default async function OwnerPage() {
   const expected = today ? present + today.absent : 0;
   const reports = today?.reportsComplete ?? null;
   return (
-    <div className="grid gap-5">
+    <div className="tone-mint grid gap-5">
       {isHome ? (
         <HomeHeader
           roles={user.roles}
@@ -45,6 +46,30 @@ export default async function OwnerPage() {
       ) : (
         <PageHeader title="Dashboard direktur utama" />
       )}
+      {isHome ? (
+        <NextStepCard
+          step={
+            pending > 0
+              ? {
+                  pose: "tablet",
+                  title: `${String(pending)} pengajuan menunggu persetujuan`,
+                  text: "Periksa sebelum jam pulang.",
+                  href: "/portal/owner/absensi",
+                  action: "Periksa sekarang",
+                }
+              : {
+                  pose: "jempol",
+                  title: `Kehadiran hari ini ${String(present)} dari ${String(expected)}`,
+                  text:
+                    expected - present > 0
+                      ? `${String(expected - present)} karyawan belum clock in.`
+                      : "Semua karyawan sudah clock in.",
+                  href: "/portal/owner/absensi",
+                  action: "Lihat kehadiran",
+                }
+          }
+        />
+      ) : null}
       <section aria-labelledby="dashboard-utama" className="grid gap-3">
         <h2 id="dashboard-utama" className="text-sm font-semibold">
           Dashboard direktur utama
@@ -96,7 +121,7 @@ export default async function OwnerPage() {
             className="hit-44 inline-flex h-9 items-center gap-1 rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
             Buka rekap kehadiran
-            <Icon icon={ArrowRight01Icon} className="size-4" />
+            <Icon icon={ArrowRight01Icon} className="arrow-nudge size-4" />
           </Link>
         </div>
         <AttendanceCharts days={trend} />

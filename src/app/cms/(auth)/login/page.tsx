@@ -9,9 +9,7 @@ export default async function CmsLoginPage({ searchParams }: PageProps<"/cms/log
   const message = typeof params.error === "string" ? params.error : undefined;
   return (
     <>
-      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
-        Masuk ke panel CMS
-      </h1>
+      <h1 className="text-2xl leading-tight font-semibold tracking-tight">Masuk ke panel CMS</h1>
       <p className="mt-3 text-subtle-foreground">
         Khusus akun pengelola konten website. Karyawan masuk lewat portal.
       </p>

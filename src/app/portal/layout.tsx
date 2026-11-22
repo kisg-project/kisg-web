@@ -4,6 +4,8 @@ import { BodyClass } from "@/components/shared/body-class";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/features/pwa";
 
+const PREFERENCES = `try{var r=document.documentElement,s=localStorage;if(s.getItem("kis-tema")==="gelap")r.setAttribute("data-tema","gelap");if(s.getItem("kis-rel")==="lebar")r.setAttribute("data-rel","lebar")}catch(e){}`;
+
 const workSans = Work_Sans({ variable: "--font-work-sans", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
@@ -18,6 +20,7 @@ export const metadata: Metadata = {
 export default function PortalLayout({ children }: LayoutProps<"/portal">) {
   return (
     <div className={workSans.variable}>
+      <script dangerouslySetInnerHTML={{ __html: PREFERENCES }} />
       <BodyClass className={workSans.variable} />
       {children}
       <Toaster position="top-center" />

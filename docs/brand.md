@@ -200,3 +200,19 @@ Semua dari Unsplash (Unsplash License), dipotong 16:9 (berita, 1600 x 900) atau 
 | `karir/magang.webp` | photo-1531537571171-a707bf2683da | Mimi Thian |
 
 Gambar proyek sold out (`projects/sejahtera-residence-*/`) diambil dari Company Profile PT KISG 2024 (milik KIS). Resolusinya kecil (410 sampai 576 px), jadi diganti foto asli beresolusi tinggi kalau owner punya.
+
+## Maskot portal
+
+Keputusan owner, 22 November 2026. Tokoh kartun 3D pengawas lapangan berhelm hijau KIS (#0F6D5F) dengan garis emas (#D7AE5F), dibuat owner dengan ChatGPT dari prompt di `Desktop/maskot-kis.txt`. Ilustrasi, bukan foto proyek, dan tidak memuat bangunan sehingga tidak mewakili produk KIS.
+
+| File | Pose | Dipakai di |
+|---|---|---|
+| `public/images/maskot/melambai.webp` | Melambai | Belum clock in, aktivasi akun |
+| `public/images/maskot/clipboard.webp` | Menulis di papan klip | Rencana dan hasil kerja |
+| `public/images/maskot/tablet.webp` | Menunjuk tablet | Sedang bekerja, persetujuan Direktur Utama |
+| `public/images/maskot/jempol.webp` | Jempol | Absensi lengkap, kehadiran tim |
+| `public/images/maskot/hp.webp` | Menunjukkan HP | Pasang aplikasi (belum dipakai) |
+| `public/images/maskot/login.webp` | Kartu pegawai | Halaman masuk |
+| `public/images/maskot/kunci.webp` | Kunci emas | Lupa dan reset password |
+
+Semua dipotong setengah badan di pertengahan paha, WebP 560 px tinggi, 31 sampai 41 KB.
