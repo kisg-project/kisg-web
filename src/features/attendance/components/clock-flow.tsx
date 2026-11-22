@@ -22,6 +22,7 @@ import {
   SentIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/shared/icon";
+import { PauseLiveRefresh } from "@/components/shared/live-refresh";
 
 interface Position {
   lat: number;
@@ -139,6 +140,7 @@ export function ClockFlow({
   if (exception.result.data) {
     return (
       <div role="status" className="grid gap-4 rounded-3xl bg-warning-50 p-5 text-center">
+        <PauseLiveRefresh />
         <p className="text-lg font-bold">Pengajuan terkirim</p>
         <p className="text-sm text-subtle-foreground">
           {label} di luar lokasi menunggu persetujuan owner atau manajer Anda.
@@ -153,6 +155,7 @@ export function ClockFlow({
     const late = kind === "masuk" ? result.late_minutes : result.early_minutes;
     return (
       <div role="status" className="grid gap-4 rounded-3xl bg-success-50 p-5 text-center">
+        <PauseLiveRefresh />
         <Icon
           icon={CheckmarkCircle02Icon}
           aria-hidden="true"
@@ -181,6 +184,7 @@ export function ClockFlow({
 
   return (
     <div className="grid gap-6">
+      <PauseLiveRefresh />
       <section aria-labelledby="langkah-lokasi" className="grid gap-2 app-card p-4 sm:p-5">
         <h2 id="langkah-lokasi" className="flex items-center gap-2 font-bold">
           {position && accurate ? (
