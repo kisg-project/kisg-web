@@ -227,7 +227,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
           downPayment: parsed.data.downPayment,
           loanAmount: result.loanAmount,
           npoptkp: parsed.data.npoptkp,
-          bphtbRatePercent: KPR_DEFAULTS.bphtbRatePercent,
+          bphtbRatePercent: KPR_DEFAULTS.bphtbIncluded ? 0 : KPR_DEFAULTS.bphtbRatePercent,
           otherCostsPercent: parsed.data.otherCostsPercent,
         })
       : null;
@@ -593,14 +593,16 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
               </div>
             </FormGroup>
             <FormGroup title="Biaya pembelian">
-              <NumberField
-                control={form.control}
-                name="npoptkp"
-                label="NPOPTKP untuk BPHTB"
-                prefix="Rp"
-                readOnly={!hydrated}
-                hint="Sesuai perda daerah. UU HKPD: paling sedikit Rp 80.000.000."
-              />
+              {KPR_DEFAULTS.bphtbIncluded ? null : (
+                <NumberField
+                  control={form.control}
+                  name="npoptkp"
+                  label="NPOPTKP untuk BPHTB"
+                  prefix="Rp"
+                  readOnly={!hydrated}
+                  hint="Sesuai perda daerah. UU HKPD: paling sedikit Rp 80.000.000."
+                />
+              )}
               <NumberField
                 control={form.control}
                 name="otherCostsPercent"
@@ -757,10 +759,12 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                 ))}
               </ul>
               <dl className="mt-4 divide-y border-t">
-                <Stat
-                  label="BPHTB (5% x harga dikurangi NPOPTKP)"
-                  value={formatRupiah(costs.bphtb)}
-                />
+                {KPR_DEFAULTS.bphtbIncluded ? null : (
+                  <Stat
+                    label="BPHTB (5% x harga dikurangi NPOPTKP)"
+                    value={formatRupiah(costs.bphtb)}
+                  />
+                )}
                 <Stat
                   label={`Biaya bank, notaris bank, asuransi (perkiraan ${percentText(values.otherCostsPercent ?? 0)})`}
                   value={formatRupiah(costs.otherCosts)}

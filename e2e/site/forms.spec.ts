@@ -76,12 +76,23 @@ test.describe("Form lead", () => {
     expect(submission).toEqual({ status: "diterima", form_kind: "minat", page_path: PROJECT_PATH });
   });
 
-  test("minta brosur dan nomor yang sama digabung ke lead lama", async ({ page }) => {
+  test("unduh brosur setelah form, lead tercatat, nomor yang sama digabung", async ({ page }) => {
     const phone = uniquePhone();
     await page.goto(PROJECT_PATH);
     let form = await fillLead(page, "Form brosur", { name: "Uji Brosur", phone: phone.local });
-    await form.getByRole("button", { name: "Minta brosur" }).click();
-    await expect(page.getByRole("status").filter({ hasText: "Permintaan diterima" })).toBeVisible();
+    // Brosur langsung terunduh setelah form diterima (keputusan owner, 22 November 2026).
+    const downloadPromise = page.waitForEvent("download");
+    await form.getByRole("button", { name: "Unduh brosur" }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^sejahtera-green-village-[0-9a-f]{8}\.pdf$/);
+    const done = page.getByRole("status").filter({ hasText: "Brosur sedang diunduh" });
+    await expect(done).toBeVisible();
+    const again = done.getByRole("link", { name: "Unduh lagi" });
+    const href = (await again.getAttribute("href")) ?? "";
+    const response = await page.request.get(href);
+    expect(response.status()).toBe(200);
+    expect(response.headers()["content-type"]).toContain("application/pdf");
+    expect(response.headers()["x-robots-tag"]).toContain("noindex");
     await expect.poll(async () => (await leadByPhone(phone.e164))?.note).toBe("Minta brosur.");
 
     await page.goto("/kontak");

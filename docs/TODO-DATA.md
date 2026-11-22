@@ -47,9 +47,11 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 |---|---|
 | Alamat proyek | Jl. Garuda 3 No. NK-34, Blok H-21, RT 9/RW 14, Mangunjaya, Kec. Tambun Selatan, Kab. Bekasi, Jawa Barat 17510 |
 | Tipe unit | Tipe 36/60: luas bangunan 36 m2, luas tanah 60 m2, 2 kamar tidur, 1 kamar mandi |
-| Harga | Rp 571.250.000 |
-| Harga sudah termasuk | Biaya notaris, cek sertifikat di BPN, balik nama sertifikat di BPN, pajak penjualan (SSP), IMB, PBB |
-| Harga belum termasuk | Administrasi bank, biaya notaris bank, pajak pembelian (BPHTB), asuransi |
+| Harga | Rp 570.000.000 (keputusan owner, 22 November 2026, sebelumnya Rp 571.250.000). Label ringkas di website dan brosur: "Rp 570 jutaan" |
+| Harga sudah termasuk | Biaya notaris jual beli, cek sertifikat di BPN, balik nama sertifikat di BPN, pajak penjualan (SSP), pajak pembelian (BPHTB), IMB, PBB (gratis notaris jual beli dan BPHTB, owner 22 November 2026) |
+| Harga belum termasuk | Administrasi bank, biaya notaris bank, asuransi |
+| Spesifikasi bangunan | Dari brosur resmi: pondasi cakar ayam, dinding hebel double dinding, lantai granit 60 x 60 cm, plafon gypsum, kusen aluminium, genteng beton, rangka atap baja ringan, listrik 1.300 watt, air jet pump, kloset duduk |
+| Tipe unit | Tipe 36/60 dan Tipe 36/73 (brosur resmi). Harga tipe 36/73 belum ada, tampil "Hubungi marketing" |
 | Fasilitas unit | Carport, halaman belakang, smart door lock |
 | Tempat sekitar (nama saja) | Stasiun Tambun, Tol Bekasi Timur, Bank Mandiri KCP Mangunjaya, Superindo dan area komersial Tambun |
 | Foto | 7 gambar di Downloads `foto rumah` (3 mendatar, 4 tegak). Dikompres ke `public/images/projects/sejahtera-green-village/` dan dipakai untuk banner beranda dan galeri proyek (migrasi `20261121000300`) |
@@ -67,10 +69,11 @@ Hanya Sejahtera Green Village yang ditampilkan di website (keputusan owner, Fase
 | Foto lapangan asli (gerbang, jalan lingkungan, progres) | Fase 3 |
 | Deskripsi singkat proyek (2 sampai 3 kalimat fakta) | Fase 3 |
 | Testimoni pembeli dengan izin tertulis (opsional) | Fase 3 |
-| Spesifikasi teknis (pondasi, dinding, atap, lantai, kusen, listrik, air) dan denah | Fase 3 |
+| Denah resolusi tinggi dari arsitek (brosur saat ini memakai potongan gambar WhatsApp) dan denah tipe 36/73 | Fase 3 |
+| Harga tipe 36/73 | Fase 3 |
 | Legalitas proyek: status SHM/SHGB, PBG, nomor izin yang boleh ditampilkan | Fase 3 |
 | Fasilitas lingkungan (taman, musala, keamanan, dsb) | Fase 3 |
-| Brosur PDF | Fase 3 |
+| Brosur PDF | Ada: desain ulang 22 November 2026, `public/brosur/`, diunduh lewat form brosur di halaman proyek |
 | Siteplan (SVG, atau PDF/gambar resolusi tinggi untuk digambar ulang) dan daftar kavling (blok, nomor, luas, hook, status) | Fase 4 |
 | Radius geofence absensi dan titik pusat lokasi proyek | Fase 8 |
 | Radius geofence absensi kantor | Fase 8 |
@@ -81,7 +84,7 @@ Produk di `/simulasi-kpr` ada di `src/config/kpr-products.ts`, masing-masing den
 
 | Data | Status | Dibutuhkan di |
 |---|---|---|
-| Bank yang resmi bekerja sama dengan KIS: BTN, Mandiri, BSI, BSN (dulu BTN Syariah) | Perlu konfirmasi | Fase 3 |
+| Bank yang resmi bekerja sama dengan KIS: website menampilkan BTN, Mandiri, BSI, BSN. Brosur lama hanya menyebut BTN dan BSI | Perlu konfirmasi | Fase 3 |
 | Mandiri KPR Bunga Spesial (Fixed 3 tahun 2,76%, Fixed 5 tahun 3,50%, Berjenjang 10 tahun 4,06% lalu 8,76% lalu 9,76%), kategori Gold Selected KPR Primary, berlaku s.d. 30 November 2026 | Dari situs resmi Mandiri. Perlu kategori nasabah yang berlaku untuk pembeli KIS dan tenor maksimal | Sebelum 30 November 2026 |
 | BTN Fixed 3 tahun 2,65% | Dari pemberitaan (Kontan). Perlu konfirmasi angka, tenor, DP minimal | Fase 3 |
 | BSI KPR Sejahtera margin 5% tetap sampai lunas | Dari pemberitaan (Kontan). Perlu konfirmasi produk dan syaratnya | Fase 3 |

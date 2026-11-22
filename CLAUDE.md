@@ -223,6 +223,8 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
   - header berwarna dengan ikon (hijau untuk tambah dan simpan, merah untuk hapus dan nonaktifkan), tidak polos.
 - Toast (keputusan owner, 22 November 2026): hanya lewat `@/components/shared/toast` (kartu custom dengan ikon per jenis). Semua pesan disaring `friendlyMessage`, jadi bahasa sistem, kode error, atau istilah teknis tidak pernah tampil. Import `toast` langsung dari `sonner` dilarang ESLint.
 - Dropdown selalu memakai komponen custom `src/components/ui/select.tsx` (Radix), tidak memakai `<select>` bawaan browser, supaya tampilannya seragam (keputusan owner, Fase 3). Dipaksa aturan ESLint `no-restricted-syntax`.
+- Harga ringkas (keputusan owner, 22 November 2026): judul, hero, kartu proyek, dan brosur memakai label "Rp 570 jutaan" (`formatRupiahRange`, dibulatkan ke bawah ke puluhan juta). Detail unit, simulasi KPR, dan JSON-LD memakai harga lengkap.
+- Brosur PDF per proyek di `public/brosur/` (nama berakhiran hash isi, `src/config/brochures.ts`), tidak diindeks, dan diunduh setelah form brosur (lead `form_kind` brosur).
 - Foto asli proyek. Tidak memakai gambar hasil AI. Selama foto belum ada, pakai placeholder netral berlabel.
 - Foto stok orang (bukan rumah) boleh untuk bagian yang tidak menggambarkan proyek: banner konsultasi, karir, ilustrasi berita (keputusan owner, 20 November 2026). Hanya lisensi bebas pakai komersial, sumber dicatat di `docs/brand.md`. Satu foto tidak tampil dua kali di halaman yang sama.
 - Semua kartu dan tombol punya efek hover (kartu naik dan ikon berubah warna, panah tombol bergeser ke kanan). Footer memakai logo versi terang dan peta Indonesia bergaya titik dengan penanda kantor yang berdenyut.
@@ -237,7 +239,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 
   Website publik tetap bergaya corporate.
 - Semua isian gambar di CMS memakai unggahan file (dikompres di browser), bukan menempel tautan.
-- Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis.
+- Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis. Tidak ada teks panjang di PWA (keputusan owner, 22 November 2026): tanpa pengertian, tutorial, atau kalimat basa-basi seperti aplikasi native pada umumnya. Cukup judul, label, dan satu kalimat pendek kalau memang wajib (misal akibat dari aksi konfirmasi).
 
 ### Responsif di semua perangkat (wajib)
 Website, landing page, dan PWA portal harus tampil dan bisa dipakai penuh di semua ukuran layar, dari HP kecil sampai monitor lebar.

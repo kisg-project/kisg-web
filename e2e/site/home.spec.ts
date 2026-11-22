@@ -13,7 +13,7 @@ test.describe("Beranda", () => {
     await expect(
       firstSlide.getByRole("img", { name: /Deretan rumah Sejahtera Green Village/ }),
     ).toBeVisible();
-    await expect(firstSlide.getByText("Mulai Rp 500 jutaan")).toBeVisible();
+    await expect(firstSlide.getByText("Mulai Rp 570 jutaan")).toBeVisible();
 
     const viewport = page.viewportSize();
     const header = await page.getByRole("banner").boundingBox();
@@ -110,7 +110,7 @@ test.describe("Beranda", () => {
     await page.goto("/");
     const unit = page.locator("#tipe-unit");
     await expect(unit.getByRole("heading", { name: "Tipe 36/60" })).toBeVisible();
-    await expect(unit.getByText("Rp 571.250.000")).toBeVisible();
+    await expect(unit.getByText("Rp 570.000.000")).toBeVisible();
 
     const specs = unit.getByRole("list", { name: "Spesifikasi" });
     await expect(specs.getByRole("listitem")).toHaveText([
@@ -125,6 +125,10 @@ test.describe("Beranda", () => {
     );
     await expect(unit.getByText("Biaya balik nama sertifikat di BPN")).toBeVisible();
     await expect(unit.getByText("Pajak pembelian (BPHTB)")).toBeVisible();
+    // Spesifikasi bangunan dari brosur resmi.
+    const materials = unit.getByLabel("Spesifikasi bangunan");
+    await expect(materials).toContainText("Cakar ayam");
+    await expect(materials).toContainText("1.300 watt");
   });
 
   test("lolos aksesibilitas dan responsif di semua lebar", async ({ page }) => {
@@ -150,7 +154,7 @@ test.describe("Beranda", () => {
   }) => {
     await page.goto("/");
     const section = page.locator("#simulasi-kpr");
-    await expect(section.getByText("Rp 3.464.551")).toBeVisible();
+    await expect(section.getByText("Rp 3.456.970")).toBeVisible();
     await section.getByRole("link", { name: "Hitung simulasi lengkap" }).click();
     await expect(page).toHaveURL(/\/simulasi-kpr$/);
     await expect(page.getByRole("heading", { level: 1, name: "Simulasi KPR" })).toBeVisible();
@@ -195,7 +199,7 @@ test.describe("SEO", () => {
     const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
     expect(new URL(canonical ?? "").pathname).toBe("/");
     expect(await page.locator('meta[name="description"]').getAttribute("content")).toContain(
-      "Rp 571.250.000",
+      "Rp 570.000.000",
     );
     // Gambar share bermerek dari route /og (judul, logo, dan foto proyek).
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
@@ -210,7 +214,7 @@ test.describe("SEO", () => {
     ) as { "@graph": { "@type": string; offers?: { price: number; priceCurrency: string } }[] };
     const listing = jsonLd["@graph"].find((node) => node["@type"] === "RealEstateListing");
     expect(listing?.offers).toEqual(
-      expect.objectContaining({ price: 571_250_000, priceCurrency: "IDR" }),
+      expect.objectContaining({ price: 570_000_000, priceCurrency: "IDR" }),
     );
     expect(jsonLd["@graph"].some((node) => node["@type"] === "RealEstateAgent")).toBe(true);
   });

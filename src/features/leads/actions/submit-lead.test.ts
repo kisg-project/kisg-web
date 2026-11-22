@@ -75,7 +75,7 @@ const statuses = () =>
 describe("submitLeadAction", () => {
   it("menyimpan lead dengan nomor E.164, proyek, sumber, UTM, dan catatan kiriman", async () => {
     const result = await submitLeadAction(valid);
-    expect(result.data).toEqual({ ok: true });
+    expect(result.data).toEqual({ ok: true, brochureUrl: null });
     expect(rpc).toHaveBeenCalledWith(
       "upsert_lead",
       expect.objectContaining({
@@ -94,17 +94,25 @@ describe("submitLeadAction", () => {
     expect(statuses()).toEqual(["diterima"]);
   });
 
-  it("brosur menambah catatan permintaan brosur", async () => {
-    await submitLeadAction({ ...valid, formKind: "brosur", message: "" });
+  it("brosur menambah catatan permintaan brosur dan mengembalikan tautan PDF", async () => {
+    const result = await submitLeadAction({
+      ...valid,
+      formKind: "brosur",
+      projectSlug: "sejahtera-green-village",
+      message: "",
+    });
     expect(rpc).toHaveBeenCalledWith(
       "upsert_lead",
       expect.objectContaining({ p_note: "Minta brosur." }),
+    );
+    expect(result.data?.brochureUrl).toMatch(
+      /^\/brosur\/sejahtera-green-village-[0-9a-f]{8}\.pdf$/,
     );
   });
 
   it("honeypot terisi: jawaban sukses tanpa menyimpan lead", async () => {
     const result = await submitLeadAction({ ...valid, website: "spam" });
-    expect(result.data).toEqual({ ok: true });
+    expect(result.data).toEqual({ ok: true, brochureUrl: null });
     expect(rpc).not.toHaveBeenCalled();
     expect(statuses()).toEqual(["ditolak_honeypot"]);
   });

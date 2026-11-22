@@ -2,7 +2,7 @@
 
 import { useCallback, useId, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, Phone, Send } from "lucide-react";
+import { CircleCheck, Download, Phone, Send } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -33,11 +33,20 @@ const COPY: Record<FormKind, { submit: string; success: string; showMessage: boo
     showMessage: true,
   },
   brosur: {
-    submit: "Minta brosur",
-    success: "Permintaan diterima. Marketing kami mengirim brosur lewat WhatsApp.",
+    submit: "Unduh brosur",
+    success: "Brosur sedang diunduh. Marketing kami juga siap membantu lewat WhatsApp.",
     showMessage: false,
   },
 };
+
+function startDownload(url: string) {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = url.split("/").pop() ?? "brosur.pdf";
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
 
 /**
  * Form lead publik. Validasi di browser dan server memakai skema yang sama. Tombol nonaktif selama
@@ -75,14 +84,28 @@ export function LeadForm({
       projectSlug,
     },
   });
-  const { execute, result, isExecuting, hasSucceeded } = useAction(submitLeadAction);
+  const { execute, result, isExecuting, hasSucceeded } = useAction(submitLeadAction, {
+    onSuccess: ({ data }) => {
+      // Unduhan dimulai otomatis. Tombol Unduh lagi tetap ada kalau browser memblokirnya.
+      if (data.brochureUrl) startDownload(data.brochureUrl);
+    },
+  });
+  const brochureUrl = result.data?.brochureUrl ?? null;
   const errors = form.formState.errors;
 
   if (hasSucceeded) {
     return (
       <div role="status" className="flex flex-col items-start gap-4 rounded-3xl bg-success-50 p-5">
         <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
-        <p className="font-semibold">{copy.success}</p>
+        <p className="font-semibold">{brochureUrl ? copy.success : COPY.minat.success}</p>
+        {brochureUrl ? (
+          <Button asChild>
+            <a href={brochureUrl} download>
+              <Download aria-hidden="true" />
+              Unduh lagi
+            </a>
+          </Button>
+        ) : null}
         <Button asChild variant="outline">
           <a
             href={whatsappLink(

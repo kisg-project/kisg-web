@@ -124,13 +124,15 @@ test.describe("Detail proyek", () => {
     await page.goto(PROJECT_PATH);
     const units = page.locator("#tipe-unit");
     await expect(units.getByRole("heading", { name: "Tipe 36/60" })).toBeVisible();
-    await expect(units.getByText("Rp 571.250.000")).toBeVisible();
-    await expect(page.getByText("Mulai Rp 500 jutaan")).toBeVisible();
+    await expect(units.getByText("Rp 570.000.000").first()).toBeVisible();
+    await expect(page.getByText("Mulai Rp 570 jutaan")).toBeVisible();
+    // Tipe kedua dari brosur, harga belum ada.
+    await expect(units.getByRole("heading", { name: "Tipe 36/73" })).toBeVisible();
 
     const faq = page.locator("#faq");
     const question = faq.getByText("Berapa harga rumah Tipe 36/60?");
     await question.click();
-    await expect(faq.getByText(/^Rp 571\.250\.000\. Rincian biaya/)).toBeVisible();
+    await expect(faq.getByText(/^Rp 570\.000\.000\. Rincian biaya/)).toBeVisible();
 
     const types = await jsonLdTypes(page);
     expect(types).toEqual(

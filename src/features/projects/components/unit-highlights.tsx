@@ -194,6 +194,22 @@ export function UnitHighlights({
           <DetailPanel label="Fasilitas" items={features} />
           <DetailPanel label="Akses dan sekitar" items={places} />
         </div>
+        {unitType.materials.length > 0 ? (
+          <div className="rounded-2xl border border-border p-4 sm:p-5">
+            <h3 className="text-sm font-semibold text-muted-foreground">Spesifikasi bangunan</h3>
+            <dl aria-label="Spesifikasi bangunan" className="mt-2 grid gap-x-8 sm:grid-cols-2">
+              {unitType.materials.map((item) => (
+                <div
+                  key={item.label}
+                  className="flex min-h-12 items-center justify-between gap-4 border-b border-border py-2.5"
+                >
+                  <dt className="text-sm text-subtle-foreground">{item.label}</dt>
+                  <dd className="text-right font-semibold text-foreground">{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ) : null}
         {hasCosts ? (
           <div className="grid gap-4 rounded-2xl bg-surface p-5 sm:grid-cols-2">
             {unitType.priceIncludes.length > 0 ? (

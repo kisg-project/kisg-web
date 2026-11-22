@@ -33,6 +33,8 @@ export interface UnitType {
   features: string[];
   priceIncludes: string[];
   priceExcludes: string[];
+  /** Spesifikasi bangunan (pondasi, dinding, lantai, dan seterusnya) dari brosur resmi. */
+  materials: { label: string; value: string }[];
 }
 
 export interface NearbyPlace {

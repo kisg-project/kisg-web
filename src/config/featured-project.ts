@@ -21,8 +21,8 @@ export const featuredProject = {
     landArea: 60,
     bedrooms: 2,
     bathrooms: 1,
-    /** Harga dalam rupiah (owner, 19 November 2026). Di database disimpan sebagai bigint. */
-    price: 571_250_000,
+    /** Harga dalam rupiah (owner, 22 November 2026). Di database disimpan sebagai bigint. */
+    price: 570_000_000,
   },
   /** Rincian biaya dari owner (19 November 2026). */
   priceIncludes: [
@@ -30,10 +30,11 @@ export const featuredProject = {
     "Biaya cek sertifikat di BPN",
     "Biaya balik nama sertifikat di BPN",
     "Pajak penjualan (SSP)",
+    "Pajak pembelian (BPHTB)",
     "IMB",
     "PBB",
   ],
-  priceExcludes: ["Administrasi bank", "Biaya notaris bank", "Pajak pembelian (BPHTB)", "Asuransi"],
+  priceExcludes: ["Administrasi bank", "Biaya notaris bank", "Asuransi"],
   features: [
     { key: "carport", label: "Carport" },
     { key: "backyard", label: "Halaman belakang" },

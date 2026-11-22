@@ -23,6 +23,10 @@ const unitSpecsSchema = z
     features: stringList.optional(),
     price_includes: stringList.optional(),
     price_excludes: stringList.optional(),
+    materials: z
+      .array(z.object({ label: z.string().trim().min(1), value: z.string().trim().min(1) }))
+      .catch([])
+      .optional(),
   })
   .catch({});
 
@@ -65,6 +69,7 @@ export function toUnitType(row: UnitTypeRow): UnitType {
     floors: row.floors,
     price: row.show_price ? row.price_from : null,
     features: specs.features ?? [],
+    materials: specs.materials ?? [],
     priceIncludes: specs.price_includes ?? [],
     priceExcludes: specs.price_excludes ?? [],
   };

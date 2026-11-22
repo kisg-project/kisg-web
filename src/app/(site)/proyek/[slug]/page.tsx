@@ -218,9 +218,9 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
               delay={80}
               className="rounded-3xl border border-primary-100 bg-card p-5 shadow-xs sm:p-6 lg:col-span-5"
             >
-              <h3 className="text-lg font-bold">Minta brosur</h3>
+              <h3 className="text-lg font-bold">Unduh brosur</h3>
               <p className="mt-1 mb-4 text-sm text-subtle-foreground">
-                Brosur dikirim marketing lewat WhatsApp.
+                Isi nama dan nomor WhatsApp, brosur PDF langsung terunduh.
               </p>
               <LeadForm
                 formKind="brosur"

@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { brochureFor } from "@/config/brochures";
 import { PRIVACY_POLICY_VERSION } from "@/config/legal";
 import { ActionError, actionClient } from "@/lib/safe-action";
 import { clientIp, hashKey, hitRateLimit } from "@/lib/security/rate-limit";
@@ -60,11 +61,13 @@ export const submitLeadAction = actionClient
     const ip = await clientIp();
     const ipHash = hashKey(ip);
     const base = { formKind: input.formKind, pagePath: input.pagePath, ipHash };
+    // Brosur langsung bisa diunduh setelah form diterima (keputusan owner, 22 November 2026).
+    const brochureUrl = input.formKind === "brosur" ? brochureFor(input.projectSlug) : null;
 
     if (input.website) {
       await recordSubmission({ ...base, status: "ditolak_honeypot" });
       // Jawaban sama dengan sukses supaya bot tidak tahu ditolak.
-      return { ok: true as const };
+      return { ok: true as const, brochureUrl };
     }
 
     const phone = normalizePhoneID(input.phone);
@@ -141,5 +144,5 @@ export const submitLeadAction = actionClient
       leadId: lead.lead_id,
       payload: { project: input.projectSlug ?? null, has_email: Boolean(input.email) },
     });
-    return { ok: true as const };
+    return { ok: true as const, brochureUrl };
   });
