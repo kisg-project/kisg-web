@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/state-message";
 import { requirePortalUser } from "@/features/auth";
-import { AccountList, InviteDialog, listPortalAccounts } from "@/features/users";
+import { AccountDirectory, InviteDialog, listPortalAccounts } from "@/features/users";
 
 export const metadata: Metadata = { title: "Karyawan" };
 
@@ -19,14 +18,10 @@ export default async function EmployeesPage() {
         actions={<InviteDialog allowOwner={user.roles.includes("owner")} />}
       />
       <section aria-labelledby="daftar-judul" className="grid gap-3">
-        <h2 id="daftar-judul" className="text-sm font-semibold">
+        <h2 id="daftar-judul" className="sr-only">
           Semua karyawan
         </h2>
-        {accounts.length === 0 ? (
-          <EmptyState title="Belum ada karyawan" />
-        ) : (
-          <AccountList accounts={accounts} actor={{ id: user.id, roles: user.roles }} />
-        )}
+        <AccountDirectory accounts={accounts} actor={{ id: user.id, roles: user.roles }} />
       </section>
     </div>
   );

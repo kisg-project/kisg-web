@@ -10,6 +10,7 @@ test.describe("Portal realtime", () => {
     await expect(list).toBeVisible();
     await expect(page.locator("html[data-langsung=siap]")).toHaveCount(1, { timeout: 15_000 });
     const user = await createPortalUser({ role: "marketing", prefix: "langsung" });
+    await page.getByRole("searchbox", { name: "Cari karyawan" }).fill(user.email);
     await expect(list.getByRole("listitem", { name: user.fullName })).toBeVisible({
       timeout: 20_000,
     });
