@@ -442,6 +442,13 @@ Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Su
 
 Kalau nanti pindah ke paket berbayar, kembalikan ke pola aslinya (branch protection, Environments dengan approval, Vercel Cron) dan perbarui bagian ini.
 
+### Mode darurat saat kuota Actions habis (keputusan owner, 22 November 2026)
+Owner tidak memakai paket berbayar. Selama kuota menit GitHub Actions bulan berjalan habis:
+- PR tanpa migrasi database di-merge setelah lolos pemeriksaan laptop (`typecheck`, `lint`, `check:copy`, unit test), lalu dideploy dengan `vercel deploy --prod --archive=tgz` (build berjalan di server Vercel, bukan di laptop).
+- PR dengan migrasi database ditahan sampai CI jalan lagi.
+- Setelah kuota kembali, semua PR kembali lewat CI. Menit dihemat: E2E hanya untuk area yang berubah, tiga browser hanya di akhir fase.
+- Hemat kuota Vercel Hobby: build preview otomatis dimatikan (`git.deploymentEnabled: false` di `vercel.json`), deploy production per batch beberapa PR, selalu dengan `--archive=tgz`.
+
 ### Branch dan alur
 - `main` = production (`kisgroup.co.id`, portal `company.kisgroup.co.id`, CMS `cms.kisgroup.co.id`; domain terhubung 21 November 2026, DNS di Cloudflare tanpa proxy). Tanpa branch dan database staging (keputusan owner, Fase 2, mengikuti pola prins dan kelola): setiap merge ke `main` langsung tayang.
 - Kerja di branch `feat/...`, `fix/...`, `chore/...`, `refactor/...`, `test/...`, `docs/...` lalu PR ke `main`. Pengecekan sebelum tayang: CI hijau dan Preview Vercel PR itu.
