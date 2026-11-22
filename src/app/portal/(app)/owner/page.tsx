@@ -149,7 +149,12 @@ export default async function OwnerPage() {
           <WorkHoursWidget
             schedule={company}
             workday={today?.workday ?? true}
-            summary={overview.summary}
+            summary={{
+              total: expected,
+              present,
+              late: today?.late ?? 0,
+              absent: today?.absent ?? 0,
+            }}
           />
           <ApprovalsWidget pending={overview.pending} decided={overview.decided} />
           <AttendanceTrendCard days={trend} className="lg:col-span-2 xl:col-span-1" />
