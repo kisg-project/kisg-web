@@ -130,6 +130,9 @@ export function AccountDirectory({
             className="h-10 w-full rounded-lg border border-(--line-strong) bg-card pr-3 pl-9 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-600 sm:h-9 sm:text-xs"
           />
         </label>
+        <label htmlFor="filter-role" className="sr-only">
+          Filter role
+        </label>
         <Select
           value={role}
           onValueChange={(value) => {
@@ -137,7 +140,10 @@ export function AccountDirectory({
             reset();
           }}
         >
-          <SelectTrigger className="h-10 w-full rounded-lg border-(--line-strong) bg-(--band-soft) px-3 text-xs sm:h-9 sm:w-48">
+          <SelectTrigger
+            id="filter-role"
+            className="h-10 w-full rounded-lg border-(--line-strong) bg-(--band-soft) px-3 text-xs sm:h-9 sm:w-48"
+          >
             <SelectValue>{role === "semua" ? "Semua role" : ROLE_LABELS[role]}</SelectValue>
           </SelectTrigger>
           <SelectContent>

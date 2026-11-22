@@ -300,7 +300,7 @@ test.describe("Daftar karyawan (owner)", () => {
     await pager.getByRole("button", { name: "Halaman 2" }).click();
     await expect(pager.getByText("Menampilkan 11 sampai 12 dari 12 akun")).toBeVisible();
 
-    await page.getByRole("combobox").filter({ hasText: "Semua role" }).click();
+    await page.getByRole("combobox", { name: "Filter role" }).click();
     await page.getByRole("option", { name: "Marketing", exact: true }).click();
     await expect(pager.getByText("Menampilkan 1 sampai 1 dari 1 akun")).toBeVisible();
     await expect(list.getByRole("listitem", { name: pending.fullName })).toBeVisible();
