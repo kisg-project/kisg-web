@@ -84,7 +84,6 @@ export function ScheduleWidget({
                 <button
                   type="button"
                   aria-pressed={active}
-                  aria-label={LONG.format(asDate(item.date))}
                   onClick={() => {
                     setSelected(index);
                   }}
@@ -99,6 +98,7 @@ export function ScheduleWidget({
                   <span className="text-sm font-semibold tabular-nums">
                     {asDate(item.date).getUTCDate()}
                   </span>
+                  <span className="sr-only">, {LONG.format(asDate(item.date))}</span>
                 </button>
               </li>
             );
