@@ -2,6 +2,11 @@
 set -euo pipefail
 
 if [ -z "${VERCEL_TOKEN:-}" ]; then echo "VERCEL_TOKEN tidak ada di sesi ini."; exit 1; fi
+if [ -z "${VERCEL_ORG_ID:-}" ]; then echo "VERCEL_ORG_ID tidak ada di sesi ini."; exit 1; fi
+if [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+  VERCEL_PROJECT_ID="$(node -e 'fetch(`https://api.vercel.com/v9/projects/kisg-web?teamId=${process.env.VERCEL_ORG_ID}`,{headers:{Authorization:`Bearer ${process.env.VERCEL_TOKEN}`}}).then(r=>r.json()).then(d=>{if(!String(d.id).startsWith("prj_"))process.exit(1);process.stdout.write(d.id)}).catch(()=>process.exit(1))')" || { echo "Project Vercel kisg-web tidak ditemukan."; exit 1; }
+  export VERCEL_PROJECT_ID
+fi
 if [ "$(git branch --show-current)" != "main" ]; then echo "Deploy hanya dari branch main."; exit 1; fi
 git fetch -q origin main
 if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then echo "main lokal belum sama dengan origin/main."; exit 1; fi
