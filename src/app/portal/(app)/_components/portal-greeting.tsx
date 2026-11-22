@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { CalendarDays } from "lucide-react";
+import { Calendar03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 import { ROLE_LABELS, type AppRole } from "@/config/roles";
 import { greetingName, greetingFor } from "@/lib/format/greeting";
 import { formatDateWIB } from "@/lib/format";
@@ -9,12 +10,6 @@ export interface GreetingStat {
   value: string;
 }
 
-/**
- * Kartu sapaan beranda portal: foto proyek dengan gradasi warna brand, tanggal, lalu sapaan dua baris
- * ("Selamat malam," dan dua kata pertama nama), semua role, dan ringkasan angka opsional. Foto profil tidak
- * diulang di sini karena sudah ada di header (keputusan owner, 21 November 2026). Halaman portal
- * dirender per request, jadi jam yang dipakai adalah jam saat halaman dibuka.
- */
 export function PortalGreeting({
   fullName,
   roles,
@@ -29,7 +24,7 @@ export function PortalGreeting({
   const now = new Date();
   const name = greetingName(fullName) || "rekan KIS";
   return (
-    <section className="relative isolate overflow-hidden rounded-[2rem] px-5 pt-5 pb-5 text-white shadow-[0_24px_48px_-28px_rgb(1_60_52/0.7)] sm:px-7 sm:pt-7">
+    <section className="relative isolate overflow-hidden rounded-2xl border border-(--line-strong) px-4 py-4 text-white sm:px-5">
       <Image
         src="/images/projects/sejahtera-green-village/sgv-3.webp"
         alt=""
@@ -42,21 +37,19 @@ export function PortalGreeting({
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-linear-to-br from-primary-950 via-primary-900/90 to-primary-800/55"
       />
-      <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md">
-        <CalendarDays aria-hidden="true" className="size-3.5" />
+      <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-2.5 py-0.5 text-[0.7rem] font-medium text-white/90 ring-1 ring-white/20 backdrop-blur-md">
+        <Icon icon={Calendar03Icon} className="size-3.5" />
         {formatDateWIB(now)}
       </p>
-      <h1 className="mt-4 tracking-tight [overflow-wrap:anywhere]">
-        <span className="block text-lg font-medium text-white/85 sm:text-xl">
-          {greetingFor(now)},
-        </span>{" "}
-        <span className="block text-[2.25rem] leading-[1.05] font-bold sm:text-5xl">{name}</span>
+      <h1 className="mt-3 tracking-tight [overflow-wrap:anywhere]">
+        <span className="block text-sm font-normal text-white/85">{greetingFor(now)},</span>{" "}
+        <span className="block text-2xl leading-tight font-semibold sm:text-3xl">{name}</span>
       </h1>
-      <ul aria-label="Role" className="mt-4 flex flex-wrap gap-1.5">
+      <ul aria-label="Role" className="mt-3 flex flex-wrap gap-1.5">
         {roles.map((role) => (
           <li
             key={role}
-            className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25 backdrop-blur-md"
+            className="rounded-full bg-white/15 px-2.5 py-0.5 text-[0.7rem] font-medium ring-1 ring-white/25 backdrop-blur-md"
           >
             {ROLE_LABELS[role]}
           </li>

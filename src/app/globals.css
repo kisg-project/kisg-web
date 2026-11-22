@@ -94,6 +94,16 @@
   --color-info-800: #004981; /* oklch(0.400 0.113 250.0) */
   --color-info-900: #01345e; /* oklch(0.320 0.090 250.0) */
   --color-info-950: #002241; /* oklch(0.250 0.070 250.0) */
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-600: #7c3aed;
+  --color-violet-700: #6d28d9;
+  --color-violet-900: #4c1d95;
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-600: #ea580c;
+  --color-orange-700: #c2410c;
+  --color-orange-900: #7c2d12;
 
   --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
 
@@ -503,30 +513,27 @@
 
 /* Latar portal: gradasi lembut warna brand di sudut atas, tanpa pola ramai. */
 .portal-field {
-  background-color: var(--color-background);
-  background-image:
-    radial-gradient(60rem 30rem at 100% -10%, var(--color-primary-50), transparent 70%),
-    radial-gradient(40rem 24rem at -10% 0%, var(--color-gold-50), transparent 70%);
-  background-attachment: fixed;
+  background-color: var(--color-neutral-50);
 }
 
-/* Kartu portal gaya aplikasi: sudut lebar, garis tipis, bayangan lembut. */
 @utility app-card {
-  border-radius: 1.75rem;
+  border-radius: 1rem;
   background-color: var(--color-card);
-  box-shadow:
-    0 16px 36px -28px rgb(1 60 52 / 0.5),
-    0 0 0 1px color-mix(in oklab, var(--color-primary-100) 75%, transparent);
+  border: 1px solid var(--line-strong);
 }
 
-/*
- * Kanvas portal (keputusan owner, 21 November 2026: terasa aplikasi native): latar mint lembut dengan
- * kartu putih. Teks pudar memakai neutral-700 supaya tetap lolos kontras AA di atas mint.
- */
 .portal-canvas {
   --background: var(--color-neutral-50);
   --muted-foreground: var(--color-neutral-700);
+  --line-strong: var(--color-neutral-800);
+  --line-soft: var(--color-neutral-200);
   background-color: var(--background);
+  font-family: var(--font-work-sans), var(--font-sans);
+}
+
+.dark .portal-canvas {
+  --line-strong: var(--color-neutral-600);
+  --line-soft: var(--color-neutral-800);
 }
 
 /* Bilah progres perpindahan halaman: maju cepat lalu melambat, tidak pernah penuh sebelum selesai. */

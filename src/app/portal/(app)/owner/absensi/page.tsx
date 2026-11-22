@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  ChevronLeft,
-  ChevronRight,
-  ClipboardCheck,
-  ClipboardList,
-  FileText,
-  MapPin,
-  ShieldCheck,
-} from "lucide-react";
+  Alert02Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  CalendarCheckIn01Icon,
+  ClipboardCheckIcon,
+  File01Icon,
+  Location01Icon,
+  SecurityCheckIcon,
+  Task01Icon,
+  UserCheck01Icon,
+  UserGroupIcon,
+  UserRemove01Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 import { PageHeader } from "@/components/shared/page-header";
+import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/state-message";
 import { APPROVAL_DECISION_LABEL, verificationPath } from "@/config/approvals";
 import { env } from "@/env";
@@ -64,17 +71,17 @@ function Selfie({ src, label }: { src: string | null; label: string }) {
 
 function ReportBlock({
   title,
-  icon: Icon,
+  icon,
   report,
 }: {
   title: string;
-  icon: typeof ClipboardList;
+  icon: AppIcon;
   report: OverviewEmployee["rencana"];
 }) {
   if (!report) {
     return (
       <p className="flex items-center gap-2 text-sm text-subtle-foreground">
-        <Icon aria-hidden="true" className="size-4" />
+        <Icon icon={icon} className="size-4" />
         {title}: belum diisi
       </p>
     );
@@ -82,7 +89,7 @@ function ReportBlock({
   return (
     <details className="group rounded-2xl bg-surface p-3">
       <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-semibold">
-        <Icon aria-hidden="true" className="size-4 text-primary" />
+        <Icon icon={icon} className="size-4 text-primary" />
         {title}
         <span className="font-normal text-subtle-foreground tabular">
           {formatTimeWIB(report.updatedAt)}
@@ -100,7 +107,7 @@ function ReportBlock({
                   rel="noreferrer"
                   className="inline-flex min-h-11 items-center gap-2 rounded-full border bg-background px-3 text-sm font-semibold hover:bg-accent"
                 >
-                  <FileText aria-hidden="true" className="size-4" />
+                  <Icon icon={File01Icon} className="size-4" />
                   {item.name}
                 </a>
               </li>
@@ -142,8 +149,8 @@ function EmployeeCard({ employee }: { employee: OverviewEmployee }) {
       </div>
       {day ? (
         <div className="grid gap-2">
-          <ReportBlock title="Rencana kegiatan" icon={ClipboardList} report={employee.rencana} />
-          <ReportBlock title="Hasil kerja" icon={ClipboardCheck} report={employee.hasil} />
+          <ReportBlock title="Rencana kegiatan" icon={Task01Icon} report={employee.rencana} />
+          <ReportBlock title="Hasil kerja" icon={ClipboardCheckIcon} report={employee.hasil} />
         </div>
       ) : null}
     </li>
@@ -182,10 +189,6 @@ function PendingCard({ item }: { item: OverviewException }) {
   );
 }
 
-/**
- * Kehadiran harian untuk owner: ringkasan, pengajuan di luar lokasi yang menunggu persetujuan digital,
- * keputusan di tanggal itu dengan tautan verifikasi, dan status setiap karyawan beserta laporannya.
- */
 export default async function OwnerAttendancePage({
   searchParams,
 }: PageProps<"/portal/owner/absensi">) {
@@ -194,61 +197,91 @@ export default async function OwnerAttendancePage({
   const date = pickDate((await searchParams).tanggal, today);
   const overview = await getAttendanceOverview(date);
   const { summary } = overview;
-  const stats = [
-    { label: "Wajib absen", value: summary.total },
-    { label: "Hadir", value: summary.present },
-    { label: "Terlambat", value: summary.late },
-    { label: "Belum absen", value: summary.absent },
-  ];
+  const shortDate = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${date}T00:00:00Z`));
+  const arrow =
+    "flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-neutral-100";
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-5">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke dashboard"
         title="Kehadiran"
         description={formatDateWIB(date)}
+        icon={CalendarCheckIn01Icon}
+        actions={
+          <nav aria-label="Pilih tanggal" className="flex items-center gap-2">
+            <div className="flex items-center rounded-full border border-(--line-strong) bg-card p-0.5">
+              <Link
+                href={`${BASE}?tanggal=${shiftDate(date, -1)}`}
+                aria-label="Hari sebelumnya"
+                className={arrow}
+              >
+                <Icon icon={ArrowLeft01Icon} className="size-4" />
+              </Link>
+              <span className="min-w-[6.5rem] px-1 text-center text-xs font-medium tabular-nums">
+                {shortDate}
+              </span>
+              {date < today ? (
+                <Link
+                  href={`${BASE}?tanggal=${shiftDate(date, 1)}`}
+                  aria-label="Hari berikutnya"
+                  className={arrow}
+                >
+                  <Icon icon={ArrowRight01Icon} className="size-4" />
+                </Link>
+              ) : (
+                <span aria-hidden="true" className={cn(arrow, "opacity-30 hover:bg-transparent")}>
+                  <Icon icon={ArrowRight01Icon} className="size-4" />
+                </span>
+              )}
+            </div>
+            {date !== today ? (
+              <Link
+                href={BASE}
+                className="inline-flex min-h-10 items-center rounded-full bg-primary-700 px-3.5 text-xs font-medium text-white hover:bg-primary-800"
+              >
+                Hari ini
+              </Link>
+            ) : null}
+          </nav>
+        }
       />
 
-      <nav aria-label="Pilih tanggal" className="flex items-center gap-2">
-        <Link
-          href={`${BASE}?tanggal=${shiftDate(date, -1)}`}
-          aria-label="Hari sebelumnya"
-          className="inline-flex size-11 items-center justify-center rounded-full border bg-background hover:bg-accent"
-        >
-          <ChevronLeft aria-hidden="true" className="size-5" />
-        </Link>
-        {date < today ? (
-          <Link
-            href={`${BASE}?tanggal=${shiftDate(date, 1)}`}
-            aria-label="Hari berikutnya"
-            className="inline-flex size-11 items-center justify-center rounded-full border bg-background hover:bg-accent"
-          >
-            <ChevronRight aria-hidden="true" className="size-5" />
-          </Link>
-        ) : null}
-        {date !== today ? (
-          <Link
-            href={BASE}
-            className="inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-primary hover:bg-primary-50"
-          >
-            Hari ini
-          </Link>
-        ) : null}
-      </nav>
-
-      <dl aria-label="Ringkasan kehadiran" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {stats.map((item) => (
-          <div key={item.label} className="app-card p-4">
-            <dt className="text-sm text-subtle-foreground">{item.label}</dt>
-            <dd className="mt-1 text-2xl font-bold tabular">{item.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <div
+        aria-label="Ringkasan kehadiran"
+        role="group"
+        className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+      >
+        <StatCard
+          icon={UserGroupIcon}
+          tone="blue"
+          label="Wajib absen"
+          value={String(summary.total)}
+        />
+        <StatCard
+          icon={UserCheck01Icon}
+          tone="green"
+          label="Hadir"
+          value={String(summary.present)}
+        />
+        <StatCard icon={Alert02Icon} tone="orange" label="Terlambat" value={String(summary.late)} />
+        <StatCard
+          icon={UserRemove01Icon}
+          tone="red"
+          label="Belum absen"
+          value={String(summary.absent)}
+        />
+      </div>
 
       <section aria-labelledby="menunggu" className="grid gap-3">
-        <h2 id="menunggu" className="flex items-center gap-2 text-lg font-bold">
-          <MapPin aria-hidden="true" className="size-5" />
+        <h2 id="menunggu" className="flex items-center gap-2 text-base font-semibold">
+          <Icon icon={Location01Icon} className="size-5" />
           Menunggu persetujuan
           {summary.pending > 0 ? (
             <span className="rounded-full bg-warning-100 px-2.5 py-0.5 text-xs font-semibold text-warning-800 tabular">
@@ -272,8 +305,8 @@ export default async function OwnerAttendancePage({
 
       {overview.decided.length > 0 ? (
         <section aria-labelledby="diputuskan" className="grid gap-3">
-          <h2 id="diputuskan" className="flex items-center gap-2 text-lg font-bold">
-            <ShieldCheck aria-hidden="true" className="size-5" />
+          <h2 id="diputuskan" className="flex items-center gap-2 text-base font-semibold">
+            <Icon icon={SecurityCheckIcon} className="size-5" />
             Sudah diputuskan
           </h2>
           <ul aria-label="Pengajuan diputuskan" className="grid gap-2">
@@ -303,7 +336,7 @@ export default async function OwnerAttendancePage({
                     rel="noreferrer"
                     className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-primary hover:bg-primary-50"
                   >
-                    <ShieldCheck aria-hidden="true" className="size-4" />
+                    <Icon icon={SecurityCheckIcon} className="size-4" />
                     Verifikasi
                   </a>
                 ) : null}
@@ -314,7 +347,7 @@ export default async function OwnerAttendancePage({
       ) : null}
 
       <section aria-labelledby="karyawan" className="grid gap-3">
-        <h2 id="karyawan" className="text-lg font-bold">
+        <h2 id="karyawan" className="text-base font-semibold">
           Karyawan
         </h2>
         {overview.employees.length === 0 ? (
