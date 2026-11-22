@@ -61,7 +61,7 @@ export default async function SchedulesPage() {
           initial={{
             scope: "perusahaan",
             targetId: null,
-            startTime: company?.startTime ?? "08:00",
+            startTime: company?.startTime ?? "09:00",
             endTime: company?.endTime ?? "17:00",
             workdays: company?.workdays ?? [1, 2, 3, 4, 5, 6],
             lateToleranceMin: company?.lateToleranceMin ?? 15,
@@ -82,12 +82,20 @@ export default async function SchedulesPage() {
             {overrides.map((item) => {
               const name = item.targetName ?? "Tanpa nama";
               return (
-                <li key={item.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                <li
+                  key={item.id}
+                  aria-label={name}
+                  className="flex items-center justify-between gap-3 px-4 py-3"
+                >
                   <span className="min-w-0">
                     <span className="block text-[0.8125rem] font-semibold break-words">
                       {name}
                       <span className="ml-2 text-xs font-medium text-subtle-foreground">
-                        {item.scope === "lokasi" ? "Titik absensi" : "Karyawan"}
+                        {item.scope === "lokasi"
+                          ? "Titik absensi"
+                          : item.scope === "role"
+                            ? "Role"
+                            : "Karyawan"}
                       </span>
                     </span>
                     <span className="block text-xs text-muted-foreground tabular-nums">
