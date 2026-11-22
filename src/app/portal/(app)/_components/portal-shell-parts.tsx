@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Moon02Icon, Sun03Icon, SunriseIcon, SunsetIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/shared/icon";
 import { Avatar } from "@/components/shared/avatar";
+import { LiveRefresh } from "@/components/shared/live-refresh";
 import { bottomItems, railItems } from "@/config/portal-nav";
 import { getPortalUser, LogoutButton } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
+import { getSupabaseConfig } from "@/lib/supabase/config";
 import { greetingFor, greetingName } from "@/lib/format/greeting";
 import { cn } from "@/lib/utils";
 import { PortalBottomNav, PortalSidebarNav } from "./portal-nav";
@@ -64,4 +66,11 @@ export async function UserMenu() {
       <LogoutButton iconOnly />
     </div>
   );
+}
+
+export async function LiveRefreshForUser() {
+  const user = await getPortalUser();
+  if (!user) return null;
+  const { url, publishableKey } = getSupabaseConfig();
+  return <LiveRefresh url={url} publishableKey={publishableKey} />;
 }

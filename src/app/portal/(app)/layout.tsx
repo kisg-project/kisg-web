@@ -5,6 +5,7 @@ import { StickyHeader } from "./_components/portal-nav";
 import {
   BottomNavForUser,
   HeaderGreeting,
+  LiveRefreshForUser,
   SidebarNavForUser,
   UserMenu,
 } from "./_components/portal-shell-parts";
@@ -43,6 +44,9 @@ export default function PortalAppLayout({ children }: { children: React.ReactNod
       </main>
       <Suspense fallback={null}>
         <BottomNavForUser />
+      </Suspense>
+      <Suspense fallback={null}>
+        <LiveRefreshForUser />
       </Suspense>
     </div>
   );
