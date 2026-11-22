@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Buat lowongan" };
 export default async function CmsNewCareerPage() {
   await requireCmsUser();
   return (
-    <div className="grid max-w-4xl gap-6">
+    <div className="tone-violet grid gap-4 [&>:not(:first-child)]:max-w-4xl">
       <PageHeader
         title="Buat lowongan"
         description="Pilih jenjang supaya lowongan tampil di kartu yang tepat."

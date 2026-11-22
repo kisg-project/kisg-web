@@ -1,45 +1,29 @@
 import { Suspense } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { siteConfig } from "@/config/site";
-import { CmsNav, CmsUserMenu } from "./_components/cms-shell";
+import { StickyHeader } from "@/components/shared/app-nav";
+import { CmsBottomNav, CmsSidebar } from "./_components/cms-nav";
+import { CmsGreeting, CmsUserMenu } from "./_components/cms-shell";
 
 export default function CmsAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="sticky top-0 z-30 border-b bg-background pt-[env(safe-area-inset-top)]">
-        <div className="mx-auto flex min-h-16 w-full max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 sm:px-6">
-          <Link
-            href="/cms"
-            aria-label="Panel CMS, ke ringkasan"
-            className="flex items-center gap-2"
-          >
-            <Image
-              src={siteConfig.logo.src}
-              alt={siteConfig.logo.alt}
-              width={siteConfig.logo.width}
-              height={siteConfig.logo.height}
-              loading="eager"
-              sizes="96px"
-              className="h-9 w-auto"
-            />
-            <span className="text-xs font-semibold tracking-wide text-subtle-foreground uppercase">
-              Panel CMS
-            </span>
-          </Link>
-          <Suspense fallback={<div className="order-last h-11 w-full sm:order-none sm:w-64" />}>
-            <CmsNav />
-          </Suspense>
-          <div className="ml-auto">
+    <div className="app-feel portal-field portal-canvas portal-shell flex min-h-dvh flex-col text-sm lg:pl-(--rail-w)">
+      <CmsSidebar />
+      <StickyHeader>
+        <div className="flex h-14 items-center justify-between gap-3 px-4 lg:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
             <Suspense fallback={null}>
-              <CmsUserMenu />
+              <CmsGreeting />
             </Suspense>
           </div>
+          <CmsUserMenu />
         </div>
-      </header>
-      <main id="konten" className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      </StickyHeader>
+      <main
+        id="konten"
+        className="flex w-full flex-1 flex-col gap-5 px-4 pt-4 pb-28 lg:px-6 lg:pb-12"
+      >
         {children}
       </main>
+      <CmsBottomNav />
     </div>
   );
 }

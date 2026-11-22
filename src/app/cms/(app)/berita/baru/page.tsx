@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Tulis berita" };
 export default async function CmsNewPostPage() {
   await requireCmsUser();
   return (
-    <div className="grid max-w-4xl gap-6">
+    <div className="tone-orange grid gap-4 [&>:not(:first-child)]:max-w-4xl">
       <PageHeader
         title="Tulis berita"
         description="Simpan sebagai draf dulu kalau belum siap tayang."

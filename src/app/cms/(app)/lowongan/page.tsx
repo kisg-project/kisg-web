@@ -24,7 +24,7 @@ export default async function CmsCareersPage() {
   await requireCmsUser();
   const careers = await listCmsCareers();
   return (
-    <div className="grid gap-6">
+    <div className="tone-violet grid gap-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeader
           title="Lowongan"

@@ -23,7 +23,7 @@ export default async function CmsPostsPage() {
   await requireCmsUser();
   const posts = await listCmsPosts();
   return (
-    <div className="grid gap-6">
+    <div className="tone-orange grid gap-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeader title="Berita" description="Berita dan artikel di halaman /berita." />
         <Button asChild>
