@@ -6,7 +6,9 @@ import { CmsGreeting, CmsUserMenu } from "./_components/cms-shell";
 export default function CmsAppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="app-feel portal-field portal-canvas portal-shell flex min-h-dvh flex-col text-sm lg:pl-(--rail-w)">
-      <CmsSidebar />
+      <Suspense fallback={null}>
+        <CmsSidebar />
+      </Suspense>
       <StickyHeader>
         <div className="flex h-14 items-center justify-between gap-3 px-4 lg:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
@@ -14,7 +16,9 @@ export default function CmsAppLayout({ children }: { children: React.ReactNode }
               <CmsGreeting />
             </Suspense>
           </div>
-          <CmsUserMenu />
+          <Suspense fallback={null}>
+            <CmsUserMenu />
+          </Suspense>
         </div>
       </StickyHeader>
       <main
@@ -23,7 +27,9 @@ export default function CmsAppLayout({ children }: { children: React.ReactNode }
       >
         {children}
       </main>
-      <CmsBottomNav />
+      <Suspense fallback={null}>
+        <CmsBottomNav />
+      </Suspense>
     </div>
   );
 }
