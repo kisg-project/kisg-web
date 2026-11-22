@@ -48,8 +48,8 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 
 - **Framework**: Next.js (App Router), React, TypeScript `strict` + `noUncheckedIndexedAccess`
 - **Styling**: Tailwind CSS v4 (token via `@theme`), shadcn/ui sebagai basis komponen, `class-variance-authority`, `tailwind-merge`
-- **Ikon**: `lucide-react`. Ikon `Sparkles`, `Sparkle`, `WandSparkles`, `Wand2`, `Stars`, `Bot` dan sejenisnya **dilarang**.
-- **Font**: `Plus Jakarta Sans` via `next/font` (heading dan body). Angka di tabel/dashboard pakai `tabular-nums`.
+- **Ikon**: Hugeicons (`@hugeicons/react` + `@hugeicons/core-free-icons`, keputusan owner 22 November 2026, menggantikan `lucide-react` secara bertahap, mulai dari PWA) lewat komponen `src/components/shared/icon.tsx`. Ikon sparkles, wand, stars, bot, dan sejenisnya **dilarang**.
+- **Font**: `Plus Jakarta Sans` via `next/font` untuk website. PWA portal memakai `Work Sans` (keputusan owner, 22 November 2026). Angka di tabel/dashboard pakai `tabular-nums`.
 - **Backend**: Supabase (Postgres, Auth, Storage, Realtime, Edge Functions, `pg_cron`)
 - **Akses data**: `@supabase/ssr`, type hasil `supabase gen types`
 - **Validasi**: Zod di setiap batas sistem (form, server action, route handler, webhook, env)
@@ -178,6 +178,7 @@ Kalau ragu, anggap tugas besar. Seluruh pemeriksaan tetap dijalankan penuh di CI
 - Di akhir setiap fase, tulis daftar skenario E2E yang dicakup di `docs/e2e-coverage.md`.
 
 Wajib:
+- Kode tanpa komentar dan padat (keputusan owner, 22 November 2026). Satu-satunya komentar yang boleh: alasan di `eslint-disable`. Komentar lama dihapus setiap kali file disentuh.
 - Tidak ada `any`, `@ts-ignore`, `eslint-disable` tanpa komentar alasan yang spesifik.
 - Setiap halaman punya `loading.tsx`, `error.tsx`, dan empty state yang jelas. `not-found.tsx` untuk slug yang tidak ada.
 - Setiap form: validasi client dan server dengan schema Zod yang sama, tombol disabled saat submit, cegah double submit, pesan error per field.
@@ -238,6 +239,13 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
   - rasa aplikasi lewat kelas `app-feel` (tanpa highlight tap dan tanpa seleksi teks kecuali di field isian).
 
   Website publik tetap bergaya corporate.
+- Rombakan PWA (keputusan owner, 22 November 2026, menggantikan gaya Shaflow untuk halaman di dalam aplikasi): gaya aplikasi HR modern dari referensi owner, rapi, padat, playful, tidak kekanak-kanakan.
+  - kanvas abu muda, panel putih bergaris tegas (`--line-strong`, `app-card` radius 16px) tanpa bayangan besar;
+  - teks kecil dan padat di HP (judul halaman 18 sampai 20px, isi 13 sampai 14px, label 11 sampai 12px);
+  - rel ikon di kiri (desktop), bottom bar ikon saja yang simetris (HP), drawer menu berikon;
+  - bar judul halaman (`PageHeader`) berwarna abu dengan ikon modul dan aksi kecil;
+  - kartu KPI (`StatCard`) dan grid shortcut fitur, bukan kartu modul besar;
+  - warna kategori (ungu, oranye, biru, merah, kuning) hanya untuk ikon, badge, dan acara. Warna utama tetap hijau KIS.
 - Semua isian gambar di CMS memakai unggahan file (dikompres di browser), bukan menempel tautan.
 - Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis. Tidak ada teks panjang di PWA (keputusan owner, 22 November 2026): tanpa pengertian, tutorial, atau kalimat basa-basi seperti aplikasi native pada umumnya. Cukup judul, label, dan satu kalimat pendek kalau memang wajib (misal akibat dari aksi konfirmasi).
 

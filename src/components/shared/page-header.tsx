@@ -1,51 +1,64 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
   title: ReactNode;
   description?: ReactNode;
-  /** Tombol atau aksi di sisi kanan (desktop) atau di bawah judul (HP). */
   actions?: ReactNode;
-  /** Halaman induk. Kalau diisi, tombol kembali bulat tampil di kiri judul, seperti aplikasi. */
   backHref?: string;
-  /** Nama tombol kembali untuk pembaca layar, misal "Kembali ke beranda". */
   backLabel?: string;
+  icon?: AppIcon;
+  tone?: string;
   className?: string;
 }
 
-/** Judul halaman (h1) gaya aplikasi: judul besar, deskripsi singkat, aksi, dan tombol kembali. */
 export function PageHeader({
   title,
   description,
   actions,
   backHref,
   backLabel = "Kembali",
+  icon,
+  tone = "bg-primary-100 text-primary-800",
   className,
 }: PageHeaderProps) {
   return (
     <div
-      className={cn("flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between", className)}
+      className={cn(
+        "flex flex-col gap-3 rounded-2xl border border-(--line-strong) bg-neutral-100 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between dark:bg-neutral-900",
+        className,
+      )}
     >
-      <div className="flex min-w-0 items-start gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         {backHref ? (
           <Link
             href={backHref}
             aria-label={backLabel}
-            className="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-full bg-card text-primary-900 shadow-xs ring-1 ring-primary-100 transition-colors hover:bg-primary-50 motion-safe:active:scale-95"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-(--line-strong) bg-card transition-colors hover:bg-neutral-50 motion-safe:active:scale-95"
           >
-            <ChevronLeft aria-hidden="true" className="size-5" />
+            <Icon icon={ArrowLeft01Icon} className="size-[1.125rem]" />
           </Link>
         ) : null}
+        {icon ? (
+          <span
+            className={cn("flex size-9 shrink-0 items-center justify-center rounded-full", tone)}
+          >
+            <Icon icon={icon} className="size-[1.125rem]" />
+          </span>
+        ) : null}
         <div className="min-w-0">
-          <h1 className="text-[1.75rem] leading-tight font-extrabold tracking-tight text-balance text-primary-950 sm:text-4xl">
+          <h1 className="truncate text-lg leading-tight font-semibold tracking-tight sm:text-xl">
             {title}
           </h1>
-          {description ? <p className="mt-1.5 text-muted-foreground">{description}</p> : null}
+          {description ? (
+            <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{description}</p>
+          ) : null}
         </div>
       </div>
-      {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </div>
   );
 }

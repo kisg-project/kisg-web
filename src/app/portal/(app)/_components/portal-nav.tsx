@@ -4,25 +4,24 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CalendarCheck,
-  ClipboardList,
-  LayoutDashboard,
-  LoaderCircle,
-  Megaphone,
-  Settings,
-  UsersRound,
-  type LucideIcon,
-} from "lucide-react";
+  Building03Icon,
+  CalendarCheckIn01Icon,
+  DashboardSquare01Icon,
+  Loading03Icon,
+  Megaphone01Icon,
+  Menu01Icon,
+  Settings02Icon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
-const ICONS: Record<string, LucideIcon> = {
-  "/portal/admin": Settings,
-  "/portal/owner": LayoutDashboard,
-  "/portal/crm": UsersRound,
-  "/portal/marketing": Megaphone,
-  "/portal/lapangan": ClipboardList,
-  "/portal/absensi": CalendarCheck,
-};
 
 export interface PortalNavItem {
   href: string;
@@ -30,7 +29,17 @@ export interface PortalNavItem {
   shortLabel: string;
 }
 
-/** Path di subdomain portal tanpa awalan /portal, jadi dicocokkan setelah awalan ditambahkan. */
+const AREA: Record<string, { icon: AppIcon; tone: string }> = {
+  "/portal/owner": { icon: DashboardSquare01Icon, tone: "bg-primary-100 text-primary-800" },
+  "/portal/crm": { icon: UserGroupIcon, tone: "bg-violet-100 text-violet-700" },
+  "/portal/marketing": { icon: Megaphone01Icon, tone: "bg-orange-100 text-orange-700" },
+  "/portal/lapangan": { icon: Building03Icon, tone: "bg-info-100 text-info-700" },
+  "/portal/absensi": { icon: CalendarCheckIn01Icon, tone: "bg-success-100 text-success-700" },
+  "/portal/admin": { icon: Settings02Icon, tone: "bg-neutral-200 text-neutral-800" },
+};
+
+const areaOf = (href: string) => AREA[href] ?? { icon: DashboardSquare01Icon, tone: "" };
+
 function normalize(pathname: string): string {
   return pathname.startsWith("/portal") ? pathname : `/portal${pathname === "/" ? "" : pathname}`;
 }
@@ -40,93 +49,169 @@ function isActive(pathname: string, href: string) {
   return path === href || path.startsWith(`${href}/`);
 }
 
-/** Ikon menu yang berputar selama halaman tujuan dimuat, supaya ketukan langsung terasa ditanggapi. */
-function NavIcon({ icon: Icon, active }: { icon: LucideIcon; active: boolean }) {
+function NavIcon({ icon }: { icon: AppIcon }) {
   const { pending } = useLinkStatus();
-  if (pending) {
-    return <LoaderCircle aria-hidden="true" className="size-[1.35rem] shrink-0 animate-spin" />;
-  }
-  return (
-    <Icon aria-hidden="true" className="size-[1.35rem] shrink-0" strokeWidth={active ? 2.4 : 2} />
-  );
+  return <Icon icon={pending ? Loading03Icon : icon} className={cn(pending && "animate-spin")} />;
 }
 
-/**
- * Menu pil melayang di bawah layar (HP dan tablet), gaya tab bar aplikasi: wadah pil gelap, menu aktif
- * melebar menjadi pil putih berlabel, menu lain cukup ikon (labelnya tetap dibaca pembaca layar). Sudut
- * penanda aktif konsentris dengan wadahnya.
- */
 export function PortalBottomNav({ items }: { items: readonly PortalNavItem[] }) {
   const pathname = usePathname();
   if (items.length === 0) return null;
   return (
     <nav
       aria-label="Menu portal bawah"
-      className="fixed inset-x-4 bottom-[max(0.875rem,env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-md items-center gap-1 rounded-full bg-primary-950/95 p-1.5 shadow-[0_20px_44px_-18px_rgb(1_41_34/0.65)] ring-1 ring-white/10 backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-(--line-strong) bg-card pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      {items.map((item) => {
-        const active = isActive(pathname, item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "flex h-[3.25rem] min-w-0 items-center justify-center gap-2 rounded-full transition-[flex-grow,background-color,color] duration-300 ease-out select-none motion-safe:active:scale-95",
-              active
-                ? "grow-[2.4] basis-0 bg-white px-4 text-primary-900 shadow-sm"
-                : "grow basis-0 text-white/70 hover:text-white",
-            )}
-          >
-            <NavIcon icon={ICONS[item.href] ?? LayoutDashboard} active={active} />
-            <span className={active ? "truncate text-sm font-bold" : "sr-only"}>
-              {item.shortLabel}
-            </span>
-          </Link>
-        );
-      })}
+      <ul
+        className="mx-auto grid max-w-lg"
+        style={{ gridTemplateColumns: `repeat(${String(items.length)}, minmax(0, 1fr))` }}
+      >
+        {items.map((item) => {
+          const active = isActive(pathname, item.href);
+          return (
+            <li key={item.href} className="flex justify-center">
+              <Link
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                title={item.label}
+                className="flex h-16 w-full items-center justify-center select-none motion-safe:active:scale-95"
+              >
+                <span
+                  className={cn(
+                    "flex size-11 items-center justify-center rounded-xl transition-colors",
+                    active
+                      ? "bg-primary-700 text-white"
+                      : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300",
+                  )}
+                >
+                  <NavIcon icon={areaOf(item.href).icon} />
+                </span>
+                <span className="sr-only">{item.shortLabel}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }
 
-/** Rel menu melayang di kiri layar (desktop). Penanda aktif konsentris dengan wadahnya. */
-export function PortalSidebarNav({ items }: { items: readonly PortalNavItem[] }) {
+export function PortalSidebarNav({
+  items,
+  footer,
+}: {
+  items: readonly PortalNavItem[];
+  footer?: ReactNode;
+}) {
   const pathname = usePathname();
   if (items.length === 0) return null;
   return (
-    <nav
-      aria-label="Menu portal"
-      className="fixed top-1/2 left-5 z-30 hidden -translate-y-1/2 flex-col items-center gap-1.5 rounded-[2.25rem] bg-background p-2 shadow-[0_18px_40px_-24px_rgb(1_60_52/0.45)] ring-1 ring-primary-100 lg:flex"
-    >
-      {items.map((item) => {
-        const active = isActive(pathname, item.href);
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "flex w-[4.75rem] flex-col items-center justify-center gap-1 rounded-[1.75rem] py-3 text-[0.68rem] transition-colors duration-200 select-none motion-safe:active:scale-95",
-              active
-                ? "bg-primary-900 font-bold text-white"
-                : "font-semibold text-subtle-foreground hover:bg-primary-50 hover:text-primary-900",
-            )}
-          >
-            <NavIcon icon={ICONS[item.href] ?? LayoutDashboard} active={active} />
-            <span className="max-w-full truncate px-1">{item.shortLabel}</span>
-          </Link>
-        );
-      })}
-    </nav>
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-[4.5rem] flex-col items-center border-r border-(--line-strong) bg-card py-4 lg:flex">
+      <Link
+        href="/portal"
+        aria-label="Beranda portal"
+        className="mb-4 flex size-11 items-center justify-center"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- ikon logo kecil dari route ikon aplikasi, bukan konten */}
+        <img src="/icon.png" alt="" width={40} height={40} className="size-10 rounded-xl" />
+      </Link>
+      <span
+        aria-hidden="true"
+        className="mb-4 h-px w-8 border-t border-dashed border-(--line-strong)"
+      />
+      <nav aria-label="Menu portal" className="flex flex-1 flex-col items-center gap-2.5">
+        {items.map((item) => {
+          const active = isActive(pathname, item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              title={item.label}
+              className={cn(
+                "flex size-11 items-center justify-center rounded-full border transition-colors motion-safe:active:scale-95",
+                active
+                  ? "border-primary-700 bg-primary-700 text-white"
+                  : "border-(--line-strong) text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200",
+              )}
+            >
+              <NavIcon icon={areaOf(item.href).icon} />
+              <span className="sr-only">{item.shortLabel}</span>
+            </Link>
+          );
+        })}
+      </nav>
+      {footer}
+    </aside>
   );
 }
 
-/** Header lengket yang menjadi buram saat halaman digulir. */
+export function PortalDrawer({ items }: { items: readonly PortalNavItem[] }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        aria-label="Buka semua menu"
+        className="flex size-10 items-center justify-center rounded-xl border border-(--line-strong) bg-card lg:hidden"
+      >
+        <Icon icon={Menu01Icon} />
+      </SheetTrigger>
+      <SheetContent
+        side="left"
+        className="portal-canvas w-[17rem] gap-0 border-r border-(--line-strong) bg-card p-0"
+      >
+        <div className="flex items-center gap-3 border-b border-(--line-soft) px-5 py-4">
+          {/* eslint-disable-next-line @next/next/no-img-element -- ikon logo kecil dari route ikon aplikasi, bukan konten */}
+          <img src="/icon.png" alt="" width={36} height={36} className="size-9 rounded-xl" />
+          <div>
+            <SheetTitle className="text-sm font-semibold">KIS Operasional</SheetTitle>
+            <SheetDescription className="text-xs text-muted-foreground">
+              Semua menu
+            </SheetDescription>
+          </div>
+        </div>
+        <ul className="grid gap-1 p-3">
+          {items.map((item) => {
+            const active = isActive(pathname, item.href);
+            const area = areaOf(item.href);
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "flex min-h-12 items-center gap-3 rounded-xl px-2 text-sm font-medium transition-colors",
+                    active ? "bg-primary-50 text-primary-900" : "hover:bg-neutral-100",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "flex size-9 items-center justify-center rounded-full",
+                      area.tone,
+                    )}
+                  >
+                    <Icon icon={area.icon} className="size-[1.125rem]" />
+                  </span>
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 export function StickyHeader({ children }: { children: ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const update = () => {
-      setScrolled(window.scrollY > 8);
+      setScrolled(window.scrollY > 4);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -138,9 +223,8 @@ export function StickyHeader({ children }: { children: ReactNode }) {
     <header
       data-scrolled={scrolled}
       className={cn(
-        "sticky top-0 z-30 border-b border-transparent pt-[env(safe-area-inset-top)] motion-safe:transition-[background-color,box-shadow,border-color] motion-safe:duration-200",
-        scrolled &&
-          "border-primary-100 bg-background/85 shadow-[0_10px_30px_-22px_rgb(11_61_54/0.55)] backdrop-blur-xl",
+        "sticky top-0 z-30 border-b bg-card/95 pt-[env(safe-area-inset-top)] backdrop-blur-md motion-safe:transition-colors",
+        scrolled ? "border-(--line-strong)" : "border-(--line-soft)",
       )}
     >
       {children}
