@@ -59,7 +59,11 @@ describe("mustAttend", () => {
 });
 
 describe("decideExceptionSchema", () => {
-  const base = { id: "00000000-0000-4000-8000-000000001021", password: "Rahasia2026" };
+  const base = {
+    id: "00000000-0000-4000-8000-000000001021",
+    method: "cadangan" as const,
+    password: "Rahasia2026",
+  };
 
   it("menyetujui tanpa catatan", () => {
     expect(decideExceptionSchema.safeParse({ ...base, decision: "disetujui" }).success).toBe(true);
@@ -81,5 +85,14 @@ describe("decideExceptionSchema", () => {
       decision: "disetujui",
     });
     expect(result.error?.issues[0]?.message).toBe("Masukkan password akun Anda.");
+  });
+
+  it("sidik jari wajib membawa jawaban perangkat", () => {
+    const result = decideExceptionSchema.safeParse({
+      id: base.id,
+      method: "biometrik",
+      decision: "disetujui",
+    });
+    expect(result.error?.issues[0]?.message).toBe("Sentuh sidik jari dulu untuk menandatangani.");
   });
 });

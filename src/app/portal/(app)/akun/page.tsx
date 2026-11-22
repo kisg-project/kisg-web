@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/shared/page-header";
 import { ROLE_LABELS } from "@/config/roles";
 import { ChangePasswordForm, ProfileForm, ProfilePhotoForm } from "@/features/account";
+import { FingerprintSetup } from "@/features/approvals";
+import { activeCredential } from "@/features/approvals/server";
 import { requirePortalUser } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
 
@@ -46,6 +48,13 @@ export default async function AccountPage() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section aria-labelledby="akun-sidik-jari" className={panel}>
+          <h2 id="akun-sidik-jari" className={heading}>
+            Sidik jari
+          </h2>
+          <FingerprintSetup registered={await activeCredential(user.id)} />
         </section>
 
         <section aria-labelledby="akun-password" className={panel}>

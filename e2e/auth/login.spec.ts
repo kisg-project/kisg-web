@@ -21,9 +21,15 @@ test.describe("Login portal", () => {
       await page.goto("/portal/login");
       await loginViaForm(page, user);
       await expect(page).toHaveURL(ROLE_HOME[role]);
-      const name = user.fullName.split(" ").slice(0, 2).join(" ");
+      const words = user.fullName.split(" ");
+      const name = (
+        (page.viewportSize()?.width ?? 1280) < 640 ? words.slice(0, 1) : words.slice(0, 2)
+      ).join(" ");
       await expect(
-        page.getByRole("banner").getByText(/^Selamat (pagi|siang|sore|malam),/),
+        page
+          .getByRole("banner")
+          .getByText(/^Selamat (pagi|siang|sore|malam),/)
+          .filter({ visible: true }),
       ).toHaveText(new RegExp(`^Selamat (pagi|siang|sore|malam), ${name}$`));
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       await expect(

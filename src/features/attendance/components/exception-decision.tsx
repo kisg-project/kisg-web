@@ -8,8 +8,15 @@ import type { ApprovalDecision } from "@/config/approvals";
 import { ApprovalDialog } from "@/features/approvals";
 import { decideExceptionAction } from "../actions/attendance";
 
-/** Tombol Setujui dan Tolak untuk satu pengajuan absen di luar lokasi. */
-export function ExceptionDecision({ id, summary }: { id: string; summary: ReactNode }) {
+export function ExceptionDecision({
+  id,
+  summary,
+  fingerprint,
+}: {
+  id: string;
+  summary: ReactNode;
+  fingerprint: boolean;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState<ApprovalDecision | null>(null);
   const { execute, result, isPending, reset } = useAction(decideExceptionAction, {
@@ -30,6 +37,9 @@ export function ExceptionDecision({ id, summary }: { id: string; summary: ReactN
         <ApprovalDialog
           key={decision}
           decision={decision}
+          docType="absen_luar_lokasi"
+          docId={id}
+          fingerprint={fingerprint}
           summary={summary}
           pending={isPending}
           open={open === decision}

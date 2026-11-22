@@ -14,10 +14,18 @@ export const APPROVAL_DECISION_LABEL: Record<ApprovalDecision, string> = {
   ditolak: "Ditolak",
 };
 
-/** Percobaan password per penyetuju sebelum dikunci 15 menit. */
+export const SIGNATURE_METHOD_LABEL = {
+  biometrik: "Sidik jari perangkat terdaftar",
+  cadangan: "Password (metode cadangan)",
+  password: "Password",
+} as const;
+
 export const SIGNATURE_ATTEMPTS = 5;
 
-/** Halaman verifikasi publik yang dibuka dari QR code. */
 export function verificationPath(code: string): string {
   return `/verifikasi/${code}`;
+}
+
+export function carriesCompanyStamp(decision: ApprovalDecision): boolean {
+  return decision === "disetujui";
 }

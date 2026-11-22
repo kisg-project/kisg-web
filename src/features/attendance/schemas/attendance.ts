@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { APPROVAL_DECISIONS } from "@/config/approvals";
-import { signatureSchema } from "@/features/approvals";
+import { refineSignature, signatureFields } from "@/features/approvals/schemas";
 
 const kind = z.enum(["masuk", "pulang"]);
 const coordinate = {
@@ -87,7 +87,6 @@ export const deleteScheduleSchema = z.object({ id: z.uuid() });
 export type WorkLocationInput = z.input<typeof workLocationSchema>;
 export type ScheduleInput = z.input<typeof scheduleSchema>;
 
-/** Lampiran laporan harian yang sudah diunggah ke work-attachments/<user>/<tanggal>/. */
 export const workAttachmentSchema = z.object({
   path: z
     .string()
@@ -117,14 +116,15 @@ export const workReportSchema = z.object({
 export type WorkAttachment = z.infer<typeof workAttachmentSchema>;
 export type WorkReportInput = z.input<typeof workReportSchema>;
 
-/** Keputusan pengajuan absen di luar lokasi, ditandatangani dengan password penyetuju. */
-export const decideExceptionSchema = signatureSchema
-  .extend({
+export const decideExceptionSchema = z
+  .object({
+    ...signatureFields,
     id: z.uuid(),
     decision: z.enum(APPROVAL_DECISIONS),
     note: z.string().trim().max(500, "Catatan maksimal 500 karakter.").optional(),
   })
   .superRefine((value, context) => {
+    refineSignature(value, context);
     if (value.decision === "ditolak" && (value.note?.length ?? 0) < 5) {
       context.addIssue({
         code: "custom",
