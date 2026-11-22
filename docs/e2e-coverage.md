@@ -277,7 +277,10 @@ Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `conte
 | Dashboard owner: angka sesuai seed, filter periode, drill-down sampai data mentah | D, MC | 8 | Belum |
 | Ekspor Excel dan PDF berhasil diunduh dan isinya sesuai filter | D | 8 | Belum |
 | Skor KPI dihitung sesuai definisi dan bobot (fungsi dipanggil di test) | D | 8 | Belum |
-| Notifikasi push: subscribe berhasil, pemicu (lead baru, laporan ditolak) memanggil endpoint push (mock) | MC | 8 | Belum |
+| Lonceng: jumlah belum dibaca, buka notifikasi menandai dibaca dan menuju halaman tujuan, tandai semua dibaca (`pwa/notifikasi.spec.ts`) | C | 8 | Ditulis |
+| Lonceng realtime: notifikasi baru muncul tanpa memuat ulang, notifikasi akun lain tidak terlihat, keadaan kosong | C | 8 | Ditulis |
+| Pemicu: ajukan absen luar lokasi memberi tahu owner, keputusan memberi tahu karyawan (lonceng dan email Mailpit), reset sidik jari memberi tahu karyawan | C | 8 | Ditulis |
+| Akun saya: status notifikasi HP saat kunci VAPID belum diisi. Kirim push asli tidak diuji E2E (butuh layanan push browser), payload diuji unit | C | 8 | Ditulis |
 
 ### Rilis (Fase 9)
 

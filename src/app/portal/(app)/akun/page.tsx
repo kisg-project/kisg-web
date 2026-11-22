@@ -5,6 +5,9 @@ import { ChangePasswordForm, ProfileForm, ProfilePhotoForm } from "@/features/ac
 import { FingerprintSetup } from "@/features/approvals";
 import { activeCredential } from "@/features/approvals/server";
 import { requirePortalUser } from "@/features/auth";
+import { PushSetup } from "@/features/notifications";
+import { pushConfigured } from "@/features/notifications/server";
+import { env } from "@/env";
 import { avatarUrl } from "@/features/users";
 
 export const metadata: Metadata = { title: "Akun saya" };
@@ -55,6 +58,13 @@ export default async function AccountPage() {
             Sidik jari
           </h2>
           <FingerprintSetup registered={await activeCredential(user.id)} />
+        </section>
+
+        <section aria-labelledby="akun-notifikasi" className={panel}>
+          <h2 id="akun-notifikasi" className={heading}>
+            Notifikasi HP
+          </h2>
+          <PushSetup publicKey={pushConfigured() ? (env.VAPID_PUBLIC_KEY ?? null) : null} />
         </section>
 
         <section aria-labelledby="akun-password" className={panel}>

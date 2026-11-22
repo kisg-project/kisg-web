@@ -13,6 +13,7 @@ const TABLES = [
   "profiles",
   "user_roles",
   "approval_stamps",
+  "notifications",
 ] as const;
 
 export function LiveRefresh({ url, publishableKey }: { url: string; publishableKey: string }) {

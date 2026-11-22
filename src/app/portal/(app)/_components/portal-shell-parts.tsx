@@ -4,6 +4,7 @@ import { LiveRefresh } from "@/components/shared/live-refresh";
 import { GREETING_EMOJI } from "@/config/greeting-emoji";
 import { bottomItems, railItems } from "@/config/portal-nav";
 import { getPortalUser, LogoutButton } from "@/features/auth";
+import { NotificationBell } from "@/features/notifications";
 import { avatarUrl } from "@/features/users";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import { greetingFor, greetingName } from "@/lib/format/greeting";
@@ -46,6 +47,7 @@ export async function UserMenu() {
   const photo = await avatarUrl(user.avatarPath);
   return (
     <div className="flex items-center gap-2">
+      <NotificationBell userId={user.id} />
       <Link
         href="/portal/akun"
         className="hit-44 flex size-9 items-center justify-center overflow-hidden rounded-lg border border-(--line-strong) motion-safe:active:scale-95"

@@ -1,9 +1,6 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-// Variabel env divalidasi saat build dan saat server mulai (CLAUDE.md bagian 3).
-// Kunci Supabase dibaca saat runtime oleh server (bukan NEXT_PUBLIC), supaya satu build bisa dipakai
-// di CI (Supabase lokal) dan di Vercel (production). Halaman publik tidak memakainya.
 export const env = createEnv({
   server: {
     SUPABASE_URL: z.url().optional(),
@@ -13,29 +10,23 @@ export const env = createEnv({
     SENTRY_ORG: z.string().min(1).optional(),
     SENTRY_PROJECT: z.string().min(1).optional(),
     ENABLE_DEV_UI: z.enum(["0", "1"]).optional(),
-    // Cloudflare Turnstile. Kosong sampai akun Cloudflare siap: verifikasi dilewati, form tetap dijaga
-    // honeypot dan rate limit (src/lib/security/turnstile.ts).
     TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
-    // Host portal karyawan, misal company.kisgroup.co.id (harus berawalan "company.", lihat proxy.ts).
-    // Kosong sampai domain terhubung: portal tetap di /portal.
     PORTAL_HOST: z
       .string()
       .regex(/^company\.[a-z0-9.-]+(:\d+)?$/, "PORTAL_HOST harus berawalan company.")
       .optional(),
-    // Host panel CMS, misal cms.kisgroup.co.id (harus berawalan "cms."). Kosong: CMS di /cms.
     CMS_HOST: z
       .string()
       .regex(/^cms\.[a-z0-9.-]+(:\d+)?$/, "CMS_HOST harus berawalan cms.")
       .optional(),
-    // Email aplikasi (undangan, slip gaji, notifikasi) lewat API Brevo. Kosong sampai Brevo siap:
-    // tautan undangan ditampilkan untuk disalin. MAILPIT_URL hanya untuk lokal dan CI (E2E).
     BREVO_API_KEY: z.string().min(1).optional(),
     EMAIL_FROM: z.email().default("notifikasi@kisgroup.co.id"),
     EMAIL_FROM_NAME: z.string().min(1).default("KIS Group"),
     EMAIL_REPLY_TO: z.email().default("corporate@kisgroup.co.id"),
     MAILPIT_URL: z.url().optional(),
-    // Chat customer service "Jaka" (CLAUDE.md bagian 12). Tanpa GEMINI_API_KEY widget tetap tampil
-    // dan langsung menawarkan WhatsApp. CHAT_MOCK=1 hanya untuk E2E di CI (jawaban tiruan, tanpa Gemini).
+    VAPID_PUBLIC_KEY: z.string().min(1).optional(),
+    VAPID_PRIVATE_KEY: z.string().min(1).optional(),
+    VAPID_SUBJECT: z.string().min(1).default("mailto:notifikasi@kisgroup.co.id"),
     GEMINI_API_KEY: z.string().min(1).optional(),
     GEMINI_MODEL: z.string().min(1).default("gemini-3.5-flash"),
     CHAT_THINKING: z.enum(["minimal", "low", "medium"]).default("low"),
@@ -63,13 +54,14 @@ export const env = createEnv({
     EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
     EMAIL_REPLY_TO: process.env.EMAIL_REPLY_TO,
     MAILPIT_URL: process.env.MAILPIT_URL,
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+    VAPID_SUBJECT: process.env.VAPID_SUBJECT,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GEMINI_MODEL: process.env.GEMINI_MODEL,
     CHAT_THINKING: process.env.CHAT_THINKING,
     CHAT_DAILY_TOKEN_LIMIT: process.env.CHAT_DAILY_TOKEN_LIMIT,
     CHAT_MOCK: process.env.CHAT_MOCK,
-    // Preview Vercel: URL berubah per deploy, jadi memakai variabel sistem NEXT_PUBLIC_VERCEL_URL.
-    // Production wajib diisi eksplisit (https://kisgroup.co.id) di env Vercel.
     NEXT_PUBLIC_SITE_URL:
       process.env.NEXT_PUBLIC_SITE_URL ??
       (process.env.NEXT_PUBLIC_VERCEL_URL

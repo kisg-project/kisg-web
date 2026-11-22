@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { createPortalUser, type TestUser } from "../factories/users";
+import { linkFrom, waitForEmail } from "../fixtures/mailpit";
 import { adminClient } from "../fixtures/supabase";
 import { expectNoA11yViolations } from "../fixtures/test";
 import { expect, loginViaForm, test } from "../fixtures/portal";
@@ -165,6 +166,18 @@ test.describe("Tanda tangan sidik jari", () => {
       })
       .not.toBeNull();
     await expect(card.getByRole("button", { name: "Reset sidik jari" })).toHaveCount(0);
+    await expect
+      .poll(async () => {
+        const { data } = await adminClient()
+          .from("notifications")
+          .select("kind, href")
+          .eq("user_id", employee.id);
+        return data;
+      })
+      .toEqual([{ kind: "sidik_jari_direset", href: "/portal/akun#akun-sidik-jari" }]);
+    const email = await waitForEmail(employee.email, "Sidik jari Anda direset");
+    expect(email.text).toContain("Daftarkan ulang di Akun saya");
+    expect(linkFrom(email, "/portal/akun")).toContain("#akun-sidik-jari");
   });
 
   test("tanpa sidik jari terdaftar, persetujuan diarahkan ke pendaftaran", async ({ page }) => {

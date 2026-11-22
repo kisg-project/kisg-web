@@ -1,5 +1,6 @@
 "use server";
 
+import { notify } from "@/features/notifications/server";
 import { adminActionClient, authActionClient } from "@/lib/safe-action";
 import {
   registerFingerprintSchema,
@@ -39,5 +40,13 @@ export const resetFingerprintAction = adminActionClient
   .inputSchema(resetFingerprintSchema)
   .action(async ({ parsedInput, ctx }) => {
     await revokeCredential(ctx.userId, parsedInput.userId);
+    await notify([parsedInput.userId], {
+      kind: "sidik_jari_direset",
+      title: "Sidik jari Anda direset",
+      body: "Daftarkan ulang di Akun saya sebelum menyetujui dokumen.",
+      href: "/portal/akun#akun-sidik-jari",
+      dedupeKey: `sidik-jari-reset:${String(Date.now())}`,
+      email: true,
+    });
     return { ok: true as const };
   });

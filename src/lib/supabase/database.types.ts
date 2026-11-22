@@ -393,6 +393,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"notifications": {
+                  Row: {
+                    "body": string,"created_at": string,"dedupe_key": string,"href": string,"id": string,"kind": Database["public"]['Enums']["notification_kind"],"read_at": string | null,"title": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string,"created_at"?: string,"dedupe_key": string,"href"?: string,"id"?: string,"kind": Database["public"]['Enums']["notification_kind"],"read_at"?: string | null,"title": string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"dedupe_key"?: string,"href"?: string,"id"?: string,"kind"?: Database["public"]['Enums']["notification_kind"],"read_at"?: string | null,"title"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notifications_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"posts": {
                   Row: {
                     "author_id": string | null,"body": NonNullable<Json>,"content_status": Database["public"]['Enums']["content_status"],"cover_alt": string | null,"cover_path": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"excerpt": string | null,"id": string,"published_at": string | null,"scheduled_at": string | null,"slug": string,"title": string,"updated_at": string
@@ -504,6 +524,26 @@ isOneToOne: false
       columns: ["project_id"]
 isOneToOne: false
       referencedRelation: "projects"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"push_subscriptions": {
+                  Row: {
+                    "auth": string,"created_at": string,"endpoint": string,"id": string,"last_success_at": string | null,"p256dh": string,"user_agent": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "auth": string,"created_at"?: string,"endpoint": string,"id"?: string,"last_success_at"?: string | null,"p256dh": string,"user_agent"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "auth"?: string,"created_at"?: string,"endpoint"?: string,"id"?: string,"last_success_at"?: string | null,"p256dh"?: string,"user_agent"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "push_subscriptions_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -809,6 +849,9 @@ isOneToOne: false
 "normalize_phone_id":
 { Args: { "input": string }; Returns: string
                            },
+"notification_approvers":
+{ Args: { "p_user": string }; Returns: string[]
+                           },
 "rate_limit_hit":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
                            },
@@ -837,7 +880,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","approval_decision": "disetujui"|"ditolak","approval_doc_type": "absen_luar_lokasi","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan"|"role","signature_method": "password"|"biometrik"|"cadangan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek","work_report_kind": "rencana"|"hasil"
+            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","approval_decision": "disetujui"|"ditolak","approval_doc_type": "absen_luar_lokasi","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","notification_kind": "absen_luar_lokasi_diajukan"|"absen_luar_lokasi_diputuskan"|"sidik_jari_direset","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan"|"role","signature_method": "password"|"biometrik"|"cadangan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek","work_report_kind": "rencana"|"hasil"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -953,7 +996,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"approval_decision": ["disetujui", "ditolak"],"approval_doc_type": ["absen_luar_lokasi"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan", "role"],"signature_method": ["password", "biometrik", "cadangan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"],"work_report_kind": ["rencana", "hasil"]
+            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"approval_decision": ["disetujui", "ditolak"],"approval_doc_type": ["absen_luar_lokasi"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"notification_kind": ["absen_luar_lokasi_diajukan", "absen_luar_lokasi_diputuskan", "sidik_jari_direset"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan", "role"],"signature_method": ["password", "biometrik", "cadangan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"],"work_report_kind": ["rencana", "hasil"]
           }
         }
 } as const

@@ -1,11 +1,4 @@
-// Isi service worker portal, ditulis manual (Serwist belum mendukung Turbopack yang dipakai build
-// Next 16, CLAUDE.md bagian 3). Strategi sengaja sederhana dan aman untuk data karyawan:
-// - halaman portal: selalu dari jaringan; kalau offline, tampilkan halaman offline yang sudah disimpan
-// - aset build (/_next/static, ikon): simpan dan pakai dari cache (nama file berisi hash)
-// - data, server action, dan semua request selain GET: tidak pernah di-cache
-// Antrian laporan offline (Dexie) ditambah di Fase 8.
-
-export const SW_VERSION = "2026-11-20-1";
+export const SW_VERSION = "2026-11-23-1";
 
 export function serviceWorkerSource(base: string): string {
   const offlineUrl = `${base}/offline`;
@@ -15,6 +8,7 @@ const STATIC_CACHE = "kis-portal-static-" + VERSION;
 const PAGE_CACHE = "kis-portal-pages-" + VERSION;
 const OFFLINE_URL = ${JSON.stringify(offlineUrl)};
 const PRECACHE = [OFFLINE_URL, "/brand/pwa-192.png", "/brand/pwa-512.png"];
+const BASE = ${JSON.stringify(base)};
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -67,6 +61,45 @@ self.addEventListener("fetch", (event) => {
       ),
     );
   }
+});
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (error) {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = typeof data.title === "string" && data.title ? data.title : "KIS Operasional";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: typeof data.body === "string" ? data.body : "",
+      icon: "/brand/pwa-192.png",
+      badge: "/brand/pwa-192.png",
+      tag: typeof data.tag === "string" ? data.tag : undefined,
+      data: { url: typeof data.url === "string" ? data.url : "/portal/notifikasi" },
+    }),
+  );
+});
+
+function publicUrl(href) {
+  const valid = (href === "/portal" || href.startsWith("/portal/")) && !href.includes("//");
+  const path = valid ? href : "/portal/notifikasi";
+  const clean = BASE === "" ? path.slice("/portal".length) || "/" : path;
+  return new URL(clean, self.location.origin).href;
+}
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = publicUrl((event.notification.data && event.notification.data.url) || "");
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      const same = windows.find((client) => client.url === target);
+      if (same) return same.focus();
+      const open = windows.find((client) => "navigate" in client);
+      if (open) return open.navigate(target).then((client) => (client ? client.focus() : undefined));
+      return self.clients.openWindow(target);
+    }),
+  );
 });
 `;
 }
