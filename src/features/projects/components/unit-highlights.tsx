@@ -167,7 +167,8 @@ export function UnitHighlights({
   const hasCosts = unitType.priceIncludes.length > 0 || unitType.priceExcludes.length > 0;
 
   return (
-    <div
+    <section
+      aria-labelledby={`unit-${unitType.slug}`}
       className={cn(
         "rounded-[2rem] border border-primary-100 bg-card p-5 shadow-sm sm:p-8",
         className,
@@ -176,7 +177,10 @@ export function UnitHighlights({
       <div className="flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-muted-foreground">Tipe unit</p>
-          <h2 className="text-2xl font-extrabold tracking-tight text-primary-950 dark:text-primary-50">
+          <h2
+            id={`unit-${unitType.slug}`}
+            className="text-2xl font-extrabold tracking-tight text-primary-950 dark:text-primary-50"
+          >
             {unitType.name}
           </h2>
         </div>
@@ -231,6 +235,6 @@ export function UnitHighlights({
           </Link>
         ) : null}
       </div>
-    </div>
+    </section>
   );
 }

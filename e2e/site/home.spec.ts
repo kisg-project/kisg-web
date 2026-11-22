@@ -108,7 +108,8 @@ test.describe("Beranda", () => {
     page,
   }) => {
     await page.goto("/");
-    const unit = page.locator("#tipe-unit");
+    // Beranda menampilkan tipe 36/60 dan 36/73. Yang diperiksa kartu tipe 36/60.
+    const unit = page.locator("#tipe-unit").getByRole("region", { name: "Tipe 36/60" });
     await expect(unit.getByRole("heading", { name: "Tipe 36/60" })).toBeVisible();
     await expect(unit.getByText("Rp 570.000.000")).toBeVisible();
 

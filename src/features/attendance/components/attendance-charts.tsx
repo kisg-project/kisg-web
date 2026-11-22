@@ -130,7 +130,7 @@ function ChartCard({
   return (
     <section
       aria-labelledby={`${id}-judul`}
-      className={cn("grid content-start gap-4 app-card p-5 sm:p-6", className)}
+      className={cn("grid min-w-0 content-start gap-4 app-card p-5 sm:p-6", className)}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -157,7 +157,7 @@ function ChartCard({
           {table}
         </div>
       ) : (
-        <div className="h-60 w-full sm:h-64">
+        <div className="h-60 w-full min-w-0 overflow-hidden sm:h-64">
           <p className="sr-only">{description}</p>
           {children}
         </div>
@@ -173,10 +173,10 @@ function ChartCard({
  */
 export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
   const today = days.at(-1);
-  const workdays = days.filter((day) => day.workday);
-  const present = workdays.reduce((sum, day) => sum + day.onTime + day.late, 0);
-  const expected = workdays.reduce((sum, day) => sum + day.onTime + day.late + day.absent, 0);
-  const late = workdays.reduce((sum, day) => sum + day.late, 0);
+  // Hari libur tidak punya "belum absen", jadi yang tetap masuk di hari libur ikut dihitung hadir.
+  const present = days.reduce((sum, day) => sum + day.onTime + day.late, 0);
+  const expected = days.reduce((sum, day) => sum + day.onTime + day.late + day.absent, 0);
+  const late = days.reduce((sum, day) => sum + day.late, 0);
   const reportDays = days.filter((day) => day.reportsComplete !== null);
   const reportAverage =
     reportDays.length > 0
@@ -191,13 +191,13 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
     <div className="grid gap-4 xl:grid-cols-5">
       <ChartCard
         className="xl:col-span-3"
-        title="Kehadiran 14 hari terakhir"
+        title="Kehadiran harian"
         summary={
           rate === null
             ? "Belum ada data kehadiran."
-            : `Tingkat hadir ${String(rate)}% di hari kerja, ${String(late)} kali terlambat.`
+            : `Tingkat hadir ${String(rate)}%, ${String(late)} kali terlambat.`
         }
-        description={`Grafik batang kehadiran harian 14 hari terakhir. Hari ini ${String(today?.onTime ?? 0)} tepat waktu, ${String(today?.late ?? 0)} terlambat, ${String(today?.absent ?? 0)} belum absen.`}
+        description={`Grafik batang kehadiran harian. Hari ini ${String(today?.onTime ?? 0)} tepat waktu, ${String(today?.late ?? 0)} terlambat, ${String(today?.absent ?? 0)} belum absen.`}
         legend={
           <ul aria-label="Keterangan warna" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {SERIES.map((item) => (
@@ -290,7 +290,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
             ? "Belum ada laporan harian."
             : `Rata-rata ${String(reportAverage)}% karyawan hadir mengisi rencana dan hasil kerja.`
         }
-        description={`Grafik area persentase karyawan hadir yang mengisi rencana dan hasil kerja, 14 hari terakhir. Rata-rata ${String(reportAverage ?? 0)}%.`}
+        description={`Grafik area persentase karyawan hadir yang mengisi rencana dan hasil kerja. Rata-rata ${String(reportAverage ?? 0)}%.`}
         table={
           <table className={tableClass}>
             <thead className="sticky top-0 bg-surface text-left">
