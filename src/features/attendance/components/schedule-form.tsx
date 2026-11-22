@@ -279,7 +279,7 @@ export function ScheduleDialog({
       icon={Clock01Icon}
       description="Jam karyawan mengalahkan jam titik absensi. Jam titik mengalahkan jam perusahaan."
       trigger={
-        <Button type="button" size="lg">
+        <Button type="button">
           <Icon icon={PlusSignIcon} aria-hidden="true" />
           Tambah jam khusus
         </Button>

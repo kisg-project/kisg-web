@@ -36,18 +36,22 @@ export default async function SchedulesPage() {
   const locationChoices = locations.map((item) => ({ id: item.id, name: item.name }));
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-4">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke beranda"
         title="Jam kerja"
-        description="Clock in lewat dari jam masuk ditambah toleransi dicatat terlambat. Clock out sebelum jam pulang dicatat pulang awal."
+        description="Lewat jam masuk ditambah toleransi dicatat terlambat"
+        actions={<ScheduleDialog locations={locationChoices} employees={employees} />}
       />
-      <section aria-labelledby="jam-perusahaan-judul" className="app-card p-5 sm:p-6">
-        <h2 id="jam-perusahaan-judul" className="mb-1 text-lg font-bold">
+      <section
+        aria-labelledby="jam-perusahaan-judul"
+        className="rounded-xl border border-(--line-strong) bg-card p-4"
+      >
+        <h2 id="jam-perusahaan-judul" className="mb-0.5 text-sm font-semibold">
           Jam kerja perusahaan
         </h2>
-        <p className="mb-4 text-sm text-subtle-foreground">
+        <p className="mb-3 text-xs text-muted-foreground">
           Berlaku untuk semua karyawan tanpa jam khusus.
         </p>
         <ScheduleForm
@@ -65,31 +69,28 @@ export default async function SchedulesPage() {
         />
       </section>
       <section aria-labelledby="daftar-jam-khusus" className="grid gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="daftar-jam-khusus" className="text-lg font-bold">
-            Jam khusus
-          </h2>
-          <ScheduleDialog locations={locationChoices} employees={employees} />
-        </div>
+        <h2 id="daftar-jam-khusus" className="text-sm font-semibold">
+          Jam khusus
+        </h2>
         {overrides.length === 0 ? (
-          <EmptyState
-            title="Belum ada jam khusus"
-            description="Semua karyawan memakai jam kerja perusahaan."
-          />
+          <EmptyState title="Belum ada jam khusus" />
         ) : (
-          <ul aria-label="Daftar jam khusus" className="grid gap-2">
+          <ul
+            aria-label="Daftar jam khusus"
+            className="divide-y divide-(--line-soft) rounded-xl border border-(--line-strong) bg-card"
+          >
             {overrides.map((item) => {
               const name = item.targetName ?? "Tanpa nama";
               return (
-                <li key={item.id} className="flex items-center justify-between gap-3 app-card p-4">
+                <li key={item.id} className="flex items-center justify-between gap-3 px-4 py-3">
                   <span className="min-w-0">
-                    <span className="block font-semibold break-words">
+                    <span className="block text-[0.8125rem] font-semibold break-words">
                       {name}
                       <span className="ml-2 text-xs font-medium text-subtle-foreground">
                         {item.scope === "lokasi" ? "Titik absensi" : "Karyawan"}
                       </span>
                     </span>
-                    <span className="block text-sm text-subtle-foreground tabular-nums">
+                    <span className="block text-xs text-muted-foreground tabular-nums">
                       {item.startTime} sampai {item.endTime}, {dayNames(item.workdays)}, toleransi{" "}
                       {item.lateToleranceMin} menit
                     </span>

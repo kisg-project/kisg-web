@@ -78,7 +78,10 @@ function layer(name, { shapes, p, a = [0, 0], s = [100, 100], r = 0, o = 100, pa
     ks: {
       o: wrap(o),
       r: wrap(r),
-      p: wrap([...(Array.isArray(p) ? p : [0, 0]), 0].slice(0, 3)),
+      p:
+        typeof p === "object" && p !== null && "a" in p
+          ? p
+          : wrap([...(Array.isArray(p) ? p : [0, 0]), 0].slice(0, 3)),
       a: still([...a, 0]),
       s: wrap(Array.isArray(s) && s.length === 2 ? [...s, 100] : s),
     },

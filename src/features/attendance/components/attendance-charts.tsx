@@ -195,7 +195,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         }
         description={`Grafik batang kehadiran harian. Hari ini ${String(today?.onTime ?? 0)} tepat waktu, ${String(today?.late ?? 0)} terlambat, ${String(today?.absent ?? 0)} belum absen.`}
         legend={
-          <ul aria-label="Keterangan warna" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <ul aria-label="Keterangan warna" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
             {SERIES.map((item) => (
               <li key={item.key} className="flex items-center gap-2 text-muted-foreground">
                 <span
@@ -241,7 +241,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={days}
-            margin={{ top: 8, right: 4, bottom: 0, left: -20 }}
+            margin={{ top: 8, right: 4, bottom: 0, left: -12 }}
             barCategoryGap="22%"
           >
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
@@ -315,7 +315,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         }
       >
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={days} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+          <AreaChart data={days} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="laporan-isi" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--chart-trend)" stopOpacity={0.18} />
