@@ -176,7 +176,7 @@ export default async function AttendancePage() {
   const next = nextStep(today, reports);
 
   return (
-    <div className="grid gap-4">
+    <div className="tone-green grid gap-4">
       <PageHeader title="Absensi" description={formatDateWIB(new Date())} />
 
       <section aria-labelledby="absen-hari-ini" className="grid gap-3 app-card p-3.5">
@@ -237,7 +237,7 @@ export default async function AttendancePage() {
             <Link href={`/portal/absensi/${next}`}>
               <Icon icon={STEP[next].icon} />
               {STEP[next].action}
-              <Icon icon={ArrowRight01Icon} className="ml-auto" />
+              <Icon icon={ArrowRight01Icon} className="arrow-nudge ml-auto" />
             </Link>
           </Button>
         ) : (

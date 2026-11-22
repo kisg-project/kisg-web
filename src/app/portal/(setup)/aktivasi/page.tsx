@@ -16,9 +16,7 @@ export default async function ActivationPage() {
   if (user.complete) redirect(safeNextPath(null, user.roles));
   return (
     <>
-      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
-        Aktifkan akun
-      </h1>
+      <h1 className="text-2xl leading-tight font-semibold tracking-tight">Aktifkan akun</h1>
       <p className="mt-3 text-subtle-foreground">
         Lengkapi foto profil, nomor HP, dan password. Setelah itu Anda langsung masuk ke beranda.
       </p>

@@ -1,5 +1,7 @@
 /** Sapaan sesuai jam di Asia/Jakarta (WIB), dipakai di beranda portal. */
-export function greetingFor(at: Date = new Date()): string {
+export type Greeting = "Selamat pagi" | "Selamat siang" | "Selamat sore" | "Selamat malam";
+
+export function greetingFor(at: Date = new Date()): Greeting {
   const hour = Number(
     new Intl.DateTimeFormat("en-GB", {
       hour: "2-digit",

@@ -7,7 +7,9 @@ import { expect, loginViaForm, test } from "../fixtures/portal";
 test.describe("Login portal", () => {
   test("halaman masuk tidak diindeks, aksesibel, dan responsif", async ({ page }) => {
     await page.goto("/portal/login");
-    await expect(page.getByRole("heading", { level: 1, name: "Masuk ke portal" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Masuk ke KIS Operasional" }),
+    ).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expectNoA11yViolations(page);
     await expectResponsive(page);
@@ -149,6 +151,8 @@ test.describe("Login portal", () => {
     // dialihkan ke halaman masuk.
     await page.goBack();
     await expect(page).toHaveURL(/\/portal\/login\?next=%2Fportal%2Fabsensi/);
-    await expect(page.getByRole("heading", { level: 1, name: "Masuk ke portal" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Masuk ke KIS Operasional" }),
+    ).toBeVisible();
   });
 });

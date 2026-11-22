@@ -16,6 +16,7 @@ import { requirePortalUser } from "@/features/auth";
 import { formatTimeWIB } from "@/lib/format";
 import { HomeHeader } from "./home-header";
 import { ModuleCards } from "./module-cards";
+import { NextStepCard, type NextStep } from "./next-step-card";
 
 const clock = (value: string) => formatTimeWIB(value).replace(" WIB", "");
 
@@ -24,46 +25,88 @@ async function AttendanceStats({ userId }: { userId: string }) {
     getMyAttendance(userId),
     getMyWorkReports(userId),
   ]);
-  return (
-    <section aria-labelledby="status-hari-ini" className="grid gap-3">
-      <h2 id="status-hari-ini" className="text-sm font-semibold">
-        Status hari ini
-      </h2>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard
-          icon={Login03Icon}
-          tone="green"
-          label={
-            today && today.lateMinutes > 0
-              ? `Terlambat ${String(today.lateMinutes)} menit`
-              : "Clock in"
+  const step: NextStep = !today
+    ? {
+        pose: "melambai",
+        title: "Belum clock in hari ini",
+        text: "Foto wajah dan lokasi di titik absensi.",
+        href: "/portal/absensi/masuk",
+        action: "Clock in sekarang",
+      }
+    : !reports.rencana
+      ? {
+          pose: "clipboard",
+          title: "Isi rencana kerja hari ini",
+          text: "Wajib sebelum membuka modul lain.",
+          href: "/portal/absensi/rencana",
+          action: "Isi rencana",
+        }
+      : !today.clockOutAt
+        ? {
+            pose: "tablet",
+            title: "Clock out saat pekerjaan selesai",
+            text: "Setelah itu isi hasil kerja hari ini.",
+            href: "/portal/absensi/pulang",
+            action: "Clock out",
           }
-          value={today ? clock(today.clockInAt) : "Belum"}
-          href="/portal/absensi"
-        />
-        <StatCard
-          icon={TaskDaily01Icon}
-          tone="violet"
-          label="Rencana kerja"
-          value={reports.rencana ? "Terisi" : "Belum"}
-          href="/portal/absensi"
-        />
-        <StatCard
-          icon={Logout03Icon}
-          tone="orange"
-          label="Clock out"
-          value={today?.clockOutAt ? clock(today.clockOutAt) : "Belum"}
-          href="/portal/absensi"
-        />
-        <StatCard
-          icon={CalendarCheckIn01Icon}
-          tone="blue"
-          label="Hadir 7 hari terakhir"
-          value={`${String(history.length)} hari`}
-          href="/portal/absensi"
-        />
-      </div>
-    </section>
+        : !reports.hasil
+          ? {
+              pose: "clipboard",
+              title: "Kirim hasil kerja hari ini",
+              text: "Lampirkan foto kalau ada.",
+              href: "/portal/absensi/hasil",
+              action: "Isi hasil kerja",
+            }
+          : {
+              pose: "jempol",
+              title: "Absensi hari ini lengkap",
+              text: "Terima kasih, sampai besok.",
+              href: "/portal/absensi",
+              action: "Lihat riwayat",
+            };
+  return (
+    <>
+      <NextStepCard step={step} />
+      <section aria-labelledby="status-hari-ini" className="grid gap-3">
+        <h2 id="status-hari-ini" className="text-sm font-semibold">
+          Status hari ini
+        </h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <StatCard
+            icon={Login03Icon}
+            tone="green"
+            label={
+              today && today.lateMinutes > 0
+                ? `Terlambat ${String(today.lateMinutes)} menit`
+                : "Clock in"
+            }
+            value={today ? clock(today.clockInAt) : "Belum"}
+            href="/portal/absensi"
+          />
+          <StatCard
+            icon={TaskDaily01Icon}
+            tone="violet"
+            label="Rencana kerja"
+            value={reports.rencana ? "Terisi" : "Belum"}
+            href="/portal/absensi"
+          />
+          <StatCard
+            icon={Logout03Icon}
+            tone="orange"
+            label="Clock out"
+            value={today?.clockOutAt ? clock(today.clockOutAt) : "Belum"}
+            href="/portal/absensi"
+          />
+          <StatCard
+            icon={CalendarCheckIn01Icon}
+            tone="blue"
+            label="Hadir 7 hari terakhir"
+            value={`${String(history.length)} hari`}
+            href="/portal/absensi"
+          />
+        </div>
+      </section>
+    </>
   );
 }
 

@@ -125,7 +125,17 @@ test.describe("Absensi karyawan", () => {
     await expect(page.getByText(/Lokasi ditemukan/)).toBeVisible();
     const send = page.getByRole("button", { name: "Kirim clock in" });
     await expect(send).toBeDisabled();
+    await page.screenshot({
+      path: "test-results/tampilan/absensi-kamera.png",
+      fullPage: true,
+      animations: "disabled",
+    });
     await takeSelfie(page);
+    await page.screenshot({
+      path: "test-results/tampilan/absensi-foto.png",
+      fullPage: true,
+      animations: "disabled",
+    });
     await expectNoA11yViolations(page);
     await send.click();
     await expect(

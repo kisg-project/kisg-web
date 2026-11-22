@@ -24,7 +24,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob:${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
   "font-src 'self'",
-  `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin}` : ""} https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
+  `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin} ${supabaseOrigin.replace(/^http/, "ws")}` : ""} https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
   // Cloudflare Turnstile (form publik) memakai iframe dari domain ini.
   "frame-src https://challenges.cloudflare.com",
   "worker-src 'self' blob:",

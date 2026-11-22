@@ -109,7 +109,7 @@ function ReportBlock({
     );
   }
   return (
-    <details className="group rounded-lg border border-(--line-soft) bg-(--band) px-2.5 py-1">
+    <details className="group rounded-lg border border-(--line-soft) bg-(--band-soft) px-2.5 py-1">
       <summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 text-xs font-semibold">
         <Icon icon={icon} className="size-4 text-primary" />
         {title}
@@ -167,13 +167,13 @@ function EmployeeRow({ employee }: { employee: OverviewEmployee }) {
           </p>
         </div>
       </div>
-      <span className="hidden self-center text-xs tabular-nums lg:block">
+      <span className="hidden self-center text-center text-xs tabular-nums lg:block">
         {day ? formatTimeWIB(day.clockInAt) : "-"}
       </span>
-      <span className="hidden self-center text-xs tabular-nums lg:block">
+      <span className="hidden self-center text-center text-xs tabular-nums lg:block">
         {day?.clockOutAt ? formatTimeWIB(day.clockOutAt) : "-"}
       </span>
-      <div className="flex flex-wrap content-center gap-1.5">
+      <div className="flex flex-wrap content-center gap-1.5 lg:justify-center">
         {!day ? <Chip tone="muted">Belum absen</Chip> : null}
         {day && day.lateMinutes === 0 ? <Chip tone="success">Tepat waktu</Chip> : null}
         {day && day.lateMinutes > 0 ? (
@@ -252,7 +252,7 @@ export default async function OwnerAttendancePage({
     "hit-44 flex size-9 items-center justify-center rounded-lg border border-(--line-strong) bg-card text-foreground transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800";
 
   return (
-    <div className="grid gap-5">
+    <div className="tone-green grid gap-5">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke dashboard"
@@ -266,7 +266,7 @@ export default async function OwnerAttendancePage({
                 aria-label="Hari sebelumnya"
                 className={arrow}
               >
-                <Icon icon={ArrowLeft01Icon} className="size-4" />
+                <Icon icon={ArrowLeft01Icon} className="arrow-nudge-back size-4" />
               </Link>
               <span className="flex h-9 min-w-[6.5rem] items-center justify-center rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium tabular-nums">
                 {shortDate}
@@ -277,11 +277,11 @@ export default async function OwnerAttendancePage({
                   aria-label="Hari berikutnya"
                   className={arrow}
                 >
-                  <Icon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRight01Icon} className="arrow-nudge size-4" />
                 </Link>
               ) : (
                 <span aria-hidden="true" className={cn(arrow, "opacity-30 hover:bg-transparent")}>
-                  <Icon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRight01Icon} className="arrow-nudge size-4" />
                 </span>
               )}
             </div>
@@ -412,14 +412,14 @@ export default async function OwnerAttendancePage({
             <div
               aria-hidden="true"
               className={cn(
-                "hidden items-center gap-4 border-b border-(--line-strong) bg-(--band) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300",
+                "hidden items-center gap-4 border-b border-(--line-strong) bg-(--band-soft) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300",
                 ROW,
               )}
             >
               <span>Karyawan</span>
-              <span>Masuk</span>
-              <span>Pulang</span>
-              <span>Status</span>
+              <span className="text-center">Masuk</span>
+              <span className="text-center">Pulang</span>
+              <span className="text-center">Status</span>
             </div>
             <ul aria-label="Kehadiran karyawan" className="divide-y divide-(--line-soft)">
               {overview.employees.map((employee) => (

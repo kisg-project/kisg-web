@@ -6,9 +6,7 @@ export const metadata: Metadata = { title: "Buat password baru" };
 export default function ResetPasswordPage() {
   return (
     <>
-      <h1 className="text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
-        Buat password baru
-      </h1>
+      <h1 className="text-2xl leading-tight font-semibold tracking-tight">Buat password baru</h1>
       <p className="mt-3 text-subtle-foreground">
         Password ini dipakai untuk masuk ke portal berikutnya.
       </p>

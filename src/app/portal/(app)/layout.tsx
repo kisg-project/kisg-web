@@ -5,13 +5,14 @@ import { StickyHeader } from "./_components/portal-nav";
 import {
   BottomNavForUser,
   HeaderGreeting,
+  LiveRefreshForUser,
   SidebarNavForUser,
   UserMenu,
 } from "./_components/portal-shell-parts";
 
 export default function PortalAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-feel portal-field portal-canvas flex min-h-dvh flex-col text-sm lg:pl-16">
+    <div className="app-feel portal-field portal-canvas portal-shell flex min-h-dvh flex-col text-sm lg:pl-(--rail-w)">
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
@@ -43,6 +44,9 @@ export default function PortalAppLayout({ children }: { children: React.ReactNod
       </main>
       <Suspense fallback={null}>
         <BottomNavForUser />
+      </Suspense>
+      <Suspense fallback={null}>
+        <LiveRefreshForUser />
       </Suspense>
     </div>
   );

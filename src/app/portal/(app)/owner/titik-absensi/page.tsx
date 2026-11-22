@@ -14,7 +14,7 @@ export default async function WorkLocationsPage() {
   await requirePortalUser(["owner", "admin"]);
   const [locations, projects] = await Promise.all([listWorkLocations(), listProjectOptions()]);
   return (
-    <div className="grid gap-4">
+    <div className="tone-blue grid gap-4">
       <PageHeader
         backHref="/portal/owner"
         backLabel="Kembali ke beranda"
@@ -32,12 +32,12 @@ export default async function WorkLocationsPage() {
           <div className="overflow-hidden rounded-xl border border-(--line-strong) bg-card">
             <div
               aria-hidden="true"
-              className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)_7rem_7rem_4rem] items-center gap-4 border-b border-(--line-strong) bg-(--band) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300"
+              className="hidden grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)_7rem_7rem_4rem] items-center gap-4 border-b border-(--line-strong) bg-(--band-soft) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300"
             >
               <span>Nama titik</span>
               <span>Jenis</span>
-              <span>Radius</span>
-              <span>Status</span>
+              <span className="text-right">Radius</span>
+              <span className="text-center">Status</span>
               <span className="text-right">Aksi</span>
             </div>
             <ul aria-label="Daftar titik absensi" className="divide-y divide-(--line-soft)">
@@ -63,10 +63,12 @@ export default async function WorkLocationsPage() {
                   <span className="hidden truncate text-xs lg:block">
                     {location.kind === "proyek" ? (location.projectName ?? "Proyek") : "Kantor"}
                   </span>
-                  <span className="hidden text-xs tabular-nums lg:block">{location.radiusM} m</span>
+                  <span className="hidden text-right text-xs tabular-nums lg:block">
+                    {location.radiusM} m
+                  </span>
                   <span
                     className={cn(
-                      "hidden w-fit items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold lg:inline-flex",
+                      "hidden w-fit items-center gap-1.5 justify-self-center rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold lg:inline-flex",
                       location.isActive
                         ? "bg-success-50 text-success-800 dark:bg-success-950 dark:text-success-200"
                         : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200",

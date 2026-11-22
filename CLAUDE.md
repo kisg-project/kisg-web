@@ -36,6 +36,7 @@ Satu codebase Next.js, empat area:
 1. **Website corporate** (`/`): profil perusahaan, proyek, berita, promo, progres pembangunan, karir, kontak.
 2. **Landing page iklan** (`/lp/[slug]`): halaman konversi untuk kampanye Meta Ads, dibangun dari blok yang diatur di admin.
 3. **PWA Manajemen Operasional Bisnis Pengembang Properti** ("KIS Operasional", `company.kisgroup.co.id`, route `src/app/portal/`): aplikasi kerja lengkap untuk setiap role (absensi dengan scan wajah, rencana dan hasil kerja harian, CRM dan penjualan, lapangan dan progres, keuangan, izin), dashboard owner yang memantau semuanya, HR dan penggajian. Pengganti aplikasi seperti Odoo atau Mekari (keputusan owner, 20 November 2026). Beranda setiap role memakai sapaan sesuai jam WIB dengan nama dan role. Bisa di-install di HP. `kisgroup.co.id/portal` tidak dipakai (404), keputusan owner.
+   Portal realtime (keputusan owner, 22 November 2026): perubahan dari akun lain langsung tampil tanpa refresh lewat Supabase Realtime (komponen LiveRefresh, publikasi supabase_realtime), tetap dibatasi RLS. Setiap tabel baru yang tampil di portal wajib ditambahkan ke publikasi dan ke daftar tabel LiveRefresh.
    **Panel CMS** terpisah di `cms.kisgroup.co.id` (route `src/app/cms/`, env `CMS_HOST`, sebelum DNS siap di `/cms`). Hanya akun khusus CMS (role `cms`) yang bisa masuk. Akun CMS tidak bisa masuk portal, dan owner maupun karyawan tidak bisa masuk CMS (keputusan owner, 21 November 2026).
 4. **Integrasi Meta** (server side): Pixel + Conversions API, webhook Lead Ads, dan pengiriman status lead dari CRM ke Meta (Conversion Leads) supaya algoritma iklan belajar dari lead yang benar-benar closing.
 5. **Widget customer service** di website dan landing page: asisten chat berbasis Gemini yang menjawab dari data resmi KIS, mengumpulkan lead ke CRM, dan menyerahkan percakapan ke marketing (portal atau WhatsApp). Detail di bagian 12.
@@ -65,7 +66,7 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 - **Testing**: Vitest + Testing Library (unit), Playwright (e2e), pgTAP atau test SQL untuk RLS
 - **Kualitas**: ESLint (config Next + `typescript-eslint` strict), Prettier, `lint-staged` + Husky
 - **Monitoring**: Vercel Analytics, Speed Insights, Sentry
-- **Deploy**: Vercel (Preview per PR, Production otomatis dari `main`), satu project Supabase (production). Tanpa staging (keputusan owner, Fase 2)
+- **Deploy**: Vercel (Preview per PR, Production otomatis dari `main`), fungsi server di wilayah Singapura (`sin1`, dekat database Supabase ap-southeast-1), satu project Supabase (production). Tanpa staging (keputusan owner, Fase 2)
 
 Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan meminta persetujuan.
 
@@ -248,6 +249,15 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
   - rel kiri desktop mulai dari atas: logo bulat, garis titik-titik, ikon dalam lingkaran bergaris, aktif lingkaran hijau penuh, pengaturan akun di bawah;
   - kartu KPI (`StatCard`) dan grid shortcut fitur, bukan kartu modul besar;
   - warna kategori (ungu, oranye, biru, merah, kuning) hanya untuk ikon, badge, dan acara. Warna utama tetap hijau KIS.
+- Lanjutan rombakan PWA (keputusan owner, 22 November 2026):
+  - colorful pastel konsisten, tidak ada bagian polos: setiap modul punya satu warna pastel (kelas `tone-*`, sama dengan warna ikonnya di menu) untuk pita judul (`--band`), baris judul tabel dan panel grid (`--band-soft`); kartu KPI berlatar pastel sesuai ikonnya; isi tabel dan grafik tetap putih;
+  - HP tanpa sidebar dan hamburger: bottom bar (Beranda, dua fitur utama, Akun) dan grid fitur di beranda; desktop tanpa grid, rel kiri berisi semua fitur, bisa dilebarkan dengan nama menu, sakelar mode terang/gelap di bawah (bawaan terang, pilihan disimpan di perangkat);
+  - sapaan di header dengan ikon waktu pastel di kanan nama (bukan emoji);
+  - tabel: teks rata kiri, jam, tanggal, dan status di tengah, angka dan aksi rata kanan; judul kolom mengikuti isinya;
+  - semua tombol punya efek ditekan dan semua panah bergerak saat disentuh kursor; tata letak konsisten: aksi halaman di pita judul kanan, judul bagian di kiri dengan tombol di kanan;
+  - maskot kartun (ilustrasi buatan AI, bukan foto proyek, tanpa bangunan) dipotong setengah badan dari paha, di `public/images/maskot/`: kartu langkah berikutnya di beranda, halaman masuk, lupa password, dan aktivasi;
+  - animasi memuat dan keadaan kosong bergaya garis tipis gelap dengan isian pastel;
+  - grafik kehadiran berupa kotak-kotak pastel (satu kotak satu karyawan), laporan lengkap berupa cincin persen dan petak per hari.
 - Semua isian gambar di CMS memakai unggahan file (dikompres di browser), bukan menempel tautan.
 - Aplikasi portal wajib terasa modern dan ramah dipakai (keputusan owner, 20 November 2026): satu tugas utama per layar, tombol aksi utama besar dan mudah dijangkau jempol, langkah wajib (absen, rencana, hasil kerja) ditampilkan sebagai kartu status di beranda, umpan balik langsung (toast, status kirim, indikator offline), skeleton saat memuat, kosong yang jelas dengan aksi berikutnya, transisi halus, dan teks singkat tanpa istilah teknis. Tidak ada teks panjang di PWA (keputusan owner, 22 November 2026): tanpa pengertian, tutorial, atau kalimat basa-basi seperti aplikasi native pada umumnya. Cukup judul, label, dan satu kalimat pendek kalau memang wajib (misal akibat dari aksi konfirmasi).
 

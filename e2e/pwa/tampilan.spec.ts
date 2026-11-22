@@ -71,3 +71,13 @@ test.describe("Foto dialog", () => {
     }
   });
 });
+
+test.describe("Foto halaman masuk", () => {
+  for (const path of ["/portal/login", "/portal/lupa-password"]) {
+    test(`memotret ${path}`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await capture(page, `masuk-${slug(path)}`);
+    });
+  }
+});
