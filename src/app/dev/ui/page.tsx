@@ -47,6 +47,7 @@ const SAMPLE_UNIT: UnitType = {
   features: featuredProject.features.map((feature) => feature.label),
   priceIncludes: [...featuredProject.priceIncludes],
   priceExcludes: [...featuredProject.priceExcludes],
+  materials: [],
 };
 const SAMPLE_NEARBY: NearbyPlace[] = featuredProject.nearby.map((place, index) => ({
   id: place.key,

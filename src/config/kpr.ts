@@ -12,6 +12,8 @@ export const KPR_DEFAULTS = {
   /** UU 1/2022 (HKPD): NPOPTKP paling sedikit Rp 80 juta. Nilai pasti mengikuti perda Kabupaten Bekasi. */
   npoptkp: 80_000_000,
   bphtbRatePercent: 5,
+  /** BPHTB ditanggung pengembang, gratis bagi pembeli (keputusan owner, 22 November 2026). */
+  bphtbIncluded: true as boolean,
   /** Perkiraan biaya bank (provisi, administrasi, appraisal), notaris bank, dan asuransi. */
   otherCostsPercent: 3,
 } as const;
@@ -36,6 +38,7 @@ export const KPR_COST_GROUPS = [
       "Cek sertifikat di BPN",
       "Balik nama sertifikat di BPN",
       "Pajak penjualan (SSP)",
+      "Pajak pembelian (BPHTB)",
       "IMB",
       "PBB",
     ],

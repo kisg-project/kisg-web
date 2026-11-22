@@ -492,7 +492,18 @@ function isoWeekday(date: string): number {
 export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[]> {
   const supabase = await createSupabaseServerClient();
   const end = todayWib();
-  const start = addDays(end, -(days - 1));
+  // Grafik dimulai dari hari pertama ada absensi, supaya hari sebelum sistem dipakai tidak dihitung
+  // sebagai belum absen.
+  const { data: first } = await supabase
+    .from("attendance_records")
+    .select("work_date")
+    .order("work_date")
+    .limit(1)
+    .maybeSingle();
+  const windowStart = addDays(end, -(days - 1));
+  const start =
+    first && first.work_date > windowStart ? first.work_date : first ? windowStart : end;
+  const span = Math.round((Date.parse(end) - Date.parse(start)) / 86_400_000) + 1;
   const [people, records, reports, schedule] = await Promise.all([
     supabase
       .from("profiles")
@@ -521,7 +532,7 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
     (reports.data ?? []).map((row) => `${row.user_id}|${row.work_date}|${row.kind}`),
   );
 
-  return Array.from({ length: days }, (_, index) => {
+  return Array.from({ length: span }, (_, index) => {
     const date = addDays(start, index);
     const present = records.data.filter(
       (row) => row.work_date === date && staffIds.has(row.user_id),

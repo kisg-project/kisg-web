@@ -84,6 +84,14 @@ describe("toUnitType", () => {
     expect(toUnitType(unitRow({ price_from: null })).price).toBeNull();
   });
 
+  it("memetakan spesifikasi bangunan dan mengabaikan baris yang tidak lengkap", () => {
+    const unit = toUnitType(
+      unitRow({ specs: { materials: [{ label: "Pondasi", value: "Cakar ayam" }] } }),
+    );
+    expect(unit.materials).toEqual([{ label: "Pondasi", value: "Cakar ayam" }]);
+    expect(toUnitType(unitRow({ specs: { materials: [{ label: "" }] } })).materials).toEqual([]);
+  });
+
   it("specs yang rusak tidak merusak halaman", () => {
     const unit = toUnitType(unitRow({ specs: { features: "bukan daftar" } }));
     expect(unit.features).toEqual([]);

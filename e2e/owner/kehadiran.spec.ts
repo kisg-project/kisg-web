@@ -69,18 +69,19 @@ test.describe("Kehadiran owner", () => {
     await loginOwner(page);
 
     const summary = page.getByRole("region", { name: "Ringkasan kehadiran" });
-    await expect(
-      summary.getByRole("heading", { name: "Kehadiran 14 hari terakhir" }),
-    ).toBeVisible();
+    await expect(summary.getByRole("heading", { name: "Kehadiran harian" })).toBeVisible();
     await expectNoA11yViolations(page);
     await expectResponsive(page);
 
-    const attendance = summary.getByRole("region", { name: "Kehadiran 14 hari terakhir" });
+    const attendance = summary.getByRole("region", { name: "Kehadiran harian" });
     await expect(attendance.getByRole("list", { name: "Keterangan warna" })).toContainText(
       "Tepat waktu",
     );
     await attendance.getByRole("button", { name: "Lihat tabel" }).click();
-    await expect(attendance.getByRole("table").getByRole("row")).toHaveCount(15);
+    // Grafik dimulai dari hari pertama ada absensi: minimal header dan satu hari.
+    const rows = attendance.getByRole("table").getByRole("row");
+    await expect(rows.nth(1)).toBeVisible();
+    expect(await rows.count()).toBeLessThanOrEqual(15);
     await expect(attendance.getByRole("button", { name: "Lihat grafik" })).toBeVisible();
 
     await page.getByRole("link", { name: "Buka rekap kehadiran" }).click();

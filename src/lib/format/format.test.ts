@@ -15,9 +15,10 @@ import {
 } from "./index";
 
 describe("formatRupiahRange", () => {
-  it("membulatkan ke bawah ke ratusan juta", () => {
-    expect(formatRupiahRange(571_250_000)).toBe("Rp 500 jutaan");
-    expect(formatRupiahRange(899_999_999n)).toBe("Rp 800 jutaan");
+  it("membulatkan ke bawah ke puluhan juta", () => {
+    expect(formatRupiahRange(570_000_000)).toBe("Rp 570 jutaan");
+    expect(formatRupiahRange(571_250_000)).toBe("Rp 570 jutaan");
+    expect(formatRupiahRange(899_999_999n)).toBe("Rp 890 jutaan");
     expect(formatRupiahRange(100_000_000)).toBe("Rp 100 jutaan");
   });
 

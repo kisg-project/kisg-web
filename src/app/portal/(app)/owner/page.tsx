@@ -104,7 +104,7 @@ export default async function OwnerPage() {
           value: `${String(today.onTime + today.late)}/${String(today.onTime + today.late + today.absent)}`,
         },
         { label: "Terlambat", value: String(today.late) },
-        { label: "Perlu persetujuan", value: String(pending) },
+        { label: "Persetujuan", value: String(pending) },
       ]
     : [];
   return (
@@ -112,7 +112,6 @@ export default async function OwnerPage() {
       {isHome ? (
         <>
           <PortalGreeting fullName={user.fullName} roles={user.roles} stats={stats} />
-          <h2 className="text-xl font-bold">Dashboard direktur utama</h2>
         </>
       ) : (
         <PageHeader
@@ -135,6 +134,7 @@ export default async function OwnerPage() {
         </div>
         <AttendanceCharts days={trend} />
       </section>
+      {isHome ? <h2 className="text-xl font-bold">Dashboard direktur utama</h2> : null}
       <ModuleCards label="Modul owner" modules={MODULES} />
     </div>
   );

@@ -17,8 +17,9 @@ export function formatRupiah(value: bigint | number): string {
 }
 
 /**
- * Harga dibulatkan ke bawah untuk label singkat, misal Rp 571.250.000 menjadi "Rp 500 jutaan".
- * Di bawah 1 miliar: kelipatan 100 juta. Mulai 1 miliar: kelipatan 0,1 miliar ("Rp 1,2 miliaran").
+ * Harga dibulatkan ke bawah untuk label singkat (harga psikologis), misal Rp 575.000.000 menjadi
+ * "Rp 570 jutaan". Di bawah 1 miliar: kelipatan 10 juta. Mulai 1 miliar: kelipatan 0,1 miliar
+ * ("Rp 1,2 miliaran").
  * Dibulatkan ke bawah supaya tidak pernah lebih tinggi dari harga sebenarnya.
  */
 export function formatRupiahRange(value: bigint | number): string {
@@ -28,7 +29,7 @@ export function formatRupiahRange(value: bigint | number): string {
   }
   if (amount < 100_000_000) return formatRupiah(amount);
   if (amount < 1_000_000_000) {
-    return `Rp ${String(Math.floor(amount / 100_000_000) * 100)} jutaan`;
+    return `Rp ${String(Math.floor(amount / 10_000_000) * 10)} jutaan`;
   }
   const billions = Math.floor(amount / 100_000_000) / 10;
   return `Rp ${billions.toLocaleString("id-ID", { maximumFractionDigits: 1 })} miliaran`;

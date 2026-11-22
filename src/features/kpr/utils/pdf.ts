@@ -178,11 +178,16 @@ export async function downloadKprPdf(data: KprPdfData): Promise<void> {
     head: [["Biaya", "Keterangan", "Jumlah"]],
     body: [
       ...data.includedCosts.map((item) => [item, "Sudah termasuk harga rumah", "Rp 0"]),
-      [
-        "BPHTB",
-        `5% x (harga - NPOPTKP ${formatRupiah(data.npoptkp)})`,
-        formatRupiah(data.costs.bphtb),
-      ],
+      // BPHTB dihitung hanya kalau tidak termasuk harga (kalau termasuk, ada di daftar di atas).
+      ...(data.includedCosts.some((item) => item.includes("BPHTB"))
+        ? []
+        : [
+            [
+              "BPHTB",
+              `5% x (harga - NPOPTKP ${formatRupiah(data.npoptkp)})`,
+              formatRupiah(data.costs.bphtb),
+            ],
+          ]),
       [
         "Biaya bank, notaris bank, asuransi",
         `Perkiraan ${percent(data.otherCostsPercent)} dari ${terms.principal.toLowerCase()}`,

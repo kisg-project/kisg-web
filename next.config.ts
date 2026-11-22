@@ -87,7 +87,11 @@ const nextConfig: NextConfig = {
     },
   },
   headers() {
-    return Promise.resolve([{ source: "/:path*", headers: securityHeaders }]);
+    return Promise.resolve([
+      { source: "/:path*", headers: securityHeaders },
+      // Brosur diunduh lewat form lead, bukan dari hasil pencarian.
+      { source: "/brosur/:file*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    ]);
   },
 };
 

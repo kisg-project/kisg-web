@@ -7,7 +7,7 @@ import {
   waitForKprReady,
 } from "../fixtures/test";
 
-// Nilai acuan dihitung terpisah (Python, rumus anuitas). Harga Rp 571.250.000, uang muka 10%, 15 tahun.
+// Nilai acuan dihitung terpisah (Python, rumus anuitas). Harga Rp 570.000.000, uang muka 10%, 15 tahun.
 
 test.describe("Halaman simulasi KPR", () => {
   test("konvensional: produk pertama terpilih dan angsuran sesuai nilai acuan", async ({
@@ -19,9 +19,9 @@ test.describe("Halaman simulasi KPR", () => {
     await expect(panel.getByRole("combobox", { name: "Program KPR" })).toHaveText(
       "Mandiri KPR Bunga Spesial Fixed 3 Tahun",
     );
-    await expect(panel.getByLabel("Harga rumah")).toHaveValue("571.250.000");
-    await expect(panel.getByLabel("Uang muka (rupiah)")).toHaveValue("57.125.000");
-    await expect(panel.getByText("Rp 3.491.410").first()).toBeVisible();
+    await expect(panel.getByLabel("Harga rumah")).toHaveValue("570.000.000");
+    await expect(panel.getByLabel("Uang muka (rupiah)")).toHaveValue("57.000.000");
+    await expect(panel.getByText("Rp 3.483.771").first()).toBeVisible();
     await expect(panel.getByText("Bunga floating setelah masa fixed (asumsi)")).toBeVisible();
   });
 
@@ -38,7 +38,7 @@ test.describe("Halaman simulasi KPR", () => {
     await expect(panel.getByRole("combobox", { name: "Program KPR" })).toHaveText(
       "KPR BTN Fixed 3 Tahun",
     );
-    await expect(panel.getByText("Rp 3.464.551").first()).toBeVisible();
+    await expect(panel.getByText("Rp 3.456.970").first()).toBeVisible();
   });
 
   test("dropdown program memakai komponen custom dan bisa dipilih dengan keyboard", async ({
@@ -51,7 +51,7 @@ test.describe("Halaman simulasi KPR", () => {
     await program.click();
     await page.getByRole("option", { name: "KPR BTN Fixed 3 Tahun" }).click();
     await expect(program).toHaveText("KPR BTN Fixed 3 Tahun");
-    await expect(panel.getByText("Rp 3.464.551").first()).toBeVisible();
+    await expect(panel.getByText("Rp 3.456.970").first()).toBeVisible();
     await program.focus();
     await page.keyboard.press("Enter");
     await page.getByRole("option", { name: "Atur sendiri" }).click();
@@ -67,7 +67,7 @@ test.describe("Halaman simulasi KPR", () => {
     await dp.pressSequentially("100000000");
     await expect(dp).toHaveValue("100.000.000");
     await expect(panel.getByLabel("Uang muka (persen)")).toHaveValue("17,5");
-    await expect(panel.getByText("Rp 3.200.247").first()).toBeVisible();
+    await expect(panel.getByText("Rp 3.191.759").first()).toBeVisible();
 
     const rate = panel.getByLabel("Periode 1: Bunga");
     await rate.fill("");
@@ -90,7 +90,7 @@ test.describe("Halaman simulasi KPR", () => {
     ).toBeVisible();
     await expect(panel.getByText("Lengkapi data di form untuk melihat hasil.")).toBeVisible();
     await panel.getByRole("button", { name: "Hapus periode 2" }).click();
-    await expect(panel.getByText("Rp 3.491.410").first()).toBeVisible();
+    await expect(panel.getByText("Rp 3.483.771").first()).toBeVisible();
   });
 
   test("syariah: istilah syariah tanpa kata bunga, cicilan, atau pinjaman", async ({ page }) => {
@@ -101,7 +101,7 @@ test.describe("Halaman simulasi KPR", () => {
     await expect(panel.getByRole("combobox", { name: "Program pembiayaan" })).toHaveText(
       "BSI KPR Sejahtera",
     );
-    await expect(panel.getByText("Rp 4.065.668").first()).toBeVisible();
+    await expect(panel.getByText("Rp 4.056.771").first()).toBeVisible();
     await expect(panel.getByText("Harga jual bank (pokok + margin)")).toBeVisible();
     await expect(panel.getByText("Margin tetap sampai lunas").first()).toBeVisible();
     const text = (await panel.textContent()) ?? "";
@@ -125,7 +125,7 @@ test.describe("Halaman simulasi KPR", () => {
     expect(content).toContain("PT Kreatif Inovatif Sejahtera Group");
     expect(content).toContain("Simulasi KPR Konvensional");
     expect(content).toContain("Halaman 1 dari");
-    expect(content).toContain("Rp 3.491.410");
+    expect(content).toContain("Rp 3.483.771");
   });
 
   test("lolos aksesibilitas, responsif, dan metadata halaman", async ({ page }) => {
