@@ -1,13 +1,8 @@
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
 import { officeMapsUrl } from "@/config/site";
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/*
- * Peta Indonesia bergaya titik dengan penanda kantor pemasaran yang berdenyut (keputusan owner: peta di
- * footer, bukan thumbnail Google). Titik peta dibuat dari garis pantai Natural Earth (domain publik)
- * oleh skrip satu kali, disimpan sebagai SVG statis supaya ringan dan bisa di-cache.
- * Posisi penanda: Bekasi (6,21 LS, 107,00 BT) di proyeksi equirectangular peta (lihat docs/brand.md).
- */
 const MARKER = { left: "26.62%", top: "71.37%" } as const;
 
 export function OfficeMap() {
@@ -37,7 +32,7 @@ export function OfficeMap() {
       </div>
       <span className="mt-3 inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-white underline-offset-4 group-hover:underline">
         Petunjuk arah
-        <ArrowUpRight aria-hidden="true" className="size-4" />
+        <Icon icon={ArrowUpRight01Icon} aria-hidden="true" className="size-4" />
       </span>
     </a>
   );

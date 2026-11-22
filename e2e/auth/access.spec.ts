@@ -1,5 +1,6 @@
 import { PORTAL_ROLES, ROLE_LABELS, type AppRole } from "../../src/config/roles";
 import { PORTAL_AREAS, portalAreasFor, ROLE_HOME } from "../../src/config/portal";
+import { bottomItems, railItems } from "../../src/config/portal-nav";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
 import { expect, storageStateFor, test } from "../fixtures/portal";
 
@@ -35,22 +36,28 @@ for (const role of PORTAL_ROLES) {
       await expect(page).toHaveURL(ROLE_HOME[role]);
     });
 
-    test("menu hanya berisi area yang boleh dibuka", async ({ page }) => {
+    test("menu hanya berisi fitur yang boleh dibuka", async ({ page }) => {
       await page.goto(ROLE_HOME[role]);
       const desktop = (page.viewportSize()?.width ?? 0) >= 1024;
       const nav = page.getByRole("navigation", {
         name: desktop ? "Menu portal" : "Menu portal bawah",
         exact: true,
       });
-      await expect(nav.getByRole("link")).toHaveCount(allowed.length);
-      // Menu gaya aplikasi (rel di desktop, pil di HP) memakai label pendek.
-      for (const area of allowed) {
-        await expect(nav.getByRole("link", { name: area.shortLabel, exact: true })).toHaveAttribute(
+      const items = desktop ? railItems([role], role) : bottomItems([role], role);
+      await expect(nav.getByRole("link")).toHaveCount(items.length + (desktop ? 0 : 1));
+      for (const item of items) {
+        await expect(nav.getByRole("link", { name: item.label, exact: true })).toHaveAttribute(
           "href",
-          area.prefix,
+          item.href,
         );
       }
-      // Kartu sapaan beranda menampilkan role.
+      if (!desktop) {
+        await expect(nav.getByRole("link", { name: "Akun", exact: true })).toHaveAttribute(
+          "href",
+          "/portal/akun",
+        );
+      }
+      await expect(page.getByRole("button", { name: "Buka semua menu" })).toHaveCount(0);
       await expect(
         page.getByRole("list", { name: "Role" }).getByText(ROLE_LABELS[role], { exact: true }),
       ).toBeVisible();
@@ -60,9 +67,11 @@ for (const role of PORTAL_ROLES) {
       test(`boleh membuka ${area.prefix}`, async ({ page }) => {
         await page.goto(area.prefix);
         await expect(page).toHaveURL(area.prefix);
-        // Beranda role memakai sapaan sebagai h1 dan nama modul sebagai h2.
-        const level = ROLE_HOME[role] === area.prefix ? 2 : 1;
-        await expect(page.getByRole("heading", { level, name: area.label })).toBeVisible();
+        if (ROLE_HOME[role] === area.prefix) {
+          await expect(page.getByRole("list", { name: "Role" })).toBeVisible();
+        } else {
+          await expect(page.getByRole("heading", { level: 1, name: area.label })).toBeVisible();
+        }
       });
     }
 

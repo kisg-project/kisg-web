@@ -38,49 +38,62 @@ export function LoadingScene({
                 className="loader-house relative h-28 w-32 overflow-visible"
               >
                 <ellipse
-                  className="loader-shadow fill-primary-900/15 dark:fill-black/40"
+                  className="loader-shadow fill-neutral-200 dark:fill-neutral-800"
                   cx="80"
                   cy="128"
-                  rx="46"
-                  ry="5"
+                  rx="48"
+                  ry="3.5"
                 />
                 <rect
-                  className="loader-body fill-primary-600 dark:fill-primary-500"
-                  x="40"
+                  className="loader-body fill-primary-100 stroke-neutral-800 dark:fill-primary-900 dark:stroke-neutral-300"
+                  x="41"
                   y="64"
-                  width="80"
-                  height="60"
-                  rx="10"
+                  width="78"
+                  height="58"
+                  rx="8"
+                  strokeWidth="2.6"
                 />
                 <rect
-                  className="loader-window fill-gold-300"
-                  x="52"
-                  y="78"
+                  className="loader-window fill-gold-100 stroke-neutral-800 dark:stroke-neutral-300"
+                  x="50"
+                  y="85"
                   width="16"
                   height="14"
-                  rx="4"
+                  rx="3"
+                  strokeWidth="2.2"
                 />
                 <rect
-                  className="loader-window loader-window-late fill-gold-300"
-                  x="92"
-                  y="78"
+                  className="loader-window loader-window-late fill-gold-100 stroke-neutral-800 dark:stroke-neutral-300"
+                  x="94"
+                  y="85"
                   width="16"
                   height="14"
-                  rx="4"
+                  rx="3"
+                  strokeWidth="2.2"
                 />
                 <rect
-                  className="loader-door fill-white dark:fill-primary-100"
+                  className="loader-door fill-white stroke-neutral-800 dark:fill-neutral-900 dark:stroke-neutral-300"
                   x="70"
-                  y="96"
+                  y="94"
                   width="20"
                   height="28"
                   rx="5"
+                  strokeWidth="2.2"
                 />
                 <path
-                  className="loader-roof stroke-gold-400"
-                  d="M26 72 L80 28 L134 72"
+                  className="loader-roof stroke-neutral-800 dark:stroke-neutral-300"
+                  d="M30 74 L80 32 L130 74"
                   fill="none"
-                  strokeWidth="10"
+                  strokeWidth="11"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength={100}
+                />
+                <path
+                  className="loader-roof stroke-gold-200"
+                  d="M30 74 L80 32 L130 74"
+                  fill="none"
+                  strokeWidth="6"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   pathLength={100}
@@ -89,7 +102,7 @@ export function LoadingScene({
             }
           />
         </div>
-        <p className="flex items-center gap-2 text-base font-semibold text-foreground">
+        <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
           {label}
           <span aria-hidden="true" className="flex items-end gap-1 pb-1">
             <span className="loader-dot size-1.5 rounded-full bg-primary-600" />

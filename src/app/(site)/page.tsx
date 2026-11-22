@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal } from "@/components/shared/reveal";
 import { RoofLine } from "@/components/shared/roof-line";
@@ -36,6 +35,13 @@ import {
   organizationJsonLd,
   websiteJsonLd,
 } from "@/lib/seo/structured-data";
+import {
+  ArrowRight02Icon,
+  ArrowUpRight01Icon,
+  Call02Icon,
+  Location01Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 function describe(project: ProjectDetail | null): string {
   if (!project) return `${siteConfig.legalName}, developer perumahan di Kabupaten Bekasi.`;
@@ -54,7 +60,6 @@ function describe(project: ProjectDetail | null): string {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  // Judul tab memakai default layout root. Gambar share bermerek dari /og.
   return pageMetadata({ path: "/", description: describe(await getFeaturedProject()) });
 }
 
@@ -77,7 +82,6 @@ export default async function HomePage() {
   const firstUnit = project?.unitTypes[0];
   const projectPath = project ? `/proyek/${project.slug}` : "/";
 
-  // Foto yang sudah tampil di banner tidak diulang di cuplikan galeri (keputusan owner).
   const bannerImages = new Set(banners.flatMap((banner) => [banner.image, banner.mobileImage]));
   const homeGallery = (project?.gallery ?? [])
     .filter((image) => !bannerImages.has(image.src))
@@ -130,7 +134,11 @@ export default async function HomePage() {
                   {project.name}
                 </h3>
                 <p className="mt-4 flex gap-2 text-subtle-foreground">
-                  <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+                  <Icon
+                    icon={Location01Icon}
+                    aria-hidden="true"
+                    className="mt-0.5 size-5 shrink-0 text-primary"
+                  />
                   {formatAddress(project.address)}
                 </p>
                 {lowestPrice(project.unitTypes) ? (
@@ -142,7 +150,7 @@ export default async function HomePage() {
                   <Button asChild size="lg">
                     <Link href={projectPath}>
                       Lihat detail proyek
-                      <ArrowRight aria-hidden="true" />
+                      <Icon icon={ArrowRight02Icon} aria-hidden="true" />
                     </Link>
                   </Button>
                   <Button
@@ -217,7 +225,7 @@ export default async function HomePage() {
               <div className="lg:col-span-5">
                 <p className="flex gap-3 text-base">
                   <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-                    <MapPin aria-hidden="true" className="size-5" />
+                    <Icon icon={Location01Icon} aria-hidden="true" className="size-5" />
                   </span>
                   <span>
                     <span className="block text-lg font-bold text-primary-950">{project.name}</span>
@@ -227,7 +235,7 @@ export default async function HomePage() {
                 <Button asChild variant="outline" className="mt-6 border-primary-200">
                   <a href={mapsUrl(project)} target="_blank" rel="noopener noreferrer">
                     Buka di Google Maps
-                    <ArrowUpRight aria-hidden="true" />
+                    <Icon icon={ArrowUpRight01Icon} aria-hidden="true" />
                   </a>
                 </Button>
               </div>
@@ -292,7 +300,7 @@ export default async function HomePage() {
             <Button asChild variant="outline" className="border-primary-200">
               <Link href="/berita">
                 Semua berita
-                <ArrowRight aria-hidden="true" />
+                <Icon icon={ArrowRight02Icon} aria-hidden="true" />
               </Link>
             </Button>
           }
@@ -344,7 +352,7 @@ export default async function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Phone aria-hidden="true" />
+              <Icon icon={Call02Icon} aria-hidden="true" />
               Atur jadwal survei
             </a>
           </Button>

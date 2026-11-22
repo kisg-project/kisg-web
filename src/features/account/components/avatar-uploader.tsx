@@ -1,22 +1,18 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Camera, ImagePlus, LoaderCircle } from "lucide-react";
 import { Avatar } from "@/components/shared/avatar";
 import { compressImage, cropToSquare, ImageCompressionError } from "@/lib/image";
 import { cn } from "@/lib/utils";
+import { Camera01Icon, ImageAdd01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 type Status = "idle" | "processing" | "uploading" | "done" | "error";
 
-/** Path unggah mengikuti host: /portal/foto-profil di domain utama, /foto-profil di subdomain portal. */
 function uploadUrl(): string {
   return window.location.pathname.startsWith("/portal") ? "/portal/foto-profil" : "/foto-profil";
 }
 
-/**
- * Foto profil: ambil dari kamera depan atau pilih dari galeri, dipotong persegi, dikompres di browser
- * (src/lib/image, profil "avatar"), lalu diunggah. Status selalu terlihat dan diumumkan ke pembaca layar.
- */
 export function AvatarUploader({
   name,
   initialUrl,
@@ -77,7 +73,11 @@ export function AvatarUploader({
         <Avatar src={url} name={name || "Karyawan"} className="size-24 text-2xl" />
         {busy ? (
           <span className="absolute inset-0 flex items-center justify-center rounded-full bg-background/70">
-            <LoaderCircle aria-hidden="true" className="size-6 animate-spin text-primary" />
+            <Icon
+              icon={Loading03Icon}
+              aria-hidden="true"
+              className="size-6 animate-spin text-primary"
+            />
           </span>
         ) : null}
       </div>
@@ -85,7 +85,7 @@ export function AvatarUploader({
         <p className="text-sm font-semibold">Foto profil (wajib)</p>
         <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
           <label htmlFor={`${id}-kamera`} className={buttonClass}>
-            <Camera aria-hidden="true" className="size-4" />
+            <Icon icon={Camera01Icon} aria-hidden="true" className="size-4" />
             Ambil foto
             <input
               id={`${id}-kamera`}
@@ -101,7 +101,7 @@ export function AvatarUploader({
             />
           </label>
           <label htmlFor={`${id}-galeri`} className={buttonClass}>
-            <ImagePlus aria-hidden="true" className="size-4" />
+            <Icon icon={ImageAdd01Icon} aria-hidden="true" className="size-4" />
             Pilih dari galeri
             <input
               id={`${id}-galeri`}

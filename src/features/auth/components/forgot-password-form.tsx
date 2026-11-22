@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { LoaderCircle } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -16,6 +15,8 @@ import {
   type ForgotPasswordInput,
   type ResetWithCodeInput,
 } from "../schemas/auth";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 function BackToLogin({ app }: { app: AuthApp }) {
   return (
@@ -28,7 +29,6 @@ function BackToLogin({ app }: { app: AuthApp }) {
   );
 }
 
-/** Langkah kedua: kode 6 digit dari email dan password baru. */
 function CodeStep({
   app,
   email,
@@ -98,7 +98,9 @@ function CodeStep({
         aria-busy={busy}
         className="aria-busy:opacity-100"
       >
-        {busy ? <LoaderCircle aria-hidden="true" className="size-5 animate-spin" /> : null}
+        {busy ? (
+          <Icon icon={Loading03Icon} aria-hidden="true" className="size-5 animate-spin" />
+        ) : null}
         {hasNavigated ? "Membuka beranda" : isPending ? "Menyimpan" : "Simpan password baru"}
       </Button>
       <Button type="button" variant="ghost" disabled={resending} onClick={onResend}>
@@ -109,11 +111,6 @@ function CodeStep({
   );
 }
 
-/**
- * Lupa password dengan kode email (OTP, keputusan owner 21 November 2026): langkah pertama email,
- * langkah kedua kode dan password baru di halaman yang sama. Jawaban sama untuk email yang terdaftar
- * maupun tidak, supaya tidak membocorkan akun.
- */
 export function ForgotPasswordForm({ app = "portal" }: { app?: AuthApp }) {
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),

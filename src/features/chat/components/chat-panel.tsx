@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { Maximize2, Minimize2, Phone, SendHorizontal, X } from "lucide-react";
 import {
   CHAT_ASSISTANT,
   CHAT_GREETING,
@@ -15,10 +14,17 @@ import {
 import { whatsappLink } from "@/config/site";
 import { TurnstileWidget } from "@/features/leads";
 import { cn } from "@/lib/utils";
+import {
+  ArrowExpand01Icon,
+  ArrowShrink02Icon,
+  Call02Icon,
+  Cancel01Icon,
+  SentIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 type ChatMessage = UIMessage<{ fallback?: boolean }>;
 
-/** Pesan pembuka WhatsApp yang menyebut halaman asal, supaya marketing tahu konteksnya. */
 export function pageWhatsappLink(): string {
   const page = document.title.split("|")[0]?.trim() || "website";
   return whatsappLink(
@@ -40,7 +46,7 @@ function WhatsappButton({
       rel="noopener noreferrer"
       className="mt-2 inline-flex min-h-10 items-center gap-2 rounded-full bg-success-700 px-4 text-sm font-semibold text-white transition-colors hover:bg-success-800"
     >
-      <Phone aria-hidden="true" className="size-4" />
+      <Icon icon={Call02Icon} aria-hidden="true" className="size-4" />
       {label}
     </a>
   );
@@ -86,11 +92,6 @@ function MessageView({ message }: { message: ChatMessage }) {
   );
 }
 
-/**
- * Panel chat Jaka (CLAUDE.md bagian 12): layar penuh di HP, panel di desktop dengan tombol layar penuh.
- * Hanya pesan terakhir yang dikirim ke server. Kalau Jaka tidak bisa membalas, tampil pesan ramah dan
- * tombol WhatsApp, tanpa pesan error teknis.
- */
 export function ChatPanel({ onClose }: { onClose: () => void }) {
   const [chatId] = useState(() => crypto.randomUUID());
   const [input, setInput] = useState("");
@@ -104,7 +105,6 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
     id: chatId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
-      // Hanya pesan terakhir yang dikirim. Riwayat dimuat server dari database.
       prepareSendMessagesRequest: ({ messages: all, id, body }) => ({
         body: { ...body, id, message: all[all.length - 1] },
       }),
@@ -167,7 +167,7 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
           }}
           className="flex size-10 items-center justify-center rounded-full text-success-700 transition-colors hover:bg-success-50"
         >
-          <Phone aria-hidden="true" className="size-5" />
+          <Icon icon={Call02Icon} aria-hidden="true" className="size-5" />
         </a>
         <button
           type="button"
@@ -178,9 +178,9 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
           className="hidden size-10 items-center justify-center rounded-full text-subtle-foreground transition-colors hover:bg-surface sm:flex"
         >
           {fullscreen ? (
-            <Minimize2 aria-hidden="true" className="size-5" />
+            <Icon icon={ArrowShrink02Icon} aria-hidden="true" className="size-5" />
           ) : (
-            <Maximize2 aria-hidden="true" className="size-5" />
+            <Icon icon={ArrowExpand01Icon} aria-hidden="true" className="size-5" />
           )}
         </button>
         <button
@@ -189,7 +189,7 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
           aria-label="Tutup chat"
           className="flex size-10 items-center justify-center rounded-full text-subtle-foreground transition-colors hover:bg-surface"
         >
-          <X aria-hidden="true" className="size-5" />
+          <Icon icon={Cancel01Icon} aria-hidden="true" className="size-5" />
         </button>
       </header>
 
@@ -280,7 +280,7 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
             aria-label="Kirim pesan"
             className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary-hover disabled:opacity-50"
           >
-            <SendHorizontal aria-hidden="true" className="size-5" />
+            <Icon icon={SentIcon} aria-hidden="true" className="size-5" />
           </button>
         </div>
         <p className="mt-2 px-1 text-[0.72rem] text-muted-foreground">

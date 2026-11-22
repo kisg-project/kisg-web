@@ -2,7 +2,6 @@
 
 import { useCallback, useId, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, Send } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField } from "@/components/shared/text-field";
@@ -13,10 +12,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { env } from "@/env";
 import { applicationSchema, cvProblem, type ApplicationInput } from "../schemas/application";
 import { TurnstileWidget } from "./turnstile-widget";
+import { CheckmarkCircle02Icon, SentIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const GENERIC_ERROR = "Lamaran gagal terkirim. Periksa koneksi, lalu coba lagi.";
 
-/** Form lamaran kerja dengan CV PDF. Dikirim ke /api/lamaran sebagai multipart. */
 export function ApplicationForm({
   careerSlug,
   careerTitle,
@@ -51,7 +51,7 @@ export function ApplicationForm({
   if (state === "sent") {
     return (
       <div role="status" className="flex flex-col items-start gap-3 rounded-3xl bg-success-50 p-5">
-        <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
+        <Icon icon={CheckmarkCircle02Icon} aria-hidden="true" className="size-8 text-success-700" />
         <p className="font-semibold">
           Lamaran untuk {careerTitle} terkirim. Kami menghubungi kandidat yang sesuai lewat WhatsApp
           atau email.
@@ -207,7 +207,7 @@ export function ApplicationForm({
       ) : null}
       <div>
         <Button type="submit" size="lg" disabled={state === "sending"}>
-          <Send aria-hidden="true" />
+          <Icon icon={SentIcon} aria-hidden="true" />
           {state === "sending" ? "Mengirim" : "Kirim lamaran"}
         </Button>
       </div>

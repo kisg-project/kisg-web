@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Phone } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { PageHero } from "@/components/site/page-hero";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,8 @@ import { whatsappLink } from "@/config/site";
 import { ContentBlocks, getPromoBySlug } from "@/features/cms";
 import { formatDateWIB } from "@/lib/format";
 import { shareMetadata } from "@/lib/seo/page-metadata";
+import { Call02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export async function generateMetadata({ params }: PageProps<"/promo/[slug]">): Promise<Metadata> {
   const { slug } = await params;
@@ -73,7 +74,7 @@ export default async function PromoPage({ params }: PageProps<"/promo/[slug]">) 
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Phone aria-hidden="true" />
+              <Icon icon={Call02Icon} aria-hidden="true" />
               Tanya promo ini
             </a>
           </Button>

@@ -1,35 +1,28 @@
-import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logout03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/**
- * Form POST biasa ke /portal/auth/keluar: sesi diakhiri di server lalu halaman masuk dimuat penuh,
- * sehingga cache router tidak menyimpan halaman portal untuk tombol back. POST (bukan tautan) supaya
- * situs lain tidak bisa mengeluarkan user, karena cookie SameSite=Lax tidak ikut di POST lintas situs.
- */
 export function LogoutButton({
   action = "/portal/auth/keluar",
   iconOnly = false,
 }: {
   action?: string;
-  /** Hanya ikon (header portal). Nama tombol tetap "Keluar" untuk pembaca layar. */
   iconOnly?: boolean;
 }) {
   return (
     <form action={action} method="post">
       {iconOnly ? (
-        <Button
+        <button
           type="submit"
-          variant="ghost"
-          size="icon"
           aria-label="Keluar"
           title="Keluar"
-          className="text-subtle-foreground hover:bg-danger-50 hover:text-danger-700"
+          className="hit-44 flex size-9 items-center justify-center rounded-lg border border-(--line-strong,var(--color-border)) bg-card text-foreground transition-colors hover:bg-danger-50 hover:text-danger-700 motion-safe:active:scale-95"
         >
-          <LogOut aria-hidden="true" className="size-5" />
-        </Button>
+          <Icon icon={Logout03Icon} className="size-[1.125rem]" />
+        </button>
       ) : (
         <Button type="submit" variant="ghost">
-          <LogOut aria-hidden="true" />
+          <Icon icon={Logout03Icon} />
           Keluar
         </Button>
       )}

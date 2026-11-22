@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/state-message";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { careerLevelInfo } from "@/config/careers";
 import { listCmsCareers, requireCmsUser } from "@/features/cms-panel";
 import { formatDateWIB } from "@/lib/format";
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = { title: "Lowongan" };
 
@@ -31,7 +32,7 @@ export default async function CmsCareersPage() {
         />
         <Button asChild>
           <Link href="/cms/lowongan/baru">
-            <Plus aria-hidden="true" />
+            <Icon icon={PlusSignIcon} aria-hidden="true" />
             Buat lowongan
           </Link>
         </Button>

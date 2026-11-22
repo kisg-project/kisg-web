@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
 import type { Faq } from "../types";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Tanya jawab dengan details/summary: bisa dibuka tanpa JavaScript, panah berputar saat dibuka. */
 export function FaqList({ items }: { items: readonly Faq[] }) {
   return (
     <div className="divide-y overflow-hidden rounded-3xl border border-primary-100 bg-card">
@@ -9,7 +9,8 @@ export function FaqList({ items }: { items: readonly Faq[] }) {
         <details key={item.id} className="group">
           <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 font-semibold transition-colors hover:text-primary [&::-webkit-details-marker]:hidden">
             {item.question}
-            <ChevronDown
+            <Icon
+              icon={ArrowDown01Icon}
               aria-hidden="true"
               className="size-5 shrink-0 transition-transform duration-200 group-open:rotate-180"
             />

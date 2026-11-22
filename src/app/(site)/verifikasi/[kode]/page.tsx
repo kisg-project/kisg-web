@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { APPROVAL_DECISION_LABEL, APPROVAL_DOC_LABEL } from "@/config/approvals";
 import { ROLE_LABELS } from "@/config/roles";
@@ -8,6 +7,8 @@ import { siteConfig } from "@/config/site";
 import { verifyApproval } from "@/features/approvals/server";
 import { formatDateTimeWIB } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SecurityCheckIcon, SecurityWarningIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = {
   title: "Verifikasi persetujuan digital",
@@ -16,10 +17,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-/**
- * Halaman verifikasi dari QR code pada dokumen. Isi dokumen dihitung ulang di database: kalau berubah
- * setelah diputuskan, cap dinyatakan tidak cocok. Kode tidak dikenal: 404.
- */
 export default async function VerificationPage({ params }: PageProps<"/verifikasi/[kode]">) {
   const { kode } = await params;
   const result = await verifyApproval(kode);
@@ -43,9 +40,9 @@ export default async function VerificationPage({ params }: PageProps<"/verifikas
         )}
       >
         {result.matches ? (
-          <ShieldCheck aria-hidden="true" className="size-6 shrink-0" />
+          <Icon icon={SecurityCheckIcon} aria-hidden="true" className="size-6 shrink-0" />
         ) : (
-          <ShieldAlert aria-hidden="true" className="size-6 shrink-0" />
+          <Icon icon={SecurityWarningIcon} aria-hidden="true" className="size-6 shrink-0" />
         )}
         <p className="font-semibold">
           {result.matches

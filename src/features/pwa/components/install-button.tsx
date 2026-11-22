@@ -1,19 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Download04Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-/**
- * Tombol "Pasang aplikasi" di portal. Hanya tampil kalau browser mendukung pemasangan (Chrome, Edge,
- * Samsung Internet) dan aplikasi belum terpasang. Di iPhone pemasangan lewat menu Bagikan, lalu
- * "Tambahkan ke Layar Utama".
- */
 export function InstallButton() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
@@ -35,18 +30,18 @@ export function InstallButton() {
 
   if (!prompt) return null;
   return (
-    <Button
+    <button
       type="button"
-      variant="outline"
+      title="Pasang aplikasi"
       onClick={() => {
         void prompt.prompt().then(() => {
           setPrompt(null);
         });
       }}
+      className="hit-44 flex h-9 items-center gap-1.5 rounded-lg border border-(--line-strong) bg-card px-2.5 text-xs font-medium transition-colors hover:bg-neutral-50 motion-safe:active:scale-95 dark:hover:bg-neutral-800"
     >
-      <Download aria-hidden="true" />
-      <span className="hidden sm:inline">Pasang aplikasi</span>
-      <span className="sm:hidden">Pasang</span>
-    </Button>
+      <Icon icon={Download04Icon} className="size-[1.125rem]" />
+      <span className="sr-only sm:not-sr-only">Pasang aplikasi</span>
+    </button>
   );
 }

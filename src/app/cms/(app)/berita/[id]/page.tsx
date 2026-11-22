@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { DeleteContentButton, getCmsPost, PostForm, requireCmsUser } from "@/features/cms-panel";
+import { LinkSquare02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = { title: "Ubah berita" };
 
@@ -20,7 +21,7 @@ export default async function CmsEditPostPage({ params }: PageProps<"/cms/berita
           {post.status === "terbit" ? (
             <Button asChild variant="outline">
               <a href={`/berita/${post.slug}`} target="_blank" rel="noopener noreferrer">
-                <ExternalLink aria-hidden="true" />
+                <Icon icon={LinkSquare02Icon} aria-hidden="true" />
                 Lihat di website
               </a>
             </Button>

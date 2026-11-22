@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/state-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { listCmsPosts, requireCmsUser } from "@/features/cms-panel";
 import { formatDateWIB } from "@/lib/format";
+import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = { title: "Berita" };
 
@@ -27,7 +28,7 @@ export default async function CmsPostsPage() {
         <PageHeader title="Berita" description="Berita dan artikel di halaman /berita." />
         <Button asChild>
           <Link href="/cms/berita/baru">
-            <Plus aria-hidden="true" />
+            <Icon icon={PlusSignIcon} aria-hidden="true" />
             Tulis berita
           </Link>
         </Button>

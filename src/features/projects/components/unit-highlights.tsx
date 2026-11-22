@@ -1,54 +1,53 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Bath,
-  BedDouble,
-  Calculator,
-  CarFront,
-  CircleCheck,
-  CircleMinus,
-  House,
-  LandPlot,
-  Landmark,
-  LockKeyhole,
-  MapPin,
-  Route,
-  ShoppingCart,
-  TrainFront,
-  Trees,
-  type LucideIcon,
-} from "lucide-react";
 import { formatRupiah } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { NearbyPlace, UnitType } from "../types";
 import { formatNearbyDistance } from "../utils/map";
+import {
+  ArrowRight02Icon,
+  BankIcon,
+  Bathtub01Icon,
+  BedDoubleIcon,
+  Calculator01Icon,
+  Car01Icon,
+  CheckmarkCircle02Icon,
+  Home01Icon,
+  Location01Icon,
+  LockPasswordIcon,
+  MapsSquare01Icon,
+  MinusSignCircleIcon,
+  Route01Icon,
+  ShoppingCart01Icon,
+  Train01Icon,
+  Tree06Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 
-// Ikon fasilitas unit dicocokkan dari nama (diisi admin). Nama yang tidak dikenal memakai ikon umum.
-const FEATURE_ICONS: [RegExp, LucideIcon][] = [
-  [/carport|garasi|car ?porch/i, CarFront],
-  [/halaman|taman/i, Trees],
-  [/smart|kunci|door lock/i, LockKeyhole],
+const FEATURE_ICONS: [RegExp, AppIcon][] = [
+  [/carport|garasi|car ?porch/i, Car01Icon],
+  [/halaman|taman/i, Tree06Icon],
+  [/smart|kunci|door lock/i, LockPasswordIcon],
 ];
 
-const NEARBY: Record<string, { icon: LucideIcon; label: string }> = {
-  transportasi: { icon: TrainFront, label: "Transportasi umum" },
-  tol: { icon: Route, label: "Akses tol" },
-  bank: { icon: Landmark, label: "Perbankan" },
-  belanja: { icon: ShoppingCart, label: "Belanja" },
+const NEARBY: Record<string, { icon: AppIcon; label: string }> = {
+  transportasi: { icon: Train01Icon, label: "Transportasi umum" },
+  tol: { icon: Route01Icon, label: "Akses tol" },
+  bank: { icon: BankIcon, label: "Perbankan" },
+  belanja: { icon: ShoppingCart01Icon, label: "Belanja" },
 };
 
-function featureIcon(name: string): LucideIcon {
-  return FEATURE_ICONS.find(([pattern]) => pattern.test(name))?.[1] ?? CircleCheck;
+function featureIcon(name: string): AppIcon {
+  return FEATURE_ICONS.find(([pattern]) => pattern.test(name))?.[1] ?? CheckmarkCircle02Icon;
 }
 
 interface Highlight {
-  icon: LucideIcon;
+  icon: AppIcon;
   label: string;
   value?: string;
   detail?: string;
 }
 
-function IconChip({ icon: Icon, size = "md" }: { icon: LucideIcon; size?: "md" | "lg" }) {
+function IconChip({ icon, size = "md" }: { icon: AppIcon; size?: "md" | "lg" }) {
   return (
     <span
       className={cn(
@@ -56,12 +55,11 @@ function IconChip({ icon: Icon, size = "md" }: { icon: LucideIcon; size?: "md" |
         size === "lg" ? "size-12 rounded-2xl" : "size-11 rounded-xl",
       )}
     >
-      <Icon aria-hidden="true" className={size === "lg" ? "size-6" : "size-5"} />
+      <Icon icon={icon} className={size === "lg" ? "size-6" : "size-5"} />
     </span>
   );
 }
 
-/** Empat angka utama unit sebagai kartu yang sama besar. */
 function SpecGrid({ items }: { items: Highlight[] }) {
   return (
     <div>
@@ -81,7 +79,6 @@ function SpecGrid({ items }: { items: Highlight[] }) {
   );
 }
 
-/** Panel daftar dengan baris sejajar: ikon, nama, dan keterangan singkat. */
 function DetailPanel({ label, items }: { label: string; items: Highlight[] }) {
   if (items.length === 0) return null;
   return (
@@ -113,7 +110,7 @@ function CostList({
   items: readonly string[];
   included: boolean;
 }) {
-  const Icon = included ? CircleCheck : CircleMinus;
+  const mark = included ? CheckmarkCircle02Icon : MinusSignCircleIcon;
   return (
     <div>
       <h3 className="text-sm font-semibold">{title}</h3>
@@ -121,7 +118,7 @@ function CostList({
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2">
             <Icon
-              aria-hidden="true"
+              icon={mark}
               className={cn(
                 "mt-0.5 size-4 shrink-0",
                 included ? "text-success-700" : "text-neutral-600",
@@ -135,10 +132,6 @@ function CostList({
   );
 }
 
-/**
- * Ringkasan tipe unit: harga, empat angka spesifikasi, fasilitas unit, akses sekitar (kategori dan
- * jarak kalau sudah diisi), dan rincian biaya. Tanpa efek hover (keputusan owner, 22 November 2026).
- */
 export function UnitHighlights({
   unitType,
   nearby,
@@ -149,10 +142,10 @@ export function UnitHighlights({
   className?: string;
 }) {
   const specs: Highlight[] = [
-    { icon: BedDouble, value: String(unitType.bedrooms), label: "Kamar tidur" },
-    { icon: Bath, value: String(unitType.bathrooms), label: "Kamar mandi" },
-    { icon: House, value: `${String(unitType.buildingArea)} m²`, label: "Luas bangunan" },
-    { icon: LandPlot, value: `${String(unitType.landArea)} m²`, label: "Luas tanah" },
+    { icon: BedDoubleIcon, value: String(unitType.bedrooms), label: "Kamar tidur" },
+    { icon: Bathtub01Icon, value: String(unitType.bathrooms), label: "Kamar mandi" },
+    { icon: Home01Icon, value: `${String(unitType.buildingArea)} m²`, label: "Luas bangunan" },
+    { icon: MapsSquare01Icon, value: `${String(unitType.landArea)} m²`, label: "Luas tanah" },
   ];
   const features: Highlight[] = unitType.features.map((name) => ({
     icon: featureIcon(name),
@@ -162,7 +155,7 @@ export function UnitHighlights({
   const places: Highlight[] = nearby.map((place) => {
     const meta = NEARBY[place.category];
     const detail = [meta?.label, formatNearbyDistance(place)].filter(Boolean).join(", ");
-    return { icon: meta?.icon ?? MapPin, label: place.name, detail: detail || undefined };
+    return { icon: meta?.icon ?? Location01Icon, label: place.name, detail: detail || undefined };
   });
   const hasCosts = unitType.priceIncludes.length > 0 || unitType.priceExcludes.length > 0;
 
@@ -229,9 +222,9 @@ export function UnitHighlights({
             href="/simulasi-kpr"
             className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-full bg-primary-50 px-5 text-sm font-semibold text-primary-800 transition-colors hover:bg-primary-100"
           >
-            <Calculator aria-hidden="true" className="size-4" />
+            <Icon icon={Calculator01Icon} aria-hidden="true" className="size-4" />
             Hitung cicilan KPR tipe ini
-            <ArrowRight aria-hidden="true" className="size-4" />
+            <Icon icon={ArrowRight02Icon} aria-hidden="true" className="size-4" />
           </Link>
         ) : null}
       </div>

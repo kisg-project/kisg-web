@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
 import { PageHero } from "@/components/site/page-hero";
 import { CAREER_LEVELS } from "@/config/careers";
 import { CareerList, getOpenCareers } from "@/features/cms";
 import { pageMetadata } from "@/lib/seo/page-metadata";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = pageMetadata({
   path: "/karir",
@@ -52,7 +53,7 @@ export default async function CareersPage() {
                       <span className="text-sm text-subtle-foreground">{item.description}</span>
                       <span className="mt-auto inline-flex items-center gap-2 pt-3 text-sm font-semibold text-primary">
                         {count > 0 ? `${String(count)} lowongan dibuka` : "Lihat jenjang"}
-                        <ArrowRight aria-hidden="true" className="size-4" />
+                        <Icon icon={ArrowRight02Icon} aria-hidden="true" className="size-4" />
                       </span>
                     </span>
                   </Link>

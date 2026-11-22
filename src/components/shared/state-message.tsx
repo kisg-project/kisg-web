@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { CircleAlert, Inbox, type LucideIcon } from "lucide-react";
+import { Alert02Icon, Task01Icon } from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 import { cn } from "@/lib/utils";
 import { LottiePlayer } from "./lottie-player";
 
@@ -7,15 +8,11 @@ interface StateMessageProps {
   title: string;
   description?: ReactNode;
   action?: ReactNode;
-  icon?: LucideIcon;
+  icon?: AppIcon;
   className?: string;
 }
 
-/**
- * Ilustrasi bergerak untuk keadaan kosong dan error: ikon di lingkaran yang melayang pelan, bayangan
- * mengikuti, cincin berdenyut, dan dua titik kecil berkedip. Diam saat prefers-reduced-motion aktif.
- */
-function StateIllustration({ icon: Icon, tone }: { icon: LucideIcon; tone: "empty" | "error" }) {
+function StateIllustration({ icon, tone }: { icon: AppIcon; tone: "empty" | "error" }) {
   const error = tone === "error";
   return (
     <div aria-hidden="true" className="relative mb-1 grid size-28 place-items-center">
@@ -37,11 +34,12 @@ function StateIllustration({ icon: Icon, tone }: { icon: LucideIcon; tone: "empt
           error ? "bg-danger-300" : "bg-primary-400",
         )}
       />
-      <span className="empty-float relative grid size-16 place-items-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
+      <span className="empty-float relative grid size-16 place-items-center rounded-2xl border-2 border-neutral-800 bg-primary-50 dark:border-neutral-300 dark:bg-primary-950">
         <Icon
+          icon={icon}
           className={cn(
             "size-8",
-            error ? "text-destructive" : "text-primary-600 dark:text-primary-300",
+            error ? "text-destructive" : "text-neutral-800 dark:text-neutral-100",
           )}
         />
       </span>
@@ -54,17 +52,16 @@ function StateMessage({
   title,
   description,
   action,
-  icon: Icon,
+  icon,
   tone,
   className,
 }: StateMessageProps & { tone: "empty" | "error" }) {
-  const FallbackIcon = tone === "error" ? CircleAlert : Inbox;
-  const ShownIcon = Icon ?? FallbackIcon;
+  const shown = icon ?? (tone === "error" ? Alert02Icon : Task01Icon);
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "flex flex-col items-center gap-3 rounded-3xl border border-dashed px-6 py-10 text-center",
+        "flex flex-col items-center gap-2 rounded-2xl border border-dashed border-(--line-strong,var(--color-border)) px-5 py-8 text-center",
         className,
       )}
     >
@@ -72,24 +69,24 @@ function StateMessage({
         <LottiePlayer
           name="empty-box"
           className="mb-1 size-28"
-          fallback={<StateIllustration icon={ShownIcon} tone={tone} />}
+          fallback={<StateIllustration icon={shown} tone={tone} />}
         />
       ) : (
-        <StateIllustration icon={ShownIcon} tone={tone} />
+        <StateIllustration icon={shown} tone={tone} />
       )}
-      <p className="text-base font-semibold">{title}</p>
-      {description ? <p className="max-w-md text-sm text-muted-foreground">{description}</p> : null}
+      <p className="text-sm font-semibold sm:text-base">{title}</p>
+      {description ? (
+        <p className="max-w-md text-xs text-muted-foreground sm:text-sm">{description}</p>
+      ) : null}
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
   );
 }
 
-/** Keadaan kosong: data belum ada. Judul singkat, deskripsi menyebut langkah berikutnya. */
 export function EmptyState(props: StateMessageProps) {
   return <StateMessage tone="empty" {...props} />;
 }
 
-/** Keadaan error: apa yang salah dan apa yang bisa dilakukan, tanpa pesan teknis. */
 export function ErrorState(props: StateMessageProps) {
   return <StateMessage tone="error" {...props} />;
 }

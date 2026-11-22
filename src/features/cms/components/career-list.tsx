@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, Briefcase, MapPin } from "lucide-react";
 import { Reveal } from "@/components/shared/reveal";
 import { formatDateWIB } from "@/lib/format";
 import type { CareerSummary } from "../types";
+import { ArrowRight02Icon, Briefcase01Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Daftar lowongan terbuka (dipakai di /karir dan /karir/jenjang/[level]). */
 export function CareerList({ careers }: { careers: readonly CareerSummary[] }) {
   return (
     <ul className="grid gap-4">
@@ -22,20 +22,24 @@ export function CareerList({ careers }: { careers: readonly CareerSummary[] }) {
                 <span className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                   {career.department ? (
                     <span className="inline-flex items-center gap-1">
-                      <Briefcase aria-hidden="true" className="size-4" />
+                      <Icon icon={Briefcase01Icon} aria-hidden="true" className="size-4" />
                       {career.department}
                     </span>
                   ) : null}
                   {career.location ? (
                     <span className="inline-flex items-center gap-1">
-                      <MapPin aria-hidden="true" className="size-4" />
+                      <Icon icon={Location01Icon} aria-hidden="true" className="size-4" />
                       {career.location}
                     </span>
                   ) : null}
                   {career.closesOn ? <span>Ditutup {formatDateWIB(career.closesOn)}</span> : null}
                 </span>
               </span>
-              <ArrowRight aria-hidden="true" className="size-5 shrink-0 text-primary" />
+              <Icon
+                icon={ArrowRight02Icon}
+                aria-hidden="true"
+                className="size-5 shrink-0 text-primary"
+              />
             </Link>
           </Reveal>
         </li>

@@ -1,11 +1,8 @@
-// Membuat animasi Lottie milik KIS sendiri (tanpa aset pihak ketiga) dengan warna brand.
-// Jalankan: node scripts/build-lottie.mjs. Hasil di src/assets/lottie/*.json, dimuat lottie-web.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const OUT = join(process.cwd(), "src", "assets", "lottie");
 
-/** Hex ke warna Lottie [r, g, b, a] (0 sampai 1). */
 function rgb(hex) {
   const value = Number.parseInt(hex.slice(1), 16);
   return [(value >> 16) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255, 1].map(
@@ -13,19 +10,24 @@ function rgb(hex) {
   );
 }
 
-const BRAND = {
-  primary: rgb("#408477"),
-  primaryLight: rgb("#88b4aa"),
-  gold: rgb("#d7ae5f"),
-  goldLight: rgb("#e3bd74"),
+const C = {
+  line: rgb("#414a48"),
+  mint: rgb("#def2ed"),
+  mintDeep: rgb("#c5e0d9"),
+  green: rgb("#0f6d5f"),
+  goldSoft: rgb("#ffeac5"),
+  gold: rgb("#f6d495"),
+  goldDeep: rgb("#d7ae5f"),
+  successSoft: rgb("#ddf4e1"),
+  violetSoft: rgb("#ede9fe"),
   white: rgb("#ffffff"),
-  line: rgb("#c5e0d9"),
-  shadow: rgb("#013c34"),
+  shadow: rgb("#d4dbd9"),
 };
 
 const EASE = { o: { x: [0.33], y: [0] }, i: { x: [0.67], y: [1] } };
 const still = (k) => ({ a: 0, k });
-/** Keyframe beranimasi: [[frame, nilai], ...], easing halus di setiap segmen. */
+const isAnim = (value) => typeof value === "object" && value !== null && "a" in value;
+const wrap = (value) => (isAnim(value) ? value : still(value));
 const anim = (frames) => ({
   a: 1,
   k: frames.map(([t, value], index) => {
@@ -34,12 +36,14 @@ const anim = (frames) => ({
   }),
 });
 
-function transform({ p = [0, 0], a = [0, 0], s = [100, 100], r = 0, o = 100 } = {}) {
-  const wrap = (value) =>
-    typeof value === "object" && value && "a" in value ? value : still(value);
-  return { ty: "tr", p: wrap(p), a: wrap(a), s: wrap(s), r: wrap(r), o: wrap(o) };
-}
-
+const transform = () => ({
+  ty: "tr",
+  p: still([0, 0]),
+  a: still([0, 0]),
+  s: still([100, 100]),
+  r: still(0),
+  o: still(100),
+});
 const rect = (size, position, radius) => ({
   ty: "rc",
   d: 1,
@@ -48,7 +52,7 @@ const rect = (size, position, radius) => ({
   r: still(radius),
 });
 const ellipse = (size, position) => ({ ty: "el", d: 1, s: still(size), p: still(position) });
-const fill = (color, opacity = 100) => ({ ty: "fl", c: still(color), o: still(opacity), r: 1 });
+const fill = (color) => ({ ty: "fl", c: still(color), o: still(100), r: 1 });
 const stroke = (color, width) => ({
   ty: "st",
   c: still(color),
@@ -59,20 +63,15 @@ const stroke = (color, width) => ({
 });
 const path = (points, closed = false) => ({
   ty: "sh",
-  ks: still({
-    i: points.map(() => [0, 0]),
-    o: points.map(() => [0, 0]),
-    v: points,
-    c: closed,
-  }),
+  ks: still({ i: points.map(() => [0, 0]), o: points.map(() => [0, 0]), v: points, c: closed }),
 });
+const trim = (end) => ({ ty: "tm", s: still(0), e: end, o: still(0), m: 1 });
 const group = (...items) => ({ ty: "gr", it: [...items, transform()] });
+const outlined = (shape, color, width = 2.4) => group(shape, stroke(C.line, width), fill(color));
 
 let index = 0;
-function layer(name, { shapes, p, a = [0, 0], s = [100, 100], r = 0, o = 100, parent }, op) {
+function layer(name, { shapes, p = [0, 0], s = [100, 100], o = 100, parent }, op) {
   index += 1;
-  const wrap = (value) =>
-    typeof value === "object" && value && "a" in value ? value : still(value);
   return {
     ddd: 0,
     ind: index,
@@ -82,10 +81,10 @@ function layer(name, { shapes, p, a = [0, 0], s = [100, 100], r = 0, o = 100, pa
     ...(parent ? { parent } : {}),
     ks: {
       o: wrap(o),
-      r: wrap(r),
-      p: wrap([...(Array.isArray(p) ? p : [0, 0]), 0].slice(0, 3)),
-      a: still([...a, 0]),
-      s: wrap(Array.isArray(s) && s.length === 2 ? [...s, 100] : s),
+      r: still(0),
+      p: isAnim(p) ? p : still([...p, 0]),
+      a: still([0, 0, 0]),
+      s: isAnim(s) ? s : still([...s, 100]),
     },
     ao: 0,
     ...(shapes ? { shapes } : {}),
@@ -96,74 +95,118 @@ function layer(name, { shapes, p, a = [0, 0], s = [100, 100], r = 0, o = 100, pa
   };
 }
 
-function composition(name, { w, h, op, layers }) {
-  return { v: "5.7.0", fr: 60, ip: 0, op, w, h, nm: name, ddd: 0, assets: [], layers };
-}
+const composition = (name, { w, h, op, layers }) => ({
+  v: "5.7.0",
+  fr: 60,
+  ip: 0,
+  op,
+  w,
+  h,
+  nm: name,
+  ddd: 0,
+  assets: [],
+  layers,
+});
 
-/** Rumah KIS terbangun: badan memantul naik, garis atap tergambar, pintu muncul, jendela menyala. */
-function loadingHouse() {
-  index = 0;
-  const op = 168;
-  const fade = (start) =>
-    anim([
-      [0, 0],
-      [start, 0],
-      [start + 2, 100],
-      [145, 100],
-      [161, 0],
-      [op, 0],
-    ]);
-  const scale3 = (frames) => anim(frames.map(([t, x, y]) => [t, [x, y ?? x, 100]]));
-  const pop = (start) =>
-    scale3([
-      [0, 0],
-      [start, 0],
-      [start + 12, 116],
-      [start + 20, 100],
-      [op, 100],
-    ]);
-
-  const bob = layer(
-    "ayun",
+const bob = (name, x, y, lift, rest, up, down, op) =>
+  layer(
+    name,
     {
       p: anim([
-        [0, [80, 70]],
-        [92, [80, 70]],
-        [116, [80, 63]],
-        [140, [80, 70]],
-        [op, [80, 70]],
+        [0, [x, y]],
+        [rest, [x, y]],
+        [up, [x, y - lift]],
+        [down, [x, y]],
+        [op, [x, y]],
       ]),
-      a: [80, 70],
     },
     op,
   );
-  const parent = bob.ind;
+
+const ring = (name, position, size, delay, op) =>
+  layer(
+    name,
+    {
+      p: position,
+      s: anim([
+        [0, [70, 70, 100]],
+        [delay, [70, 70, 100]],
+        [delay + 30, [110, 110, 100]],
+        [delay + 60, [70, 70, 100]],
+        [op, [70, 70, 100]],
+      ]),
+      shapes: [group(ellipse([size, size], [0, 0]), stroke(C.line, 1.6))],
+    },
+    op,
+  );
+
+const dot = (name, position, size, color, delay, op) =>
+  layer(
+    name,
+    {
+      p: position,
+      o: anim([
+        [0, 40],
+        [delay, 40],
+        [delay + 30, 100],
+        [delay + 60, 40],
+        [op, 40],
+      ]),
+      shapes: [group(ellipse([size, size], [0, 0]), fill(color))],
+    },
+    op,
+  );
+
+const shadowLayer = (name, position, width, frames, op) =>
+  layer(
+    name,
+    {
+      p: position,
+      s: anim(frames.map(([t, x]) => [t, [x, 100, 100]])),
+      shapes: [group(ellipse([width, 7], [0, 0]), fill(C.shadow))],
+    },
+    op,
+  );
+
+function loadingHouse() {
+  index = 0;
+  const op = 168;
+  const pop = (start) =>
+    anim([
+      [0, [0, 0, 100]],
+      [start, [0, 0, 100]],
+      [start + 12, [114, 114, 100]],
+      [start + 20, [100, 100, 100]],
+      [150, [100, 100, 100]],
+      [162, [0, 0, 100]],
+      [op, [0, 0, 100]],
+    ]);
+  const float = bob("ayun", 0, 0, 6, 92, 116, 140, op);
+  const parent = float.ind;
   const roof = layer(
     "atap",
     {
       parent,
-      p: [80, 50],
-      o: fade(27),
+      p: [80, 52],
       shapes: [
         group(
           path([
-            [-54, 22],
-            [0, -22],
-            [54, 22],
+            [-50, 22],
+            [0, -20],
+            [50, 22],
           ]),
-          {
-            ty: "tm",
-            s: still(0),
-            e: anim([
+          trim(
+            anim([
               [0, 0],
-              [27, 0],
-              [62, 100],
-              [op, 100],
+              [24, 0],
+              [58, 100],
+              [150, 100],
+              [162, 0],
+              [op, 0],
             ]),
-            o: still(0),
-            m: 1,
-          },
-          stroke(BRAND.gold, 10),
+          ),
+          stroke(C.gold, 6),
+          stroke(C.line, 11),
         ),
       ],
     },
@@ -174,10 +217,9 @@ function loadingHouse() {
       name,
       {
         parent,
-        p: [x, 85],
-        o: fade(start),
+        p: [x, 92],
         s: pop(start),
-        shapes: [group(rect([16, 14], [0, 0], 4), fill(BRAND.goldLight))],
+        shapes: [outlined(rect([16, 14], [0, 0], 3), C.goldSoft, 2.2)],
       },
       op,
     );
@@ -185,10 +227,12 @@ function loadingHouse() {
     "pintu",
     {
       parent,
-      p: [80, 124],
-      o: fade(60),
-      s: pop(60),
-      shapes: [group(rect([20, 28], [0, -14], 5), fill(BRAND.white))],
+      p: [80, 122],
+      s: pop(64),
+      shapes: [
+        group(ellipse([3, 3], [5, -13]), fill(C.line)),
+        outlined(rect([20, 28], [0, -14], 5), C.white, 2.2),
+      ],
     },
     op,
   );
@@ -196,31 +240,17 @@ function loadingHouse() {
     "badan",
     {
       parent,
-      p: [80, 124],
-      o: fade(5),
-      s: scale3([
-        [0, 100, 0],
-        [6, 100, 0],
-        [20, 100, 108],
-        [28, 100, 100],
-        [op, 100, 100],
+      p: [80, 122],
+      s: anim([
+        [0, [100, 0, 100]],
+        [6, [100, 0, 100]],
+        [20, [100, 106, 100]],
+        [28, [100, 100, 100]],
+        [150, [100, 100, 100]],
+        [162, [100, 0, 100]],
+        [op, [100, 0, 100]],
       ]),
-      shapes: [group(rect([80, 60], [0, -30], 10), fill(BRAND.primary))],
-    },
-    op,
-  );
-  const shadow = layer(
-    "bayangan",
-    {
-      p: [80, 128],
-      s: scale3([
-        [0, 100, 100],
-        [92, 100, 100],
-        [116, 80, 100],
-        [140, 100, 100],
-        [op, 100, 100],
-      ]),
-      shapes: [group(ellipse([92, 10], [0, 0]), fill(BRAND.shadow, 15))],
+      shapes: [outlined(rect([78, 58], [0, -29], 8), C.mint, 2.6)],
     },
     op,
   );
@@ -230,131 +260,173 @@ function loadingHouse() {
     op,
     layers: [
       roof,
-      windowAt("jendela kiri", 60, 78),
-      windowAt("jendela kanan", 100, 86),
+      windowAt("jendela kiri", 58, 78),
+      windowAt("jendela kanan", 102, 86),
       door,
       body,
-      shadow,
-      bob,
+      ring("cincin", [136, 34], 8, 20, op),
+      dot("titik", [24, 50], 6, C.gold, 70, op),
+      shadowLayer(
+        "bayangan",
+        [80, 128],
+        96,
+        [
+          [0, 100],
+          [92, 100],
+          [116, 82],
+          [140, 100],
+          [op, 100],
+        ],
+        op,
+      ),
+      float,
     ],
   });
 }
 
-/** Kotak kosong: kertas naik turun dari dalam kotak, tutup bergoyang, dua titik berkedip. */
 function emptyBox() {
   index = 0;
-  const op = 192;
+  const op = 210;
   const float = layer(
     "melayang",
     {
       p: anim([
-        [0, [60, 60]],
-        [96, [60, 54]],
-        [op, [60, 60]],
+        [0, [0, 0]],
+        [105, [0, -5]],
+        [op, [0, 0]],
       ]),
-      a: [60, 60],
     },
     op,
   );
   const parent = float.ind;
-  const twinkle = (name, position, size, color, delay) =>
-    layer(
-      name,
-      {
-        p: position,
-        s: anim([
-          [0, [60, 60, 100]],
-          [delay, [60, 60, 100]],
-          [delay + 30, [110, 110, 100]],
-          [delay + 60, [60, 60, 100]],
-          [op, [60, 60, 100]],
-        ]),
-        o: anim([
-          [0, 35],
-          [delay, 35],
-          [delay + 30, 100],
-          [delay + 60, 35],
-          [op, 35],
-        ]),
-        shapes: [group(ellipse([size, size], [0, 0]), fill(color))],
-      },
-      op,
+  const write = (start) =>
+    trim(
+      anim([
+        [0, 0],
+        [start, 0],
+        [start + 22, 100],
+        [170, 100],
+        [188, 0],
+        [op, 0],
+      ]),
     );
-  const lid = (name, x, angle) =>
+  const line = (name, y, width, start) =>
     layer(
       name,
       {
         parent,
-        p: [x, 66],
-        r: anim([
-          [0, angle],
-          [96, angle * 1.6],
-          [op, angle],
-        ]),
-        shapes: [group(rect([30, 9], [x < 60 ? -15 : 15, 0], 4), fill(BRAND.primaryLight))],
+        p: [51, y],
+        shapes: [
+          group(
+            path([
+              [0, 0],
+              [width, 0],
+            ]),
+            write(start),
+            stroke(C.line, 2.2),
+          ),
+        ],
       },
       op,
     );
-  const front = layer(
-    "kotak",
+  const box = (name, y, start) =>
+    layer(
+      name,
+      {
+        parent,
+        p: [45.5, y],
+        s: anim([
+          [0, [0, 0, 100]],
+          [start, [0, 0, 100]],
+          [start + 10, [110, 110, 100]],
+          [start + 16, [100, 100, 100]],
+          [170, [100, 100, 100]],
+          [184, [0, 0, 100]],
+          [op, [0, 0, 100]],
+        ]),
+        shapes: [outlined(rect([5, 5], [0, 0], 1.5), C.gold, 1.4)],
+      },
+      op,
+    );
+  const badge = layer(
+    "centang",
     {
       parent,
-      p: [60, 86],
-      shapes: [
-        group(rect([20, 4], [0, -6], 2), fill(BRAND.primaryLight)),
-        group(rect([60, 40], [0, 0], 9), fill(BRAND.primary)),
-      ],
-    },
-    op,
-  );
-  const paper = layer(
-    "kertas",
-    {
-      parent,
-      p: anim([
-        [0, [60, 58]],
-        [96, [60, 46]],
-        [op, [60, 58]],
-      ]),
-      r: anim([
-        [0, -6],
-        [96, 6],
-        [op, -6],
-      ]),
-      shapes: [
-        group(rect([18, 3], [0, -8], 1.5), fill(BRAND.line)),
-        group(rect([18, 3], [0, -1], 1.5), fill(BRAND.line)),
-        group(rect([12, 3], [-3, 6], 1.5), fill(BRAND.line)),
-        group(rect([30, 34], [0, -1], 5), fill(BRAND.white)),
-      ],
-    },
-    op,
-  );
-  const shadow = layer(
-    "bayangan",
-    {
-      p: [60, 112],
+      p: [84, 90],
       s: anim([
-        [0, [100, 100, 100]],
-        [96, [78, 100, 100]],
-        [op, [100, 100, 100]],
+        [0, [0, 0, 100]],
+        [96, [0, 0, 100]],
+        [110, [116, 116, 100]],
+        [120, [100, 100, 100]],
+        [170, [100, 100, 100]],
+        [184, [0, 0, 100]],
+        [op, [0, 0, 100]],
       ]),
-      shapes: [group(ellipse([64, 8], [0, 0]), fill(BRAND.shadow, 12))],
+      shapes: [
+        group(
+          path([
+            [-4.5, 0],
+            [-1.2, 3.3],
+            [4.8, -3.2],
+          ]),
+          stroke(C.line, 2.4),
+        ),
+        outlined(ellipse([22, 22], [0, 0]), C.successSoft, 2.4),
+      ],
     },
     op,
   );
-  return composition("Kotak kosong", {
+  const clip = layer(
+    "penjepit",
+    {
+      parent,
+      p: [60, 31],
+      shapes: [
+        group(ellipse([4, 4], [0, -1]), fill(C.line)),
+        outlined(rect([24, 10], [0, 0], 4), C.gold, 2.2),
+      ],
+    },
+    op,
+  );
+  const board = layer(
+    "papan",
+    {
+      parent,
+      p: [60, 64],
+      shapes: [
+        outlined(rect([40, 52], [0, 3], 5), C.white, 2),
+        outlined(rect([54, 68], [0, 0], 10), C.mint, 2.6),
+      ],
+    },
+    op,
+  );
+  return composition("Papan kosong", {
     w: 120,
     h: 120,
     op,
     layers: [
-      twinkle("titik emas", [94, 30], 8, BRAND.gold, 0),
-      twinkle("titik hijau", [24, 46], 6, BRAND.primaryLight, 80),
-      front,
-      lid("tutup kiri", 31, -24),
-      lid("tutup kanan", 89, 24),
-      paper,
-      shadow,
+      ring("cincin", [99, 33], 7, 0, op),
+      dot("titik", [20, 54], 5, C.gold, 90, op),
+      badge,
+      clip,
+      box("kotak 1", 52, 20),
+      line("baris 1", 52, 24, 20),
+      box("kotak 2", 63, 44),
+      line("baris 2", 63, 24, 44),
+      box("kotak 3", 74, 68),
+      line("baris 3", 74, 15, 68),
+      board,
+      shadowLayer(
+        "bayangan",
+        [60, 108],
+        54,
+        [
+          [0, 100],
+          [105, 82],
+          [op, 100],
+        ],
+        op,
+      ),
       float,
     ],
   });

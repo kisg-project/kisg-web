@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/shared/json-ld";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -31,6 +30,8 @@ import {
   organizationJsonLd,
 } from "@/lib/seo/structured-data";
 import { shareMetadata } from "@/lib/seo/page-metadata";
+import { ArrowRight02Icon, Call02Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const STATUS_LABEL: Record<ProjectDetail["status"], string> = {
   segera: "Segera hadir",
@@ -80,7 +81,6 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
   const fromPrice = lowestPrice(project.unitTypes);
   const area = shortArea(project.address);
   const soldOut = project.status === "sold_out";
-  // Proyek sold out mengarahkan pengunjung ke proyek yang sedang dipasarkan.
   const available = soldOut
     ? (await getPublishedProjects()).find((item) => item.status !== "sold_out")
     : undefined;
@@ -101,7 +101,6 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
               ]
             : []),
           ...(project.faqs.length > 0 ? [faqJsonLd(project.faqs)] : []),
-          // Penjual di data listing menunjuk ke node ini.
           organizationJsonLd(env.NEXT_PUBLIC_SITE_URL),
         ])}
       />
@@ -177,7 +176,11 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
       <Section id="lokasi" tone="surface" title="Lokasi" className="scroll-mt-(--header-height)">
         <Reveal className="flex flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <p className="flex max-w-2xl gap-3 text-base">
-            <MapPin aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+            <Icon
+              icon={Location01Icon}
+              aria-hidden="true"
+              className="mt-0.5 size-5 shrink-0 text-primary"
+            />
             <span>
               <span className="block font-semibold">{project.name}</span>
               {formatAddress(project.address)}
@@ -259,7 +262,7 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
                 <Button asChild variant="highlight" size="lg">
                   <Link href={`/proyek/${available.slug}`}>
                     Lihat {available.name}
-                    <ArrowRight aria-hidden="true" />
+                    <Icon icon={ArrowRight02Icon} aria-hidden="true" />
                   </Link>
                 </Button>
               ) : null}
@@ -280,7 +283,7 @@ export default async function ProjectPage({ params }: PageProps<"/proyek/[slug]"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Phone aria-hidden="true" />
+                  <Icon icon={Call02Icon} aria-hidden="true" />
                   Hubungi marketing
                 </a>
               </Button>

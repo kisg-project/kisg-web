@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Crosshair, LoaderCircle, MapPin, Plus } from "lucide-react";
 import { toast } from "@/components/shared/toast";
 import { FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { TextField } from "@/components/shared/text-field";
@@ -22,16 +21,20 @@ import {
 import { DEFAULT_RADIUS_M } from "@/config/attendance";
 import { saveWorkLocationAction } from "../actions/attendance";
 import { workLocationSchema, type WorkLocationInput } from "../schemas/attendance";
+import {
+  GpsSignal01Icon,
+  Loading03Icon,
+  Location01Icon,
+  PencilEdit01Icon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export interface ProjectChoice {
   id: string;
   name: string;
 }
 
-/**
- * Tambah atau ubah titik absensi. "Pakai lokasi saya sekarang" mengisi koordinat dari GPS HP owner
- * yang sedang berada di lokasi (keputusan owner, CLAUDE.md bagian 8).
- */
 export function WorkLocationForm({
   projects,
   initial,
@@ -41,7 +44,6 @@ export function WorkLocationForm({
   projects: readonly ProjectChoice[];
   initial?: WorkLocationInput & { id: string };
   onDone?: () => void;
-  /** Diisi saat form tampil di dialog: footer Batal dan Simpan. */
   onCancel?: () => void;
 }) {
   const router = useRouter();
@@ -199,9 +201,9 @@ export function WorkLocationForm({
       <div>
         <Button type="button" variant="outline" onClick={fillMyLocation} disabled={locating}>
           {locating ? (
-            <LoaderCircle aria-hidden="true" className="animate-spin" />
+            <Icon icon={Loading03Icon} aria-hidden="true" className="animate-spin" />
           ) : (
-            <Crosshair aria-hidden="true" />
+            <Icon icon={GpsSignal01Icon} aria-hidden="true" />
           )}
           Pakai lokasi saya sekarang
         </Button>
@@ -244,7 +246,6 @@ export function WorkLocationForm({
   );
 }
 
-/** Tombol Tambah titik absensi atau Ubah, membuka form di dialog (lembar bawah di HP). */
 export function WorkLocationDialog({
   projects,
   initial,
@@ -262,20 +263,20 @@ export function WorkLocationDialog({
       onOpenChange={setOpen}
       title={initial ? `Ubah titik ${initial.name}` : "Tambah titik absensi"}
       description="Karyawan hanya bisa absen dalam radius titik yang aktif."
-      icon={MapPin}
+      icon={Location01Icon}
       trigger={
         initial ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            className="text-primary-700"
+            title="Ubah"
             aria-label={`Ubah titik ${initial.name}`}
+            className="hit-44 flex size-9 items-center justify-center rounded-lg border border-(--line-strong) bg-card transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
-            Ubah
-          </Button>
+            <Icon icon={PencilEdit01Icon} className="size-4" />
+          </button>
         ) : (
-          <Button type="button" size="lg">
-            <Plus aria-hidden="true" />
+          <Button type="button">
+            <Icon icon={PlusSignIcon} aria-hidden="true" />
             Tambah titik absensi
           </Button>
         )

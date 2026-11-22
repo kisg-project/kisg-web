@@ -1,16 +1,13 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { JsonLd } from "@/components/shared/json-ld";
 import { RoofLine } from "@/components/shared/roof-line";
 import { env } from "@/env";
 import { breadcrumbJsonLd, jsonLdGraph, type Crumb } from "@/lib/seo/structured-data";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/**
- * Judul halaman dalam (bukan beranda): jejak halaman, h1, dan deskripsi singkat di latar mint terang,
- * dengan garis atap logo KIS di sisi kanan. Jejak halaman juga dikirim sebagai JSON-LD BreadcrumbList.
- */
 export function PageHero({
   title,
   description,
@@ -49,7 +46,7 @@ export function PageHero({
                       >
                         {crumb.name}
                       </Link>
-                      <ChevronRight aria-hidden="true" className="size-4" />
+                      <Icon icon={ArrowRight01Icon} aria-hidden="true" className="size-4" />
                     </>
                   )}
                 </li>

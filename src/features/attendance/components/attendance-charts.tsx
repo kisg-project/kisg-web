@@ -107,7 +107,6 @@ function ReportTooltip({
   );
 }
 
-/** Kartu grafik: judul, ringkasan angka, grafik, dan tabel data yang bisa dibuka (tanpa hover). */
 function ChartCard({
   title,
   summary,
@@ -130,20 +129,23 @@ function ChartCard({
   return (
     <section
       aria-labelledby={`${id}-judul`}
-      className={cn("grid min-w-0 content-start gap-4 app-card p-5 sm:p-6", className)}
+      className={cn(
+        "grid min-w-0 content-start gap-3 rounded-xl border border-(--line-strong) bg-card p-4",
+        className,
+      )}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 id={`${id}-judul`} className="text-base font-bold">
+          <h3 id={`${id}-judul`} className="text-sm font-semibold">
             {title}
           </h3>
-          <p className="text-sm text-muted-foreground">{summary}</p>
+          <p className="text-xs text-muted-foreground">{summary}</p>
         </div>
         <button
           type="button"
           aria-expanded={showTable}
           aria-controls={`${id}-tabel`}
-          className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-semibold text-primary hover:bg-primary-50"
+          className="hit-44 inline-flex h-9 items-center rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800"
           onClick={() => {
             setShowTable((value) => !value);
           }}
@@ -166,14 +168,8 @@ function ChartCard({
   );
 }
 
-/**
- * Grafik dashboard owner: komposisi kehadiran harian (batang bertumpuk) dan persentase laporan harian
- * lengkap (area satu seri). Warna dari token --chart-* yang lolos validator palet (terang dan gelap),
- * celah 2 px berwarna permukaan antar segmen, tooltip per hari, dan tabel data sebagai alternatif.
- */
 export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
   const today = days.at(-1);
-  // Hari libur tidak punya "belum absen", jadi yang tetap masuk di hari libur ikut dihitung hadir.
   const present = days.reduce((sum, day) => sum + day.onTime + day.late, 0);
   const expected = days.reduce((sum, day) => sum + day.onTime + day.late + day.absent, 0);
   const late = days.reduce((sum, day) => sum + day.late, 0);
@@ -199,7 +195,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         }
         description={`Grafik batang kehadiran harian. Hari ini ${String(today?.onTime ?? 0)} tepat waktu, ${String(today?.late ?? 0)} terlambat, ${String(today?.absent ?? 0)} belum absen.`}
         legend={
-          <ul aria-label="Keterangan warna" className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <ul aria-label="Keterangan warna" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
             {SERIES.map((item) => (
               <li key={item.key} className="flex items-center gap-2 text-muted-foreground">
                 <span
@@ -245,7 +241,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={days}
-            margin={{ top: 8, right: 4, bottom: 0, left: -20 }}
+            margin={{ top: 8, right: 4, bottom: 0, left: -12 }}
             barCategoryGap="22%"
           >
             <CartesianGrid vertical={false} stroke="var(--chart-grid)" />
@@ -319,7 +315,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
         }
       >
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={days} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+          <AreaChart data={days} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="laporan-isi" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="var(--chart-trend)" stopOpacity={0.18} />
@@ -339,7 +335,7 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
             <YAxis
               domain={[0, 100]}
               ticks={[0, 50, 100]}
-              tickFormatter={(value: number) => `${String(value)}%`}
+              unit="%"
               tick={AXIS}
               tickLine={false}
               axisLine={false}

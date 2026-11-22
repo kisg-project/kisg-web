@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -10,6 +9,8 @@ import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { loginAction } from "../actions/auth";
 import { loginSchema, type AuthApp, type LoginInput } from "../schemas/auth";
+import { Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const PAGE_MESSAGES: Record<string, string> = {
   tautan: "Tautan sudah tidak berlaku. Minta tautan baru lewat lupa password.",
@@ -23,7 +24,6 @@ export function LoginForm({
 }: {
   next?: string;
   message?: string;
-  /** Portal karyawan atau panel CMS (akun terpisah). */
   app?: AuthApp;
 }) {
   const form = useForm<LoginInput>({
@@ -31,8 +31,6 @@ export function LoginForm({
     defaultValues: { app, email: "", password: "", next },
   });
   const { execute, result, isPending, hasNavigated } = useAction(loginAction);
-  // Setelah password benar, server mengalihkan ke beranda. Tombol tetap menampilkan proses sampai
-  // halaman tujuan tampil, supaya tidak terasa diam.
   const busy = isPending || hasNavigated;
   const serverError = result.serverError;
   const pageMessage = message ? PAGE_MESSAGES[message] : undefined;
@@ -76,10 +74,11 @@ export function LoginForm({
         size="lg"
         disabled={busy}
         aria-busy={busy}
-        // Saat memproses tombol tetap berwarna penuh, bukan pudar seperti tombol nonaktif.
         className="aria-busy:opacity-100"
       >
-        {busy ? <LoaderCircle aria-hidden="true" className="size-5 animate-spin" /> : null}
+        {busy ? (
+          <Icon icon={Loading03Icon} aria-hidden="true" className="size-5 animate-spin" />
+        ) : null}
         {hasNavigated ? "Membuka beranda" : isPending ? "Sedang masuk" : "Masuk"}
       </Button>
       <Link

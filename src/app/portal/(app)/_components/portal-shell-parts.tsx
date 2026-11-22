@@ -1,30 +1,29 @@
 import Link from "next/link";
 import { Avatar } from "@/components/shared/avatar";
-import { portalAreasFor } from "@/config/portal";
+import { bottomItems, railItems } from "@/config/portal-nav";
 import { getPortalUser, LogoutButton } from "@/features/auth";
 import { avatarUrl } from "@/features/users";
-import { PortalBottomNav, PortalDrawer, PortalSidebarNav, type PortalNavItem } from "./portal-nav";
-
-async function navItems(): Promise<PortalNavItem[]> {
-  const user = await getPortalUser();
-  if (!user) return [];
-  return portalAreasFor(user.roles).map(({ prefix, label, shortLabel }) => ({
-    href: prefix,
-    label,
-    shortLabel,
-  }));
-}
+import { greetingFor, greetingName } from "@/lib/format/greeting";
+import { PortalBottomNav, PortalSidebarNav } from "./portal-nav";
 
 export async function SidebarNavForUser() {
-  return <PortalSidebarNav items={await navItems()} />;
+  const user = await getPortalUser();
+  return <PortalSidebarNav items={user ? railItems(user.roles, user.role) : []} />;
 }
 
 export async function BottomNavForUser() {
-  return <PortalBottomNav items={await navItems()} />;
+  const user = await getPortalUser();
+  return <PortalBottomNav items={user ? bottomItems(user.roles, user.role) : []} />;
 }
 
-export async function DrawerForUser() {
-  return <PortalDrawer items={await navItems()} />;
+export async function HeaderGreeting() {
+  const user = await getPortalUser();
+  if (!user) return null;
+  return (
+    <p className="truncate text-[0.9375rem] font-medium tracking-tight lg:text-lg">
+      {greetingFor(new Date())}, {greetingName(user.fullName) || "rekan KIS"}
+    </p>
+  );
 }
 
 export async function UserMenu() {
@@ -32,13 +31,13 @@ export async function UserMenu() {
   if (!user) return null;
   const photo = await avatarUrl(user.avatarPath);
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       <Link
         href="/portal/akun"
-        className="inline-flex size-10 items-center justify-center rounded-full border border-(--line-strong) motion-safe:active:scale-95"
+        className="hit-44 flex size-9 items-center justify-center overflow-hidden rounded-lg border border-(--line-strong) motion-safe:active:scale-95"
       >
         <span className="sr-only">Akun saya, </span>
-        <Avatar src={photo} name={user.fullName} className="size-9" />
+        <Avatar src={photo} name={user.fullName} className="size-full rounded-none" />
       </Link>
       <LogoutButton iconOnly />
     </div>

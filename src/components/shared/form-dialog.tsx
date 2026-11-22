@@ -2,37 +2,28 @@
 
 import { useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import { LoaderCircle, PencilLine, TriangleAlert, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Alert02Icon, Loading03Icon, PencilEdit01Icon } from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 
 export type DialogTone = "primary" | "danger";
-
-// Header berwarna sesuai aksi: hijau brand untuk tambah dan simpan, merah untuk hapus dan nonaktifkan.
 const TONE: Record<DialogTone, { band: string; chip: string; ring: string }> = {
   primary: {
     band: "bg-linear-to-b from-primary-100/80 via-primary-50/60 to-popover dark:from-primary-900/70 dark:via-primary-950/40",
-    chip: "bg-primary-700 text-white shadow-[0_10px_24px_-10px_rgb(15_109_95/0.8)]",
+    chip: "bg-primary-100 text-primary-800 ring-1 ring-primary-200 dark:bg-primary-900 dark:text-primary-100 dark:ring-primary-800",
     ring: "border-primary-200/70 dark:border-primary-800/50",
   },
   danger: {
     band: "bg-linear-to-b from-danger-100/80 via-danger-50/60 to-popover dark:from-danger-900/60 dark:via-danger-950/40",
-    chip: "bg-danger-600 text-white shadow-[0_10px_24px_-10px_rgb(206_54_49/0.8)]",
+    chip: "bg-danger-100 text-danger-700 ring-1 ring-danger-200 dark:bg-danger-900 dark:text-danger-100 dark:ring-danger-800",
     ring: "border-danger-200/70 dark:border-danger-800/50",
   },
 };
 
-/** Jarak tarik (px) atau kecepatan (px/ms) yang menutup lembar di HP. */
 const CLOSE_DISTANCE = 110;
 const CLOSE_VELOCITY = 0.6;
 
-/**
- * Dialog form bergaya aplikasi native (keputusan owner, 22 November 2026):
- * - HP: lembar dari bawah dengan pegangan, bisa ditutup dengan swipe ke bawah.
- * - Desktop: dialog di tengah layar.
- * - Tanpa tombol X, klik di luar tidak menutup. Tombol Batal (merah) dan Simpan (hijau) di footer
- *   lewat FormDialogFooter. Selama `busy`, dialog tidak bisa ditutup.
- */
 export function FormDialog({
   open,
   onOpenChange,
@@ -40,7 +31,7 @@ export function FormDialog({
   description,
   trigger,
   busy = false,
-  icon: Icon = PencilLine,
+  icon = PencilEdit01Icon,
   tone = "primary",
   children,
 }: {
@@ -50,8 +41,7 @@ export function FormDialog({
   description?: string;
   trigger?: ReactNode;
   busy?: boolean;
-  /** Ikon di kartu berwarna pada header. */
-  icon?: LucideIcon;
+  icon?: AppIcon;
   tone?: DialogTone;
   children: ReactNode;
 }) {
@@ -112,10 +102,8 @@ export function FormDialog({
             event.preventDefault();
           }}
           className={cn(
-            "app-feel fixed z-50 flex flex-col bg-popover text-popover-foreground shadow-2xl outline-none",
-            // HP: lembar dari bawah.
+            "app-feel portal-layer fixed z-50 flex flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl outline-none",
             "inset-x-0 bottom-0 max-h-[92dvh] rounded-t-[1.75rem] pb-[env(safe-area-inset-bottom)] data-open:animate-in data-open:slide-in-from-bottom data-closed:animate-out data-closed:slide-out-to-bottom",
-            // Desktop: dialog di tengah.
             "sm:inset-x-auto sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:max-h-[85dvh] sm:w-[calc(100%-2rem)] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[1.75rem] sm:pb-0 sm:data-open:fade-in-0 sm:data-open:slide-in-from-bottom-0 sm:data-open:zoom-in-95 sm:data-closed:fade-out-0 sm:data-closed:slide-out-to-bottom-0 sm:data-closed:zoom-out-95",
           )}
         >
@@ -154,7 +142,7 @@ export function FormDialog({
                   style.chip,
                 )}
               >
-                <Icon aria-hidden="true" className="size-6" />
+                <Icon icon={icon} className="size-6" />
               </span>
               <div className="min-w-0 pt-0.5">
                 <DialogPrimitive.Title className="text-lg leading-snug font-bold">
@@ -181,10 +169,6 @@ export function FormDialog({
   );
 }
 
-/**
- * Footer dialog: Batal (merah) dan Simpan (hijau), menempel di bawah saat isi digulir. Diletakkan di
- * dalam <form> supaya Simpan menjadi tombol submit.
- */
 export function FormDialogFooter({
   onCancel,
   busy = false,
@@ -203,7 +187,7 @@ export function FormDialogFooter({
   disabled?: boolean;
 }) {
   return (
-    <div className="sticky bottom-0 -mx-5 mt-2 grid grid-cols-2 gap-3 border-t border-border bg-popover px-5 py-4 sm:-mx-6 sm:px-6">
+    <div className="sticky bottom-0 -mx-5 mt-2 grid grid-cols-2 gap-3 border-t border-border bg-popover px-5 pt-4 pb-4 sm:-mx-6 sm:px-6 sm:pb-5">
       <Button type="button" variant="cancel" size="lg" disabled={busy} onClick={onCancel}>
         Batal
       </Button>
@@ -215,17 +199,17 @@ export function FormDialogFooter({
         aria-busy={busy}
         className="aria-busy:opacity-100"
       >
-        {busy ? <LoaderCircle aria-hidden="true" className="size-5 animate-spin" /> : saveIcon}
+        {busy ? (
+          <Icon icon={Loading03Icon} aria-hidden="true" className="size-5 animate-spin" />
+        ) : (
+          saveIcon
+        )}
         {busy ? busyLabel : saveLabel}
       </Button>
     </div>
   );
 }
 
-/**
- * Dialog konfirmasi untuk aksi penting (hapus, nonaktifkan, batalkan): judul, akibatnya dalam satu
- * kalimat, lalu Batal (merah) dan tombol lanjut (hijau). Gaya dan perilaku sama dengan FormDialog.
- */
 export function ConfirmDialog({
   open,
   onOpenChange,
@@ -237,10 +221,10 @@ export function ConfirmDialog({
   error,
   onConfirm,
   trigger,
-  icon = TriangleAlert,
+  icon = Alert02Icon,
   tone = "danger",
 }: {
-  icon?: LucideIcon;
+  icon?: AppIcon;
   tone?: DialogTone;
   open: boolean;
   onOpenChange: (open: boolean) => void;

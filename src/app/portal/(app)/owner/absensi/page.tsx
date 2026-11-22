@@ -4,7 +4,6 @@ import {
   Alert02Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  CalendarCheckIn01Icon,
   ClipboardCheckIcon,
   File01Icon,
   Location01Icon,
@@ -14,6 +13,7 @@ import {
   UserGroupIcon,
   UserRemove01Icon,
 } from "@hugeicons/core-free-icons";
+import { Avatar } from "@/components/shared/avatar";
 import { Icon, type AppIcon } from "@/components/shared/icon";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
@@ -46,26 +46,48 @@ function pickDate(value: string | string[] | undefined, today: string): string {
   return text > today ? today : text;
 }
 
-function Chip({ tone, children }: { tone: "warning" | "primary" | "muted"; children: string }) {
+const CHIP = {
+  warning: {
+    tone: "bg-warning-50 text-warning-800 dark:bg-warning-950 dark:text-warning-200",
+    dot: "bg-warning-500",
+  },
+  primary: {
+    tone: "bg-info-50 text-info-800 dark:bg-info-950 dark:text-info-200",
+    dot: "bg-info-500",
+  },
+  success: {
+    tone: "bg-success-50 text-success-800 dark:bg-success-950 dark:text-success-200",
+    dot: "bg-success-600",
+  },
+  muted: {
+    tone: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200",
+    dot: "bg-neutral-500",
+  },
+} as const;
+
+function Chip({ tone, children }: { tone: keyof typeof CHIP; children: string }) {
   return (
     <span
       className={cn(
-        "rounded-full px-2.5 py-0.5 text-xs font-semibold",
-        tone === "warning" && "bg-warning-100 text-warning-800",
-        tone === "primary" && "bg-primary-50 text-primary-800",
-        tone === "muted" && "bg-surface text-subtle-foreground",
+        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold",
+        CHIP[tone].tone,
       )}
     >
+      <span aria-hidden="true" className={cn("size-1.5 rounded-full", CHIP[tone].dot)} />
       {children}
     </span>
   );
 }
 
-function Selfie({ src, label }: { src: string | null; label: string }) {
-  if (!src) return null;
+function Selfie({ src, name }: { src: string | null; name: string }) {
+  if (!src) return <Avatar src={null} name={name} className="size-9" />;
   return (
     // eslint-disable-next-line @next/next/no-img-element -- signed URL privat berumur pendek, tidak lewat optimasi gambar
-    <img src={src} alt={label} className="size-16 shrink-0 rounded-2xl object-cover" />
+    <img
+      src={src}
+      alt={`Foto clock in ${name}`}
+      className="size-9 shrink-0 rounded-full object-cover ring-1 ring-(--line-strong)"
+    />
   );
 }
 
@@ -80,22 +102,22 @@ function ReportBlock({
 }) {
   if (!report) {
     return (
-      <p className="flex items-center gap-2 text-sm text-subtle-foreground">
+      <p className="flex min-h-9 items-center gap-2 rounded-lg border border-dashed border-(--line-soft) px-2.5 text-xs text-muted-foreground">
         <Icon icon={icon} className="size-4" />
         {title}: belum diisi
       </p>
     );
   }
   return (
-    <details className="group rounded-2xl bg-surface p-3">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-sm font-semibold">
+    <details className="group rounded-lg border border-(--line-soft) bg-(--band) px-2.5 py-1">
+      <summary className="flex min-h-9 cursor-pointer list-none items-center gap-2 text-xs font-semibold">
         <Icon icon={icon} className="size-4 text-primary" />
         {title}
         <span className="font-normal text-subtle-foreground tabular">
           {formatTimeWIB(report.updatedAt)}
         </span>
       </summary>
-      <p className="mt-2 text-sm whitespace-pre-line">{report.content}</p>
+      <p className="mt-1 mb-1.5 text-xs whitespace-pre-line">{report.content}</p>
       {report.attachments.length > 0 ? (
         <ul aria-label={`Lampiran ${title.toLowerCase()}`} className="mt-3 flex flex-wrap gap-2">
           {report.attachments.map((item) =>
@@ -119,36 +141,52 @@ function ReportBlock({
   );
 }
 
-function EmployeeCard({ employee }: { employee: OverviewEmployee }) {
+const ROW = "lg:grid-cols-[minmax(0,2fr)_6rem_6rem_minmax(0,1.6fr)]";
+
+function EmployeeRow({ employee }: { employee: OverviewEmployee }) {
   const day = employee.day;
   return (
-    <li className="grid gap-3 app-card p-4">
-      <div className="flex items-start gap-3">
-        <Selfie src={day?.selfieIn ?? null} label={`Foto clock in ${employee.name}`} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">{employee.name}</p>
-          {day ? (
-            <p className="text-sm text-subtle-foreground tabular">
-              {formatTimeWIB(day.clockInAt)} sampai{" "}
-              {day.clockOutAt ? formatTimeWIB(day.clockOutAt) : "belum clock out"}
-              {day.clockInLocation ? `, ${day.clockInLocation}` : ""}
-            </p>
-          ) : null}
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {!day ? <Chip tone="muted">Belum absen</Chip> : null}
-            {day && day.lateMinutes > 0 ? (
-              <Chip tone="warning">{`Terlambat ${String(day.lateMinutes)} menit`}</Chip>
-            ) : null}
-            {day && day.earlyMinutes > 0 ? (
-              <Chip tone="warning">{`Pulang awal ${String(day.earlyMinutes)} menit`}</Chip>
-            ) : null}
-            {day?.outside ? <Chip tone="primary">Di luar lokasi</Chip> : null}
-            {day?.movedLocation ? <Chip tone="primary">Pindah lokasi</Chip> : null}
-          </div>
+    <li className={cn("grid gap-x-4 gap-y-2 px-4 py-3", ROW)}>
+      <div className="flex min-w-0 items-center gap-3">
+        <Selfie src={day?.selfieIn ?? null} name={employee.name} />
+        <div className="min-w-0">
+          <p className="truncate text-[0.8125rem] font-semibold">{employee.name}</p>
+          <p className="truncate text-xs text-muted-foreground tabular-nums">
+            {day ? (
+              <>
+                <span className="lg:hidden">
+                  {formatTimeWIB(day.clockInAt)} sampai{" "}
+                  {day.clockOutAt ? formatTimeWIB(day.clockOutAt) : "belum clock out"}
+                  {day.clockInLocation ? ", " : ""}
+                </span>
+                {day.clockInLocation ?? ""}
+              </>
+            ) : (
+              "Belum ada catatan"
+            )}
+          </p>
         </div>
       </div>
+      <span className="hidden self-center text-xs tabular-nums lg:block">
+        {day ? formatTimeWIB(day.clockInAt) : "-"}
+      </span>
+      <span className="hidden self-center text-xs tabular-nums lg:block">
+        {day?.clockOutAt ? formatTimeWIB(day.clockOutAt) : "-"}
+      </span>
+      <div className="flex flex-wrap content-center gap-1.5">
+        {!day ? <Chip tone="muted">Belum absen</Chip> : null}
+        {day && day.lateMinutes === 0 ? <Chip tone="success">Tepat waktu</Chip> : null}
+        {day && day.lateMinutes > 0 ? (
+          <Chip tone="warning">{`Terlambat ${String(day.lateMinutes)} menit`}</Chip>
+        ) : null}
+        {day && day.earlyMinutes > 0 ? (
+          <Chip tone="warning">{`Pulang awal ${String(day.earlyMinutes)} menit`}</Chip>
+        ) : null}
+        {day?.outside ? <Chip tone="primary">Di luar lokasi</Chip> : null}
+        {day?.movedLocation ? <Chip tone="primary">Pindah lokasi</Chip> : null}
+      </div>
       {day ? (
-        <div className="grid gap-2">
+        <div className="grid gap-2 sm:grid-cols-2 lg:col-span-4">
           <ReportBlock title="Rencana kegiatan" icon={Task01Icon} report={employee.rencana} />
           <ReportBlock title="Hasil kerja" icon={ClipboardCheckIcon} report={employee.hasil} />
         </div>
@@ -177,9 +215,16 @@ function ExceptionSummary({ item }: { item: OverviewException }) {
 
 function PendingCard({ item }: { item: OverviewException }) {
   return (
-    <li className="grid gap-4 app-card p-4">
+    <li className="grid gap-3 rounded-xl border border-(--line-strong) bg-card p-3.5">
       <div className="flex items-start gap-3">
-        <Selfie src={item.photoUrl} label={`Foto pengajuan ${item.userName}`} />
+        {item.photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- signed URL privat berumur pendek, tidak lewat optimasi gambar
+          <img
+            src={item.photoUrl}
+            alt={`Foto pengajuan ${item.userName}`}
+            className="size-14 shrink-0 rounded-xl object-cover"
+          />
+        ) : null}
         <div className="grid min-w-0 flex-1 gap-0.5 text-sm">
           <ExceptionSummary item={item} />
         </div>
@@ -204,7 +249,7 @@ export default async function OwnerAttendancePage({
     timeZone: "UTC",
   }).format(new Date(`${date}T00:00:00Z`));
   const arrow =
-    "flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-neutral-100";
+    "hit-44 flex size-9 items-center justify-center rounded-lg border border-(--line-strong) bg-card text-foreground transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800";
 
   return (
     <div className="grid gap-5">
@@ -213,10 +258,9 @@ export default async function OwnerAttendancePage({
         backLabel="Kembali ke dashboard"
         title="Kehadiran"
         description={formatDateWIB(date)}
-        icon={CalendarCheckIn01Icon}
         actions={
           <nav aria-label="Pilih tanggal" className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-(--line-strong) bg-card p-0.5">
+            <div className="flex items-center gap-1.5">
               <Link
                 href={`${BASE}?tanggal=${shiftDate(date, -1)}`}
                 aria-label="Hari sebelumnya"
@@ -224,7 +268,7 @@ export default async function OwnerAttendancePage({
               >
                 <Icon icon={ArrowLeft01Icon} className="size-4" />
               </Link>
-              <span className="min-w-[6.5rem] px-1 text-center text-xs font-medium tabular-nums">
+              <span className="flex h-9 min-w-[6.5rem] items-center justify-center rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium tabular-nums">
                 {shortDate}
               </span>
               {date < today ? (
@@ -244,7 +288,7 @@ export default async function OwnerAttendancePage({
             {date !== today ? (
               <Link
                 href={BASE}
-                className="inline-flex min-h-10 items-center rounded-full bg-primary-700 px-3.5 text-xs font-medium text-white hover:bg-primary-800"
+                className="hit-44 inline-flex h-9 items-center rounded-lg border border-primary-800 bg-primary-700 px-3 text-xs font-medium text-white hover:bg-primary-800"
               >
                 Hari ini
               </Link>
@@ -347,7 +391,7 @@ export default async function OwnerAttendancePage({
       ) : null}
 
       <section aria-labelledby="karyawan" className="grid gap-3">
-        <h2 id="karyawan" className="text-base font-semibold">
+        <h2 id="karyawan" className="text-sm font-semibold">
           Karyawan
         </h2>
         {overview.employees.length === 0 ? (
@@ -364,11 +408,25 @@ export default async function OwnerAttendancePage({
             }
           />
         ) : (
-          <ul aria-label="Kehadiran karyawan" className="grid gap-3 lg:grid-cols-2">
-            {overview.employees.map((employee) => (
-              <EmployeeCard key={employee.id} employee={employee} />
-            ))}
-          </ul>
+          <div className="overflow-hidden rounded-xl border border-(--line-strong) bg-card">
+            <div
+              aria-hidden="true"
+              className={cn(
+                "hidden items-center gap-4 border-b border-(--line-strong) bg-(--band) px-4 py-2.5 text-xs font-medium text-neutral-700 lg:grid dark:text-neutral-300",
+                ROW,
+              )}
+            >
+              <span>Karyawan</span>
+              <span>Masuk</span>
+              <span>Pulang</span>
+              <span>Status</span>
+            </div>
+            <ul aria-label="Kehadiran karyawan" className="divide-y divide-(--line-soft)">
+              {overview.employees.map((employee) => (
+                <EmployeeRow key={employee.id} employee={employee} />
+              ))}
+            </ul>
+          </div>
         )}
       </section>
     </div>

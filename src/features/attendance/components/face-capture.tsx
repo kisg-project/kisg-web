@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, LoaderCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   BLINK_CLOSED,
@@ -11,6 +10,8 @@ import {
 } from "@/config/attendance";
 import { compressImage } from "@/lib/image";
 import { cn } from "@/lib/utils";
+import { Camera01Icon, Loading03Icon, RotateLeft01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 type Step =
   | "memuat"
@@ -35,10 +36,6 @@ const GUIDE: Record<Step, string> = {
   gagal: "Kamera tidak bisa dipakai. Coba muat ulang halaman.",
 };
 
-/**
- * Mode uji E2E (hanya build CI, NEXT_PUBLIC_E2E_FACE_STUB=1): deteksi wajah dilewati karena kamera
- * palsu Chromium tidak menampilkan wajah. Production tidak pernah memakai jalur ini.
- */
 const FACE_STUB = process.env.NEXT_PUBLIC_E2E_FACE_STUB === "1";
 
 interface Landmarker {
@@ -53,7 +50,6 @@ interface Landmarker {
 }
 
 async function loadLandmarker(): Promise<Landmarker> {
-  // Dimuat hanya di halaman absensi (dynamic import), file dari domain sendiri (CLAUDE.md bagian 3).
   const vision = await import("@mediapipe/tasks-vision");
   const files = await vision.FilesetResolver.forVisionTasks("/vendor/mediapipe/wasm");
   return vision.FaceLandmarker.createFromOptions(files, {
@@ -70,18 +66,12 @@ function blinkScore(categories: { categoryName: string; score: number }[]): numb
   return Math.min(left, right);
 }
 
-/**
- * Selfie absensi dari kamera depan saja (tidak bisa memilih dari galeri). Harus tepat satu wajah yang
- * cukup besar dan karyawan berkedip dulu, supaya foto dari layar atau cetakan ditolak. Deteksi
- * berjalan di HP. Tidak ada data wajah yang disimpan, hanya foto yang dikompres.
- */
 export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: string) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [step, setStep] = useState<Step>("memuat");
   const [preview, setPreview] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
-  // Kedip belum terdeteksi lama: biasanya cahaya kurang atau wajah menunduk.
   const [slow, setSlow] = useState(false);
 
   const stop = useCallback(() => {
@@ -101,7 +91,6 @@ export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: 
       setStep("gagal");
       return;
     }
-    // Cermin seperti tampilan kamera depan, supaya foto sama dengan yang dilihat karyawan.
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
     context.drawImage(video, 0, 0);
@@ -124,7 +113,6 @@ export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: 
   }, [onCaptured, stop]);
 
   useEffect(() => {
-    // Dibaca lewat fungsi: TypeScript tidak melacak perubahan dari cleanup setelah await.
     const run = { cancelled: false };
     const isCancelled = () => run.cancelled;
     let landmarker: Landmarker | null = null;
@@ -244,7 +232,11 @@ export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: 
         )}
         {step === "memuat" || step === "mengambil" ? (
           <span className="absolute inset-0 flex items-center justify-center bg-primary-950/40">
-            <LoaderCircle aria-hidden="true" className="size-8 animate-spin text-white" />
+            <Icon
+              icon={Loading03Icon}
+              aria-hidden="true"
+              className="size-8 animate-spin text-white"
+            />
           </span>
         ) : null}
       </div>
@@ -264,7 +256,7 @@ export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: 
               void capture();
             }}
           >
-            <Camera aria-hidden="true" />
+            <Icon icon={Camera01Icon} aria-hidden="true" />
             Ambil foto (mode uji)
           </Button>
         ) : null}
@@ -276,7 +268,7 @@ export function FaceCapture({ onCaptured }: { onCaptured: (file: File, preview: 
               setAttempt((value) => value + 1);
             }}
           >
-            <RotateCcw aria-hidden="true" />
+            <Icon icon={RotateLeft01Icon} aria-hidden="true" />
             Ambil ulang
           </Button>
         ) : null}
