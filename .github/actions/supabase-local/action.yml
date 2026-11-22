@@ -9,8 +9,6 @@ runs:
     - name: Kosongkan ruang disk runner
       shell: bash
       run: |
-        # Image Docker Supabase, browser Playwright, dan video test bisa memenuhi disk runner (ENOSPC).
-        # Toolchain bawaan runner yang tidak dipakai proyek ini dihapus.
         sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
         df -h / | tail -1
 
@@ -21,9 +19,7 @@ runs:
     - name: Jalankan Supabase lokal
       shell: bash
       run: |
-        # Layanan yang tidak dipakai E2E dimatikan supaya start lebih cepat. Mailpit tetap jalan
-        # untuk membaca email lupa password. Runner baru, jadi migrasi dan seed jalan dari nol.
-        supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+        bash scripts/supabase-start.sh
         supabase status -o env > "$RUNNER_TEMP/supabase.env"
 
     - name: Ekspor kunci ke env
