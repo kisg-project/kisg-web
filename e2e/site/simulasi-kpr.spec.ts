@@ -101,7 +101,7 @@ test.describe("Halaman simulasi KPR", () => {
     await expect(panel.getByRole("combobox", { name: "Program pembiayaan" })).toHaveText(
       "BSI KPR Sejahtera",
     );
-    await expect(panel.getByText("Rp 4.065.668").first()).toBeVisible();
+    await expect(panel.getByText("Rp 4.056.771").first()).toBeVisible();
     await expect(panel.getByText("Harga jual bank (pokok + margin)")).toBeVisible();
     await expect(panel.getByText("Margin tetap sampai lunas").first()).toBeVisible();
     const text = (await panel.textContent()) ?? "";

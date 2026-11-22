@@ -39,6 +39,9 @@ const COPY: Record<FormKind, { submit: string; success: string; showMessage: boo
   },
 };
 
+/** Proyek tanpa file brosur: marketing mengirim brosur lewat WhatsApp. */
+const BROCHURE_BY_WHATSAPP = "Permintaan diterima. Marketing kami mengirim brosur lewat WhatsApp.";
+
 function startDownload(url: string) {
   const link = document.createElement("a");
   link.href = url;
@@ -97,7 +100,9 @@ export function LeadForm({
     return (
       <div role="status" className="flex flex-col items-start gap-4 rounded-3xl bg-success-50 p-5">
         <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
-        <p className="font-semibold">{brochureUrl ? copy.success : COPY.minat.success}</p>
+        <p className="font-semibold">
+          {formKind === "brosur" && !brochureUrl ? BROCHURE_BY_WHATSAPP : copy.success}
+        </p>
         {brochureUrl ? (
           <Button asChild>
             <a href={brochureUrl} download>

@@ -112,7 +112,7 @@ test.describe("Beranda", () => {
     await expect(unit.getByRole("heading", { name: "Tipe 36/60" })).toBeVisible();
     await expect(unit.getByText("Rp 570.000.000")).toBeVisible();
 
-    const specs = unit.getByRole("list", { name: "Spesifikasi" });
+    const specs = unit.getByRole("list", { name: "Spesifikasi", exact: true });
     await expect(specs.getByRole("listitem")).toHaveText([
       /2\s*Kamar tidur/,
       /1\s*Kamar mandi/,

@@ -70,7 +70,7 @@ select is(
 set local role anon;
 select set_config('request.jwt.claims', '{"role": "anon"}', true);
 select is((select count(*)::int from public.projects), 4, 'anon hanya melihat proyek terbit (SGV dan 3 proyek sold out)');
-select is((select count(*)::int from public.unit_types), 1, 'anon melihat tipe unit proyek terbit');
+select is((select count(*)::int from public.unit_types), 2, 'anon melihat tipe unit proyek terbit (36/60 dan 36/73)');
 select is((select count(*)::int from public.site_settings), 3, 'anon hanya melihat pengaturan publik');
 select throws_ok('select count(*) from public.profiles', '42501', null, 'anon tidak bisa membaca profil');
 select throws_ok($$select public.rate_limit_hit('uji', 60, 5)$$, '42501', null, 'anon tidak bisa memanggil rate limit');
