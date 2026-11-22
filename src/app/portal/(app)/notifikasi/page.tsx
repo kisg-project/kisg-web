@@ -13,13 +13,13 @@ export default async function NotificationsPage() {
   const items = await listNotifications(user.id);
   const unread = items.filter((item) => !item.readAt).length;
   return (
-    <div className="tone-blue grid gap-4">
+    <div className="tone-blue grid grid-cols-[minmax(0,1fr)] gap-4">
       <PageHeader
         title="Notifikasi"
         description={unread > 0 ? `${String(unread)} belum dibaca` : "Semua sudah dibaca"}
         actions={<MarkAllReadButton disabled={unread === 0} />}
       />
-      <div className="max-w-3xl">
+      <div className="max-w-3xl min-w-0">
         {items.length > 0 ? (
           <NotificationList items={items} />
         ) : (

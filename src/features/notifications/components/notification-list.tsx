@@ -50,9 +50,12 @@ function NotificationRow({ item }: { item: NotificationItem }) {
           <Icon icon={look.icon} size={18} />
         </span>
         <span className="grid min-w-0 flex-1 gap-0.5">
-          <span className="flex items-center gap-2">
+          <span className="flex min-w-0 items-center gap-2">
             <span
-              className={cn("truncate text-[0.8125rem]", unread ? "font-semibold" : "font-medium")}
+              className={cn(
+                "min-w-0 truncate text-[0.8125rem]",
+                unread ? "font-semibold" : "font-medium",
+              )}
             >
               {item.title}
             </span>
