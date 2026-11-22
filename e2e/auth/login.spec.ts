@@ -1,14 +1,8 @@
 import { PORTAL_ROLES, ROLE_LABELS } from "../../src/config/roles";
-import { PORTAL_AREAS, ROLE_HOME } from "../../src/config/portal";
+import { ROLE_HOME } from "../../src/config/portal";
 import { createPortalUser, setUserActive } from "../factories/users";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, test } from "../fixtures/portal";
-
-function areaLabel(href: string): string {
-  const area = PORTAL_AREAS.find((item) => item.prefix === href);
-  if (!area) throw new Error(`Area ${href} tidak ada`);
-  return area.label;
-}
 
 test.describe("Login portal", () => {
   test("halaman masuk tidak diindeks, aksesibel, dan responsif", async ({ page }) => {
@@ -25,16 +19,14 @@ test.describe("Login portal", () => {
       await page.goto("/portal/login");
       await loginViaForm(page, user);
       await expect(page).toHaveURL(ROLE_HOME[role]);
-      // Beranda role: sapaan dua baris sesuai jam WIB dengan dua kata pertama nama, lalu role dan modul.
       const name = user.fullName.split(" ").slice(0, 2).join(" ");
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-        new RegExp(`^Selamat (pagi|siang|sore|malam), ${name}$`),
-      );
-      await expect(page.getByText(ROLE_LABELS[role], { exact: true }).first()).toBeVisible();
       await expect(
-        page.getByRole("heading", { level: 2, name: areaLabel(ROLE_HOME[role]) }),
+        page.getByRole("banner").getByText(/^Selamat (pagi|siang|sore|malam),/),
+      ).toHaveText(new RegExp(`^Selamat (pagi|siang|sore|malam), ${name}$`));
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(
+        page.getByRole("list", { name: "Role" }).getByText(ROLE_LABELS[role], { exact: true }),
       ).toBeVisible();
-      // Cookie sesi Supabase terbentuk.
       const cookies = await page.context().cookies();
       expect(cookies.some((cookie) => cookie.name.includes("auth-token"))).toBe(true);
     });

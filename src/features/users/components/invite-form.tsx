@@ -208,7 +208,7 @@ export function InviteDialog({ allowOwner }: { allowOwner: boolean }) {
       description="Karyawan menerima email berisi tautan aktivasi akun."
       icon={UserAdd01Icon}
       trigger={
-        <Button type="button" size="lg">
+        <Button type="button">
           <Icon icon={UserAdd01Icon} aria-hidden="true" />
           Undang karyawan
         </Button>

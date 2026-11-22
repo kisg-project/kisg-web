@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Work_Sans } from "next/font/google";
+import { BodyClass } from "@/components/shared/body-class";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegister } from "@/features/pwa";
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 export default function PortalLayout({ children }: LayoutProps<"/portal">) {
   return (
     <div className={workSans.variable}>
+      <BodyClass className={workSans.variable} />
       {children}
       <Toaster position="top-center" />
       <PwaRegister />

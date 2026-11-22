@@ -102,7 +102,7 @@ export function FormDialog({
             event.preventDefault();
           }}
           className={cn(
-            "app-feel fixed z-50 flex flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl outline-none",
+            "app-feel portal-layer fixed z-50 flex flex-col overflow-hidden bg-popover text-popover-foreground shadow-2xl outline-none",
             "inset-x-0 bottom-0 max-h-[92dvh] rounded-t-[1.75rem] pb-[env(safe-area-inset-bottom)] data-open:animate-in data-open:slide-in-from-bottom data-closed:animate-out data-closed:slide-out-to-bottom",
             "sm:inset-x-auto sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:max-h-[85dvh] sm:w-[calc(100%-2rem)] sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-[1.75rem] sm:pb-0 sm:data-open:fade-in-0 sm:data-open:slide-in-from-bottom-0 sm:data-open:zoom-in-95 sm:data-closed:fade-out-0 sm:data-closed:slide-out-to-bottom-0 sm:data-closed:zoom-out-95",
           )}

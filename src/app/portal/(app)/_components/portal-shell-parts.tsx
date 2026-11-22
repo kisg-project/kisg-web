@@ -34,7 +34,7 @@ export async function UserMenu() {
     <div className="flex items-center gap-2">
       <Link
         href="/portal/akun"
-        className="flex size-9 items-center justify-center overflow-hidden rounded-lg border border-(--line-strong) motion-safe:active:scale-95"
+        className="hit-44 flex size-9 items-center justify-center overflow-hidden rounded-lg border border-(--line-strong) motion-safe:active:scale-95"
       >
         <span className="sr-only">Akun saya, </span>
         <Avatar src={photo} name={user.fullName} className="size-full rounded-none" />

@@ -481,6 +481,7 @@
 
 .portal-canvas {
   --background: oklch(1 0 0);
+  --band: oklch(0.957 0.002 250);
   --muted-foreground: var(--color-neutral-700);
   --line-strong: var(--color-neutral-800);
   --line-soft: var(--color-neutral-200);
@@ -490,6 +491,7 @@
 
 .dark .portal-canvas {
   --background: var(--color-neutral-950);
+  --band: var(--color-neutral-900);
   --line-strong: var(--color-neutral-600);
   --line-soft: var(--color-neutral-800);
 }
@@ -773,5 +775,26 @@
   .empty-ping,
   .empty-twinkle {
     animation: none;
+  }
+}
+
+:is(.portal-canvas, .portal-layer) [data-slot="button"] {
+  border-radius: 0.5rem;
+}
+
+:is(.portal-canvas, .portal-layer) [data-slot="button"] {
+  font-size: 0.8125rem;
+}
+
+.portal-layer {
+  font-family: var(--font-work-sans), var(--font-sans);
+}
+
+@utility hit-44 {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
   }
 }

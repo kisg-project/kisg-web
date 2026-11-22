@@ -38,7 +38,7 @@ export function InstallButton() {
           setPrompt(null);
         });
       }}
-      className="flex h-9 items-center gap-1.5 rounded-lg border border-(--line-strong) bg-card px-2.5 text-xs font-medium transition-colors hover:bg-neutral-50 motion-safe:active:scale-95 dark:hover:bg-neutral-800"
+      className="hit-44 flex h-9 items-center gap-1.5 rounded-lg border border-(--line-strong) bg-card px-2.5 text-xs font-medium transition-colors hover:bg-neutral-50 motion-safe:active:scale-95 dark:hover:bg-neutral-800"
     >
       <Icon icon={Download04Icon} className="size-[1.125rem]" />
       <span className="sr-only sm:not-sr-only">Pasang aplikasi</span>

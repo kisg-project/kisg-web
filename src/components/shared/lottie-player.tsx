@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { AnimationItem } from "lottie-web";
 import { cn } from "@/lib/utils";
 
-/** Animasi Lottie milik KIS (dibuat scripts/build-lottie.mjs). */
 const ANIMATIONS = {
   "loading-house": () => import("@/assets/lottie/loading-house.json"),
   "empty-box": () => import("@/assets/lottie/empty-box.json"),
@@ -12,27 +11,18 @@ const ANIMATIONS = {
 
 export type LottieName = keyof typeof ANIMATIONS;
 
-/** Player versi ringan (SVG, tanpa eval dan tanpa WASM), aman untuk CSP. Diunduh sekali lalu di-cache. */
 const loadPlayer = () => import("lottie-web/build/player/lottie_light");
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/**
- * Unduh player dan animasi di waktu senggang, supaya layar memuat dan keadaan kosong berikutnya
- * langsung bergerak tanpa menunggu jaringan.
- */
 export function prefetchLottie(): void {
   if (prefersReducedMotion()) return;
   void loadPlayer();
   for (const load of Object.values(ANIMATIONS)) void load();
 }
 
-/**
- * Memutar animasi Lottie berulang. `fallback` (SVG atau CSS) tampil sampai animasi siap, dan tetap
- * dipakai kalau prefers-reduced-motion aktif atau pemuatan gagal. Animasi dijeda saat tidak terlihat.
- */
 export function LottiePlayer({
   name,
   fallback,
@@ -61,7 +51,7 @@ export function LottiePlayer({
           loop: true,
           autoplay: true,
           animationData: structuredClone(data.default),
-          rendererSettings: { preserveAspectRatio: "xMidYMid meet", progressiveLoad: true },
+          rendererSettings: { preserveAspectRatio: "xMidYMid meet" },
         });
         animation.addEventListener("DOMLoaded", () => {
           if (!cancelled) setReady(true);
@@ -72,9 +62,7 @@ export function LottiePlayer({
         });
         observer.observe(element);
       })
-      .catch(() => {
-        // Gagal memuat: fallback tetap tampil.
-      });
+      .catch(() => undefined);
 
     return () => {
       cancelled = true;
@@ -84,7 +72,11 @@ export function LottiePlayer({
   }, [name]);
 
   return (
-    <div aria-hidden="true" className={cn("relative", className)}>
+    <div
+      aria-hidden="true"
+      data-lottie={ready ? "siap" : "memuat"}
+      className={cn("relative", className)}
+    >
       <div
         ref={container}
         className={cn(

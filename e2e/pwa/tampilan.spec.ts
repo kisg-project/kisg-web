@@ -30,7 +30,12 @@ async function capture(page: Page, name: string) {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );
     expect(overflow, `${name} ${label} tanpa scroll horizontal`).toBeLessThanOrEqual(0);
-    await page.screenshot({ path: `test-results/tampilan/${name}-${label}.png`, fullPage: true });
+    await expect(page.locator('[data-lottie="memuat"]')).toHaveCount(0);
+    await page.screenshot({
+      path: `test-results/tampilan/${name}-${label}.png`,
+      fullPage: true,
+      animations: "disabled",
+    });
   }
 }
 
@@ -59,7 +64,10 @@ test.describe("Foto dialog", () => {
     await expect(dialog).toBeVisible();
     for (const [label, size] of Object.entries(WIDTHS)) {
       await page.setViewportSize(size);
-      await page.screenshot({ path: `test-results/tampilan/dialog-titik-absensi-${label}.png` });
+      await page.screenshot({
+        path: `test-results/tampilan/dialog-titik-absensi-${label}.png`,
+        animations: "disabled",
+      });
     }
   });
 });

@@ -93,7 +93,7 @@ export default async function OwnerPage() {
           </h2>
           <Link
             href="/portal/owner/absensi"
-            className="inline-flex h-9 items-center gap-1 rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800"
+            className="hit-44 inline-flex h-9 items-center gap-1 rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
             Buka rekap kehadiran
             <Icon icon={ArrowRight01Icon} className="size-4" />

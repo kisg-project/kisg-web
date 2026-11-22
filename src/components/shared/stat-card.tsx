@@ -31,7 +31,7 @@ export function StatCard({
 }) {
   return (
     <div className="flex min-w-0 flex-col rounded-xl border border-(--line-strong) bg-card">
-      <div className="flex items-center gap-3 p-3.5">
+      <div className="flex flex-col items-start gap-2.5 p-3.5 sm:flex-row sm:items-center sm:gap-3">
         <span
           className={cn(
             "flex size-10 shrink-0 items-center justify-center rounded-full ring-1 ring-current/25",
@@ -42,7 +42,7 @@ export function StatCard({
         </span>
         <span className="min-w-0">
           <span className="block text-xl leading-tight font-semibold tabular-nums">{value}</span>
-          <span className="block truncate text-xs text-muted-foreground">{label}</span>
+          <span className="block text-xs leading-snug text-muted-foreground">{label}</span>
         </span>
       </div>
       {href ? (

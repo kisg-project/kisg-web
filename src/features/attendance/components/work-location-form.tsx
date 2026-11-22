@@ -25,6 +25,7 @@ import {
   GpsSignal01Icon,
   Loading03Icon,
   Location01Icon,
+  PencilEdit01Icon,
   PlusSignIcon,
 } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/shared/icon";
@@ -265,16 +266,16 @@ export function WorkLocationDialog({
       icon={Location01Icon}
       trigger={
         initial ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            className="text-primary-700"
+            title="Ubah"
             aria-label={`Ubah titik ${initial.name}`}
+            className="hit-44 flex size-9 items-center justify-center rounded-lg border border-(--line-strong) bg-card transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
           >
-            Ubah
-          </Button>
+            <Icon icon={PencilEdit01Icon} className="size-4" />
+          </button>
         ) : (
-          <Button type="button" size="lg">
+          <Button type="button">
             <Icon icon={PlusSignIcon} aria-hidden="true" />
             Tambah titik absensi
           </Button>
