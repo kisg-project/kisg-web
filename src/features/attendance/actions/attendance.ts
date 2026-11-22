@@ -120,6 +120,7 @@ export const saveScheduleAction = adminActionClient
       scope: input.scope,
       work_location_id: input.scope === "lokasi" ? (input.targetId ?? null) : null,
       user_id: input.scope === "karyawan" ? (input.targetId ?? null) : null,
+      role: input.scope === "role" ? (input.role ?? null) : null,
       start_time: input.startTime,
       end_time: input.endTime,
       workdays: [...new Set(input.workdays)].sort((a, b) => a - b),
@@ -128,6 +129,7 @@ export const saveScheduleAction = adminActionClient
     let query = ctx.supabase.from("work_schedules").select("id").eq("scope", input.scope);
     if (values.work_location_id) query = query.eq("work_location_id", values.work_location_id);
     if (values.user_id) query = query.eq("user_id", values.user_id);
+    if (values.role) query = query.eq("role", values.role);
     const { data: existing } = await query.maybeSingle();
     const result = existing
       ? await ctx.supabase.from("work_schedules").update(values).eq("id", existing.id)
