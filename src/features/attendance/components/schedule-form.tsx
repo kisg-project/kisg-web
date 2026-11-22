@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WEEKDAYS } from "@/config/attendance";
+import { SCHEDULE_ROLES, WEEKDAYS } from "@/config/attendance";
+import { ROLE_LABELS } from "@/config/roles";
 import { deleteScheduleAction, saveScheduleAction } from "../actions/attendance";
 import { scheduleSchema, type ScheduleInput } from "../schemas/attendance";
 import { Clock01Icon, Delete02Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
@@ -33,6 +34,7 @@ const SCOPE_LABEL = {
   perusahaan: "Semua karyawan (default)",
   lokasi: "Per titik absensi",
   karyawan: "Per karyawan",
+  role: "Per role",
 } as const;
 
 export function ScheduleForm({
@@ -56,7 +58,7 @@ export function ScheduleForm({
     defaultValues: initial ?? {
       scope: "lokasi",
       targetId: null,
-      startTime: "08:00",
+      startTime: "09:00",
       endTime: "17:00",
       workdays: [1, 2, 3, 4, 5, 6],
       lateToleranceMin: 15,
@@ -98,6 +100,7 @@ export function ScheduleForm({
                   onValueChange={(value) => {
                     field.onChange(value);
                     form.setValue("targetId", null);
+                    form.setValue("role", null);
                   }}
                 >
                   <SelectTrigger id={`${idPrefix}-lingkup`} className="h-11 w-full rounded-md px-3">
@@ -110,41 +113,75 @@ export function ScheduleForm({
                     <SelectItem value="karyawan" className="min-h-10">
                       {SCOPE_LABEL.karyawan}
                     </SelectItem>
+                    <SelectItem value="role" className="min-h-10">
+                      {SCOPE_LABEL.role}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
           />
-          <Controller
-            control={form.control}
-            name="targetId"
-            render={({ field, fieldState }) => (
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <Label htmlFor={`${idPrefix}-target`}>
-                  {scope === "lokasi" ? "Titik absensi" : "Karyawan"}
-                </Label>
-                <Select value={field.value ?? undefined} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    id={`${idPrefix}-target`}
-                    className="h-11 w-full rounded-md px-3"
-                    aria-invalid={fieldState.error ? true : undefined}
-                  >
-                    <SelectValue placeholder="Pilih" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {choices.map((choice) => (
-                      <SelectItem key={choice.id} value={choice.id} className="min-h-10">
-                        {choice.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {fieldState.error ? (
-                  <p className="text-sm text-destructive">{fieldState.error.message}</p>
-                ) : null}
-              </div>
-            )}
-          />
+          {scope === "role" ? (
+            <Controller
+              control={form.control}
+              name="role"
+              render={({ field, fieldState }) => (
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <Label htmlFor={`${idPrefix}-role`}>Role</Label>
+                  <Select value={field.value ?? undefined} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id={`${idPrefix}-role`}
+                      className="h-11 w-full rounded-md px-3"
+                      aria-invalid={fieldState.error ? true : undefined}
+                    >
+                      <SelectValue placeholder="Pilih" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      {SCHEDULE_ROLES.map((role) => (
+                        <SelectItem key={role} value={role} className="min-h-10">
+                          {ROLE_LABELS[role]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.error ? (
+                    <p className="text-sm text-destructive">{fieldState.error.message}</p>
+                  ) : null}
+                </div>
+              )}
+            />
+          ) : (
+            <Controller
+              control={form.control}
+              name="targetId"
+              render={({ field, fieldState }) => (
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <Label htmlFor={`${idPrefix}-target`}>
+                    {scope === "lokasi" ? "Titik absensi" : "Karyawan"}
+                  </Label>
+                  <Select value={field.value ?? undefined} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id={`${idPrefix}-target`}
+                      className="h-11 w-full rounded-md px-3"
+                      aria-invalid={fieldState.error ? true : undefined}
+                    >
+                      <SelectValue placeholder="Pilih" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      {choices.map((choice) => (
+                        <SelectItem key={choice.id} value={choice.id} className="min-h-10">
+                          {choice.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.error ? (
+                    <p className="text-sm text-destructive">{fieldState.error.message}</p>
+                  ) : null}
+                </div>
+              )}
+            />
+          )}
         </div>
       )}
       <div className="grid gap-4 sm:grid-cols-3">

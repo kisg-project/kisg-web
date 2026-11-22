@@ -22,7 +22,6 @@ import {
   workLocationSchema,
 } from "../schemas/attendance";
 
-/** Pesan dari fungsi database (errcode 22023) sudah ditulis untuk karyawan, jadi ditampilkan apa adanya. */
 function rpcError(error: { code?: string; message: string }): Error {
   if (error.code === "22023") return new ActionError(error.message);
   if (error.code === "42501") return new ActionError("Akun ini tidak memakai absensi.");
@@ -46,10 +45,6 @@ const clockResult = z.discriminatedUnion("status", [
   }),
 ]);
 
-/**
- * Clock in atau clock out. Jarak ke titik absensi dan waktu dihitung di database (server), bukan di
- * HP. Di luar radius: tidak disimpan, karyawan ditawari pengajuan absen di luar lokasi.
- */
 export const clockAction = authActionClient
   .inputSchema(clockSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -75,7 +70,6 @@ export const clockAction = authActionClient
     return { ...result, locationName };
   });
 
-/** Pengajuan absen di luar lokasi. Disetujui owner atau manajer tim. */
 export const requestExceptionAction = authActionClient
   .inputSchema(exceptionSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -91,7 +85,6 @@ export const requestExceptionAction = authActionClient
     return { id: data };
   });
 
-/** Tambah atau ubah titik absensi (kantor atau proyek). Hanya owner. */
 export const saveWorkLocationAction = adminActionClient
   .inputSchema(workLocationSchema)
   .action(async ({ parsedInput: input, ctx }) => {
@@ -120,7 +113,6 @@ export const saveWorkLocationAction = adminActionClient
     return { id: result.data.id };
   });
 
-/** Simpan jam kerja perusahaan, per titik absensi, atau per karyawan. Hanya owner. */
 export const saveScheduleAction = adminActionClient
   .inputSchema(scheduleSchema)
   .action(async ({ parsedInput: input, ctx }) => {
@@ -128,6 +120,7 @@ export const saveScheduleAction = adminActionClient
       scope: input.scope,
       work_location_id: input.scope === "lokasi" ? (input.targetId ?? null) : null,
       user_id: input.scope === "karyawan" ? (input.targetId ?? null) : null,
+      role: input.scope === "role" ? (input.role ?? null) : null,
       start_time: input.startTime,
       end_time: input.endTime,
       workdays: [...new Set(input.workdays)].sort((a, b) => a - b),
@@ -136,6 +129,7 @@ export const saveScheduleAction = adminActionClient
     let query = ctx.supabase.from("work_schedules").select("id").eq("scope", input.scope);
     if (values.work_location_id) query = query.eq("work_location_id", values.work_location_id);
     if (values.user_id) query = query.eq("user_id", values.user_id);
+    if (values.role) query = query.eq("role", values.role);
     const { data: existing } = await query.maybeSingle();
     const result = existing
       ? await ctx.supabase.from("work_schedules").update(values).eq("id", existing.id)
@@ -144,7 +138,6 @@ export const saveScheduleAction = adminActionClient
     return { ok: true as const };
   });
 
-/** Hapus jam kerja khusus (titik atau karyawan), kembali ke jam kerja perusahaan. */
 export const deleteScheduleAction = adminActionClient
   .inputSchema(deleteScheduleSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -157,10 +150,6 @@ export const deleteScheduleAction = adminActionClient
     return { ok: true as const };
   });
 
-/**
- * Simpan rencana kegiatan (setelah clock in) atau hasil kerja (setelah clock out) hari ini. Aturan
- * dicek fungsi database. Rencana tersimpan: ke beranda role. Hasil tersimpan: ke halaman absensi.
- */
 export const submitWorkReportAction = authActionClient
   .inputSchema(workReportSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -173,11 +162,6 @@ export const submitWorkReportAction = authActionClient
     redirect(parsedInput.kind === "rencana" ? safeNextPath(null, ctx.roles) : "/portal/absensi");
   });
 
-/**
- * Setujui atau tolak pengajuan absen di luar lokasi (owner, atau manajer tim karyawan itu). Password
- * penyetuju diperiksa dulu sebagai tanda tangan elektronik, lalu fungsi database (khusus server)
- * memeriksa wewenang, mencatat absen kalau disetujui, dan menyimpan cap permanen.
- */
 export const decideExceptionAction = roleActionClient([
   "owner",
   "admin",

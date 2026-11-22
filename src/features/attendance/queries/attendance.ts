@@ -1,8 +1,9 @@
 import "server-only";
 import { mustAttend } from "@/config/attendance";
+import { ROLE_LABELS, type AppRole } from "@/config/roles";
+import { workdaysFor, type ScheduleRule } from "../utils/schedule";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-/** Tanggal kerja hari ini di Asia/Jakarta (YYYY-MM-DD), sama dengan private.today_wib(). */
 export function todayWib(at: Date = new Date()): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(at);
 }
@@ -59,7 +60,6 @@ function toDay(row: RecordRow): AttendanceDay {
   };
 }
 
-/** Absensi karyawan hari ini, riwayat 7 hari terakhir, dan pengajuan di luar lokasi hari ini. */
 export async function getMyAttendance(userId: string): Promise<{
   today: AttendanceDay | null;
   history: AttendanceDay[];
@@ -146,8 +146,9 @@ export async function listProjectOptions(): Promise<ProjectOption[]> {
 
 export interface WorkSchedule {
   id: string;
-  scope: "perusahaan" | "lokasi" | "karyawan";
+  scope: "perusahaan" | "lokasi" | "karyawan" | "role";
   targetId: string | null;
+  role: AppRole | null;
   targetName: string | null;
   startTime: string;
   endTime: string;
@@ -160,7 +161,7 @@ export async function listWorkSchedules(): Promise<WorkSchedule[]> {
   const { data, error } = await supabase
     .from("work_schedules")
     .select(
-      "id, scope, work_location_id, user_id, start_time, end_time, workdays, late_tolerance_min, work_locations(name), profiles(full_name)",
+      "id, scope, work_location_id, user_id, role, start_time, end_time, workdays, late_tolerance_min, work_locations(name), profiles(full_name)",
     )
     .order("scope");
   if (error) throw new Error(`Gagal memuat jam kerja: ${error.message}`);
@@ -168,7 +169,11 @@ export async function listWorkSchedules(): Promise<WorkSchedule[]> {
     id: row.id,
     scope: row.scope,
     targetId: row.work_location_id ?? row.user_id,
-    targetName: row.work_locations?.name ?? row.profiles?.full_name ?? null,
+    targetName:
+      row.work_locations?.name ??
+      row.profiles?.full_name ??
+      (row.role ? ROLE_LABELS[row.role] : null),
+    role: row.role,
     startTime: row.start_time.slice(0, 5),
     endTime: row.end_time.slice(0, 5),
     workdays: row.workdays,
@@ -181,7 +186,6 @@ export interface EmployeeOption {
   name: string;
 }
 
-/** Karyawan yang wajib absen (untuk jam kerja per karyawan). */
 export async function listEmployeeOptions(): Promise<EmployeeOption[]> {
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase
@@ -204,7 +208,6 @@ export interface WorkReport {
   updatedAt: string;
 }
 
-/** Rencana dan hasil kerja hari ini milik user. */
 export async function getMyWorkReports(
   userId: string,
 ): Promise<{ rencana: WorkReport | null; hasil: WorkReport | null }> {
@@ -317,11 +320,6 @@ async function signedUrls(bucket: string, paths: string[]): Promise<Map<string, 
   );
 }
 
-/**
- * Rekap kehadiran untuk owner: semua karyawan wajib absen di satu tanggal (WIB), rencana dan hasil
- * kerja dengan lampiran, pengajuan di luar lokasi yang menunggu (semua tanggal), dan keputusan di
- * tanggal itu beserta kode verifikasinya. Foto dan lampiran memakai signed URL 10 menit.
- */
 export async function getAttendanceOverview(date: string): Promise<AttendanceOverview> {
   const supabase = await createSupabaseServerClient();
   const [people, records, reports, pendingRows, decidedRows] = await Promise.all([
@@ -478,22 +476,15 @@ function addDays(date: string, days: number): string {
   return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
 }
 
-/** 1 Senin sampai 7 Minggu, sama dengan kolom workdays. */
 function isoWeekday(date: string): number {
   const [year = 0, month = 1, day = 1] = date.split("-").map(Number);
   const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   return weekday === 0 ? 7 : weekday;
 }
 
-/**
- * Tren kehadiran untuk grafik dashboard owner: per hari tepat waktu, terlambat, belum absen (karyawan
- * wajib absen yang akunnya sudah ada di tanggal itu), dan persentase laporan harian lengkap.
- */
 export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[]> {
   const supabase = await createSupabaseServerClient();
   const end = todayWib();
-  // Grafik dimulai dari hari pertama ada absensi, supaya hari sebelum sistem dipakai tidak dihitung
-  // sebagai belum absen.
   const { data: first } = await supabase
     .from("attendance_records")
     .select("work_date")
@@ -507,7 +498,7 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
   const [people, records, reports, schedule] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, created_at, user_roles(role)")
+      .select("id, created_at, user_roles(role, is_primary)")
       .eq("is_active", true)
       .is("deleted_at", null),
     supabase
@@ -520,14 +511,36 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
       .select("user_id, work_date, kind")
       .gte("work_date", start)
       .lte("work_date", end),
-    supabase.from("work_schedules").select("workdays").eq("scope", "perusahaan").maybeSingle(),
+    supabase.from("work_schedules").select("scope, user_id, role, workdays"),
   ]);
   if (records.error) throw new Error(`Gagal memuat tren absensi: ${records.error.message}`);
   const staff = (people.data ?? []).filter((row) =>
     mustAttend(row.user_roles.map((item) => item.role)),
   );
   const staffIds = new Set(staff.map((row) => row.id));
-  const workdays = new Set(schedule.data?.workdays ?? [1, 2, 3, 4, 5, 6]);
+  const rules: ScheduleRule[] = (schedule.data ?? []).map((row) => ({
+    scope: row.scope,
+    userId: row.user_id,
+    role: row.role,
+    workdays: row.workdays,
+  }));
+  const companyDays = new Set(
+    rules.find((rule) => rule.scope === "perusahaan")?.workdays ?? [1, 2, 3, 4, 5, 6],
+  );
+  const staffDays = new Map(
+    staff.map((row) => [
+      row.id,
+      new Set(
+        workdaysFor(
+          {
+            id: row.id,
+            roles: row.user_roles.map((item) => ({ role: item.role, isPrimary: item.is_primary })),
+          },
+          rules,
+        ),
+      ),
+    ]),
+  );
   const filed = new Set(
     (reports.data ?? []).map((row) => `${row.user_id}|${row.work_date}|${row.kind}`),
   );
@@ -538,8 +551,13 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
       (row) => row.work_date === date && staffIds.has(row.user_id),
     );
     const late = present.filter((row) => row.late_minutes > 0).length;
-    const eligible = staff.filter((row) => todayWib(new Date(row.created_at)) <= date).length;
-    const workday = workdays.has(isoWeekday(date));
+    const weekday = isoWeekday(date);
+    const presentIds = new Set(present.map((row) => row.user_id));
+    const expected = staff.filter(
+      (row) =>
+        todayWib(new Date(row.created_at)) <= date && Boolean(staffDays.get(row.id)?.has(weekday)),
+    );
+    const workday = expected.length > 0 || companyDays.has(weekday);
     const complete = present.filter(
       (row) =>
         filed.has(`${row.user_id}|${date}|rencana`) && filed.has(`${row.user_id}|${date}|hasil`),
@@ -549,13 +567,12 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
       workday,
       onTime: present.length - late,
       late,
-      absent: workday ? Math.max(0, eligible - present.length) : 0,
+      absent: expected.filter((row) => !presentIds.has(row.id)).length,
       reportsComplete: present.length > 0 ? Math.round((complete / present.length) * 100) : null,
     };
   });
 }
 
-/** Jumlah pengajuan absen di luar lokasi yang menunggu keputusan (untuk ringkasan dashboard). */
 export async function countPendingExceptions(): Promise<number> {
   const supabase = await createSupabaseServerClient();
   const { count } = await supabase

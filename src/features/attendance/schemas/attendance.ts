@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SCHEDULE_ROLES } from "@/config/attendance";
 import { APPROVAL_DECISIONS } from "@/config/approvals";
 import { signatureSchema } from "@/features/approvals";
 
@@ -62,8 +63,9 @@ const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Format jam HH:MM, co
 
 export const scheduleSchema = z
   .object({
-    scope: z.enum(["perusahaan", "lokasi", "karyawan"]),
+    scope: z.enum(["perusahaan", "lokasi", "karyawan", "role"]),
     targetId: z.uuid().nullable().optional(),
+    role: z.enum(SCHEDULE_ROLES).nullable().optional(),
     startTime: time,
     endTime: time,
     workdays: z.array(z.number().int().min(1).max(7)).min(1, "Pilih minimal satu hari kerja."),
@@ -77,9 +79,13 @@ export const scheduleSchema = z
     path: ["endTime"],
     message: "Jam pulang harus setelah jam masuk.",
   })
-  .refine((value) => value.scope === "perusahaan" || Boolean(value.targetId), {
-    path: ["targetId"],
-    message: "Pilih titik absensi atau karyawan.",
+  .refine(
+    (value) => value.scope === "perusahaan" || value.scope === "role" || Boolean(value.targetId),
+    { path: ["targetId"], message: "Pilih titik absensi atau karyawan." },
+  )
+  .refine((value) => value.scope !== "role" || Boolean(value.role), {
+    path: ["role"],
+    message: "Pilih role.",
   });
 
 export const deleteScheduleSchema = z.object({ id: z.uuid() });
@@ -87,7 +93,6 @@ export const deleteScheduleSchema = z.object({ id: z.uuid() });
 export type WorkLocationInput = z.input<typeof workLocationSchema>;
 export type ScheduleInput = z.input<typeof scheduleSchema>;
 
-/** Lampiran laporan harian yang sudah diunggah ke work-attachments/<user>/<tanggal>/. */
 export const workAttachmentSchema = z.object({
   path: z
     .string()
@@ -117,7 +122,6 @@ export const workReportSchema = z.object({
 export type WorkAttachment = z.infer<typeof workAttachmentSchema>;
 export type WorkReportInput = z.input<typeof workReportSchema>;
 
-/** Keputusan pengajuan absen di luar lokasi, ditandatangani dengan password penyetuju. */
 export const decideExceptionSchema = signatureSchema
   .extend({
     id: z.uuid(),
