@@ -4,18 +4,15 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { CheckCircle2 } from "lucide-react";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { activateAccountAction } from "../actions/account";
 import { activationSchema, type ActivationInput } from "../schemas/account";
 import { AvatarUploader } from "./avatar-uploader";
 import { PasswordField } from "@/components/shared/password-field";
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/**
- * Aktivasi akun: foto profil, nama, nomor HP, dan password. Satu layar, satu tombol utama.
- * Akun undangan wajib membuat password. Akun lama boleh melewati password.
- */
 export function ActivationForm({
   email,
   fullName,
@@ -124,7 +121,7 @@ export function ActivationForm({
         </p>
       ) : null}
       <Button type="submit" size="lg" disabled={isExecuting} className="w-full">
-        <CheckCircle2 aria-hidden="true" />
+        <Icon icon={CheckmarkCircle02Icon} aria-hidden="true" />
         {isExecuting ? "Menyimpan" : "Aktifkan akun"}
       </Button>
     </form>

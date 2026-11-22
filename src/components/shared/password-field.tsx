@@ -1,11 +1,12 @@
 "use client";
 
 import { useId, useState, type ComponentProps } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { passwordStrength, type PasswordStrength } from "@/lib/auth/password-strength";
+import { ViewIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const STRENGTH: Record<
   Exclude<PasswordStrength, "kosong">,
@@ -20,13 +21,10 @@ interface PasswordFieldProps extends Omit<ComponentProps<"input">, "id" | "type"
   label: string;
   error?: string;
   hint?: string;
-  /** Tampilkan indikator kekuatan (untuk password baru). */
   meter?: boolean;
-  /** Nilai saat ini, untuk indikator kekuatan. */
   currentValue?: string;
 }
 
-/** Field password dengan tombol tampilkan atau sembunyikan dan indikator kekuatan opsional. */
 export function PasswordField({
   label,
   error,
@@ -69,9 +67,9 @@ export function PasswordField({
           className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground"
         >
           {visible ? (
-            <EyeOff aria-hidden="true" className="size-4" />
+            <Icon icon={ViewOffSlashIcon} aria-hidden="true" className="size-4" />
           ) : (
-            <Eye aria-hidden="true" className="size-4" />
+            <Icon icon={ViewIcon} aria-hidden="true" className="size-4" />
           )}
         </button>
       </div>

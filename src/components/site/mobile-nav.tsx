@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -14,15 +13,16 @@ import {
 } from "@/components/ui/sheet";
 import type { NavItem } from "@/config/nav";
 import { siteConfig, whatsappLink } from "@/config/site";
+import { Call02Icon, Menu01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Menu ringkas untuk layar kecil (CLAUDE.md bagian 6, responsif). */
 export function MobileNav({ items }: { items: readonly NavItem[] }) {
   const [open, setOpen] = useState(false);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Buka menu">
-          <Menu aria-hidden="true" className="size-6" />
+          <Icon icon={Menu01Icon} aria-hidden="true" className="size-6" />
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-[min(20rem,85vw)]">
@@ -50,7 +50,7 @@ export function MobileNav({ items }: { items: readonly NavItem[] }) {
         <div className="mt-auto p-4 pb-safe">
           <Button asChild size="lg" className="w-full">
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">
-              <Phone aria-hidden="true" />
+              <Icon icon={Call02Icon} aria-hidden="true" />
               Hubungi marketing
             </a>
           </Button>

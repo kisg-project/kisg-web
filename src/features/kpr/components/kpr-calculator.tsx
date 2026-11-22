@@ -4,7 +4,6 @@ import { useId, useRef, useState, useSyncExternalStore, type ReactNode } from "r
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch, type Control, type FieldPath } from "react-hook-form";
-import { CircleCheck, CircleMinus, Download, Phone, Plus, Trash2 } from "lucide-react";
 import { NumberInput } from "@/components/shared/number-input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -31,10 +30,18 @@ import { kprFormSchema, type KprFormInput } from "../schemas/kpr";
 import { KPR_TERMS, type KprTerms } from "../terms";
 import { calculateKpr, downPaymentFromPercent, downPaymentPercent } from "../utils/calculate";
 import { calculateCosts } from "../utils/costs";
+import {
+  Call02Icon,
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Download04Icon,
+  MinusSignCircleIcon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const noopSubscribe = () => () => undefined;
 
-/** true setelah React aktif. Sebelum itu field readOnly supaya ketikan tidak hilang tanpa validasi. */
 function useHydrated(): boolean {
   return useSyncExternalStore(
     noopSubscribe,
@@ -142,7 +149,6 @@ function NumberField({
   );
 }
 
-/** Kelompok isian form dengan judul kecil dan garis pemisah, supaya form panjang tetap mudah dibaca. */
 function FormGroup({
   title,
   children,
@@ -188,7 +194,6 @@ interface KprCalculatorProps {
   unitName: string;
 }
 
-/** Simulasi KPR lengkap untuk satu skema (konvensional atau syariah). */
 export function KprCalculator({ scheme, price, projectName, unitName }: KprCalculatorProps) {
   const terms = KPR_TERMS[scheme];
   const products = productsFor(scheme);
@@ -210,9 +215,6 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       ...productValues(products[0] ?? null, scheme, KPR_DEFAULTS.tenorYears),
     },
   });
-  // Tanpa useFieldArray: library itu membuat ID baris dengan crypto.randomUUID() saat render,
-  // yang memblokir prerender Next.js (Cache Components). Daftar periode pendek dan tidak diurutkan
-  // ulang, jadi key berdasarkan urutan aman.
   const segmentValues = useWatch({ control: form.control, name: "segments" });
   const setSegments = (next: KprFormInput["segments"]) => {
     form.setValue("segments", next, { shouldValidate: true });
@@ -239,8 +241,6 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
       ? downPaymentPercent(currentPrice, currentDp)
       : Number.NaN;
   const tenorRange = selected?.tenor ?? KPR_LIMITS.tenorYears;
-  // Error level array (total periode) diambil dari hasil schema, karena mode onChange hanya
-  // memperbarui error field yang sedang diubah (misal segments.1.years), bukan "segments".
   const segmentsError = parsed.success
     ? undefined
     : parsed.error.issues.find((issue) => issue.path.length === 1 && issue.path[0] === "segments")
@@ -249,7 +249,6 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
   function chooseProduct(id: string, scroll: boolean) {
     const product = products.find((item) => item.id === id) ?? null;
     setSelectedId(product ? product.id : "custom");
-    // "Atur sendiri": angka yang sedang diisi dipertahankan.
     if (!product) return;
     const next = productValues(
       product,
@@ -523,7 +522,6 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                   </p>
                 ) : null}
                 {segmentValues.map((_segment, index) => (
-                  // Key urutan: periode stabil dan tidak diurutkan ulang (lihat setSegments).
                   <div key={index} className="grid grid-cols-[1fr_1fr_auto] items-end gap-3">
                     <NumberField
                       control={form.control}
@@ -553,7 +551,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                         );
                       }}
                     >
-                      <Trash2 aria-hidden="true" />
+                      <Icon icon={Delete02Icon} aria-hidden="true" />
                     </Button>
                   </div>
                 ))}
@@ -570,7 +568,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                       ]);
                     }}
                   >
-                    <Plus aria-hidden="true" />
+                    <Icon icon={PlusSignIcon} aria-hidden="true" />
                     Tambah periode
                   </Button>
                 ) : null}
@@ -615,7 +613,6 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
           </fieldset>
         </form>
 
-        {/* Hasil ringkas di kanan, menempel saat form di-scroll (layar 1280 px ke atas). */}
         <div
           className="grid min-w-0 content-start gap-4 xl:sticky xl:top-[calc(var(--header-height)+1.5rem)] xl:col-span-5"
           aria-live="polite"
@@ -694,7 +691,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                     }}
                     disabled={pdfState === "busy"}
                   >
-                    <Download aria-hidden="true" />
+                    <Icon icon={Download04Icon} aria-hidden="true" />
                     {pdfState === "busy" ? "Menyiapkan PDF" : "Unduh PDF"}
                   </Button>
                   <Button
@@ -703,7 +700,7 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                     className="h-auto min-h-11 py-2.5 text-center whitespace-normal"
                   >
                     <a href={whatsappLink(waMessage)} target="_blank" rel="noopener noreferrer">
-                      <Phone aria-hidden="true" />
+                      <Icon icon={Call02Icon} aria-hidden="true" />
                       Konsultasi {terms.title}
                     </a>
                   </Button>
@@ -741,12 +738,14 @@ export function KprCalculator({ scheme, price, projectName, unitName }: KprCalcu
                       {group.items.map((item) => (
                         <li key={item} className="flex items-start gap-2">
                           {group.included ? (
-                            <CircleCheck
+                            <Icon
+                              icon={CheckmarkCircle02Icon}
                               aria-hidden="true"
                               className="mt-0.5 size-4 shrink-0 text-success-700"
                             />
                           ) : (
-                            <CircleMinus
+                            <Icon
+                              icon={MinusSignCircleIcon}
                               aria-hidden="true"
                               className="mt-0.5 size-4 shrink-0 text-neutral-600"
                             />

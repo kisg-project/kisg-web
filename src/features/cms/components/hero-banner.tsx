@@ -1,22 +1,21 @@
 import { getImageProps } from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { whatsappLink } from "@/config/site";
 import { formatRupiahRange } from "@/lib/format";
 import type { Banner } from "../types";
 import { HeroCarousel, type HeroSlide } from "./hero-carousel";
+import { ArrowRight02Icon, Call02Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export interface HeroProject {
   name: string;
   area: string | null;
-  /** Harga terendah yang boleh tampil, atau null ("Hubungi marketing"). */
   lowestPrice: number | null;
 }
 
 function slideImage(banner: Banner) {
-  // Foto mengisi setengah lebar layar di desktop dan penuh di HP.
   const common = { alt: banner.alt, fill: true, sizes: "(min-width: 1024px) 50vw, 100vw" } as const;
   const desktop = getImageProps({ ...common, src: banner.image }).props;
   const mobile = getImageProps({ ...common, src: banner.mobileImage ?? banner.image }).props;
@@ -38,13 +37,12 @@ function SlideContent({
   project: HeroProject | null;
   isFirst: boolean;
 }) {
-  // Satu h1 per halaman: judul slide pertama. Slide lain memakai paragraf dengan gaya yang sama.
   const Title = isFirst ? "h1" : "p";
   return (
     <div className="max-w-xl">
       {project?.area ? (
         <p className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-primary-800 shadow-xs ring-1 ring-primary-100">
-          <MapPin aria-hidden="true" className="size-4 text-primary-600" />
+          <Icon icon={Location01Icon} aria-hidden="true" className="size-4 text-primary-600" />
           {project.name}, {project.area}
         </p>
       ) : null}
@@ -59,7 +57,7 @@ function SlideContent({
           <Button asChild size="lg" className="shadow-md">
             <Link href={banner.cta.href}>
               {banner.cta.label}
-              <ArrowRight aria-hidden="true" />
+              <Icon icon={ArrowRight02Icon} aria-hidden="true" />
             </Link>
           </Button>
         ) : null}
@@ -78,7 +76,7 @@ function SlideContent({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Phone aria-hidden="true" />
+            <Icon icon={Call02Icon} aria-hidden="true" />
             Hubungi marketing
           </a>
         </Button>
@@ -87,7 +85,6 @@ function SlideContent({
   );
 }
 
-/** Chip harga yang melayang di sudut kiri bawah foto. */
 function PriceChip({ price }: { price: number }) {
   return (
     <p className="absolute -bottom-4 left-4 rounded-2xl bg-highlight px-4 py-2.5 text-base font-extrabold text-highlight-foreground shadow-lg sm:left-6 sm:text-lg">
@@ -96,7 +93,6 @@ function PriceChip({ price }: { price: number }) {
   );
 }
 
-/** Hero Banner beranda dari tabel banners (diatur admin). Penuh satu layar di bawah navbar. */
 export function HeroBanner({
   banners,
   project,
@@ -105,7 +101,6 @@ export function HeroBanner({
   project: HeroProject | null;
 }) {
   if (banners.length === 0) {
-    // Belum ada banner terbit: judul tetap ada supaya halaman punya satu h1.
     return (
       <section className="bg-surface py-16 sm:py-24">
         <Container>

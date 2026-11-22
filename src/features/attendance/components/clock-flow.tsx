@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
-import { CheckCircle2, LoaderCircle, MapPin, MapPinOff, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,6 +14,14 @@ import {
 import { cn } from "@/lib/utils";
 import { clockAction, requestExceptionAction } from "../actions/attendance";
 import { FaceCapture } from "./face-capture";
+import {
+  CheckmarkCircle02Icon,
+  Loading03Icon,
+  Location01Icon,
+  LocationOffline01Icon,
+  SentIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 interface Position {
   lat: number;
@@ -28,11 +35,9 @@ type GeoState =
   | { status: "tidak_didukung" }
   | { status: "siap"; position: Position };
 
-/** Lokasi GPS akurat dari HP (watchPosition), dihentikan saat komponen ditutup. */
 const noSubscribe = () => () => undefined;
 
 function useGeolocation(): GeoState {
-  // Dukungan GPS dibaca saat render (server dianggap mendukung), jadi effect tidak perlu setState sinkron.
   const supported = useSyncExternalStore(
     noSubscribe,
     () => "geolocation" in navigator,
@@ -87,10 +92,6 @@ function timeWib(date: Date): string {
   }).format(date);
 }
 
-/**
- * Alur clock in atau clock out: lokasi GPS, foto wajah dengan kedip, lalu kirim. Jarak dan waktu
- * dihitung server. Di luar radius: tawarkan pengajuan absen di luar lokasi dengan alasan.
- */
 export function ClockFlow({
   kind,
   homeHref,
@@ -98,7 +99,6 @@ export function ClockFlow({
 }: {
   kind: AttendanceKind;
   homeHref: string;
-  /** Tujuan tombol Lanjut setelah absen tercatat: formulir rencana atau hasil kerja. */
   nextHref: string;
 }) {
   const geo = useGeolocation();
@@ -153,7 +153,11 @@ export function ClockFlow({
     const late = kind === "masuk" ? result.late_minutes : result.early_minutes;
     return (
       <div role="status" className="grid gap-4 rounded-3xl bg-success-50 p-5 text-center">
-        <CheckCircle2 aria-hidden="true" className="mx-auto size-12 text-success-600" />
+        <Icon
+          icon={CheckmarkCircle02Icon}
+          aria-hidden="true"
+          className="mx-auto size-12 text-success-600"
+        />
         <p className="text-lg font-bold">
           {label} tercatat pukul {timeWib(new Date())}
         </p>
@@ -180,9 +184,13 @@ export function ClockFlow({
       <section aria-labelledby="langkah-lokasi" className="grid gap-2 app-card p-4 sm:p-5">
         <h2 id="langkah-lokasi" className="flex items-center gap-2 font-bold">
           {position && accurate ? (
-            <MapPin aria-hidden="true" className="size-5 text-success-600" />
+            <Icon icon={Location01Icon} aria-hidden="true" className="size-5 text-success-600" />
           ) : (
-            <MapPinOff aria-hidden="true" className="size-5 text-muted-foreground" />
+            <Icon
+              icon={LocationOffline01Icon}
+              aria-hidden="true"
+              className="size-5 text-muted-foreground"
+            />
           )}
           1. Lokasi
         </h2>
@@ -250,7 +258,7 @@ export function ClockFlow({
               }
             }}
           >
-            <Send aria-hidden="true" />
+            <Icon icon={SentIcon} aria-hidden="true" />
             {exception.isExecuting ? "Mengirim" : "Ajukan absen di luar lokasi"}
           </Button>
         </section>
@@ -272,7 +280,7 @@ export function ClockFlow({
             void submit();
           }}
         >
-          {busy ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : null}
+          {busy ? <Icon icon={Loading03Icon} aria-hidden="true" className="animate-spin" /> : null}
           {busy ? "Mengirim" : `Kirim ${label.toLowerCase()}`}
         </Button>
       )}

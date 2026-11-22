@@ -4,7 +4,6 @@ import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { FileText, ImagePlus, LoaderCircle, Paperclip, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +12,15 @@ import { compressImage, ImageCompressionError } from "@/lib/image";
 import { cn } from "@/lib/utils";
 import { submitWorkReportAction } from "../actions/attendance";
 import { workReportSchema, type WorkAttachment, type WorkReportInput } from "../schemas/attendance";
+import {
+  Attachment01Icon,
+  Cancel01Icon,
+  File01Icon,
+  ImageAdd01Icon,
+  Loading03Icon,
+  SentIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 interface Item {
   key: string;
@@ -22,7 +30,6 @@ interface Item {
   attachment?: WorkAttachment;
 }
 
-/** Path unggah mengikuti host: /portal/absensi/lampiran di domain utama, /absensi/lampiran di portal. */
 function uploadUrl(): string {
   return window.location.pathname.startsWith("/portal")
     ? "/portal/absensi/lampiran"
@@ -55,10 +62,6 @@ async function upload(file: File): Promise<WorkAttachment> {
   return { path: result.path, name: result.name, type: result.type, size: result.size };
 }
 
-/**
- * Formulir rencana kegiatan atau hasil kerja hari ini. Foto dikompres di HP (profil siteReport),
- * dokumen dibatasi jenis dan ukurannya, dan setiap lampiran langsung diunggah saat dipilih.
- */
 export function WorkReportForm({
   kind,
   initial,
@@ -156,12 +159,12 @@ export function WorkReportForm({
 
       <fieldset className="grid gap-3">
         <legend className="mb-1 flex items-center gap-2 text-sm font-semibold">
-          <Paperclip aria-hidden="true" className="size-4" />
+          <Icon icon={Attachment01Icon} aria-hidden="true" className="size-4" />
           Lampiran (opsional, maksimal {WORK_REPORT.maxFiles} file)
         </legend>
         <div className="flex flex-wrap gap-2">
           <label className={pickerClass}>
-            <ImagePlus aria-hidden="true" className="size-4" />
+            <Icon icon={ImageAdd01Icon} aria-hidden="true" className="size-4" />
             Tambah foto
             <input
               type="file"
@@ -176,7 +179,7 @@ export function WorkReportForm({
             />
           </label>
           <label className={pickerClass}>
-            <FileText aria-hidden="true" className="size-4" />
+            <Icon icon={File01Icon} aria-hidden="true" className="size-4" />
             Tambah file
             <input
               type="file"
@@ -205,12 +208,17 @@ export function WorkReportForm({
                 )}
               >
                 {item.status === "uploading" ? (
-                  <LoaderCircle
+                  <Icon
+                    icon={Loading03Icon}
                     aria-hidden="true"
                     className="size-5 shrink-0 animate-spin text-primary"
                   />
                 ) : (
-                  <FileText aria-hidden="true" className="size-5 shrink-0 text-subtle-foreground" />
+                  <Icon
+                    icon={File01Icon}
+                    aria-hidden="true"
+                    className="size-5 shrink-0 text-subtle-foreground"
+                  />
                 )}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{item.name}</span>
@@ -236,7 +244,7 @@ export function WorkReportForm({
                     setItems((current) => current.filter((entry) => entry.key !== item.key));
                   }}
                 >
-                  <X aria-hidden="true" className="size-4" />
+                  <Icon icon={Cancel01Icon} aria-hidden="true" className="size-4" />
                 </button>
               </li>
             ))}
@@ -257,9 +265,9 @@ export function WorkReportForm({
         className="h-14 w-full rounded-2xl text-base aria-busy:opacity-100"
       >
         {busy ? (
-          <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
+          <Icon icon={Loading03Icon} aria-hidden="true" className="size-5 animate-spin" />
         ) : (
-          <Send aria-hidden="true" />
+          <Icon icon={SentIcon} aria-hidden="true" />
         )}
         {busy ? "Menyimpan" : uploading ? "Menunggu lampiran" : label.submit}
       </Button>

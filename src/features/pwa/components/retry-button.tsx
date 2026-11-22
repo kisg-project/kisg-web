@@ -1,7 +1,8 @@
 "use client";
 
-import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RotateLeft01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export function RetryButton() {
   return (
@@ -10,7 +11,7 @@ export function RetryButton() {
         window.location.reload();
       }}
     >
-      <RotateCcw aria-hidden="true" />
+      <Icon icon={RotateLeft01Icon} aria-hidden="true" />
       Muat ulang
     </Button>
   );

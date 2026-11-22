@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
-import { MailX, ShieldCheck, UserX } from "lucide-react";
 import { Avatar } from "@/components/shared/avatar";
 import { ConfirmDialog, FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +19,7 @@ import type { AccountStatus, PortalAccount } from "../queries/list";
 import { manageProblem } from "../utils/rules";
 import { InviteResultCard } from "./invite-form";
 import { RolePicker, type RoleSelection } from "./role-picker";
+import { MailRemove01Icon, SecurityCheckIcon, UserRemove01Icon } from "@hugeicons/core-free-icons";
 
 const STATUS_LABEL: Record<AccountStatus, string> = {
   aktif: "Aktif",
@@ -27,10 +27,6 @@ const STATUS_LABEL: Record<AccountStatus, string> = {
   nonaktif: "Nonaktif",
 };
 
-/**
- * Daftar karyawan sebagai kartu (rapi di HP dan desktop). Akun sendiri dan akun owner (bagi selain
- * owner) tidak bisa diubah, sesuai aturan yang sama dengan server dan database.
- */
 export function AccountList({
   accounts,
   actor,
@@ -181,7 +177,7 @@ export function AccountList({
               : "Tautan aktivasi tidak berlaku lagi dan akun dihapus dari daftar."
           }
           confirmLabel={confirming.kind === "nonaktifkan" ? "Ya, nonaktifkan" : "Ya, batalkan"}
-          icon={confirming.kind === "nonaktifkan" ? UserX : MailX}
+          icon={confirming.kind === "nonaktifkan" ? UserRemove01Icon : MailRemove01Icon}
           busy={busy}
           error={error}
           onConfirm={() => {
@@ -238,7 +234,7 @@ function EditRolesDialog({
       title={`Ubah role ${name}`}
       description="Hak akses adalah gabungan semua role yang dipilih. Perubahan berlaku saat itu juga."
       busy={action.isExecuting}
-      icon={ShieldCheck}
+      icon={SecurityCheckIcon}
     >
       <form
         noValidate

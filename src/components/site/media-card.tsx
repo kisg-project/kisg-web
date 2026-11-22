@@ -1,12 +1,9 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ImageOff } from "lucide-react";
+import { ImageNotFound01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/**
- * Kartu konten (proyek, berita, promo): foto yang memperbesar halus saat di-hover, kartu naik sedikit.
- * Seluruh kartu bisa diklik lewat tautan judul (pseudo-element), tanpa tautan bersarang.
- */
 export function MediaCard({
   href,
   title,
@@ -19,7 +16,6 @@ export function MediaCard({
   title: string;
   image: { src: string; alt: string } | null;
   meta?: ReactNode;
-  /** Label di pojok foto, misal "Sold out". */
   badge?: string;
   children?: ReactNode;
 }) {
@@ -36,7 +32,7 @@ export function MediaCard({
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted-foreground">
-            <ImageOff aria-hidden="true" className="size-8" />
+            <Icon icon={ImageNotFound01Icon} aria-hidden="true" className="size-8" />
           </div>
         )}
         {badge ? (

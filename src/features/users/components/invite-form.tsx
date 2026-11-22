@@ -5,13 +5,19 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Copy, MailCheck, MessageCircle, UserPlus } from "lucide-react";
 import { FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { TextField } from "@/components/shared/text-field";
 import { Button } from "@/components/ui/button";
 import { inviteUserAction } from "../actions/users";
 import { inviteUserSchema, type InviteUserInput } from "../schemas/users";
 import { RolePicker } from "./role-picker";
+import {
+  Copy01Icon,
+  MailValidation01Icon,
+  UserAdd01Icon,
+  WhatsappIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export interface InviteResult {
   email: string;
@@ -19,10 +25,6 @@ export interface InviteResult {
   emailed: boolean;
 }
 
-/**
- * Hasil undangan. Email terkirim: cukup konfirmasi. Email belum aktif atau gagal: tautan
- * ditampilkan untuk disalin atau dikirim lewat WhatsApp.
- */
 export function InviteResultCard({
   invited,
   onDone,
@@ -30,7 +32,6 @@ export function InviteResultCard({
 }: {
   invited: InviteResult;
   onDone?: () => void;
-  /** Di dialog: tombol Selesai menutup dialog. */
   onClose?: () => void;
 }) {
   const [copied, setCopied] = useState(false);
@@ -39,7 +40,11 @@ export function InviteResultCard({
     <div role="status" className="grid gap-4 rounded-lg bg-success-50 p-5">
       {invited.emailed ? (
         <p className="flex items-start gap-2 font-semibold">
-          <MailCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-success-700" />
+          <Icon
+            icon={MailValidation01Icon}
+            aria-hidden="true"
+            className="mt-0.5 size-5 shrink-0 text-success-700"
+          />
           Undangan terkirim ke {invited.email}.
         </p>
       ) : (
@@ -62,7 +67,7 @@ export function InviteResultCard({
             });
           }}
         >
-          <Copy aria-hidden="true" />
+          <Icon icon={Copy01Icon} aria-hidden="true" />
           {copied ? "Tautan tersalin" : "Salin tautan"}
         </Button>
         <Button asChild variant="outline">
@@ -71,7 +76,7 @@ export function InviteResultCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <MessageCircle aria-hidden="true" />
+            <Icon icon={WhatsappIcon} aria-hidden="true" />
             Kirim lewat WhatsApp
           </a>
         </Button>
@@ -90,13 +95,11 @@ export function InviteResultCard({
   );
 }
 
-/** Undang karyawan: nama, email, satu atau beberapa role, dan role utama. */
 export function InviteForm({
   allowOwner,
   onCancel,
 }: {
   allowOwner: boolean;
-  /** Diisi saat form tampil di dialog: footer Batal dan Kirim undangan. */
   onCancel?: () => void;
 }) {
   const router = useRouter();
@@ -186,7 +189,7 @@ export function InviteForm({
       ) : (
         <div>
           <Button type="submit" size="lg" disabled={isExecuting}>
-            <UserPlus aria-hidden="true" />
+            <Icon icon={UserAdd01Icon} aria-hidden="true" />
             {isExecuting ? "Mengirim undangan" : "Kirim undangan"}
           </Button>
         </div>
@@ -195,7 +198,6 @@ export function InviteForm({
   );
 }
 
-/** Tombol Undang karyawan: form undangan di dialog (lembar bawah di HP). */
 export function InviteDialog({ allowOwner }: { allowOwner: boolean }) {
   const [open, setOpen] = useState(false);
   return (
@@ -204,10 +206,10 @@ export function InviteDialog({ allowOwner }: { allowOwner: boolean }) {
       onOpenChange={setOpen}
       title="Undang karyawan"
       description="Karyawan menerima email berisi tautan aktivasi akun."
-      icon={UserPlus}
+      icon={UserAdd01Icon}
       trigger={
         <Button type="button" size="lg">
-          <UserPlus aria-hidden="true" />
+          <Icon icon={UserAdd01Icon} aria-hidden="true" />
           Undang karyawan
         </Button>
       }

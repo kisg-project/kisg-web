@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Container } from "@/components/shared/container";
 import { Logo } from "@/components/shared/logo";
@@ -7,16 +6,14 @@ import { OfficeMap } from "@/components/site/office-map";
 import { footerNav, withProjectsHref } from "@/config/nav";
 import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { getProjectsHref } from "@/features/projects";
+import { Call02Icon, Location01Icon, Mail01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const linkClass =
   "inline-flex min-h-10 items-center underline-offset-4 transition-colors hover:text-white hover:underline";
 
 const headingClass = "text-sm font-bold text-gold-400";
 
-/**
- * Footer padat dan seimbang (keputusan owner, 21 November 2026): baris atas tiga kolom setara
- * (identitas, kantor dan email, peta tanpa bingkai), baris bawah empat kolom tautan yang tingginya mirip.
- */
 export async function SiteFooter() {
   const projectsHref = await getProjectsHref();
   return (
@@ -32,7 +29,7 @@ export async function SiteFooter() {
           <address className="not-italic">
             <p className={headingClass}>Kantor pemasaran</p>
             <p className="mt-2 flex gap-2 leading-relaxed">
-              <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+              <Icon icon={Location01Icon} aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
               <span>{formatOfficeAddress()}</span>
             </p>
           </address>
@@ -41,7 +38,7 @@ export async function SiteFooter() {
             {siteConfig.emails.map((item) => (
               <li key={item.address}>
                 <a href={`mailto:${item.address}`} className={`${linkClass} min-h-8 gap-2`}>
-                  <Mail aria-hidden="true" className="size-4 shrink-0" />
+                  <Icon icon={Mail01Icon} aria-hidden="true" className="size-4 shrink-0" />
                   <span className="min-w-0 break-all">{item.address}</span>
                 </a>
                 <span className="block pl-6 text-xs text-primary-200">{item.label}</span>
@@ -81,7 +78,7 @@ export async function SiteFooter() {
                 aria-label={`WhatsApp ${siteConfig.whatsapp.display}`}
                 className={`${linkClass} gap-2`}
               >
-                <Phone aria-hidden="true" className="size-4 shrink-0" />
+                <Icon icon={Call02Icon} aria-hidden="true" className="size-4 shrink-0" />
                 {siteConfig.whatsapp.display}
               </a>
             </li>

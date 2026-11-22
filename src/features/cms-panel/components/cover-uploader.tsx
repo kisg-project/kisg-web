@@ -1,20 +1,16 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ImagePlus, LoaderCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/image";
 import { cn } from "@/lib/utils";
+import { Cancel01Icon, ImageAdd01Icon, Loading03Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Path unggah mengikuti host: /cms/aset di domain utama, /aset di subdomain CMS. */
 function uploadUrl(): string {
   return window.location.pathname.startsWith("/cms") ? "/cms/aset" : "/aset";
 }
 
-/**
- * Gambar sampul konten: dipilih dari perangkat, dikompres di browser (profil "content", maks 500 KB),
- * diunggah ke bucket publik, lalu alamatnya disimpan di form.
- */
 export function CoverUploader({
   folder,
   value,
@@ -65,7 +61,11 @@ export function CoverUploader({
         )}
         {status === "busy" ? (
           <span className="absolute inset-0 flex items-center justify-center bg-background/70">
-            <LoaderCircle aria-hidden="true" className="size-6 animate-spin text-primary" />
+            <Icon
+              icon={Loading03Icon}
+              aria-hidden="true"
+              className="size-6 animate-spin text-primary"
+            />
           </span>
         ) : null}
       </div>
@@ -77,7 +77,7 @@ export function CoverUploader({
             status === "busy" && "pointer-events-none opacity-50",
           )}
         >
-          <ImagePlus aria-hidden="true" className="size-4" />
+          <Icon icon={ImageAdd01Icon} aria-hidden="true" className="size-4" />
           {value ? "Ganti sampul" : "Pilih gambar sampul"}
           <input
             id={`${id}-file`}
@@ -99,7 +99,7 @@ export function CoverUploader({
               onChange(null);
             }}
           >
-            <X aria-hidden="true" />
+            <Icon icon={Cancel01Icon} aria-hidden="true" />
             Hapus sampul
           </Button>
         ) : null}

@@ -2,7 +2,6 @@
 
 import { useCallback, useId, useState } from "react";
 import Link from "next/link";
-import { CircleCheck, Download, Phone, Send } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
@@ -18,6 +17,13 @@ import { submitLeadAction } from "../actions/submit-lead";
 import { leadFormSchema, type LeadFormInput } from "../schemas/lead";
 import { readTracking } from "../utils/tracking";
 import { TurnstileWidget } from "./turnstile-widget";
+import {
+  Call02Icon,
+  CheckmarkCircle02Icon,
+  Download04Icon,
+  SentIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 type FormKind = LeadFormInput["formKind"];
 
@@ -39,7 +45,6 @@ const COPY: Record<FormKind, { submit: string; success: string; showMessage: boo
   },
 };
 
-/** Proyek tanpa file brosur: marketing mengirim brosur lewat WhatsApp. */
 const BROCHURE_BY_WHATSAPP = "Permintaan diterima. Marketing kami mengirim brosur lewat WhatsApp.";
 
 function startDownload(url: string) {
@@ -51,10 +56,6 @@ function startDownload(url: string) {
   link.remove();
 }
 
-/**
- * Form lead publik. Validasi di browser dan server memakai skema yang sama. Tombol nonaktif selama
- * mengirim (cegah kirim dua kali). Honeypot tersembunyi dari manusia dan pembaca layar.
- */
 export function LeadForm({
   formKind,
   projectSlug,
@@ -89,7 +90,6 @@ export function LeadForm({
   });
   const { execute, result, isExecuting, hasSucceeded } = useAction(submitLeadAction, {
     onSuccess: ({ data }) => {
-      // Unduhan dimulai otomatis. Tombol Unduh lagi tetap ada kalau browser memblokirnya.
       if (data.brochureUrl) startDownload(data.brochureUrl);
     },
   });
@@ -99,14 +99,14 @@ export function LeadForm({
   if (hasSucceeded) {
     return (
       <div role="status" className="flex flex-col items-start gap-4 rounded-3xl bg-success-50 p-5">
-        <CircleCheck aria-hidden="true" className="size-8 text-success-700" />
+        <Icon icon={CheckmarkCircle02Icon} aria-hidden="true" className="size-8 text-success-700" />
         <p className="font-semibold">
           {formKind === "brosur" && !brochureUrl ? BROCHURE_BY_WHATSAPP : copy.success}
         </p>
         {brochureUrl ? (
           <Button asChild>
             <a href={brochureUrl} download>
-              <Download aria-hidden="true" />
+              <Icon icon={Download04Icon} aria-hidden="true" />
               Unduh lagi
             </a>
           </Button>
@@ -121,7 +121,7 @@ export function LeadForm({
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Phone aria-hidden="true" />
+            <Icon icon={Call02Icon} aria-hidden="true" />
             Lanjut chat WhatsApp
           </a>
         </Button>
@@ -188,7 +188,6 @@ export function LeadForm({
         </div>
       ) : null}
 
-      {/* Honeypot: disembunyikan dari pengunjung dan pembaca layar, hanya diisi bot. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label htmlFor={`${idPrefix}-website`}>Website</label>
         <input
@@ -247,7 +246,7 @@ export function LeadForm({
       ) : null}
       <div>
         <Button type="submit" size="lg" disabled={isExecuting}>
-          <Send aria-hidden="true" />
+          <Icon icon={SentIcon} aria-hidden="true" />
           {isExecuting ? "Mengirim" : copy.submit}
         </Button>
       </div>

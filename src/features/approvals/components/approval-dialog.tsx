@@ -1,13 +1,20 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import { Check, PenLine, ShieldCheck, ShieldX, X } from "lucide-react";
 import { FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { PasswordField } from "@/components/shared/password-field";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ApprovalDecision } from "@/config/approvals";
+import {
+  Cancel01Icon,
+  PencilEdit01Icon,
+  SecurityBlockIcon,
+  SecurityCheckIcon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export interface SignedDecision {
   password: string;
@@ -16,7 +23,6 @@ export interface SignedDecision {
   lng?: number;
 }
 
-/** Lokasi hanya diambil kalau izin lokasi sudah diberikan sebelumnya (tanpa memunculkan dialog izin). */
 async function grantedPosition(): Promise<{ lat: number; lng: number } | null> {
   try {
     const status = await navigator.permissions.query({ name: "geolocation" });
@@ -42,11 +48,6 @@ const COPY: Record<ApprovalDecision, { trigger: string; title: string; submit: s
   ditolak: { trigger: "Tolak", title: "Tolak pengajuan", submit: "Tolak" },
 };
 
-/**
- * Tombol keputusan dengan tanda tangan elektronik: penyetuju melihat ringkasan, mengisi catatan
- * (wajib saat menolak), lalu memasukkan password akunnya. Password diperiksa di server. Tampil
- * sebagai FormDialog (lembar bawah di HP, tanpa X, Batal merah).
- */
 export function ApprovalDialog({
   decision,
   summary,
@@ -82,7 +83,7 @@ export function ApprovalDialog({
         onOpenChange(next);
       }}
       busy={busy}
-      icon={decision === "disetujui" ? ShieldCheck : ShieldX}
+      icon={decision === "disetujui" ? SecurityCheckIcon : SecurityBlockIcon}
       tone={decision === "disetujui" ? "primary" : "danger"}
       title={copy.title}
       description="Periksa ringkasan, lalu tanda tangani dengan password akun Anda."
@@ -93,7 +94,11 @@ export function ApprovalDialog({
           size="lg"
           className="min-h-11 flex-1"
         >
-          {decision === "disetujui" ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
+          {decision === "disetujui" ? (
+            <Icon icon={Tick02Icon} aria-hidden="true" />
+          ) : (
+            <Icon icon={Cancel01Icon} aria-hidden="true" />
+          )}
           {copy.trigger}
         </Button>
       }
@@ -151,7 +156,7 @@ export function ApprovalDialog({
         <FormDialogFooter
           busy={busy}
           saveLabel={copy.submit}
-          saveIcon={<PenLine aria-hidden="true" />}
+          saveIcon={<Icon icon={PencilEdit01Icon} aria-hidden="true" />}
           onCancel={() => {
             onOpenChange(false);
           }}

@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { KPR_DEFAULTS } from "@/config/kpr";
 import { KPR_PRODUCTS, lowestRate, type KprProduct } from "@/config/kpr-products";
 import { formatRupiah } from "@/lib/format";
 import { calculateKpr, downPaymentFromPercent } from "../utils/calculate";
 import { PartnerBanks } from "./partner-banks";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Angsuran periode pertama untuk produk dengan bunga atau margin terendah, DP dan tenor default. */
 function lowestInstallment(price: number): { product: KprProduct; monthly: number } | null {
   const product = [...KPR_PRODUCTS].sort((a, b) => lowestRate(a) - lowestRate(b))[0];
   if (!product) return null;
@@ -21,7 +21,6 @@ function lowestInstallment(price: number): { product: KprProduct; monthly: numbe
   return { product, monthly: result.periods[0]?.monthly ?? 0 };
 }
 
-/** Ringkasan simulasi di beranda, menaut ke halaman simulasi lengkap. */
 export function KprTeaser({ price }: { price: number }) {
   const lowest = lowestInstallment(price);
   return (
@@ -50,7 +49,7 @@ export function KprTeaser({ price }: { price: number }) {
       <Button asChild size="lg" className="shadow-md">
         <Link href="/simulasi-kpr">
           Hitung simulasi lengkap
-          <ArrowRight aria-hidden="true" />
+          <Icon icon={ArrowRight02Icon} aria-hidden="true" />
         </Link>
       </Button>
       <PartnerBanks className="lg:col-span-2" />

@@ -1,13 +1,4 @@
 import type { Metadata } from "next";
-import {
-  Building2,
-  CalendarDays,
-  Handshake,
-  House,
-  MapPin,
-  MessageSquareText,
-  Phone,
-} from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -17,8 +8,18 @@ import { formatOfficeAddress, siteConfig, whatsappLink } from "@/config/site";
 import { formatAddress, getPublishedProjects, lowestPrice } from "@/features/projects";
 import { formatRupiahRange } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo/page-metadata";
+import {
+  Agreement01Icon,
+  BubbleChatIcon,
+  Building03Icon,
+  Calendar03Icon,
+  Call02Icon,
+  Home01Icon,
+  Location01Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-const SERVICE_ICONS = [House, Handshake, MessageSquareText] as const;
+const SERVICE_ICONS = [Home01Icon, Agreement01Icon, BubbleChatIcon] as const;
 
 export const metadata: Metadata = pageMetadata({
   path: "/tentang",
@@ -26,15 +27,13 @@ export const metadata: Metadata = pageMetadata({
   description: `${siteConfig.legalName}, developer perumahan di Bekasi. Profil, proyek, dan kontak kantor pemasaran.`,
 });
 
-// Isi dari Company Profile PT KISG (2024) dan data owner. Legalitas ditambah saat datanya ada
-// (docs/TODO-DATA.md bagian 2). Proyek lama tidak disebut (keputusan owner, Fase 1).
 export default async function AboutPage() {
   const projects = await getPublishedProjects();
   const { company } = siteConfig;
   const facts = [
-    { icon: Building2, label: "Badan usaha", value: siteConfig.legalName },
-    { icon: CalendarDays, label: "Berdiri", value: String(company.foundedYear) },
-    { icon: MapPin, label: "Kantor pemasaran", value: formatOfficeAddress() },
+    { icon: Building03Icon, label: "Badan usaha", value: siteConfig.legalName },
+    { icon: Calendar03Icon, label: "Berdiri", value: String(company.foundedYear) },
+    { icon: Location01Icon, label: "Kantor pemasaran", value: formatOfficeAddress() },
   ];
 
   return (
@@ -60,7 +59,7 @@ export default async function AboutPage() {
             >
               <dt className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
                 <span className="icon-chip flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-                  <fact.icon aria-hidden="true" className="size-5" />
+                  <Icon icon={fact.icon} className="size-5" />
                 </span>
                 {fact.label}
               </dt>
@@ -102,7 +101,7 @@ export default async function AboutPage() {
       <Section title="Layanan">
         <ul className="grid gap-4 sm:grid-cols-3">
           {company.services.map((service, index) => {
-            const Icon = SERVICE_ICONS[index] ?? House;
+            const serviceIcon = SERVICE_ICONS[index] ?? Home01Icon;
             return (
               <li key={service.title}>
                 <Reveal
@@ -110,7 +109,7 @@ export default async function AboutPage() {
                   className="flex h-full lift flex-col gap-3 rounded-3xl border border-primary-100 bg-card p-5"
                 >
                   <span className="icon-chip flex size-11 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-                    <Icon aria-hidden="true" className="size-5" />
+                    <Icon icon={serviceIcon} className="size-5" />
                   </span>
                   <h3 className="text-lg font-bold">{service.title}</h3>
                   <p className="text-sm text-subtle-foreground">{service.body}</p>
@@ -153,7 +152,7 @@ export default async function AboutPage() {
             rel="noopener noreferrer"
             className="inline-flex min-h-11 lift items-center gap-2 rounded-full border border-primary-100 bg-card px-5 font-semibold"
           >
-            <Phone aria-hidden="true" className="size-4 text-primary" />
+            <Icon icon={Call02Icon} aria-hidden="true" className="size-4 text-primary" />
             WhatsApp {siteConfig.whatsapp.display}
           </a>
           <a

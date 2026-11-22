@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
-import { Trash2 } from "lucide-react";
 import { toast } from "@/components/shared/toast";
 import { ConfirmDialog } from "@/components/shared/form-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteCareerAction, deletePostAction } from "../actions/content";
+import { Delete02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/** Hapus konten dengan konfirmasi. Konten hilang dari website, data tetap tersimpan untuk audit. */
 export function DeleteContentButton({
   kind,
   id,
@@ -38,7 +38,7 @@ export function DeleteContentButton({
       title={`Hapus ${kind} ini?`}
       description={`"${title}" hilang dari website. Tindakan ini tidak bisa dibatalkan dari panel CMS.`}
       confirmLabel="Ya, hapus"
-      icon={Trash2}
+      icon={Delete02Icon}
       busyLabel="Menghapus"
       busy={action.isExecuting}
       error={action.result.serverError}
@@ -47,7 +47,7 @@ export function DeleteContentButton({
       }}
       trigger={
         <Button type="button" variant="outline">
-          <Trash2 aria-hidden="true" />
+          <Icon icon={Delete02Icon} aria-hidden="true" />
           Hapus {kind}
         </Button>
       }

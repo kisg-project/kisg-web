@@ -1,8 +1,9 @@
 "use client";
 
-import { RotateCcw } from "lucide-react";
 import { ErrorState } from "@/components/shared/state-message";
 import { Button } from "@/components/ui/button";
+import { RotateLeft01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export default function PortalError({
   retry,
@@ -20,7 +21,7 @@ export default function PortalError({
             retry();
           }}
         >
-          <RotateCcw aria-hidden="true" />
+          <Icon icon={RotateLeft01Icon} aria-hidden="true" />
           Muat ulang
         </Button>
       }

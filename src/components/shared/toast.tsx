@@ -2,30 +2,36 @@
 
 // eslint-disable-next-line no-restricted-imports -- satu-satunya pembungkus sonner yang diizinkan
 import { toast as sonner } from "sonner";
-import { CircleAlert, CircleCheck, Info, TriangleAlert, type LucideIcon } from "lucide-react";
 import { friendlyMessage } from "@/lib/utils/friendly-message";
 import { cn } from "@/lib/utils";
+import {
+  Alert02Icon,
+  AlertCircleIcon,
+  CheckmarkCircle02Icon,
+  InformationCircleIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon, type AppIcon } from "@/components/shared/icon";
 
 type Kind = "success" | "error" | "info" | "warning";
 
-const STYLE: Record<Kind, { icon: LucideIcon; chip: string; bar: string }> = {
+const STYLE: Record<Kind, { icon: AppIcon; chip: string; bar: string }> = {
   success: {
-    icon: CircleCheck,
+    icon: CheckmarkCircle02Icon,
     chip: "bg-success-100 text-success-700 dark:bg-success-950 dark:text-success-300",
     bar: "bg-success-600",
   },
   error: {
-    icon: CircleAlert,
+    icon: AlertCircleIcon,
     chip: "bg-danger-100 text-danger-700 dark:bg-danger-950 dark:text-danger-300",
     bar: "bg-danger-600",
   },
   info: {
-    icon: Info,
+    icon: InformationCircleIcon,
     chip: "bg-info-100 text-info-700 dark:bg-info-950 dark:text-info-300",
     bar: "bg-info-600",
   },
   warning: {
-    icon: TriangleAlert,
+    icon: Alert02Icon,
     chip: "bg-warning-100 text-warning-800 dark:bg-warning-950 dark:text-warning-300",
     bar: "bg-warning-500",
   },
@@ -42,7 +48,7 @@ function ToastCard({
   message: string;
   description?: string;
 }) {
-  const { icon: Icon, chip, bar } = STYLE[kind];
+  const { icon, chip, bar } = STYLE[kind];
   return (
     <button
       type="button"
@@ -51,7 +57,7 @@ function ToastCard({
     >
       <span aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-1", bar)} />
       <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-full", chip)}>
-        <Icon aria-hidden="true" className="size-5" />
+        <Icon icon={icon} className="size-5" />
       </span>
       <span className="min-w-0">
         <span className="block text-sm font-semibold">{message}</span>
@@ -72,11 +78,6 @@ function show(kind: Kind, message: string, options?: { description?: string }) {
   );
 }
 
-/**
- * Toast custom KIS (keputusan owner, 22 November 2026): kartu membulat dengan ikon berwarna per jenis.
- * Semua pesan disaring friendlyMessage, jadi bahasa sistem atau kode tidak pernah tampil. Komponen
- * lain wajib memakai modul ini, bukan sonner langsung (aturan ESLint).
- */
 export const toast = {
   success: (message: string, options?: { description?: string }) =>
     show("success", message, options),

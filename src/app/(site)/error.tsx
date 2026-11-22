@@ -1,10 +1,11 @@
 "use client";
 
-import { Phone, RotateCcw } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { ErrorState } from "@/components/shared/state-message";
 import { Button } from "@/components/ui/button";
 import { whatsappLink } from "@/config/site";
+import { Call02Icon, RotateLeft01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export default function SiteError({
   retry,
@@ -24,12 +25,12 @@ export default function SiteError({
                 retry();
               }}
             >
-              <RotateCcw aria-hidden="true" />
+              <Icon icon={RotateLeft01Icon} aria-hidden="true" />
               Muat ulang
             </Button>
             <Button asChild variant="outline">
               <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">
-                <Phone aria-hidden="true" />
+                <Icon icon={Call02Icon} aria-hidden="true" />
                 Hubungi marketing
               </a>
             </Button>

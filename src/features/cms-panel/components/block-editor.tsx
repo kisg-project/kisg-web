@@ -1,12 +1,22 @@
 "use client";
 
 import { useId } from "react";
-import { ArrowDown, ArrowUp, Heading2, Link2, List, Pilcrow, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { ContentBlock } from "@/features/cms/types";
+import {
+  ArrowDown02Icon,
+  ArrowUp02Icon,
+  Delete02Icon,
+  Heading02Icon,
+  LeftToRightListBulletIcon,
+  Link01Icon,
+  ParagraphIcon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 const TYPE_LABEL: Record<ContentBlock["type"], string> = {
   paragraph: "Paragraf",
@@ -21,10 +31,6 @@ function emptyBlock(type: ContentBlock["type"]): ContentBlock {
   return { type, text: "" };
 }
 
-/**
- * Editor isi konten berbasis blok (paragraf, subjudul, daftar, sumber). Disimpan sebagai jsonb dan
- * dirender halaman publik tanpa HTML mentah, jadi aman dari XSS. Blok bisa diurutkan dan dihapus.
- */
 export function BlockEditor({
   label,
   value,
@@ -90,7 +96,7 @@ export function BlockEditor({
                       move(index, -1);
                     }}
                   >
-                    <ArrowUp aria-hidden="true" />
+                    <Icon icon={ArrowUp02Icon} aria-hidden="true" />
                   </Button>
                   <Button
                     type="button"
@@ -102,7 +108,7 @@ export function BlockEditor({
                       move(index, 1);
                     }}
                   >
-                    <ArrowDown aria-hidden="true" />
+                    <Icon icon={ArrowDown02Icon} aria-hidden="true" />
                   </Button>
                   <Button
                     type="button"
@@ -113,7 +119,7 @@ export function BlockEditor({
                       remove(index);
                     }}
                   >
-                    <Trash2 aria-hidden="true" />
+                    <Icon icon={Delete02Icon} aria-hidden="true" />
                   </Button>
                 </div>
               </div>
@@ -219,7 +225,7 @@ export function BlockEditor({
                         });
                       }}
                     >
-                      <Plus aria-hidden="true" />
+                      <Icon icon={PlusSignIcon} aria-hidden="true" />
                       Tambah sumber
                     </Button>
                   </div>
@@ -231,14 +237,14 @@ export function BlockEditor({
       </ol>
       <div className="flex flex-wrap gap-2">
         {types.map((type) => {
-          const Icon =
+          const blockIcon =
             type === "paragraph"
-              ? Pilcrow
+              ? ParagraphIcon
               : type === "heading"
-                ? Heading2
+                ? Heading02Icon
                 : type === "list"
-                  ? List
-                  : Link2;
+                  ? LeftToRightListBulletIcon
+                  : Link01Icon;
           return (
             <Button
               key={type}
@@ -249,7 +255,7 @@ export function BlockEditor({
                 onChange([...value, emptyBlock(type)]);
               }}
             >
-              <Icon aria-hidden="true" />
+              <Icon icon={blockIcon} />
               Tambah {TYPE_LABEL[type].toLowerCase()}
             </Button>
           );
@@ -264,7 +270,6 @@ export function BlockEditor({
   );
 }
 
-/** Bersihkan blok sebelum disimpan: buang baris daftar kosong dan blok kosong. */
 export function cleanBlocks(blocks: readonly ContentBlock[]): ContentBlock[] {
   return blocks.flatMap((block): ContentBlock[] => {
     if (block.type === "list") {

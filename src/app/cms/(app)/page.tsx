@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, Newspaper } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { getCmsSummary, requireCmsUser } from "@/features/cms-panel";
+import { ArrowRight02Icon, Briefcase01Icon, News01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = { title: "Ringkasan" };
 
@@ -13,14 +14,14 @@ export default async function CmsHomePage() {
     {
       href: "/cms/berita",
       title: "Berita",
-      icon: Newspaper,
+      icon: News01Icon,
       published: summary.posts.published,
       drafts: summary.posts.drafts,
     },
     {
       href: "/cms/lowongan",
       title: "Lowongan",
-      icon: BriefcaseBusiness,
+      icon: Briefcase01Icon,
       published: summary.careers.published,
       drafts: summary.careers.drafts,
     },
@@ -39,7 +40,7 @@ export default async function CmsHomePage() {
               className="group flex h-full lift items-start gap-4 rounded-lg border bg-card p-5"
             >
               <span className="icon-chip flex size-11 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
-                <card.icon aria-hidden="true" className="size-5" />
+                <Icon icon={card.icon} className="size-5" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-bold group-hover:text-primary">{card.title}</span>
@@ -47,7 +48,7 @@ export default async function CmsHomePage() {
                   {card.published} terbit, {card.drafts} draf
                 </span>
               </span>
-              <ArrowRight aria-hidden="true" className="size-5 text-primary" />
+              <Icon icon={ArrowRight02Icon} aria-hidden="true" className="size-5 text-primary" />
             </Link>
           </li>
         ))}

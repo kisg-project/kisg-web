@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { Phone } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,8 @@ import { whatsappLink } from "@/config/site";
 import { getProjectsHref } from "@/features/projects";
 import { DesktopNav, NavLinks } from "./desktop-nav";
 import { MobileNav } from "./mobile-nav";
+import { Call02Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export async function SiteHeader() {
   const items = withProjectsHref(siteNav, await getProjectsHref());
@@ -21,7 +22,7 @@ export async function SiteHeader() {
         <div className="flex items-center gap-2">
           <Button asChild className="hidden shadow-sm xl:inline-flex">
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">
-              <Phone aria-hidden="true" />
+              <Icon icon={Call02Icon} aria-hidden="true" />
               Hubungi marketing
             </a>
           </Button>

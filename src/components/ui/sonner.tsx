@@ -3,26 +3,25 @@
 import type * as React from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 import {
-  CircleCheckIcon,
-  InfoIcon,
-  Loader2Icon,
-  OctagonXIcon,
-  TriangleAlertIcon,
-} from "lucide-react";
+  Alert02Icon,
+  CancelCircleIcon,
+  CheckmarkCircle02Icon,
+  InformationCircleIcon,
+  Loading03Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-// Disesuaikan dari shadcn: tanpa next-themes. Mode gelap portal memakai class "dark",
-// jadi tema dikirim lewat prop `theme` oleh layout yang memakainya (default terang).
 function Toaster({ theme = "light", ...props }: ToasterProps) {
   return (
     <Sonner
       theme={theme}
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
+        success: <Icon icon={CheckmarkCircle02Icon} className="size-4" />,
+        info: <Icon icon={InformationCircleIcon} className="size-4" />,
+        warning: <Icon icon={Alert02Icon} className="size-4" />,
+        error: <Icon icon={CancelCircleIcon} className="size-4" />,
+        loading: <Icon icon={Loading03Icon} className="size-4 animate-spin" />,
       }}
       style={
         {

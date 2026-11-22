@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
-import { Clock, Plus, Trash2 } from "lucide-react";
 import { ConfirmDialog, FormDialog, FormDialogFooter } from "@/components/shared/form-dialog";
 import { toast } from "@/components/shared/toast";
 import { TextField } from "@/components/shared/text-field";
@@ -22,6 +21,8 @@ import {
 import { WEEKDAYS } from "@/config/attendance";
 import { deleteScheduleAction, saveScheduleAction } from "../actions/attendance";
 import { scheduleSchema, type ScheduleInput } from "../schemas/attendance";
+import { Clock01Icon, Delete02Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export interface Choice {
   id: string;
@@ -34,7 +35,6 @@ const SCOPE_LABEL = {
   karyawan: "Per karyawan",
 } as const;
 
-/** Atur jam masuk, jam pulang, hari kerja, dan toleransi terlambat. Hanya owner. */
 export function ScheduleForm({
   initial,
   locations,
@@ -46,10 +46,8 @@ export function ScheduleForm({
   initial?: ScheduleInput;
   locations: readonly Choice[];
   employees: readonly Choice[];
-  /** Untuk jam kerja perusahaan: lingkup tidak bisa diganti. */
   fixedScope?: boolean;
   onDone?: () => void;
-  /** Diisi saat form tampil di dialog: footer Batal dan Simpan. */
   onCancel?: () => void;
 }) {
   const router = useRouter();
@@ -229,7 +227,6 @@ export function ScheduleForm({
   );
 }
 
-/** Hapus jam kerja khusus (kembali ke jam kerja perusahaan). */
 export function DeleteScheduleButton({ id, name }: { id: string; name: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -248,7 +245,7 @@ export function DeleteScheduleButton({ id, name }: { id: string; name: string })
       description="Jam kerja kembali mengikuti jam kerja perusahaan."
       confirmLabel="Ya, hapus"
       busyLabel="Menghapus"
-      icon={Trash2}
+      icon={Delete02Icon}
       busy={isExecuting}
       error={result.serverError}
       onConfirm={() => {
@@ -256,14 +253,13 @@ export function DeleteScheduleButton({ id, name }: { id: string; name: string })
       }}
       trigger={
         <Button type="button" variant="ghost" size="icon" aria-label={`Hapus jam kerja ${name}`}>
-          <Trash2 aria-hidden="true" />
+          <Icon icon={Delete02Icon} aria-hidden="true" />
         </Button>
       }
     />
   );
 }
 
-/** Tombol Tambah jam khusus: form jam per titik absensi atau per karyawan di dialog. */
 export function ScheduleDialog({
   locations,
   employees,
@@ -280,11 +276,11 @@ export function ScheduleDialog({
       open={open}
       onOpenChange={setOpen}
       title="Tambah jam khusus"
-      icon={Clock}
+      icon={Clock01Icon}
       description="Jam karyawan mengalahkan jam titik absensi. Jam titik mengalahkan jam perusahaan."
       trigger={
         <Button type="button" size="lg">
-          <Plus aria-hidden="true" />
+          <Icon icon={PlusSignIcon} aria-hidden="true" />
           Tambah jam khusus
         </Button>
       }

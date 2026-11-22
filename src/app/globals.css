@@ -1,10 +1,6 @@
 @import "tailwindcss";
-/* Utilitas animasi dan varian data-state untuk komponen shadcn (dibaca saat build). */
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
-/* Token desain KIS Group. Sumber: docs/brand.md (dikunci di Fase 0).
-   Tidak ada warna hardcode di komponen. Palet bawaan Tailwind dimatikan supaya hanya warna brand yang tersedia. */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -15,8 +11,6 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  /* Skala dibuat di OKLCH (lihat docs/brand.md). Nilai hex dipakai supaya warna logo tepat:
-     primary-700 = #0F6D5F (hijau logo), gold-400 = #D7AE5F (emas logo). */
   --color-primary-50: #ebfbf7; /* oklch(0.975 0.018 179.3) */
   --color-primary-100: #def2ed; /* oklch(0.945 0.022 179.3) */
   --color-primary-200: #c5e0d9; /* oklch(0.885 0.030 179.3) */
@@ -110,10 +104,6 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  /*
-   * Skala besar untuk tampilan ramah (keputusan owner, 21 November 2026): kartu 20px, foto 28px,
-   * panel besar 40px. Field dan komponen kecil tetap 4 sampai 8px.
-   */
   --radius-xl: 12px;
   --radius-2xl: 20px;
   --radius-3xl: 28px;
@@ -121,15 +111,12 @@
 
   --shadow-xs: 0 1px 2px 0 rgb(28 36 34 / 0.06);
   --shadow-sm: 0 1px 3px 0 rgb(28 36 34 / 0.08), 0 1px 2px -1px rgb(28 36 34 / 0.06);
-  /* Bayangan tipis saat kartu di-hover (CLAUDE.md bagian 6: bayangan tipis). */
   --shadow-md: 0 6px 16px -4px rgb(28 36 34 / 0.12), 0 2px 4px -2px rgb(28 36 34 / 0.08);
-  /* Bayangan lembut bernuansa hijau untuk kartu besar dan foto hero. */
   --shadow-lg: 0 28px 56px -24px rgb(1 60 52 / 0.28), 0 8px 16px -8px rgb(1 60 52 / 0.1);
 
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Token semantik. Komponen memakai ini, bukan step skala langsung (kecuali badge status). */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -150,7 +137,6 @@
   --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  /* "accent" mengikuti konvensi shadcn: latar hover netral. Emas brand memakai "highlight". */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-highlight: var(--highlight);
@@ -194,7 +180,6 @@
   --popover: var(--color-white);
   --popover-foreground: var(--color-neutral-900);
   --muted: var(--color-neutral-100);
-  /* neutral-600 lolos di putih (4.56:1). Di atas surface pakai subtle-foreground (neutral-700). */
   --muted-foreground: var(--color-neutral-600);
   --subtle-foreground: var(--color-neutral-700);
   --border: var(--color-neutral-200);
@@ -202,7 +187,6 @@
   --ring: var(--color-primary-700);
   --primary: var(--color-primary-700);
   --primary-foreground: var(--color-white);
-  /* Hover lebih gelap: putih di primary-600 gagal kontras (4.39:1). */
   --primary-hover: var(--color-primary-800);
   --secondary: var(--color-neutral-100);
   --secondary-foreground: var(--color-neutral-900);
@@ -211,11 +195,9 @@
   --highlight: var(--color-gold-400);
   --highlight-foreground: var(--color-primary-950);
   --highlight-hover: var(--color-gold-300);
-  /* Emas logo hanya 2.08:1 di putih. Teks emas memakai gold-700 (6.59:1). */
   --highlight-text: var(--color-gold-700);
   --destructive: var(--color-danger-600);
   --destructive-foreground: var(--color-white);
-  /* Putih di success-600 gagal (4.27:1), jadi solid success memakai 700. */
   --success: var(--color-success-700);
   --success-foreground: var(--color-white);
   --warning: var(--color-warning-600);
@@ -232,13 +214,11 @@
   --sidebar-accent-foreground: var(--color-neutral-900);
   --sidebar-border: var(--color-neutral-200);
   --sidebar-ring: var(--color-primary-700);
-  /* Grafik dashboard (Fase 8). Diperiksa ulang dengan skill dataviz saat grafik dibuat. */
   --chart-1: var(--color-primary-700);
   --chart-2: var(--color-gold-500);
   --chart-3: var(--color-info-600);
   --chart-4: var(--color-success-600);
   --chart-5: var(--color-danger-500);
-  /* Grafik kehadiran (palet lolos validator dataviz, mode terang). */
   --chart-on-time: var(--color-success-600);
   --chart-late: var(--color-warning-400);
   --chart-absent: var(--color-neutral-200);
@@ -247,7 +227,6 @@
   --header-height: 4.5rem;
 }
 
-/* Mode gelap hanya dipakai portal (class "dark" di elemen root portal). */
 .dark {
   --background: var(--color-neutral-950);
   --foreground: var(--color-neutral-50);
@@ -327,7 +306,6 @@
     outline-offset: 2px;
   }
 
-  /* Scrollbar minimalis (keputusan owner, Fase 3): tipis, menyatu dengan palet, latar transparan. */
   html {
     scrollbar-width: thin;
     scrollbar-color: var(--color-neutral-300) transparent;
@@ -376,21 +354,14 @@
   padding-top: env(safe-area-inset-top);
 }
 
-/* Tinggi Hero Banner beranda: satu layar penuh di bawah navbar (svh mengikuti bilah alamat HP). */
 @utility h-hero {
   height: calc(100svh - var(--header-height));
 }
 
-/* Hero beranda: minimal satu layar di bawah navbar, boleh lebih tinggi kalau isinya panjang (HP kecil). */
 @utility min-h-hero {
   min-height: max(28rem, calc(100svh - var(--header-height)));
 }
 
-/*
- * Gerak halus saat bagian halaman masuk layar (keputusan owner, Fase 3). Elemen hanya disembunyikan
- * oleh komponen Reveal setelah halaman jalan di browser dan kalau posisinya di bawah layar, jadi konten
- * tetap terlihat tanpa JavaScript dan tidak memengaruhi LCP. Transform tidak menggeser layout (CLS 0).
- */
 @utility reveal {
   transition:
     opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -410,9 +381,7 @@
   }
 }
 
-/* Kartu yang bereaksi saat disentuh atau di-hover: naik sedikit dan bayangan menebal. */
 @utility lift {
-  /* Opacity ikut didaftarkan supaya elemen yang juga memakai reveal tetap memudar halus. */
   transition:
     translate 250ms ease-out,
     box-shadow 250ms ease-out,
@@ -434,7 +403,6 @@
   }
 }
 
-/* Tombol melayang muncul halus saat halaman dibuka. */
 @keyframes float-in {
   from {
     opacity: 0;
@@ -448,12 +416,6 @@
   }
 }
 
-/*
- * Efek kecil yang berlaku di seluruh website (keputusan owner: tidak ada kartu atau tombol yang diam).
- * Ditulis di luar @layer supaya menang atas utility warna Tailwind di elemen yang sama.
- * - Ikon di dalam kartu .lift berubah warna saat kartunya di-hover.
- * - Panah kanan di tombol atau tautan bergeser ke kanan saat di-hover atau difokus.
- */
 .icon-chip,
 .lucide-arrow-right,
 .lucide-arrow-up-right {
@@ -489,10 +451,6 @@
   }
 }
 
-/*
- * Rasa aplikasi untuk portal PWA dan halaman masuk (keputusan owner, 21 November 2026, mengikuti
- * aplikasi Shaflow). Tidak dipakai website. Teks tetap bisa dipilih di field isian.
- */
 .app-feel {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
@@ -511,9 +469,8 @@
   }
 }
 
-/* Latar portal: gradasi lembut warna brand di sudut atas, tanpa pola ramai. */
 .portal-field {
-  background-color: var(--color-neutral-50);
+  background-color: var(--background);
 }
 
 @utility app-card {
@@ -523,7 +480,7 @@
 }
 
 .portal-canvas {
-  --background: var(--color-neutral-50);
+  --background: oklch(1 0 0);
   --muted-foreground: var(--color-neutral-700);
   --line-strong: var(--color-neutral-800);
   --line-soft: var(--color-neutral-200);
@@ -532,11 +489,11 @@
 }
 
 .dark .portal-canvas {
+  --background: var(--color-neutral-950);
   --line-strong: var(--color-neutral-600);
   --line-soft: var(--color-neutral-800);
 }
 
-/* Bilah progres perpindahan halaman: maju cepat lalu melambat, tidak pernah penuh sebelum selesai. */
 @keyframes nav-progress {
   from {
     transform: scaleX(0.06);
@@ -550,7 +507,6 @@
   animation: nav-progress 9s cubic-bezier(0.08, 0.82, 0.17, 1) forwards;
 }
 
-/* Kerangka memuat yang berkilau halus dari kiri ke kanan. */
 @keyframes shimmer {
   from {
     background-position: 120% 0;
@@ -573,7 +529,6 @@
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
-/* Garis atap kecil di teks memuat: naik turun pelan. */
 @keyframes roof-bob {
   from {
     translate: 0 1px;
@@ -587,10 +542,6 @@
   animation: roof-bob 0.9s ease-in-out infinite alternate;
 }
 
-/*
- * Layar memuat (LoadingScene): rumah kecil terbangun lalu berulang, siklus 2,8 detik. Badan naik
- * memantul, garis atap tergambar, pintu muncul, jendela menyala, lalu memudar dan mulai lagi.
- */
 .loader-body,
 .loader-door,
 .loader-window {
@@ -747,7 +698,6 @@
   }
 }
 
-/* Keadaan kosong (EmptyState): ikon melayang, bayangan mengikuti, dua titik kecil berkedip. */
 .empty-float {
   animation: empty-float 3.2s ease-in-out infinite;
 }

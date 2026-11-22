@@ -4,7 +4,6 @@ import {
   Alert02Icon,
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  CalendarCheckIn01Icon,
   ClipboardCheckIcon,
   File01Icon,
   Location01Icon,
@@ -204,7 +203,7 @@ export default async function OwnerAttendancePage({
     timeZone: "UTC",
   }).format(new Date(`${date}T00:00:00Z`));
   const arrow =
-    "flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-neutral-100";
+    "flex size-9 items-center justify-center rounded-lg border border-(--line-strong) bg-card text-foreground transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800";
 
   return (
     <div className="grid gap-5">
@@ -213,10 +212,9 @@ export default async function OwnerAttendancePage({
         backLabel="Kembali ke dashboard"
         title="Kehadiran"
         description={formatDateWIB(date)}
-        icon={CalendarCheckIn01Icon}
         actions={
           <nav aria-label="Pilih tanggal" className="flex items-center gap-2">
-            <div className="flex items-center rounded-full border border-(--line-strong) bg-card p-0.5">
+            <div className="flex items-center gap-1.5">
               <Link
                 href={`${BASE}?tanggal=${shiftDate(date, -1)}`}
                 aria-label="Hari sebelumnya"
@@ -224,7 +222,7 @@ export default async function OwnerAttendancePage({
               >
                 <Icon icon={ArrowLeft01Icon} className="size-4" />
               </Link>
-              <span className="min-w-[6.5rem] px-1 text-center text-xs font-medium tabular-nums">
+              <span className="flex h-9 min-w-[6.5rem] items-center justify-center rounded-lg border border-(--line-strong) bg-card px-3 text-xs font-medium tabular-nums">
                 {shortDate}
               </span>
               {date < today ? (
@@ -244,7 +242,7 @@ export default async function OwnerAttendancePage({
             {date !== today ? (
               <Link
                 href={BASE}
-                className="inline-flex min-h-10 items-center rounded-full bg-primary-700 px-3.5 text-xs font-medium text-white hover:bg-primary-800"
+                className="inline-flex h-9 items-center rounded-lg border border-primary-800 bg-primary-700 px-3 text-xs font-medium text-white hover:bg-primary-800"
               >
                 Hari ini
               </Link>

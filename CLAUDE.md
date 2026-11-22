@@ -219,7 +219,7 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 - Dialog (keputusan owner, 22 November 2026): tombol tambah atau ubah membuka `FormDialog`, bukan form yang muncul di bawah tombol. Aksi penting (hapus, nonaktifkan, batalkan) memakai `ConfirmDialog`. Aturannya:
   - tanpa tombol X;
   - klik di luar dialog tidak menutup;
-  - footer Batal (merah, varian `cancel`) dan Simpan (hijau, varian `save`);
+  - footer Batal (merah pastel, varian `cancel`) dan Simpan (hijau pastel, varian `save`), warna muda bukan pekat (keputusan owner, 22 November 2026);
   - di HP tampil sebagai lembar dari bawah yang bisa ditutup dengan swipe ke bawah;
   - header berwarna dengan ikon (hijau untuk tambah dan simpan, merah untuk hapus dan nonaktifkan), tidak polos.
 - Toast (keputusan owner, 22 November 2026): hanya lewat `@/components/shared/toast` (kartu custom dengan ikon per jenis). Semua pesan disaring `friendlyMessage`, jadi bahasa sistem, kode error, atau istilah teknis tidak pernah tampil. Import `toast` langsung dari `sonner` dilarang ESLint.
@@ -240,10 +240,12 @@ Professional corporate. Bersih, tegas, banyak ruang putih, foto proyek sebagai e
 
   Website publik tetap bergaya corporate.
 - Rombakan PWA (keputusan owner, 22 November 2026, menggantikan gaya Shaflow untuk halaman di dalam aplikasi): gaya aplikasi HR modern dari referensi owner, rapi, padat, playful, tidak kekanak-kanakan.
-  - kanvas abu muda, panel putih bergaris tegas (`--line-strong`, `app-card` radius 16px) tanpa bayangan besar;
+  - kanvas putih, panel putih bergaris tegas (`--line-strong`, radius 12 sampai 16px) tanpa bayangan besar. Referensi gambar owner di `Downloads/referensi UI KIS`;
+  - header putih berisi sapaan sesuai jam dan nama (dua kata), tombol ikon kotak bergaris, avatar kotak;
   - teks kecil dan padat di HP (judul halaman 18 sampai 20px, isi 13 sampai 14px, label 11 sampai 12px);
   - rel ikon di kiri (desktop), bottom bar ikon saja yang simetris (HP), drawer menu berikon;
-  - bar judul halaman (`PageHeader`) berwarna abu dengan ikon modul dan aksi kecil;
+  - pita judul halaman (`PageHeader`) abu selebar layar tepat di bawah header, bergaris bawah, berisi judul, keterangan singkat, dan aksi kecil. Beranda memakai tanggal sebagai judul dan badge role;
+  - rel kiri desktop mulai dari atas: logo bulat, garis titik-titik, ikon dalam lingkaran bergaris, aktif lingkaran hijau penuh, pengaturan akun di bawah;
   - kartu KPI (`StatCard`) dan grid shortcut fitur, bukan kartu modul besar;
   - warna kategori (ungu, oranye, biru, merah, kuning) hanya untuk ikon, badge, dan acara. Warna utama tetap hijau KIS.
 - Semua isian gambar di CMS memakai unggahan file (dikompres di browser), bukan menempel tautan.
@@ -428,7 +430,7 @@ Semua gambar yang diunggah ke website, portal, atau PWA dikompres di browser seb
 Tidak ada kode yang sampai ke production tanpa lewat PR dan CI hijau.
 
 ### Paket gratis (keputusan owner, Fase 0)
-Semua layanan memakai paket gratis: GitHub Free (repo private), Vercel Hobby, Supabase Free. Batasan dan penggantinya:
+Semua layanan memakai paket gratis: GitHub Free, Vercel Hobby, Supabase Free. Repo dijadikan publik sementara (keputusan owner, 22 November 2026) supaya GitHub Actions gratis tanpa batas, dan dikembalikan ke privat setelah aplikasi selesai. Selama publik, tidak boleh ada secret, data pribadi, atau data konsumen di repo (riwayat git sudah dipindai). Batasan dan penggantinya:
 
 | Batasan | Pengganti |
 |---|---|

@@ -1,11 +1,7 @@
-// Membuat animasi Lottie milik KIS sendiri (tanpa aset pihak ketiga) dengan warna brand.
-// Jalankan: node scripts/build-lottie.mjs. Hasil di src/assets/lottie/*.json, dimuat lottie-web.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const OUT = join(process.cwd(), "src", "assets", "lottie");
-
-/** Hex ke warna Lottie [r, g, b, a] (0 sampai 1). */
 function rgb(hex) {
   const value = Number.parseInt(hex.slice(1), 16);
   return [(value >> 16) / 255, ((value >> 8) & 255) / 255, (value & 255) / 255, 1].map(
@@ -25,7 +21,6 @@ const BRAND = {
 
 const EASE = { o: { x: [0.33], y: [0] }, i: { x: [0.67], y: [1] } };
 const still = (k) => ({ a: 0, k });
-/** Keyframe beranimasi: [[frame, nilai], ...], easing halus di setiap segmen. */
 const anim = (frames) => ({
   a: 1,
   k: frames.map(([t, value], index) => {
@@ -99,8 +94,6 @@ function layer(name, { shapes, p, a = [0, 0], s = [100, 100], r = 0, o = 100, pa
 function composition(name, { w, h, op, layers }) {
   return { v: "5.7.0", fr: 60, ip: 0, op, w, h, nm: name, ddd: 0, assets: [], layers };
 }
-
-/** Rumah KIS terbangun: badan memantul naik, garis atap tergambar, pintu muncul, jendela menyala. */
 function loadingHouse() {
   index = 0;
   const op = 168;
@@ -240,16 +233,15 @@ function loadingHouse() {
   });
 }
 
-/** Kotak kosong: kertas naik turun dari dalam kotak, tutup bergoyang, dua titik berkedip. */
 function emptyBox() {
   index = 0;
-  const op = 192;
+  const op = 210;
   const float = layer(
     "melayang",
     {
       p: anim([
         [0, [60, 60]],
-        [96, [60, 54]],
+        [105, [60, 55]],
         [op, [60, 60]],
       ]),
       a: [60, 60],
@@ -257,6 +249,96 @@ function emptyBox() {
     op,
   );
   const parent = float.ind;
+  const reveal = (start) =>
+    anim([
+      [0, [0, 100, 100]],
+      [start, [0, 100, 100]],
+      [start + 22, [100, 100, 100]],
+      [170, [100, 100, 100]],
+      [188, [0, 100, 100]],
+      [op, [0, 100, 100]],
+    ]);
+  const line = (name, y, width, start) =>
+    layer(
+      name,
+      {
+        parent,
+        p: [47, y],
+        s: reveal(start),
+        shapes: [group(rect([width, 4], [width / 2, 0], 2), fill(BRAND.primaryLight))],
+      },
+      op,
+    );
+  const bullet = (name, y, start) =>
+    layer(
+      name,
+      {
+        parent,
+        p: [42, y],
+        o: anim([
+          [0, 0],
+          [start, 0],
+          [start + 8, 100],
+          [170, 100],
+          [188, 0],
+          [op, 0],
+        ]),
+        shapes: [group(ellipse([4, 4], [0, 0]), fill(BRAND.gold))],
+      },
+      op,
+    );
+  const badge = layer(
+    "centang",
+    {
+      parent,
+      p: [83, 88],
+      s: anim([
+        [0, [0, 0, 100]],
+        [96, [0, 0, 100]],
+        [110, [118, 118, 100]],
+        [120, [100, 100, 100]],
+        [170, [100, 100, 100]],
+        [184, [0, 0, 100]],
+        [op, [0, 0, 100]],
+      ]),
+      shapes: [
+        group(
+          path([
+            [-5, 0],
+            [-1.5, 3.5],
+            [5, -3.5],
+          ]),
+          stroke(BRAND.white, 2.6),
+        ),
+        group(ellipse([22, 22], [0, 0]), fill(BRAND.gold)),
+      ],
+    },
+    op,
+  );
+  const clip = layer(
+    "penjepit",
+    {
+      parent,
+      p: [60, 31],
+      shapes: [
+        group(ellipse([5, 5], [0, -1]), fill(BRAND.primary)),
+        group(rect([24, 10], [0, 0], 4), fill(BRAND.gold)),
+      ],
+    },
+    op,
+  );
+  const board = layer(
+    "papan",
+    {
+      parent,
+      p: [60, 64],
+      shapes: [
+        group(rect([42, 52], [0, 3], 5), fill(BRAND.white)),
+        group(rect([54, 68], [0, 0], 10), fill(BRAND.primary)),
+      ],
+    },
+    op,
+  );
   const twinkle = (name, position, size, color, delay) =>
     layer(
       name,
@@ -280,80 +362,35 @@ function emptyBox() {
       },
       op,
     );
-  const lid = (name, x, angle) =>
-    layer(
-      name,
-      {
-        parent,
-        p: [x, 66],
-        r: anim([
-          [0, angle],
-          [96, angle * 1.6],
-          [op, angle],
-        ]),
-        shapes: [group(rect([30, 9], [x < 60 ? -15 : 15, 0], 4), fill(BRAND.primaryLight))],
-      },
-      op,
-    );
-  const front = layer(
-    "kotak",
-    {
-      parent,
-      p: [60, 86],
-      shapes: [
-        group(rect([20, 4], [0, -6], 2), fill(BRAND.primaryLight)),
-        group(rect([60, 40], [0, 0], 9), fill(BRAND.primary)),
-      ],
-    },
-    op,
-  );
-  const paper = layer(
-    "kertas",
-    {
-      parent,
-      p: anim([
-        [0, [60, 58]],
-        [96, [60, 46]],
-        [op, [60, 58]],
-      ]),
-      r: anim([
-        [0, -6],
-        [96, 6],
-        [op, -6],
-      ]),
-      shapes: [
-        group(rect([18, 3], [0, -8], 1.5), fill(BRAND.line)),
-        group(rect([18, 3], [0, -1], 1.5), fill(BRAND.line)),
-        group(rect([12, 3], [-3, 6], 1.5), fill(BRAND.line)),
-        group(rect([30, 34], [0, -1], 5), fill(BRAND.white)),
-      ],
-    },
-    op,
-  );
   const shadow = layer(
     "bayangan",
     {
-      p: [60, 112],
+      p: [60, 108],
       s: anim([
         [0, [100, 100, 100]],
-        [96, [78, 100, 100]],
+        [105, [80, 100, 100]],
         [op, [100, 100, 100]],
       ]),
-      shapes: [group(ellipse([64, 8], [0, 0]), fill(BRAND.shadow, 12))],
+      shapes: [group(ellipse([58, 7], [0, 0]), fill(BRAND.shadow, 12))],
     },
     op,
   );
-  return composition("Kotak kosong", {
+  return composition("Papan kosong", {
     w: 120,
     h: 120,
     op,
     layers: [
-      twinkle("titik emas", [94, 30], 8, BRAND.gold, 0),
-      twinkle("titik hijau", [24, 46], 6, BRAND.primaryLight, 80),
-      front,
-      lid("tutup kiri", 31, -24),
-      lid("tutup kanan", 89, 24),
-      paper,
+      twinkle("titik emas", [98, 34], 7, BRAND.gold, 0),
+      twinkle("titik hijau", [20, 52], 6, BRAND.primaryLight, 90),
+      badge,
+      clip,
+      bullet("butir 1", 52, 20),
+      line("baris 1", 52, 26, 20),
+      bullet("butir 2", 63, 44),
+      line("baris 2", 63, 26, 44),
+      bullet("butir 3", 74, 68),
+      line("baris 3", 74, 16, 68),
+      board,
       shadow,
       float,
     ],

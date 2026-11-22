@@ -2,16 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { ProjectImage } from "../types";
+import { ArrowExpand01Icon, ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
-/**
- * Galeri foto proyek: kisi foto yang memperbesar halus saat di-hover, klik membuka tampilan penuh
- * dengan tombol sebelumnya/berikutnya dan tombol panah keyboard.
- */
 export function ProjectGallery({
   images,
   projectName,
@@ -54,7 +51,7 @@ export function ProjectGallery({
                 className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               />
               <span className="absolute right-2 bottom-2 flex size-9 items-center justify-center rounded-full bg-primary-950/60 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                <Expand aria-hidden="true" className="size-4" />
+                <Icon icon={ArrowExpand01Icon} aria-hidden="true" className="size-4" />
               </span>
             </button>
           </li>
@@ -98,7 +95,7 @@ export function ProjectGallery({
                     go(-1);
                   }}
                 >
-                  <ChevronLeft aria-hidden="true" />
+                  <Icon icon={ArrowLeft01Icon} aria-hidden="true" />
                   Sebelumnya
                 </Button>
                 <p className="text-sm text-muted-foreground tabular">
@@ -111,7 +108,7 @@ export function ProjectGallery({
                   }}
                 >
                   Berikutnya
-                  <ChevronRight aria-hidden="true" />
+                  <Icon icon={ArrowRight01Icon} aria-hidden="true" />
                 </Button>
               </div>
             </>

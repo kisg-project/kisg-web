@@ -1,22 +1,14 @@
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { HugeiconsIcon, type HugeiconsIconProps, type IconSvgElement } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 
 export type AppIcon = IconSvgElement;
 
-export function Icon({
-  icon,
-  className,
-  strokeWidth = 1.8,
-}: {
-  icon: AppIcon;
-  className?: string;
-  strokeWidth?: number;
-}) {
+export function Icon({ className, strokeWidth = 1.8, ...props }: HugeiconsIconProps) {
   return (
     <HugeiconsIcon
-      icon={icon}
       aria-hidden="true"
       strokeWidth={strokeWidth}
+      {...props}
       className={cn("size-5 shrink-0", className)}
     />
   );

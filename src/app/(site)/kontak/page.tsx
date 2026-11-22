@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Mail, MapPin, MessageCircle } from "lucide-react";
 import { InstagramIcon } from "@/components/shared/brand-icons";
 import { Reveal } from "@/components/shared/reveal";
 import { Section } from "@/components/shared/section";
@@ -8,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { formatOfficeAddress, officeMapsUrl, siteConfig, whatsappLink } from "@/config/site";
 import { LeadForm } from "@/features/leads";
 import { pageMetadata } from "@/lib/seo/page-metadata";
+import { Location01Icon, Mail01Icon, WhatsappIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/shared/icon";
 
 export const metadata: Metadata = pageMetadata({
   path: "/kontak",
@@ -27,7 +28,7 @@ export default function ContactPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           <Reveal className="flex lift flex-col gap-4 rounded-3xl border border-primary-100 bg-card p-6 lg:col-span-2">
             <span className="icon-chip flex size-12 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-              <MessageCircle aria-hidden="true" className="size-6" />
+              <Icon icon={WhatsappIcon} aria-hidden="true" className="size-6" />
             </span>
             <div>
               <h2 className="text-xl font-bold">WhatsApp marketing</h2>
@@ -72,7 +73,7 @@ export default function ContactPage() {
           >
             <div className="flex gap-4">
               <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-                <Mail aria-hidden="true" className="size-6" />
+                <Icon icon={Mail01Icon} aria-hidden="true" className="size-6" />
               </span>
               <div>
                 <h2 className="text-xl font-bold">Email</h2>
@@ -100,7 +101,7 @@ export default function ContactPage() {
           >
             <div className="flex gap-4">
               <span className="icon-chip flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
-                <MapPin aria-hidden="true" className="size-6" />
+                <Icon icon={Location01Icon} aria-hidden="true" className="size-6" />
               </span>
               <address className="not-italic">
                 <h2 className="text-xl font-bold">Kantor pemasaran</h2>
