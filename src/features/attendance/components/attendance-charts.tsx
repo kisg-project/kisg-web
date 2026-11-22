@@ -278,10 +278,69 @@ function ReportTiles({ days }: { days: AttendanceTrendDay[] }) {
 
 const TABLE = "w-full text-xs [&_td]:px-3 [&_td]:py-2 [&_th]:px-3 [&_th]:py-2";
 
-export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
+export function AttendanceTrendCard({
+  days,
+  className,
+}: {
+  days: AttendanceTrendDay[];
+  className?: string;
+}) {
   const present = days.reduce((sum, day) => sum + day.onTime + day.late, 0);
   const expected = days.reduce((sum, day) => sum + day.onTime + day.late + day.absent, 0);
   const late = days.reduce((sum, day) => sum + day.late, 0);
+  const rate = expected > 0 ? Math.round((present / expected) * 100) : null;
+  return (
+    <ChartCard
+      className={className}
+      title="Kehadiran harian"
+      summary={
+        rate === null
+          ? "Belum ada data kehadiran."
+          : `Tingkat hadir ${String(rate)}%, ${String(late)} kali terlambat.`
+      }
+      legend={<Legend items={SERIES} />}
+      table={
+        <table className={TABLE}>
+          <thead className="sticky top-0 bg-(--band-soft,var(--color-neutral-100)) text-left">
+            <tr>
+              <th scope="col">Tanggal</th>
+              {SERIES.map((item) => (
+                <th key={item.key} scope="col" className="text-right">
+                  {item.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-(--line-soft)">
+            {days.map((day) => (
+              <tr key={day.date}>
+                <th scope="row" className="text-left font-normal">
+                  {fullDay(day.date)}
+                  {day.workday ? "" : " (libur)"}
+                </th>
+                {SERIES.map((item) => (
+                  <td key={item.key} className="text-right tabular-nums">
+                    {day[item.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      }
+    >
+      <AttendanceWaffle days={days} />
+    </ChartCard>
+  );
+}
+
+export function ReportTrendCard({
+  days,
+  className,
+}: {
+  days: AttendanceTrendDay[];
+  className?: string;
+}) {
   const reportDays = days.filter((day) => day.reportsComplete !== null);
   const reportAverage =
     reportDays.length > 0
@@ -289,101 +348,55 @@ export function AttendanceCharts({ days }: { days: AttendanceTrendDay[] }) {
           reportDays.reduce((sum, day) => sum + (day.reportsComplete ?? 0), 0) / reportDays.length,
         )
       : null;
-  const rate = expected > 0 ? Math.round((present / expected) * 100) : null;
-
   return (
-    <div className="grid gap-4 xl:grid-cols-5">
-      <ChartCard
-        className="xl:col-span-3"
-        title="Kehadiran harian"
-        summary={
-          rate === null
-            ? "Belum ada data kehadiran."
-            : `Tingkat hadir ${String(rate)}%, ${String(late)} kali terlambat.`
-        }
-        legend={<Legend items={SERIES} />}
-        table={
-          <table className={TABLE}>
-            <thead className="sticky top-0 bg-(--band-soft,var(--color-neutral-100)) text-left">
-              <tr>
-                <th scope="col">Tanggal</th>
-                {SERIES.map((item) => (
-                  <th key={item.key} scope="col" className="text-right">
-                    {item.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--line-soft)">
-              {days.map((day) => (
-                <tr key={day.date}>
-                  <th scope="row" className="text-left font-normal">
-                    {fullDay(day.date)}
-                    {day.workday ? "" : " (libur)"}
-                  </th>
-                  {SERIES.map((item) => (
-                    <td key={item.key} className="text-right tabular-nums">
-                      {day[item.key]}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        }
-      >
-        <AttendanceWaffle days={days} />
-      </ChartCard>
-
-      <ChartCard
-        className="xl:col-span-2"
-        title="Laporan harian lengkap"
-        summary={
-          reportAverage === null
-            ? "Belum ada laporan harian."
-            : "Karyawan hadir yang mengisi rencana dan hasil kerja."
-        }
-        legend={
-          <Legend
-            items={[
-              { label: "Sedikit", cell: "bg-success-50 border-success-800/40" },
-              { label: "Sebagian", cell: "bg-success-200 border-success-800/40" },
-              { label: "Semua", cell: "bg-success-400 border-success-800/40" },
-            ]}
-          />
-        }
-        table={
-          <table className={TABLE}>
-            <thead className="sticky top-0 bg-(--band-soft,var(--color-neutral-100)) text-left">
-              <tr>
-                <th scope="col">Tanggal</th>
-                <th scope="col" className="text-right">
-                  Laporan lengkap
+    <ChartCard
+      className={className}
+      title="Laporan harian lengkap"
+      summary={
+        reportAverage === null
+          ? "Belum ada laporan harian."
+          : "Karyawan hadir yang mengisi rencana dan hasil kerja."
+      }
+      legend={
+        <Legend
+          items={[
+            { label: "Sedikit", cell: "bg-success-50 border-success-800/40" },
+            { label: "Sebagian", cell: "bg-success-200 border-success-800/40" },
+            { label: "Semua", cell: "bg-success-400 border-success-800/40" },
+          ]}
+        />
+      }
+      table={
+        <table className={TABLE}>
+          <thead className="sticky top-0 bg-(--band-soft,var(--color-neutral-100)) text-left">
+            <tr>
+              <th scope="col">Tanggal</th>
+              <th scope="col" className="text-right">
+                Laporan lengkap
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-(--line-soft)">
+            {days.map((day) => (
+              <tr key={day.date}>
+                <th scope="row" className="text-left font-normal">
+                  {fullDay(day.date)}
                 </th>
+                <td className="text-right tabular-nums">
+                  {day.reportsComplete === null
+                    ? "Tidak ada yang hadir"
+                    : `${String(day.reportsComplete)}%`}
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-(--line-soft)">
-              {days.map((day) => (
-                <tr key={day.date}>
-                  <th scope="row" className="text-left font-normal">
-                    {fullDay(day.date)}
-                  </th>
-                  <td className="text-right tabular-nums">
-                    {day.reportsComplete === null
-                      ? "Tidak ada yang hadir"
-                      : `${String(day.reportsComplete)}%`}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        }
-      >
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <ReportRing value={reportAverage} />
-          <ReportTiles days={days} />
-        </div>
-      </ChartCard>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      }
+    >
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+        <ReportRing value={reportAverage} />
+        <ReportTiles days={days} />
+      </div>
+    </ChartCard>
   );
 }

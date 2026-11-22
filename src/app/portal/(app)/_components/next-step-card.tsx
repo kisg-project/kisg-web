@@ -16,7 +16,7 @@ export function NextStepCard({ step }: { step: NextStep }) {
   return (
     <section
       aria-label="Langkah berikutnya"
-      className="relative mt-10 flex min-h-36 items-center overflow-visible rounded-xl border border-(--line-strong) bg-(--band) pr-32 sm:pr-44"
+      className="relative mt-12 flex min-h-36 items-center overflow-visible rounded-xl border border-(--line-strong) bg-(--band) pr-32 sm:mt-14 sm:pr-44"
     >
       <div className="grid gap-1 p-4">
         <h2 className="text-base leading-snug font-semibold">{step.title}</h2>
@@ -32,7 +32,7 @@ export function NextStepCard({ step }: { step: NextStep }) {
       <Mascot
         pose={step.pose}
         sizes="(min-width: 640px) 120px, 96px"
-        className="absolute right-3 bottom-0 h-44 w-auto sm:right-6 sm:h-52"
+        className="absolute right-3 bottom-0 h-44 w-auto sm:right-6 sm:h-48"
       />
     </section>
   );
