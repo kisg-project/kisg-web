@@ -11,7 +11,6 @@ import { Icon } from "@/components/shared/icon";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { ROLE_HOME } from "@/config/portal";
-import { featuresFor } from "@/config/portal-nav";
 import {
   AttendanceTrendCard,
   getAttendanceOverview,
@@ -20,9 +19,9 @@ import {
   todayWib,
 } from "@/features/attendance";
 import { requirePortalUser } from "@/features/auth";
-import { ModuleCards } from "../_components/module-cards";
 import { HomeHeader } from "../_components/home-header";
 import { NextStepCard } from "../_components/next-step-card";
+import { ShortcutSection } from "../_components/shortcut-section";
 import { AttendanceTable, type AttendanceRow } from "./_components/attendance-table";
 import { ScheduleWidget } from "./_components/schedule-widget";
 import { ApprovalsWidget, WorkHoursWidget } from "./_components/today-widgets";
@@ -126,12 +125,7 @@ export default async function OwnerPage() {
           />
         </div>
       </section>
-      <section aria-labelledby="fitur" className="grid gap-3 lg:hidden">
-        <h2 id="fitur" className="text-sm font-semibold">
-          Fitur
-        </h2>
-        <ModuleCards label="Modul owner" modules={featuresFor(user.roles, user.role)} />
-      </section>
+      <ShortcutSection roles={user.roles} primary={user.role} label="Modul owner" />
       <section aria-labelledby="ringkasan-kehadiran" className="grid gap-3">
         <div className="flex items-center justify-between gap-2">
           <h2 id="ringkasan-kehadiran" className="text-sm font-semibold">
