@@ -17,6 +17,12 @@ const writes: { table: string; op: string; values?: unknown; filters: [string, u
 
 vi.mock("@/env", () => ({ env: {} }));
 
+const notifications = vi.hoisted(() => ({
+  approversOf: vi.fn(() => Promise.resolve(["owner-1"])),
+  notify: vi.fn(() => Promise.resolve()),
+}));
+vi.mock("@/features/notifications/server", () => notifications);
+
 function from(table: string) {
   const write: { table: string; op: string; values?: unknown; filters: [string, unknown][] } = {
     table,
@@ -198,6 +204,17 @@ describe("requestExceptionAction", () => {
     expect(result.data).toEqual({ id: RECORD });
     expect(rpcCalls[0]?.name).toBe("request_attendance_exception");
     expect(rpcCalls[0]?.args.p_reason).toBe("Survei lahan calon pembeli.");
+    expect(notifications.approversOf).toHaveBeenCalledWith(USER, ["owner", "admin"]);
+    expect(notifications.notify).toHaveBeenCalledWith(
+      ["owner-1"],
+      expect.objectContaining({
+        kind: "absen_luar_lokasi_diajukan",
+        title: "Karyawan Uji mengajukan absen masuk di luar lokasi",
+        href: "/portal/owner/absensi",
+        dedupeKey: `absen-luar:${RECORD}:diajukan`,
+        email: true,
+      }),
+    );
   });
 
   it("alasan terlalu pendek ditolak", async () => {
