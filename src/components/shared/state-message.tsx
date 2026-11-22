@@ -34,12 +34,12 @@ function StateIllustration({ icon, tone }: { icon: AppIcon; tone: "empty" | "err
           error ? "bg-danger-300" : "bg-primary-400",
         )}
       />
-      <span className="empty-float relative grid size-16 place-items-center rounded-3xl bg-card shadow-lg ring-1 ring-border">
+      <span className="empty-float relative grid size-16 place-items-center rounded-2xl border-2 border-neutral-800 bg-primary-50 dark:border-neutral-300 dark:bg-primary-950">
         <Icon
           icon={icon}
           className={cn(
             "size-8",
-            error ? "text-destructive" : "text-primary-600 dark:text-primary-300",
+            error ? "text-destructive" : "text-neutral-800 dark:text-neutral-100",
           )}
         />
       </span>
