@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import path from "node:path";
 import type { Page } from "@playwright/test";
 import { completeProfile, createPortalUser, E2E_PASSWORD, uniqueEmail } from "../factories/users";
@@ -145,6 +146,7 @@ test.describe("Karyawan (owner)", () => {
     await invite(page, { name: "Undangan Ulang", email, roles: ["Keuangan"] });
     await expect(page.getByRole("status").filter({ hasText: email })).toBeVisible();
     await page.reload();
+    await page.getByRole("searchbox", { name: "Cari karyawan" }).fill(email);
 
     const card = page.getByRole("listitem", { name: "Undangan Ulang" });
     await expect(card.getByText("Menunggu aktivasi")).toBeVisible();
@@ -170,6 +172,7 @@ test.describe("Karyawan (owner)", () => {
   test("ubah role menjadi rangkap jabatan, nonaktifkan, lalu aktifkan lagi", async ({ page }) => {
     const target = await createPortalUser({ role: "marketing" });
     await page.goto("/portal/owner/karyawan");
+    await page.getByRole("searchbox", { name: "Cari karyawan" }).fill(target.email);
     const card = page.getByRole("listitem", { name: target.fullName });
 
     await card.getByRole("button", { name: "Ubah role" }).click();
@@ -276,5 +279,38 @@ test.describe("Aktivasi dan Akun saya", () => {
     await expect(page.getByRole("link", { name: "Lupa password" })).toBeVisible();
     await expect(page.getByRole("link", { name: /Daftar|Buat akun/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Google/i })).toHaveCount(0);
+  });
+});
+
+test.describe("Daftar karyawan (owner)", () => {
+  test.use({ storageState: storageStateFor("owner") });
+
+  test("daftar karyawan: tab status, cari, filter role, dan nomor halaman", async ({ page }) => {
+    const prefix = `dir-${randomUUID().slice(0, 6)}`;
+    const people = await Promise.all(
+      Array.from({ length: 11 }, () => createPortalUser({ role: "site_manager", prefix })),
+    );
+    const pending = await createPortalUser({ role: "marketing", prefix, complete: false });
+    await page.goto("/portal/owner/karyawan");
+    const search = page.getByRole("searchbox", { name: "Cari karyawan" });
+    await search.fill(prefix);
+    const list = page.getByRole("list", { name: "Daftar karyawan" });
+    const pager = page.getByRole("navigation", { name: "Halaman daftar karyawan" });
+    await expect(pager.getByText("Menampilkan 1 sampai 10 dari 12 akun")).toBeVisible();
+    await pager.getByRole("button", { name: "Halaman 2" }).click();
+    await expect(pager.getByText("Menampilkan 11 sampai 12 dari 12 akun")).toBeVisible();
+
+    await page.getByRole("combobox", { name: "Filter role" }).click();
+    await page.getByRole("option", { name: "Marketing", exact: true }).click();
+    await expect(pager.getByText("Menampilkan 1 sampai 1 dari 1 akun")).toBeVisible();
+    await expect(list.getByRole("listitem", { name: pending.fullName })).toBeVisible();
+
+    const tabs = page.getByRole("group", { name: "Status akun" });
+    await tabs.getByRole("button", { name: /^Aktif/ }).click();
+    await expect(page.getByText("Tidak ada akun yang cocok")).toBeVisible();
+    await tabs.getByRole("button", { name: /^Semua/ }).click();
+    await search.fill(people[0]?.email ?? "");
+    await expect(page.getByText("Tidak ada akun yang cocok")).toBeVisible();
+    await expectNoA11yViolations(page);
   });
 });
