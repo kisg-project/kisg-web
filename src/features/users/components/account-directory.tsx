@@ -138,7 +138,7 @@ export function AccountDirectory({
           }}
         >
           <SelectTrigger className="h-10 w-full rounded-lg border-(--line-strong) bg-(--band-soft) px-3 text-xs sm:h-9 sm:w-48">
-            <SelectValue />
+            <SelectValue>{role === "semua" ? "Semua role" : ROLE_LABELS[role]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="semua">Semua role</SelectItem>

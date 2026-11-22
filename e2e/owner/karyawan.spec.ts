@@ -280,6 +280,10 @@ test.describe("Aktivasi dan Akun saya", () => {
     await expect(page.getByRole("link", { name: /Daftar|Buat akun/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Google/i })).toHaveCount(0);
   });
+});
+
+test.describe("Daftar karyawan (owner)", () => {
+  test.use({ storageState: storageStateFor("owner") });
 
   test("daftar karyawan: tab status, cari, filter role, dan nomor halaman", async ({ page }) => {
     const prefix = `dir-${randomUUID().slice(0, 6)}`;
