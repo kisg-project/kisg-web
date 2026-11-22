@@ -9,7 +9,6 @@ export interface PortalAccount {
   id: string;
   email: string;
   fullName: string;
-  /** Semua role, role utama di depan. */
   roles: AppRole[];
   primaryRole: AppRole | null;
   status: AccountStatus;
@@ -17,9 +16,9 @@ export interface PortalAccount {
   avatarUrl: string | null;
   invitedAt: string | null;
   createdAt: string;
+  hasFingerprint: boolean;
 }
 
-/** Semua akun portal untuk halaman Karyawan. Dibaca dengan sesi owner, jadi tetap dibatasi RLS. */
 export async function listPortalAccounts(): Promise<PortalAccount[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -30,7 +29,11 @@ export async function listPortalAccounts(): Promise<PortalAccount[]> {
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
   if (error) throw new Error(`Gagal memuat karyawan: ${error.message}`);
-  const urls = await avatarUrls(data.map((row) => row.avatar_path));
+  const [urls, fingerprints] = await Promise.all([
+    avatarUrls(data.map((row) => row.avatar_path)),
+    supabase.from("webauthn_credentials").select("user_id").is("revoked_at", null),
+  ]);
+  const withFingerprint = new Set((fingerprints.data ?? []).map((row) => row.user_id));
   return data.map((row) => {
     const primary = row.user_roles.find((item) => item.is_primary)?.role;
     const primaryRole = primary && isAppRole(primary) ? primary : null;
@@ -54,6 +57,7 @@ export async function listPortalAccounts(): Promise<PortalAccount[]> {
       avatarUrl: row.avatar_path ? (urls.get(row.avatar_path) ?? null) : null,
       invitedAt: row.invited_at,
       createdAt: row.created_at,
+      hasFingerprint: withFingerprint.has(row.id),
     };
   });
 }

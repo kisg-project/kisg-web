@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { safeNextPath } from "@/config/portal";
 import type { Json } from "@/lib/supabase/database.types";
-import { confirmSignerPassword, signerUserAgent } from "@/features/approvals/server";
+import { confirmSignature, signerUserAgent } from "@/features/approvals/server";
 import {
   ActionError,
   adminActionClient,
@@ -22,7 +22,6 @@ import {
   workLocationSchema,
 } from "../schemas/attendance";
 
-/** Pesan dari fungsi database (errcode 22023) sudah ditulis untuk karyawan, jadi ditampilkan apa adanya. */
 function rpcError(error: { code?: string; message: string }): Error {
   if (error.code === "22023") return new ActionError(error.message);
   if (error.code === "42501") return new ActionError("Akun ini tidak memakai absensi.");
@@ -46,10 +45,6 @@ const clockResult = z.discriminatedUnion("status", [
   }),
 ]);
 
-/**
- * Clock in atau clock out. Jarak ke titik absensi dan waktu dihitung di database (server), bukan di
- * HP. Di luar radius: tidak disimpan, karyawan ditawari pengajuan absen di luar lokasi.
- */
 export const clockAction = authActionClient
   .inputSchema(clockSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -75,7 +70,6 @@ export const clockAction = authActionClient
     return { ...result, locationName };
   });
 
-/** Pengajuan absen di luar lokasi. Disetujui owner atau manajer tim. */
 export const requestExceptionAction = authActionClient
   .inputSchema(exceptionSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -91,7 +85,6 @@ export const requestExceptionAction = authActionClient
     return { id: data };
   });
 
-/** Tambah atau ubah titik absensi (kantor atau proyek). Hanya owner. */
 export const saveWorkLocationAction = adminActionClient
   .inputSchema(workLocationSchema)
   .action(async ({ parsedInput: input, ctx }) => {
@@ -120,7 +113,6 @@ export const saveWorkLocationAction = adminActionClient
     return { id: result.data.id };
   });
 
-/** Simpan jam kerja perusahaan, per titik absensi, atau per karyawan. Hanya owner. */
 export const saveScheduleAction = adminActionClient
   .inputSchema(scheduleSchema)
   .action(async ({ parsedInput: input, ctx }) => {
@@ -144,7 +136,6 @@ export const saveScheduleAction = adminActionClient
     return { ok: true as const };
   });
 
-/** Hapus jam kerja khusus (titik atau karyawan), kembali ke jam kerja perusahaan. */
 export const deleteScheduleAction = adminActionClient
   .inputSchema(deleteScheduleSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -157,10 +148,6 @@ export const deleteScheduleAction = adminActionClient
     return { ok: true as const };
   });
 
-/**
- * Simpan rencana kegiatan (setelah clock in) atau hasil kerja (setelah clock out) hari ini. Aturan
- * dicek fungsi database. Rencana tersimpan: ke beranda role. Hasil tersimpan: ke halaman absensi.
- */
 export const submitWorkReportAction = authActionClient
   .inputSchema(workReportSchema)
   .action(async ({ parsedInput, ctx }) => {
@@ -173,11 +160,6 @@ export const submitWorkReportAction = authActionClient
     redirect(parsedInput.kind === "rencana" ? safeNextPath(null, ctx.roles) : "/portal/absensi");
   });
 
-/**
- * Setujui atau tolak pengajuan absen di luar lokasi (owner, atau manajer tim karyawan itu). Password
- * penyetuju diperiksa dulu sebagai tanda tangan elektronik, lalu fungsi database (khusus server)
- * memeriksa wewenang, mencatat absen kalau disetujui, dan menyimpan cap permanen.
- */
 export const decideExceptionAction = roleActionClient([
   "owner",
   "admin",
@@ -186,11 +168,11 @@ export const decideExceptionAction = roleActionClient([
 ])
   .inputSchema(decideExceptionSchema)
   .action(async ({ parsedInput, ctx }) => {
-    await confirmSignerPassword({
-      userId: ctx.userId,
-      email: ctx.email,
-      password: parsedInput.password,
-    });
+    const signature = await confirmSignature(
+      { userId: ctx.userId, email: ctx.email },
+      parsedInput,
+      { docType: "absen_luar_lokasi", docId: parsedInput.id, decision: parsedInput.decision },
+    );
     const userAgent = await signerUserAgent();
     const { data, error } = await createSupabaseAdminClient().rpc("decide_attendance_exception", {
       p_actor: ctx.userId,
@@ -198,6 +180,8 @@ export const decideExceptionAction = roleActionClient([
       p_decision: parsedInput.decision,
       ...(parsedInput.note ? { p_note: parsedInput.note } : {}),
       ...(userAgent ? { p_user_agent: userAgent } : {}),
+      p_method: signature.method,
+      ...(signature.credentialId ? { p_credential_id: signature.credentialId } : {}),
       ...(parsedInput.lat !== undefined && parsedInput.lng !== undefined
         ? { p_lat: parsedInput.lat, p_lng: parsedInput.lng }
         : {}),

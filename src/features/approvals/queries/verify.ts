@@ -12,12 +12,12 @@ const verificationSchema = z.object({
   signer_name: z.string(),
   signer_role: z.enum(APP_ROLES),
   signed_at: z.string(),
+  method: z.enum(["password", "biometrik", "cadangan"]).catch("password"),
   matches: z.boolean(),
 });
 
 export type ApprovalVerification = z.infer<typeof verificationSchema>;
 
-/** Hasil verifikasi kode QR. null kalau kode tidak dikenal. */
 export async function verifyApproval(code: string): Promise<ApprovalVerification | null> {
   if (!/^[0-9a-f]{64}$/.test(code)) return null;
   const { data, error } = await createSupabasePublicClient().rpc("verify_approval", {

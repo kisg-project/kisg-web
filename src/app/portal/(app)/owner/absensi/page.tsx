@@ -27,6 +27,7 @@ import {
   type OverviewEmployee,
   type OverviewException,
 } from "@/features/attendance";
+import { activeCredential } from "@/features/approvals/server";
 import { requirePortalUser } from "@/features/auth";
 import { formatDateWIB, formatTimeWIB } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -213,7 +214,7 @@ function ExceptionSummary({ item }: { item: OverviewException }) {
   );
 }
 
-function PendingCard({ item }: { item: OverviewException }) {
+function PendingCard({ item, fingerprint }: { item: OverviewException; fingerprint: boolean }) {
   return (
     <li className="grid gap-3 rounded-xl border border-(--line-strong) bg-card p-3.5">
       <div className="flex items-start gap-3">
@@ -229,7 +230,11 @@ function PendingCard({ item }: { item: OverviewException }) {
           <ExceptionSummary item={item} />
         </div>
       </div>
-      <ExceptionDecision id={item.id} summary={<ExceptionSummary item={item} />} />
+      <ExceptionDecision
+        id={item.id}
+        fingerprint={fingerprint}
+        summary={<ExceptionSummary item={item} />}
+      />
     </li>
   );
 }
@@ -237,10 +242,13 @@ function PendingCard({ item }: { item: OverviewException }) {
 export default async function OwnerAttendancePage({
   searchParams,
 }: PageProps<"/portal/owner/absensi">) {
-  await requirePortalUser(["owner", "admin"]);
+  const user = await requirePortalUser(["owner", "admin"]);
   const today = todayWib();
   const date = pickDate((await searchParams).tanggal, today);
-  const overview = await getAttendanceOverview(date);
+  const [overview, credential] = await Promise.all([
+    getAttendanceOverview(date),
+    activeCredential(user.id),
+  ]);
   const { summary } = overview;
   const shortDate = new Intl.DateTimeFormat("id-ID", {
     day: "numeric",
@@ -341,7 +349,7 @@ export default async function OwnerAttendancePage({
         ) : (
           <ul aria-label="Pengajuan menunggu" className="grid gap-3 lg:grid-cols-2">
             {overview.pending.map((item) => (
-              <PendingCard key={item.id} item={item} />
+              <PendingCard key={item.id} item={item} fingerprint={Boolean(credential)} />
             ))}
           </ul>
         )}
