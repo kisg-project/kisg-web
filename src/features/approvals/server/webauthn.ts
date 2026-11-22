@@ -16,7 +16,6 @@ import type {
 import type { ApprovalDecision, ApprovalDocType } from "@/config/approvals";
 import { ActionError } from "@/lib/safe-action";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import type { Json } from "@/lib/supabase/database.types";
 
 const RP_NAME = "KIS Operasional";
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
@@ -54,7 +53,7 @@ async function storeChallenge(
       user_id: userId,
       purpose,
       challenge,
-      payload: payload as Json,
+      payload,
       expires_at: new Date(Date.now() + CHALLENGE_TTL_MS).toISOString(),
     });
   if (error) throw new Error(`Tantangan gagal disimpan: ${error.message}`);

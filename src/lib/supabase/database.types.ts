@@ -675,14 +675,14 @@ isOneToOne: false
                   ]
                 },"webauthn_challenges": {
                   Row: {
-                    "challenge": string,"created_at": string,"expires_at": string,"id": string,"payload": Json,"purpose": string,"used_at": string | null,"user_id": string
+                    "challenge": string,"created_at": string,"expires_at": string,"id": string,"payload": NonNullable<Json>,"purpose": string,"used_at": string | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "challenge": string,"created_at"?: string,"expires_at": string,"id"?: string,"payload"?: Json,"purpose": string,"used_at"?: string | null,"user_id": string
+                    "challenge": string,"created_at"?: string,"expires_at": string,"id"?: string,"payload"?: NonNullable<Json>,"purpose": string,"used_at"?: string | null,"user_id": string
                   }
                   Update: {
-                    "challenge"?: string,"created_at"?: string,"expires_at"?: string,"id"?: string,"payload"?: Json,"purpose"?: string,"used_at"?: string | null,"user_id"?: string
+                    "challenge"?: string,"created_at"?: string,"expires_at"?: string,"id"?: string,"payload"?: NonNullable<Json>,"purpose"?: string,"used_at"?: string | null,"user_id"?: string
                   }
                   Relationships: [
                     {
