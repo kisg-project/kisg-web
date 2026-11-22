@@ -50,7 +50,7 @@ jobs:
 
       - name: Supabase lokal, migrasi dari nol, seed
         run: |
-          supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+          bash scripts/supabase-start.sh
           supabase db reset
 
       - name: Test RLS (pgTAP)
