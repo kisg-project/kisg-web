@@ -61,7 +61,7 @@ function StateMessage({
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "flex flex-col items-center gap-2 rounded-2xl border border-dashed border-(--line-strong,var(--color-border)) px-5 py-8 text-center",
+        "flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-(--line-strong,var(--color-border)) px-5 py-8 text-center",
         className,
       )}
     >

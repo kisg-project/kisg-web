@@ -19,7 +19,7 @@ export default async function AccountPage() {
   return (
     <div className="tone-gold grid gap-4">
       <PageHeader title="Akun saya" description={user.email} />
-      <div className="grid max-w-3xl gap-4">
+      <div className="mx-auto grid w-full max-w-3xl gap-4">
         <section aria-labelledby="akun-foto" className={panel}>
           <h2 id="akun-foto" className="sr-only">
             Foto profil

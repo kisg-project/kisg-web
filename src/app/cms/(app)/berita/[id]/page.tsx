@@ -14,7 +14,7 @@ export default async function CmsEditPostPage({ params }: PageProps<"/cms/berita
   const post = /^[0-9a-f-]{36}$/i.test(id) ? await getCmsPost(id) : null;
   if (!post) notFound();
   return (
-    <div className="tone-orange grid gap-4 [&>:not(:first-child)]:max-w-4xl">
+    <div className="tone-orange grid gap-4 [&>:not(:first-child)]:mx-auto [&>:not(:first-child)]:w-full [&>:not(:first-child)]:max-w-4xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeader title="Ubah berita" description={post.title} />
         <div className="flex flex-wrap gap-2">
