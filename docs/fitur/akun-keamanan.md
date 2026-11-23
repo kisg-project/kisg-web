@@ -42,6 +42,17 @@ Usulan role per departemen
 | Sistem | Admin sistem, CMS (akun khusus panel CMS), Auditor internal (hanya baca) |
 | Eksternal (portal sendiri) | Agen atau Broker, Konsumen, Kontraktor atau Mandor (opname dan progres) |
 
+## Pelimpahan tugas jabatan kosong (keputusan owner, 23 November 2026)
+Kalau jabatan di bawah belum terisi, tugas dan hak aksesnya dilimpahkan ke jabatan terdekat di atasnya yang sudah terisi, supaya pekerjaan tetap jalan. Ini adalah rangkap jabatan otomatis.
+
+1. **Hak akses**: pemegang jabatan atasan otomatis mendapat menu dan aksi jabatan kosong di bawahnya. Contoh: Kasir kosong, maka Manajer Keuangan melihat menu kas kecil dan bisa mencairkan.
+2. **Tugas dan antrean**: semua pekerjaan yang ditujukan ke jabatan (bukan ke orang), misalnya antrean pencairan, tagihan konsumen yang harus dikirim, opname yang harus dicek, atau lead tim, masuk ke pemegang jabatan terdekat di atasnya. Kalau seluruh rantai di atasnya kosong, pekerjaan ke Direktur Utama.
+3. **Pelimpahan khusus**: owner bisa menentukan pelimpahan lain per jabatan, misalnya Kasir kosong dipegang Staf Akuntansi, bukan Manajer Keuangan. Owner juga tetap bisa mengatur rangkap jabatan manual.
+4. **Terlihat jelas**: beranda dan Akun saya menampilkan "Anda juga memegang tugas Kasir (jabatan belum terisi)". Setiap aksi tercatat atas nama orangnya, lengkap dengan jabatan yang dijalankan.
+5. **Pemisahan tugas tetap berlaku**: kalau pelimpahan membuat satu orang menjadi pembuat sekaligus penyetuju dokumen yang sama, langkah persetujuannya naik ke atasan, karena pengaju tidak boleh menyetujui dokumennya sendiri.
+6. **Saat jabatan terisi**: pekerjaan baru langsung ke pemegang baru. Antrean yang ditujukan ke jabatan pindah otomatis. Pekerjaan yang sudah diambil orang tertentu tetap padanya sampai selesai atau dipindah manual oleh atasan.
+7. **Berlaku di semua fitur**: CRM, keuangan, pembelian, gudang, konstruksi, legal, HR, after-sales, dan administrasi.
+
 Role yang sudah ada dipetakan ke role baru: `marketing_manager` ke Manajer Marketing, `marketing` ke Marketing, `site_manager` ke Site Manager, `site_supervisor` ke Pengawas Lapangan, `finance` ke Manajer Keuangan atau Staf Akuntansi (dipilih per orang), `cms` tetap, `admin` menjadi Admin sistem.
 
 ## Cakupan
@@ -58,6 +69,8 @@ Role yang sudah ada dipetakan ke role baru: `marketing_manager` ke Manajer Marke
 - [ ] Jabatan, departemen, tingkat, dan atasan (struktur organisasi), rangkap jabatan, jabatan kosong
 - [ ] Role kustom: hak akses per menu dan aksi diatur owner (seperti Odoo), di atas role bawaan
 - [ ] Undangan memilih role dan jabatan sekaligus
+- [ ] Pelimpahan tugas dan hak akses jabatan kosong ke jabatan terdekat di atasnya, pelimpahan khusus per jabatan, penanda di beranda dan Akun saya
+- [ ] Antrean kerja ditujukan ke jabatan (bukan orang) di semua modul, berpindah otomatis saat jabatan terisi
 - [ ] Riwayat login dan perangkat aktif di Akun saya, keluar dari semua perangkat
 - [ ] Hapus dan ekspor data konsumen (UU PDP) di admin, tercatat di audit
 - [ ] Halaman audit log untuk owner: siapa mengubah apa, kapan, dengan filter
