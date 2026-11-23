@@ -1,7 +1,6 @@
 export { ClockFlow } from "./components/clock-flow";
 export { WorkReportForm } from "./components/work-report-form";
 export {
-  countPendingExceptions,
   getAttendanceOverview,
   getAttendanceTrend,
   getMyAttendance,

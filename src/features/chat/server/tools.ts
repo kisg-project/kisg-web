@@ -14,12 +14,10 @@ import type { Database } from "@/lib/supabase/database.types";
 
 export interface ChatToolContext {
   sessionId: string;
-  /** Harga unit proyek unggulan, dipakai kalau pengunjung tidak menyebut harga. */
   defaultPrice: number | null;
   projectId: string | null;
 }
 
-/** Alat yang boleh dipakai Jaka (CLAUDE.md bagian 12). Hasilnya data, bukan teks untuk pengunjung. */
 export function chatTools(context: ChatToolContext) {
   return {
     calculate_kpr: tool({
@@ -164,5 +162,3 @@ export function chatTools(context: ChatToolContext) {
     }),
   };
 }
-
-export type ChatTools = ReturnType<typeof chatTools>;

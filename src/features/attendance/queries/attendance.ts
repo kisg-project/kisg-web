@@ -17,7 +17,6 @@ export interface AttendanceDay {
   clockOutAt: string | null;
   clockOutLocation: string | null;
   earlyMinutes: number;
-  /** Clock in dan clock out di titik absensi berbeda. */
   movedLocation: boolean;
 }
 
@@ -460,14 +459,11 @@ export async function getAttendanceOverview(date: string): Promise<AttendanceOve
 }
 
 export interface AttendanceTrendDay {
-  /** Tanggal kerja WIB (YYYY-MM-DD). */
   date: string;
-  /** Hari kerja menurut jam kerja perusahaan. Hari libur tidak menghitung yang belum absen. */
   workday: boolean;
   onTime: number;
   late: number;
   absent: number;
-  /** Persen karyawan hadir yang mengisi rencana dan hasil kerja. null kalau tidak ada yang hadir. */
   reportsComplete: number | null;
 }
 
@@ -571,13 +567,4 @@ export async function getAttendanceTrend(days = 14): Promise<AttendanceTrendDay[
       reportsComplete: present.length > 0 ? Math.round((complete / present.length) * 100) : null,
     };
   });
-}
-
-export async function countPendingExceptions(): Promise<number> {
-  const supabase = await createSupabaseServerClient();
-  const { count } = await supabase
-    .from("attendance_exceptions")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "menunggu");
-  return count ?? 0;
 }

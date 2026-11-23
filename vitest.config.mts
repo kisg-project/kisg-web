@@ -7,15 +7,12 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      // Modul "server-only" melempar error di luar React Server Components. Di unit test diganti modul kosong.
       "server-only": fileURLToPath(new URL("./src/test/empty-module.ts", import.meta.url)),
     },
   },
   test: {
-    // Default node. Test komponen memakai docblock `// @vitest-environment jsdom`.
     environment: "node",
     include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.mjs"],
-    setupFiles: ["./src/test/setup.ts"],
     restoreMocks: true,
     coverage: {
       provider: "v8",
@@ -28,12 +25,9 @@ export default defineConfig({
       exclude: [
         "**/*.test.*",
         "**/index.ts",
-        // Bagian kompresi yang hanya jalan di browser (canvas, Web Worker).
-        // Diuji E2E di e2e/site/image-compress.spec.ts, logikanya diuji unit di plan.test.ts.
         "src/lib/image/compress.ts",
         "src/lib/image/compress.worker.ts",
         "src/lib/image/encode.ts",
-        // Pembuat PDF jsPDF (butuh DOM, FileReader, unduhan). Diuji E2E di e2e/site/simulasi-kpr.spec.ts.
         "src/features/kpr/utils/pdf.ts",
       ],
       thresholds: {

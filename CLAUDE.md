@@ -58,13 +58,13 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 - **Form**: React Hook Form + `@hookform/resolvers/zod`
 - **Server action**: `next-safe-action` dengan middleware auth + role
 - **Data client di portal**: TanStack Query (cache, optimistic update, offline), TanStack Table untuk tabel besar
-- **Chart**: Recharts
+- **Chart**: komponen sendiri (kotak dan cincin pastel di `attendance-charts.tsx`). Recharts dilepas 23 November 2026 karena tidak terpakai, dipasang lagi kalau laporan keuangan butuh grafik garis atau batang.
 - **PWA**: Serwist. Cek dulu kompatibilitasnya dengan bundler versi Next yang terpasang. Kalau belum kompatibel, tulis service worker manual, jangan dipaksa.
 - **Offline storage**: Dexie (IndexedDB)
 - **Email transaksional**: Brevo (relay SMTP untuk email Supabase Auth, API HTTP lewat `fetch` untuk email aplikasi). Pola sama dengan proyek KELOLA: login SMTP terpisah dari alamat pengirim (`SMTP_FROM`). Template email ditulis sebagai komponen React (React Email, persetujuan dependency diminta saat dipakai)
 - **AI customer service**: Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/google`) dengan Gemini, `pgvector` di Supabase untuk pencarian knowledge base. Nama model diambil dari env `GEMINI_MODEL` dan `GEMINI_EMBEDDING_MODEL`, jangan hardcode. Cek dokumentasi Google untuk model yang masih aktif.
 - **Env**: `@t3-oss/env-nextjs` (validasi env saat build)
-- **Testing**: Vitest + Testing Library (unit), Playwright (e2e), pgTAP atau test SQL untuk RLS
+- **Testing**: Vitest (unit), Playwright (e2e), pgTAP atau test SQL untuk RLS. Testing Library, jsdom, dan jest-dom dilepas 23 November 2026 karena tidak ada test komponen; dipasang lagi kalau dibutuhkan
 - **Kualitas**: ESLint (config Next + `typescript-eslint` strict), Prettier, `lint-staged` + Husky
 - **Monitoring**: Vercel Analytics, Speed Insights, Sentry
 - **Deploy**: Vercel (Preview per PR, Production otomatis dari `main`), fungsi server di wilayah Singapura (`sin1`, dekat database Supabase ap-southeast-1), satu project Supabase (production). Tanpa staging (keputusan owner, Fase 2)
@@ -72,11 +72,10 @@ Gunakan versi stable terbaru saat proyek dibuat. Sebelum memakai API apa pun dar
 Jangan menambah dependency di luar daftar ini tanpa menjelaskan alasannya dan meminta persetujuan.
 
 Dependency tambahan yang sudah disetujui owner:
-- Fase 1: `clsx`, `radix-ui`, `sonner`, `server-only`, `prettier-plugin-tailwindcss`, `@vitest/coverage-v8`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/user-event`, `tw-animate-css` dan `shadcn` (CSS, dipakai saat build).
+- Fase 1: `clsx`, `radix-ui`, `sonner`, `server-only`, `prettier-plugin-tailwindcss`, `@vitest/coverage-v8`, `tw-animate-css` dan `shadcn` (CSS, dipakai saat build).
 - Simulasi KPR: `jspdf` dan `jspdf-autotable` untuk PDF berkop KIS, dimuat hanya saat tombol unduh diklik. Dipakai lagi untuk ekspor PDF portal di Fase 8.
 - Email: `@react-email/components` dan `@react-email/render` untuk template email HTML (keputusan owner, 20 November 2026).
 - Absensi: `@mediapipe/tasks-vision` (Google, Apache 2.0) untuk deteksi wajah dan kedip di browser, dimuat hanya di halaman absensi. Model dan file WASM disajikan dari domain sendiri, bukan CDN (keputusan owner, 20 November 2026).
-- Grafik: `recharts` (sudah di tech stack), dipasang 22 November 2026 untuk grafik dashboard owner.
 - Tanda tangan: `@simplewebauthn/browser` dan `@simplewebauthn/server` untuk sidik jari WebAuthn (keputusan owner, 22 November 2026).
 - Notifikasi: `web-push` untuk Web Push (persetujuan owner, 23 November 2026).
 - Animasi: `lottie-web` (Airbnb, MIT) versi ringan `lottie_light` (SVG, tanpa eval dan WASM) untuk layar memuat dan keadaan kosong (keputusan owner, 22 November 2026). File animasi dibuat sendiri oleh `scripts/build-lottie.mjs` dengan warna brand, dimuat lewat dynamic import dan di-cache.

@@ -1,6 +1,3 @@
-// Aturan absensi (CLAUDE.md bagian 8, keputusan owner 20 November 2026). Nilai di database tetap
-// pengaman utama (radius per titik absensi, waktu dari server).
-
 export const DEFAULT_RADIUS_M = 100;
 
 export const MAX_GPS_ACCURACY_M = 150;
@@ -42,8 +39,6 @@ export const SCHEDULE_ROLES = [
   "finance",
 ] as const;
 
-export type ScheduleRole = (typeof SCHEDULE_ROLES)[number];
-
 export function mustAttend(roles: readonly string[]): boolean {
   return (
     roles.some((role) => (ATTENDANCE_ROLES as readonly string[]).includes(role)) &&
@@ -55,7 +50,6 @@ export const WORK_REPORT = {
   minChars: 10,
   maxChars: 4000,
   maxFiles: 10,
-  /** Batas keras server dan bucket work-attachments. Foto dikompres di HP ke 300 KB. */
   maxFileBytes: 2 * 1024 * 1024,
   documentTypes: {
     "application/pdf": "pdf",

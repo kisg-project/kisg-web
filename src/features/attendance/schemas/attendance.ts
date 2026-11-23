@@ -139,5 +139,3 @@ export const decideExceptionSchema = z
       });
     }
   });
-
-export type DecideExceptionInput = z.input<typeof decideExceptionSchema>;
