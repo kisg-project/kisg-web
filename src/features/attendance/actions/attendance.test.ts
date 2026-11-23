@@ -102,6 +102,7 @@ vi.mock("@/lib/supabase/server", () => ({
       auth: { getClaims: () => Promise.resolve({ data: { claims: { sub: USER } } }) },
       from,
       rpc: (name: string, args: Record<string, unknown>) => {
+        if (name === "my_inherited_duties") return Promise.resolve({ data: [], error: null });
         rpcCalls.push({ name, args });
         return Promise.resolve({ data: state.rpcData, error: state.rpcError });
       },

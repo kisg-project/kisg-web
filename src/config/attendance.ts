@@ -1,3 +1,5 @@
+import { STAFF_ROLES } from "./roles";
+
 export const DEFAULT_RADIUS_M = 100;
 
 export const MAX_GPS_ACCURACY_M = 150;
@@ -22,22 +24,9 @@ export const WEEKDAYS = [
   { value: 7, label: "Minggu" },
 ] as const;
 
-export const ATTENDANCE_ROLES = [
-  "admin",
-  "marketing_manager",
-  "marketing",
-  "site_manager",
-  "site_supervisor",
-  "finance",
-] as const;
+export const ATTENDANCE_ROLES = STAFF_ROLES;
 
-export const SCHEDULE_ROLES = [
-  "marketing_manager",
-  "marketing",
-  "site_manager",
-  "site_supervisor",
-  "finance",
-] as const;
+export const SCHEDULE_ROLES = STAFF_ROLES.filter((role) => role !== "admin");
 
 export function mustAttend(roles: readonly string[]): boolean {
   return (

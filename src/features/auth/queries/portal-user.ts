@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 import { mustAttend } from "@/config/attendance";
 import type { AppRole } from "@/config/roles";
-import { loadAccountRoles } from "@/lib/auth/account-roles";
+import { loadAccountRoles, type InheritedDuty } from "@/lib/auth/account-roles";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface PortalUser {
@@ -13,6 +13,7 @@ export interface PortalUser {
   fullName: string;
   role: AppRole;
   roles: AppRole[];
+  duties: InheritedDuty[];
   phone: string | null;
   avatarPath: string | null;
   complete: boolean;
@@ -31,7 +32,7 @@ const getPortalSession = cache(async (): Promise<PortalSession> => {
   const userId = data?.claims.sub;
   if (!userId) return { signedIn: false, user: null };
 
-  const { roles, profile } = await loadAccountRoles(supabase, userId);
+  const { roles, duties, profile } = await loadAccountRoles(supabase, userId);
   const [role] = roles;
   if (!role || !profile) return { signedIn: true, user: null };
   return {
@@ -42,6 +43,7 @@ const getPortalSession = cache(async (): Promise<PortalSession> => {
       fullName: profile.fullName,
       role,
       roles,
+      duties,
       phone: profile.phone,
       avatarPath: profile.avatarPath,
       needsPassword: profile.needsPassword,

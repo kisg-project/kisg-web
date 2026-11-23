@@ -13,6 +13,7 @@ vi.mock("@/lib/supabase/server", () => ({
       auth: {
         getClaims: () => Promise.resolve({ data: state.claims ? { claims: state.claims } : null }),
       },
+      rpc: () => Promise.resolve({ data: [], error: null }),
       from: (table: string) => {
         const profile = {
           email: "user@kis.test",

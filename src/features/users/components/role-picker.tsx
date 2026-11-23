@@ -9,17 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { INVITABLE_ROLES, ROLE_LABELS, type InvitableRole } from "@/config/roles";
+import {
+  INVITABLE_ROLES,
+  isInvitableRole,
+  ROLE_GROUPS,
+  ROLE_LABELS,
+  type InvitableRole,
+} from "@/config/roles";
 
 export interface RoleSelection {
   roles: InvitableRole[];
   primaryRole: InvitableRole;
 }
 
-/**
- * Pilih satu atau beberapa role (rangkap jabatan) dan role utamanya. Role owner hanya muncul untuk
- * owner. Role utama otomatis berpindah ke role lain kalau role utamanya dilepas.
- */
 export function RolePicker({
   idPrefix,
   value,
@@ -54,27 +56,40 @@ export function RolePicker({
         aria-describedby={rolesError ? `${idPrefix}-roles-error` : undefined}
       >
         <legend className="mb-1 text-sm font-medium">Role (boleh lebih dari satu)</legend>
-        <div className="grid gap-1 sm:grid-cols-2">
-          {options.map((role) => {
-            const id = `${idPrefix}-role-${role}`;
+        <div className="grid gap-3">
+          {ROLE_GROUPS.map((group) => {
+            const roles = group.roles
+              .filter(isInvitableRole)
+              .filter((role) => options.includes(role));
+            if (roles.length === 0) return null;
             return (
-              <div
-                key={role}
-                className="flex min-h-11 items-center gap-3 rounded-md px-2 hover:bg-accent"
-              >
-                <Checkbox
-                  id={id}
-                  checked={value.roles.includes(role)}
-                  disabled={disabled}
-                  aria-invalid={rolesError ? true : undefined}
-                  onCheckedChange={(checked) => {
-                    toggle(role, checked === true);
-                  }}
-                  className="size-5"
-                />
-                <Label htmlFor={id} className="flex-1 cursor-pointer py-2 font-normal">
-                  {ROLE_LABELS[role]}
-                </Label>
+              <div key={group.label} className="grid gap-1">
+                <p className="text-xs font-semibold text-muted-foreground">{group.label}</p>
+                <div className="grid gap-1 sm:grid-cols-2">
+                  {roles.map((role) => {
+                    const id = `${idPrefix}-role-${role}`;
+                    return (
+                      <div
+                        key={role}
+                        className="flex min-h-11 items-center gap-3 rounded-md px-2 hover:bg-accent"
+                      >
+                        <Checkbox
+                          id={id}
+                          checked={value.roles.includes(role)}
+                          disabled={disabled}
+                          aria-invalid={rolesError ? true : undefined}
+                          onCheckedChange={(checked) => {
+                            toggle(role, checked === true);
+                          }}
+                          className="size-5"
+                        />
+                        <Label htmlFor={id} className="flex-1 cursor-pointer py-2 font-normal">
+                          {ROLE_LABELS[role]}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}

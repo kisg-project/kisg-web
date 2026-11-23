@@ -20,7 +20,7 @@ export default async function AdminPage() {
   const user = await requirePortalUser(["owner", "admin"]);
   return (
     <div className="tone-mint grid gap-6">
-      <HomeHeader roles={user.roles} description="Admin" />
+      <HomeHeader roles={user.roles} duties={user.duties} description="Admin" />
       <h2 className="text-xl font-bold">Admin</h2>
       <ul className="grid gap-4 sm:grid-cols-2">
         {MODULES.map((module) => (

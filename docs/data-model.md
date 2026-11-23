@@ -251,6 +251,17 @@ Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per ite
 
 ## 12. Sistem
 
+Struktur organisasi (23 November 2026)
+
+| Tabel | Kolom utama | Index dan constraint |
+|---|---|---|
+| `departments` | `code`, `name`, `sort_order` | unique `code` |
+| `positions` | `code`, `title`, `department_id`, `level` (1 Direktur Utama sampai 6 Staf), `parent_id` (atasan), `default_role`, `delegate_to_id` (pelimpahan khusus), `is_active` | unique `code`, root hanya `direktur_utama`, tanpa pelimpahan ke diri sendiri |
+| `position_holders` | `position_id`, `user_id`, `started_at`, `ended_at` | unique aktif (`position_id`, `user_id`). Satu orang boleh rangkap, satu jabatan boleh kosong |
+| `private.role_inheritance` | `user_id`, `role`, `position_id` | Hasil pelimpahan jabatan kosong ke atasan terdekat (atau pelimpahan khusus), dihitung ulang oleh trigger dan `pg_cron` harian. Dipakai `private.my_roles()`, JWT hook, dan menu |
+
+Pemasangan otomatis: role baru di `user_roles` memasang jabatan dengan `default_role` yang sama, dan mencabut role melepas jabatannya.
+
 | Tabel | Kolom utama | Index dan constraint |
 |---|---|---|
 | `notifications` | `user_id`, `kind notification_kind`, `title`, `body`, `href` (hanya `/portal...`), `dedupe_key`, `read_at` | unique (`user_id`, `dedupe_key`), index (`user_id`, `created_at desc`), partial index belum dibaca. Ditulis server (service role), pemilik hanya membaca dan mengisi `read_at`. Disiarkan realtime |

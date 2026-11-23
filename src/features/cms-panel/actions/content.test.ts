@@ -76,6 +76,7 @@ vi.mock("@/lib/supabase/server", () => ({
     Promise.resolve({
       auth: { getClaims: () => Promise.resolve({ data: { claims: { sub: "cms-1" } } }) },
       from,
+      rpc: () => Promise.resolve({ data: [], error: null }),
     }),
 }));
 
