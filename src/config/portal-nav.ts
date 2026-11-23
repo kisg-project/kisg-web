@@ -13,7 +13,6 @@ import {
   Image01Icon,
   Invoice01Icon,
   Location01Icon,
-  Megaphone01Icon,
   Money03Icon,
   Note01Icon,
   PackageIcon,
@@ -139,21 +138,12 @@ export const FEATURES: readonly NavFeature[] = [
     bottom: true,
   },
   {
-    href: "/portal/marketing",
-    label: "Marketing",
-    icon: Megaphone01Icon,
-    tone: "orange",
-    roles: rolesOf("/portal/marketing"),
-    ready: true,
-    rail: true,
-  },
-  {
     href: "/portal/lapangan",
     label: "Lapangan",
     icon: Building03Icon,
     tone: "blue",
     roles: rolesOf("/portal/lapangan"),
-    ready: true,
+    ready: false,
     rail: true,
     bottom: true,
   },
@@ -312,7 +302,13 @@ export function featuresFor(roles: readonly AppRole[], primary: AppRole): NavFea
   const home = ROLE_HOME[primary];
   const seen = new Set<string>();
   return FEATURES.filter((feature) => {
-    if (feature.href === home || !allowed(feature, roles) || seen.has(feature.label)) return false;
+    if (
+      !feature.ready ||
+      feature.href === home ||
+      !allowed(feature, roles) ||
+      seen.has(feature.label)
+    )
+      return false;
     seen.add(feature.label);
     return true;
   });

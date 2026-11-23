@@ -5,6 +5,7 @@ import { PRIVACY_POLICY_VERSION } from "@/config/legal";
 import { KPR_DEFAULTS } from "@/config/kpr";
 import { KPR_PRODUCTS, lowestRate } from "@/config/kpr-products";
 import { whatsappLink } from "@/config/site";
+import { notifyLeadEntry } from "@/features/crm/server";
 import { calculateKpr, downPaymentFromPercent } from "@/features/kpr";
 import { formatRupiah, normalizePhoneID } from "@/lib/format";
 import { hitRateLimit } from "@/lib/security/rate-limit";
@@ -110,7 +111,6 @@ export function chatTools(context: ChatToolContext) {
           };
         }
         const admin = createSupabaseAdminClient();
-        // Sama dengan form lead: upsert_lead menerima null untuk email, tipe unit, dan catatan.
         const args = {
           p_full_name: fullName.trim(),
           p_phone: normalized,
@@ -125,6 +125,7 @@ export function chatTools(context: ChatToolContext) {
         const { data, error } = await admin.rpc("upsert_lead", args);
         const lead = data?.[0];
         if (error || !lead) return { ok: false as const, reason: "Data belum tersimpan." };
+        if (lead.is_new) await notifyLeadEntry(lead.lead_id);
         await admin
           .from("chat_sessions")
           .update({ lead_id: lead.lead_id })

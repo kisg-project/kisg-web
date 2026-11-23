@@ -217,6 +217,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"crm_settings": {
+                  Row: {
+                    "id": boolean,"sla_minutes": number,"updated_at": string,"updated_by": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "id"?: boolean,"sla_minutes"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Update: {
+                    "id"?: boolean,"sla_minutes"?: number,"updated_at"?: string,"updated_by"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "crm_settings_updated_by_fkey"
+      columns: ["updated_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"facilities": {
                   Row: {
                     "created_at": string,"created_by": string | null,"deleted_at": string | null,"description": string | null,"icon": string | null,"id": string,"name": string,"project_id": string,"sort_order": number,"updated_at": string
@@ -329,16 +349,74 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"leads": {
+                },"lead_assignments": {
                   Row: {
-                    "consent_pdp_at": string | null,"consent_text_version": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string | null,"fbc": string | null,"fbp": string | null,"first_response_at": string | null,"full_name": string,"id": string,"last_activity_at": string,"lost_reason": string | null,"merged_into_id": string | null,"meta_lead_id": string | null,"note": string | null,"owner_id": string | null,"phone": string,"project_id": string | null,"sla_due_at": string | null,"source_detail": string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage": Database["public"]['Enums']["lead_stage"],"team_id": string | null,"unit_type_id": string | null,"updated_at": string
+                    "actor_id": string | null,"created_at": string,"from_user_id": string | null,"id": string,"lead_id": string,"reason": Database["public"]['Enums']["lead_assignment_reason"],"to_user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name": string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone": string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
+                    "actor_id"?: string | null,"created_at"?: string,"from_user_id"?: string | null,"id"?: string,"lead_id": string,"reason": Database["public"]['Enums']["lead_assignment_reason"],"to_user_id"?: string | null
                   }
                   Update: {
-                    "consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name"?: string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone"?: string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind"?: Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
+                    "actor_id"?: string | null,"created_at"?: string,"from_user_id"?: string | null,"id"?: string,"lead_id"?: string,"reason"?: Database["public"]['Enums']["lead_assignment_reason"],"to_user_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_assignments_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_assignments_from_user_id_fkey"
+      columns: ["from_user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_assignments_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lead_assignments_to_user_id_fkey"
+      columns: ["to_user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lead_rotation": {
+                  Row: {
+                    "last_assigned_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "last_assigned_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "last_assigned_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lead_rotation_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"leads": {
+                  Row: {
+                    "assigned_at": string | null,"consent_pdp_at": string | null,"consent_text_version": string | null,"created_at": string,"created_by": string | null,"deleted_at": string | null,"email": string | null,"fbc": string | null,"fbp": string | null,"first_response_at": string | null,"full_name": string,"id": string,"last_activity_at": string,"lost_reason": string | null,"merged_into_id": string | null,"meta_lead_id": string | null,"note": string | null,"owner_id": string | null,"phone": string,"project_id": string | null,"sla_due_at": string | null,"source_detail": string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage": Database["public"]['Enums']["lead_stage"],"team_id": string | null,"unit_type_id": string | null,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assigned_at"?: string | null,"consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name": string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone": string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind": Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "assigned_at"?: string | null,"consent_pdp_at"?: string | null,"consent_text_version"?: string | null,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"email"?: string | null,"fbc"?: string | null,"fbp"?: string | null,"first_response_at"?: string | null,"full_name"?: string,"id"?: string,"last_activity_at"?: string,"lost_reason"?: string | null,"merged_into_id"?: string | null,"meta_lead_id"?: string | null,"note"?: string | null,"owner_id"?: string | null,"phone"?: string,"project_id"?: string | null,"sla_due_at"?: string | null,"source_detail"?: string | null,"source_kind"?: Database["public"]['Enums']["lead_source_kind"],"stage"?: Database["public"]['Enums']["lead_stage"],"team_id"?: string | null,"unit_type_id"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -837,6 +915,12 @@ isOneToOne: false
 "chat_record_usage":
 { Args: { "p_input_tokens": number,"p_output_tokens": number }; Returns: undefined
                            },
+"crm_managers":
+{ Args: Record<PropertyKey, never>; Returns: string[]
+                           },
+"crm_sla_sweep":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json
                            },
@@ -854,6 +938,9 @@ isOneToOne: false
                            },
 "rate_limit_hit":
 { Args: { "p_key": string,"p_max": number,"p_window_seconds": number }; Returns: boolean
+                           },
+"reassign_lead":
+{ Args: { "p_lead": string,"p_to"?: string }; Returns: undefined
                            },
 "request_attendance_exception":
 { Args: { "p_accuracy": number,"p_kind": Database["public"]['Enums']["attendance_kind"],"p_lat": number,"p_lng": number,"p_photo_path": string,"p_reason": string }; Returns: string
@@ -880,7 +967,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","approval_decision": "disetujui"|"ditolak","approval_doc_type": "absen_luar_lokasi","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","notification_kind": "absen_luar_lokasi_diajukan"|"absen_luar_lokasi_diputuskan"|"sidik_jari_direset","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan"|"role","signature_method": "password"|"biometrik"|"cadangan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek","work_report_kind": "rencana"|"hasil"
+            "app_role": "owner"|"admin"|"marketing_manager"|"marketing"|"site_manager"|"site_supervisor"|"finance"|"cms","application_status": "baru"|"diproses"|"wawancara"|"diterima"|"ditolak","approval_decision": "disetujui"|"ditolak","approval_doc_type": "absen_luar_lokasi","attendance_kind": "masuk"|"pulang","audit_action": "insert"|"update"|"delete"|"soft_delete","career_level": "berpengalaman"|"lulusan_baru"|"lapangan"|"magang","content_status": "draft"|"terjadwal"|"terbit"|"arsip","form_kind": "minat"|"kontak"|"brosur"|"landing_page"|"karir"|"chat","lead_activity_type": "telepon"|"whatsapp"|"email"|"survei"|"pertemuan"|"catatan"|"perubahan_tahap"|"dokumen"|"sistem","lead_assignment_reason": "giliran"|"manual"|"sla_lewat"|"tanpa_marketing"|"dibuat_sendiri","lead_source_kind": "website"|"landing_page"|"meta_lead_ads"|"chat"|"manual"|"walk_in"|"instagram"|"whatsapp"|"referral","lead_stage": "baru"|"dihubungi"|"prospek"|"jadwal_survei"|"sudah_survei"|"negosiasi"|"booking_fee"|"proses_berkas"|"akad"|"batal","media_kind": "foto"|"video"|"siteplan"|"denah"|"brosur","notification_kind": "absen_luar_lokasi_diajukan"|"absen_luar_lokasi_diputuskan"|"sidik_jari_direset"|"lead_baru"|"lead_antrean"|"lead_sla_lewat","project_role": "supervisor"|"manager"|"marketing","project_status": "segera"|"tersedia"|"sold_out","request_status": "menunggu"|"disetujui"|"ditolak","schedule_scope": "perusahaan"|"lokasi"|"karyawan"|"role","signature_method": "password"|"biometrik"|"cadangan","submission_status": "diterima"|"ditolak_validasi"|"ditolak_honeypot"|"ditolak_rate_limit"|"ditolak_turnstile","team_kind": "marketing"|"lapangan","unit_status": "tersedia"|"hold"|"booking"|"terjual","work_location_kind": "kantor"|"proyek","work_report_kind": "rencana"|"hasil"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -996,7 +1083,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"approval_decision": ["disetujui", "ditolak"],"approval_doc_type": ["absen_luar_lokasi"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"notification_kind": ["absen_luar_lokasi_diajukan", "absen_luar_lokasi_diputuskan", "sidik_jari_direset"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan", "role"],"signature_method": ["password", "biometrik", "cadangan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"],"work_report_kind": ["rencana", "hasil"]
+            "app_role": ["owner", "admin", "marketing_manager", "marketing", "site_manager", "site_supervisor", "finance", "cms"],"application_status": ["baru", "diproses", "wawancara", "diterima", "ditolak"],"approval_decision": ["disetujui", "ditolak"],"approval_doc_type": ["absen_luar_lokasi"],"attendance_kind": ["masuk", "pulang"],"audit_action": ["insert", "update", "delete", "soft_delete"],"career_level": ["berpengalaman", "lulusan_baru", "lapangan", "magang"],"content_status": ["draft", "terjadwal", "terbit", "arsip"],"form_kind": ["minat", "kontak", "brosur", "landing_page", "karir", "chat"],"lead_activity_type": ["telepon", "whatsapp", "email", "survei", "pertemuan", "catatan", "perubahan_tahap", "dokumen", "sistem"],"lead_assignment_reason": ["giliran", "manual", "sla_lewat", "tanpa_marketing", "dibuat_sendiri"],"lead_source_kind": ["website", "landing_page", "meta_lead_ads", "chat", "manual", "walk_in", "instagram", "whatsapp", "referral"],"lead_stage": ["baru", "dihubungi", "prospek", "jadwal_survei", "sudah_survei", "negosiasi", "booking_fee", "proses_berkas", "akad", "batal"],"media_kind": ["foto", "video", "siteplan", "denah", "brosur"],"notification_kind": ["absen_luar_lokasi_diajukan", "absen_luar_lokasi_diputuskan", "sidik_jari_direset", "lead_baru", "lead_antrean", "lead_sla_lewat"],"project_role": ["supervisor", "manager", "marketing"],"project_status": ["segera", "tersedia", "sold_out"],"request_status": ["menunggu", "disetujui", "ditolak"],"schedule_scope": ["perusahaan", "lokasi", "karyawan", "role"],"signature_method": ["password", "biometrik", "cadangan"],"submission_status": ["diterima", "ditolak_validasi", "ditolak_honeypot", "ditolak_rate_limit", "ditolak_turnstile"],"team_kind": ["marketing", "lapangan"],"unit_status": ["tersedia", "hold", "booking", "terjual"],"work_location_kind": ["kantor", "proyek"],"work_report_kind": ["rencana", "hasil"]
           }
         }
 } as const

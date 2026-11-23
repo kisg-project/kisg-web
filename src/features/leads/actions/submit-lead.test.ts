@@ -30,6 +30,7 @@ function from(table: string) {
 }
 
 vi.mock("@/env", () => ({ env: {} }));
+vi.mock("@/features/crm/server", () => ({ notifyLeadEntry: () => Promise.resolve() }));
 vi.mock("@/lib/supabase/admin", () => ({ createSupabaseAdminClient: () => ({ from, rpc }) }));
 vi.mock("@/lib/security/rate-limit", () => ({
   clientIp: () => Promise.resolve("203.0.113.5"),

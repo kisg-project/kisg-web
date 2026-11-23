@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PORTAL_AREAS, portalAccess, portalAreasFor, ROLE_HOME, safeNextPath } from "./portal";
+import { portalAccess, portalAreasFor, ROLE_HOME, safeNextPath } from "./portal";
 
 describe("portalAccess", () => {
   it("halaman login dan lupa password publik", () => {
@@ -21,7 +21,7 @@ describe("portalAccess", () => {
 
   it.each([
     ["/portal/admin", "admin", "allowed"],
-    ["/portal/admin/pengguna", "owner", "denied"],
+    ["/portal/lapangan", "owner", "denied"],
     ["/portal/owner/karyawan", "owner", "allowed"],
     ["/portal/admin", "marketing", "denied"],
     ["/portal/owner", "site_manager", "denied"],
@@ -55,11 +55,13 @@ describe("safeNextPath", () => {
 });
 
 describe("portalAreasFor", () => {
-  it("owner melihat semua area kecuali area admin lama dan absensi, marketing hanya area marketing", () => {
-    expect(portalAreasFor(["owner"])).toHaveLength(PORTAL_AREAS.length - 2);
+  it("setiap role hanya melihat area yang sudah bisa dipakai", () => {
+    expect(portalAreasFor(["owner"]).map((area) => area.prefix)).toEqual([
+      "/portal/owner",
+      "/portal/crm",
+    ]);
     expect(portalAreasFor(["marketing"]).map((area) => area.prefix)).toEqual([
       "/portal/crm",
-      "/portal/marketing",
       "/portal/absensi",
     ]);
     expect(portalAreasFor(["finance"]).map((area) => area.prefix)).toEqual([
@@ -80,7 +82,6 @@ describe("multi role (rangkap jabatan)", () => {
   it("menu gabungan tanpa duplikat, beranda mengikuti role utama", () => {
     expect(portalAreasFor(["marketing", "site_supervisor"]).map((area) => area.prefix)).toEqual([
       "/portal/crm",
-      "/portal/marketing",
       "/portal/lapangan",
       "/portal/absensi",
     ]);

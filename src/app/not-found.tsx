@@ -1,29 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container } from "@/components/shared/container";
-import { EmptyState } from "@/components/shared/state-message";
+import { SiteErrorScene } from "@/components/shared/site-error-scene";
 import { Button } from "@/components/ui/button";
+import { whatsappLink } from "@/config/site";
 
-export const metadata: Metadata = {
-  title: "Halaman tidak ditemukan",
-  robots: { index: false },
-};
+export const metadata: Metadata = { title: "Halaman tidak ditemukan", robots: { index: false } };
 
 export default function NotFound() {
   return (
-    <main id="konten" className="flex flex-1 items-center">
-      <Container className="py-16">
-        <h1 className="sr-only">Halaman tidak ditemukan</h1>
-        <EmptyState
-          title="Halaman tidak ditemukan."
-          description="Alamat halaman mungkin salah atau halaman sudah dipindah. Kembali ke beranda untuk melihat informasi proyek."
-          action={
+    <main id="konten" className="flex flex-1 flex-col justify-center">
+      <SiteErrorScene
+        code="404"
+        title="Halaman tidak ditemukan"
+        description="Alamatnya salah atau halamannya sudah dipindah. Lihat proyek yang masih tersedia atau hubungi marketing."
+        actions={
+          <>
             <Button asChild>
-              <Link href="/">Ke beranda</Link>
+              <Link href="/">Kembali ke beranda</Link>
             </Button>
-          }
-        />
-      </Container>
+            <Button asChild variant="outline">
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">
+                Hubungi marketing
+              </a>
+            </Button>
+          </>
+        }
+      />
     </main>
   );
 }

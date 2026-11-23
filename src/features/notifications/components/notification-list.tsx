@@ -6,6 +6,9 @@ import {
   Location01Icon,
   FingerPrintIcon,
   CheckmarkCircle02Icon,
+  Clock01Icon,
+  InboxIcon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons";
 import { Icon, type AppIcon } from "@/components/shared/icon";
 import { toast } from "@/components/shared/toast";
@@ -22,6 +25,9 @@ const KIND_ICON: Record<NotificationItem["kind"], { icon: AppIcon; tone: string 
     tone: "bg-primary-100 text-primary-700",
   },
   sidik_jari_direset: { icon: FingerPrintIcon, tone: "bg-violet-100 text-violet-700" },
+  lead_baru: { icon: UserAdd01Icon, tone: "bg-info-100 text-info-800" },
+  lead_antrean: { icon: InboxIcon, tone: "bg-warning-100 text-warning-800" },
+  lead_sla_lewat: { icon: Clock01Icon, tone: "bg-danger-100 text-danger-700" },
 };
 
 function NotificationRow({ item }: { item: NotificationItem }) {
