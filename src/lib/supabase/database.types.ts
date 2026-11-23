@@ -249,6 +249,7 @@ isOneToOne: false
                     "code"?: string,"created_at"?: string,"created_by"?: string | null,"deleted_at"?: string | null,"id"?: string,"name"?: string,"sort_order"?: number,"updated_at"?: string
                   }
                   Relationships: [
+                    
                   ]
                 },"facilities": {
                   Row: {
@@ -522,8 +523,7 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "positions"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "position_holders_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
@@ -549,15 +549,13 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "positions"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "positions_department_id_fkey"
       columns: ["department_id"]
 isOneToOne: false
       referencedRelation: "departments"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "positions_parent_id_fkey"
       columns: ["parent_id"]
 isOneToOne: false
@@ -1004,11 +1002,13 @@ isOneToOne: false
 "document_hash":
 { Args: { "p_doc_id": string,"p_doc_type": Database["public"]['Enums']["approval_doc_type"] }; Returns: string
                            },
+"my_inherited_duties":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "position_title": string,"role": Database["public"]['Enums']["app_role"]
+            }[]
+                           },
 "normalize_phone_id":
 { Args: { "input": string }; Returns: string
-                           },
-"my_inherited_duties":
-{ Args: Record<PropertyKey, never>; Returns: { "position_title": string,"role": Database["public"]['Enums']["app_role"] }[]
                            },
 "notification_approvers":
 { Args: { "p_user": string }; Returns: string[]
