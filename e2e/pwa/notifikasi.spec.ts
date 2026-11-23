@@ -60,7 +60,7 @@ test.describe("Notifikasi portal", () => {
     const list = page.getByRole("list", { name: "Daftar notifikasi" });
     await expect(list.getByRole("listitem")).toHaveCount(2);
     await expectNoA11yViolations(page);
-    await expectResponsive(page);
+    await expectResponsive(page, page.getByRole("main"));
 
     await list.getByRole("button", { name: /Sidik jari Anda direset/ }).click();
     await expect(page).toHaveURL("/portal/akun");
