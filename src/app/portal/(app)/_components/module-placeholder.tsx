@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/state-message";
 import { mustAttend } from "@/config/attendance";
+import type { AppRole } from "@/config/roles";
 import { PORTAL_AREAS, ROLE_HOME } from "@/config/portal";
 import { getMyAttendance, getMyWorkReports } from "@/features/attendance";
 import { requirePortalUser } from "@/features/auth";
@@ -123,9 +124,25 @@ export async function ModulePlaceholder({ prefix }: { prefix: string }) {
   }
   return (
     <div className="grid gap-5">
-      <HomeHeader roles={user.roles} description={area.label} />
-      {mustAttend(user.roles) ? <AttendanceStats userId={user.id} /> : null}
+      <HomeIntro roles={user.roles} userId={user.id} label={area.label} />
       <ShortcutSection roles={user.roles} primary={user.role} label={`Modul ${area.label}`} />
     </div>
+  );
+}
+
+export function HomeIntro({
+  roles,
+  userId,
+  label,
+}: {
+  roles: AppRole[];
+  userId: string;
+  label: string;
+}) {
+  return (
+    <>
+      <HomeHeader roles={roles} description={label} />
+      {mustAttend(roles) ? <AttendanceStats userId={userId} /> : null}
+    </>
   );
 }

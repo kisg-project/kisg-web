@@ -118,6 +118,8 @@ erDiagram
   leads ||--o{ utm_touchpoints : "jejak"
 ```
 
+Distribusi lead hybrid (keputusan owner, 23 November 2026): trigger `assign_new_lead` memilih marketing yang clock in hari ini, belum clock out, dan berada di jam kerja jadwalnya (`private.pick_marketing`). Kalau proyek lead punya marketing di `project_assignments`, hanya mereka yang ikut giliran. Tanpa kandidat, lead masuk antrean manajer (`owner_id` null). `crm_sla_sweep` (pg_cron tiap menit) mengembalikan lead yang belum direspons sampai `sla_due_at` ke antrean dan memberi tahu manajer. Respons pertama (`first_response_at`) diisi trigger saat pemilik mencatat aktivitas atau mengubah tahap. `reassign_lead` dipakai manajer marketing (antrean dan timnya) dan owner (semua). Kolom `leads.assigned_at` mencatat waktu pembagian terakhir.
+
 | Tabel | Kolom utama | Index dan constraint |
 |---|---|---|
 | `lead_sources` | `kind lead_source_kind`, `name` (misal "Meta Lead Ads: Form Promo Desember"), `is_active` | unique (`kind`, `name`) |
@@ -129,7 +131,9 @@ erDiagram
 | `tasks` | `lead_id`, `assignee_id`, `title`, `due_at`, `status task_status`, `completed_at` | index (`assignee_id`, `status`, `due_at`) |
 | `deals` | `lead_id`, `unit_id`, `status deal_status`, `agreed_price bigint`, `booking_fee bigint`, `payment_method`, `booked_at`, `akad_at`, `cancelled_at`, `cancel_reason` | partial unique (`unit_id`) `where status <> 'batal'` |
 | `lead_documents` | `lead_id`, `kind lead_document_kind`, `path` (bucket `customer-docs`), `uploaded_by` | index `lead_id` |
-| `lead_assignment_state` | `scope_key` PK (`global`, keputusan owner: semua marketing bergiliran untuk semua proyek. Kunci per proyek disiapkan kalau aturan berubah), `last_user_id`, `updated_at` | dipakai fungsi `assign_lead_round_robin()` dengan `for update` |
+| `lead_assignments` | `lead_id`, `from_user_id`, `to_user_id` (null = antrean manajer), `reason lead_assignment_reason` (giliran, manual, sla_lewat, tanpa_marketing, dibuat_sendiri), `actor_id`, `created_at` | index (`lead_id`, `created_at desc`). Ditulis trigger dan fungsi server saja, dibaca mengikuti akses lead |
+| `lead_rotation` | `user_id` PK, `last_assigned_at` | urutan giliran (yang paling lama tidak mendapat lead lebih dulu). Tidak bisa diakses client |
+| `crm_settings` | satu baris: `sla_minutes` (5 sampai 1440, bawaan 30), `updated_by` | diubah owner lewat server action, tercatat di audit |
 
 Trigger:
 - `leads` sebelum insert: normalisasi nomor. Kalau nomor sudah ada, data digabung ke lead lama (aktivitas "lead masuk lagi"), lalu insert dibatalkan lewat fungsi `upsert_lead()`. Insert langsung tidak dipakai.
