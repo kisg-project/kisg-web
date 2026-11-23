@@ -367,22 +367,19 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "lead_assignments_from_user_id_fkey"
       columns: ["from_user_id"]
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "lead_assignments_lead_id_fkey"
       columns: ["lead_id"]
 isOneToOne: false
       referencedRelation: "leads"
       referencedColumns: ["id"]
-    },
-                    {
+    },{
       foreignKeyName: "lead_assignments_to_user_id_fkey"
       columns: ["to_user_id"]
 isOneToOne: false
@@ -405,7 +402,7 @@ isOneToOne: false
                     {
       foreignKeyName: "lead_rotation_user_id_fkey"
       columns: ["user_id"]
-isOneToOne: false
+isOneToOne: true
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -919,10 +916,10 @@ isOneToOne: false
 { Args: { "p_input_tokens": number,"p_output_tokens": number }; Returns: undefined
                            },
 "crm_managers":
-{ Args: never; Returns: string[]
+{ Args: Record<PropertyKey, never>; Returns: string[]
                            },
 "crm_sla_sweep":
-{ Args: never; Returns: number
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "custom_access_token_hook":
 { Args: { "event": Json }; Returns: Json

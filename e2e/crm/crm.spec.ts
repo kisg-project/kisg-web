@@ -294,6 +294,8 @@ test.describe("CRM oleh marketing", () => {
       page.getByRole("region", { name: "Data lead" }).getByText("Prospek"),
     ).toBeVisible();
     expect((await leadRow(lead.id))?.stage).toBe("prospek");
+    await expect(page.getByText("Aktivitas tercatat.")).toBeHidden({ timeout: 15_000 });
+    await expect(page.getByText("Tahap tersimpan.")).toBeHidden({ timeout: 15_000 });
     await expectNoA11yViolations(page);
     await expectResponsive(page, page.getByRole("main"));
   });
