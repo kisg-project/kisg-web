@@ -93,6 +93,16 @@ test.describe("Notifikasi portal", () => {
     await login(page, owner);
     await page.goto("/portal/notifikasi");
     await expect(page.getByText("Belum ada notifikasi")).toBeVisible();
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const empty = await page
+      .getByRole("status")
+      .filter({ hasText: "Belum ada notifikasi" })
+      .boundingBox();
+    const main = await page.getByRole("main").boundingBox();
+    expect(empty && main).toBeTruthy();
+    if (empty && main) {
+      expect(Math.abs(empty.x + empty.width / 2 - (main.x + main.width / 2))).toBeLessThan(4);
+    }
     await expect(page.getByText("Rahasia akun lain")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Tandai semua dibaca" })).toBeDisabled();
     await expectNoA11yViolations(page);
