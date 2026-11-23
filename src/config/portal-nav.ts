@@ -312,7 +312,13 @@ export function featuresFor(roles: readonly AppRole[], primary: AppRole): NavFea
   const home = ROLE_HOME[primary];
   const seen = new Set<string>();
   return FEATURES.filter((feature) => {
-    if (feature.href === home || !allowed(feature, roles) || seen.has(feature.label)) return false;
+    if (
+      !feature.ready ||
+      feature.href === home ||
+      !allowed(feature, roles) ||
+      seen.has(feature.label)
+    )
+      return false;
     seen.add(feature.label);
     return true;
   });

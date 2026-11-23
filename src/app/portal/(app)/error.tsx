@@ -1,9 +1,10 @@
 "use client";
 
-import { ErrorState } from "@/components/shared/state-message";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { RotateLeft01Icon } from "@hugeicons/core-free-icons";
+import { AppErrorScene } from "@/components/shared/app-error-scene";
 import { Icon } from "@/components/shared/icon";
+import { Button } from "@/components/ui/button";
 
 export default function PortalError({
   retry,
@@ -12,18 +13,26 @@ export default function PortalError({
   retry: () => void;
 }) {
   return (
-    <ErrorState
-      title="Halaman gagal dimuat."
-      description="Coba muat ulang. Kalau masih gagal, hubungi admin."
-      action={
-        <Button
-          onClick={() => {
-            retry();
-          }}
-        >
-          <Icon icon={RotateLeft01Icon} aria-hidden="true" />
-          Muat ulang
-        </Button>
+    <AppErrorScene
+      code="500"
+      pose="tablet"
+      title="Halaman gagal dimuat"
+      description="Ada gangguan sebentar. Muat ulang, kalau masih gagal hubungi admin."
+      actions={
+        <>
+          <Button
+            size="sm"
+            onClick={() => {
+              retry();
+            }}
+          >
+            <Icon icon={RotateLeft01Icon} size={18} />
+            Muat ulang
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/portal">Ke beranda</Link>
+          </Button>
+        </>
       }
     />
   );

@@ -345,7 +345,10 @@ test.describe("Absensi: akses", () => {
 
   test("owner tidak wajib absensi", async ({ page }) => {
     await page.goto("/portal/absensi");
-    await expect(page).toHaveURL("/portal/akses-ditolak");
+    await expect(page).toHaveURL("/portal/absensi");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+    ).toBeVisible();
   });
 });
 
@@ -465,7 +468,10 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     const page = await context.newPage();
     for (const path of ["/portal/owner/titik-absensi", "/portal/owner/jam-kerja"]) {
       await page.goto(path);
-      await expect(page).toHaveURL("/portal/akses-ditolak");
+      await expect(page).toHaveURL(path);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+      ).toBeVisible();
     }
     await context.close();
   });

@@ -11,9 +11,6 @@ import {
   toPublicPath,
 } from "@/config/portal-host";
 
-// Proxy untuk portal karyawan dan panel CMS: memilih host (subdomain), menyegarkan sesi Supabase, dan
-// menolak rute di luar hak role. Pengaman utama tetap RLS di database dan cek role di server action.
-// Akun CMS dan akun karyawan terpisah: role cms hanya untuk CMS, role lain hanya untuk portal.
 export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") ?? request.nextUrl.host;
   const pathname = request.nextUrl.pathname;
@@ -46,6 +43,7 @@ export async function proxy(request: NextRequest) {
     access: (roles, signedIn) => portalAccess(portal.internalPath, roles, signedIn),
     loginPath: "/portal/login",
     deniedPath: "/portal/akses-ditolak",
+    hiddenPath: "/portal/tidak-ditemukan",
     home: (roles) => {
       const [primary] = roles;
       return primary && hasPortalRole(roles) ? ROLE_HOME[primary] : null;
@@ -53,13 +51,11 @@ export async function proxy(request: NextRequest) {
   });
 }
 
-/** 404 dan pengalihan alamat lama, sebelum sesi dibaca. */
 function earlyResponse(
   route: { kind: "not-found" } | { kind: "redirect"; location: string } | { kind: string },
   request: NextRequest,
 ): NextResponse | null {
   if (route.kind === "not-found") {
-    // Path yang tidak ada: Next merender halaman 404 website dengan status 404.
     return NextResponse.rewrite(new URL("/_portal-tidak-di-sini", request.url));
   }
   if (route.kind === "redirect" && "location" in route) {
@@ -77,13 +73,11 @@ interface GuardOptions {
   access: (roles: AppRole[], signedIn: boolean) => PortalAccess;
   loginPath: string;
   deniedPath: string;
-  /** Beranda untuk akun yang sudah login (dari halaman login atau akar aplikasi), atau null. */
+  hiddenPath?: string;
   home: (roles: AppRole[]) => string | null;
 }
 
 async function guard(request: NextRequest, options: GuardOptions): Promise<NextResponse> {
-  // Preview Vercel membaca konten publik dari database production (read-only), tetapi portal dan CMS
-  // dimatikan supaya kode yang belum di-merge tidak bisa mengubah data production.
   if (process.env.VERCEL_ENV === "preview") {
     return new NextResponse("Aplikasi tidak aktif di preview.", { status: 503 });
   }
@@ -111,7 +105,6 @@ async function guard(request: NextRequest, options: GuardOptions): Promise<NextR
         for (const { name, value, options: cookieOptions } of cookiesToSet) {
           response.cookies.set(name, value, cookieOptions);
         }
-        // Header cache dari Supabase mencegah CDN menyimpan response yang berisi sesi.
         for (const [header, value] of Object.entries(headers)) response.headers.set(header, value);
       },
     },
@@ -127,7 +120,6 @@ async function guard(request: NextRequest, options: GuardOptions): Promise<NextR
     for (const [name, value] of Object.entries(params ?? {}))
       destination.searchParams.set(name, value);
     const redirect = NextResponse.redirect(destination);
-    // Bawa cookie sesi yang baru disegarkan ke response redirect.
     for (const cookie of response.cookies.getAll()) redirect.cookies.set(cookie);
     for (const header of ["cache-control", "expires", "pragma"]) {
       const value = response.headers.get(header);
@@ -137,7 +129,14 @@ async function guard(request: NextRequest, options: GuardOptions): Promise<NextR
   };
 
   if (access === "login") return redirectTo(options.loginPath, { next: internalPath });
-  if (access === "denied") return redirectTo(options.deniedPath);
+  if (access === "denied") {
+    if (options.hiddenPath && options.home(roles)) {
+      const hidden = NextResponse.rewrite(new URL(options.hiddenPath, request.url), { request });
+      for (const cookie of response.cookies.getAll()) hidden.cookies.set(cookie);
+      return hidden;
+    }
+    return redirectTo(options.deniedPath);
+  }
   if (internalPath === options.loginPath || internalPath === prefix) {
     const home = options.home(roles);
     if (home && home !== internalPath) return redirectTo(home);
@@ -145,10 +144,6 @@ async function guard(request: NextRequest, options: GuardOptions): Promise<NextR
   return response;
 }
 
-/**
- * Role dari JWT: app_roles (multi role, role utama di depan). Token lama hanya punya app_role.
- * Kosong kalau akun nonaktif.
- */
 function claimRoles(claims: Record<string, unknown> | undefined): AppRole[] {
   if (!claims || claims.is_active !== true) return [];
   const list = Array.isArray(claims.app_roles) ? claims.app_roles : [claims.app_role];
@@ -159,8 +154,6 @@ export const config = {
   matcher: [
     "/portal/:path*",
     "/cms/:path*",
-    // Host portal (PORTAL_HOST berawalan "company.") dan host CMS (CMS_HOST berawalan "cms."):
-    // semua path kecuali aset statis.
     {
       source:
         "/((?!_next/static|_next/image|images/|brand/|vendor/|favicon.ico|robots.txt|sitemap.xml).*)",

@@ -30,42 +30,25 @@ export function ModuleCards({
         className,
       )}
     >
-      {modules.map((module) => {
-        const body = (
-          <>
-            <span
-              className={cn(
-                "relative flex size-12 items-center justify-center rounded-full ring-1 transition-transform",
-                TONE[module.tone],
-                module.ready ? "group-active:scale-95" : "opacity-55",
-              )}
-            >
-              <Icon icon={module.icon} className="size-[1.375rem]" />
-              {module.ready ? null : (
-                <span className="absolute -top-1.5 -right-2.5 rounded-full border border-(--line-strong) bg-card px-1.5 text-[0.5625rem] font-semibold text-muted-foreground">
-                  Segera
-                </span>
-              )}
-            </span>
-            <span className="line-clamp-2 text-center text-[0.6875rem] leading-tight font-medium">
-              {module.label}
-            </span>
-          </>
-        );
-        return (
+      {modules
+        .filter((module) => module.ready)
+        .map((module) => (
           <li key={module.label} className="flex justify-center">
-            {module.ready ? (
-              <Link href={module.href} className="group flex w-full flex-col items-center gap-1.5">
-                {body}
-              </Link>
-            ) : (
-              <div aria-disabled="true" className="flex w-full flex-col items-center gap-1.5">
-                {body}
-              </div>
-            )}
+            <Link href={module.href} className="group flex w-full flex-col items-center gap-1.5">
+              <span
+                className={cn(
+                  "relative flex size-12 items-center justify-center rounded-full ring-1 transition-transform group-active:scale-95",
+                  TONE[module.tone],
+                )}
+              >
+                <Icon icon={module.icon} className="size-[1.375rem]" />
+              </span>
+              <span className="line-clamp-2 text-center text-[0.6875rem] leading-tight font-medium">
+                {module.label}
+              </span>
+            </Link>
           </li>
-        );
-      })}
+        ))}
     </ul>
   );
 }

@@ -249,6 +249,9 @@ test.describe("Kehadiran owner: akses", () => {
 
   test("karyawan biasa tidak bisa membuka rekap kehadiran", async ({ page }) => {
     await page.goto("/portal/owner/absensi");
-    await expect(page).toHaveURL("/portal/akses-ditolak");
+    await expect(page).toHaveURL("/portal/owner/absensi");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+    ).toBeVisible();
   });
 });

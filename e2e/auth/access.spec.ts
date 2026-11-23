@@ -76,10 +76,17 @@ for (const role of PORTAL_ROLES) {
     }
 
     for (const area of denied) {
-      test(`ditolak membuka ${area.prefix}`, async ({ page }) => {
+      test(`${area.prefix} tersembunyi: 404 di alamat yang sama, tanpa menu`, async ({ page }) => {
         await page.goto(area.prefix);
-        await expect(page).toHaveURL("/portal/akses-ditolak");
-        await expect(page.getByText("Anda tidak punya akses ke halaman ini.")).toBeVisible();
+        await expect(page).toHaveURL(area.prefix);
+        await expect(
+          page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+        ).toBeVisible();
+        await expect(page.getByText("Kode 404")).toBeVisible();
+        await expect(page.getByRole("link", { name: "Ke beranda" })).toBeVisible();
+        await expect(
+          page.getByRole("navigation").getByRole("link", { name: area.label, exact: true }),
+        ).toHaveCount(0);
       });
     }
   });
