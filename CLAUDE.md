@@ -360,53 +360,18 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Sesi portal berumur terbatas, logout membersihkan sesi di server, perubahan role atau penonaktifan akun langsung mencabut sesi.
 - Semua aksi sensitif (undang, ubah role, nonaktifkan, ekspor, hapus data) tercatat di `audit_log`.
 
-### Absensi dan laporan harian (keputusan owner, 20 November 2026)
-- Jam masuk dan jam pulang diatur owner di portal (default perusahaan, bisa berbeda per titik absensi atau per karyawan, termasuk hari kerja dan toleransi terlambat). Clock in setelah jam masuk ditandai terlambat, clock out sebelum jam pulang ditandai pulang awal. Datanya dipakai di laporan dan penggajian.
-- Semua karyawan selain `owner` wajib absensi clock in dan clock out: foto selfie (dikompres, bagian 8) dan lokasi GPS. Absen hanya sah dalam radius 100 meter dari salah satu titik absensi aktif (lokasi proyek atau kantor, tabel `work_locations`). Di luar radius ditolak.
-- Setelah clock in, wajib mengisi formulir rencana kegiatan hari ini sebelum bisa memakai modul lain. Setelah clock out, wajib mengisi formulir hasil kerja hari ini.
-- Formulir menerima lampiran foto dan file. Foto selalu dikompres otomatis di browser. File dokumen dibatasi ukuran dan jenisnya di client dan server. Field wajib benar-benar wajib, field opsional tetap opsional.
-- Foto absensi hanya dari kamera saat itu (tidak bisa memilih dari galeri). Harus terdeteksi tepat satu wajah yang cukup besar, dan karyawan diminta berkedip dulu sebelum foto diambil, supaya foto dari layar atau cetakan ditolak. Deteksi berjalan di HP karyawan. Tidak ada pencocokan wajah dan tidak ada data biometrik yang disimpan, hanya fotonya.
-- Titik absensi diatur owner/admin di portal, termasuk tombol "pakai lokasi saya sekarang".
-- Clock in dan clock out boleh di titik absensi berbeda, asal masing-masing sah. Setiap absen mencatat titik, jarak, jam, dan foto. Laporan owner memberi penanda "pindah lokasi" untuk hari dengan titik berbeda.
-- Di luar radius, absen ditolak, tetapi karyawan bisa mengajukan "absen di luar lokasi" (alasan wajib, foto, lokasi). Pengajuan disetujui atau ditolak owner atau manajer karyawan itu, dan tercatat di audit.
-- Owner melihat semua absensi, rencana, hasil kerja, dan laporan semua karyawan. Setiap role punya modul kerja lengkap sesuai tugasnya.
+### Aturan per fitur
+Aturan dan keputusan owner yang khusus satu fitur ada di file fiturnya, bukan di sini:
 
-### Pengajuan dana (keputusan owner, 20 November 2026)
-- Semua role bisa membuat pengajuan (dana operasional, pembelian material, reimburse, kasbon, lainnya; jenis bisa diatur admin): nominal rupiah, rincian, lampiran foto (dikompres) atau file.
-- Alur wajib: pengaju, lalu keuangan memeriksa (lanjutkan ke owner, kembalikan untuk diperbaiki, atau tolak, dengan catatan), lalu owner menyetujui atau menolak, lalu keuangan menandai dicairkan dengan bukti. Tidak ada langkah yang bisa dilewati.
-- Setiap perpindahan status tercatat (siapa, kapan, catatan) dan memicu notifikasi ke pihak berikutnya. Owner bisa melihat semua pengajuan di semua status dan rekap per bulan.
-- Setiap pengajuan punya dokumen PDF berkop KIS (logo, nama dan alamat perusahaan) sebagai arsip back office: nomor pengajuan, pengaju, rincian dan nominal, daftar lampiran, riwayat status, dan cap persetujuan digital dengan QR verifikasi. PDF bisa dilihat langsung di portal dan diunduh. Saat pengajuan selesai (dicairkan atau ditolak), PDF final disimpan di bucket privat sebagai arsip yang tidak berubah.
-- Pengaju tidak bisa memeriksa atau menyetujui pengajuannya sendiri. Kalau satu orang memegang role keuangan dan owner, tiap langkah tetap dicatat terpisah dengan cap masing-masing.
-
-### Expense dan pembelian setara Mekari dan Odoo (keputusan owner, 23 November 2026)
-Modul pengeluaran dibangun selengkap Mekari Expense dan modul Expense, Purchase, dan Accounting Odoo yang relevan untuk developer properti. Semua bagian di bawah termasuk rilis pertama, bukan tahap terpisah:
-- **Pengajuan**:
-  - **jenis pengajuan**: reimburse, uang muka (cash advance) dengan pertanggungjawaban realisasi, dan kasbon (otomatis jadi potongan gaji). Sisa uang muka dikembalikan, kekurangannya diganti, dan uang muka yang belum dipertanggungjawabkan menahan pengajuan baru;
-  - **isi pengajuan**: banyak baris per pengajuan, kategori dengan kebijakan per role (batas per transaksi dan per bulan, nota wajib di atas nominal tertentu), dan alokasi ke proyek atau kantor;
-  - **nota**: lampiran nota wajib sesuai kebijakan dan cek duplikat (hash file, nominal, tanggal);
-  - **persetujuan dan pencairan**: matriks persetujuan bisa diatur (bertingkat, per nominal, kategori, atau proyek, dengan delegasi saat penyetuju berhalangan). Bawaannya tetap alur di atas: semua lewat keuangan lalu owner. Pencairan per batch memakai rekening karyawan dan bukti transfer;
-  - **pendukung**: PDF arsip, notifikasi setiap langkah, pengingat uang muka yang belum dipertanggungjawabkan, draf offline di HP, dan laporan per proyek, kategori, dan karyawan, serta umur uang muka.
-- **Kas dan anggaran**: buku kas (kas masuk dan keluar, tercatat otomatis saat pencairan), kas kecil per lokasi dengan pemegang, saldo, isi ulang, dan rekonsiliasi, anggaran atau RAB per proyek dan kategori (impor dari Excel) dengan peringatan atau blokir saat melewati anggaran, dan pengeluaran rutin.
-- **Pembelian**: data supplier, permintaan barang, PO, penerimaan barang di lokasi dengan foto, tagihan supplier dengan pencocokan tiga arah (PO, penerimaan, tagihan), PPN dan PPh 23, pembayaran supplier, dan stok material per lokasi.
-- **Otomasi dan laporan**: pindai nota dengan Gemini (nominal, tanggal, toko terisi otomatis, karyawan tetap memeriksa), laporan anggaran dibanding realisasi, dan biaya per proyek dan per unit.
-- Semua angka rupiah `bigint`, semua aksi tercatat di `audit_log`, persetujuan memakai tanda tangan digital (sidik jari), dan ekspor PDF serta Excel mengikuti aturan bagian 6.
-
-### Persetujuan digital (keputusan owner, 20 November 2026)
-- Tombol setujui (ACC) di semua alur persetujuan (pengajuan dana, izin, absen di luar lokasi, booking, laporan) adalah tanda tangan elektronik: penyetuju melihat ringkasan, lalu memasukkan password akunnya untuk mengonfirmasi. Password diperiksa di server dan dibatasi rate limit.
-- Setiap persetujuan atau penolakan menyimpan cap permanen: nama, role, waktu (timestamptz, tampil WIB), user agent, lokasi kalau diizinkan, dan kode verifikasi berupa hash SHA-256 dari isi dokumen saat disetujui, penyetuju, dan waktu. Cap tidak bisa diubah atau dihapus (tabel tanpa policy update/delete, tercatat di audit).
-- Cap tampil di halaman dokumen dan di PDF ("Disetujui secara digital oleh ..."), dengan QR code ke halaman verifikasi. Kalau isi dokumen berubah setelah disetujui, verifikasi menunjukkan tidak cocok.
-- Implementasi (Absensi D3, 22 November 2026): tabel `approval_stamps` (tanpa policy tulis, trigger menolak update dan delete), fungsi keputusan hanya bisa dipanggil server (service role) setelah password diperiksa lewat klien Supabase tanpa cookie, dan halaman publik `/verifikasi/[kode]` (noindex) yang menghitung ulang hash isi dokumen.
-- Tanda tangan sidik jari (keputusan owner, 22 November 2026): WebAuthn (`@simplewebauthn`), satu perangkat terdaftar per akun, didaftarkan sekali di Akun saya dan hanya Direktur Utama yang bisa mereset (tercatat di audit). Setiap persetujuan wajib memakai akun yang sudah mendaftarkan sidik jari: tanpa itu server menolak dan layar mengarahkan ke pendaftaran. Urutan cadangan: Face ID atau PIN perangkat (bagian dari WebAuthn), QR lintas perangkat, lalu password akun (tercatat sebagai metode cadangan). Tantangan terikat ke hash isi dokumen dan keputusan.
-- Cap KIS hanya untuk keputusan disetujui oleh atasan (`carriesCompanyStamp`), tidak pada penolakan. Pengaju menandatangani dengan sidik jari atau QR saja tanpa cap.
-- Ini tanda tangan elektronik tidak tersertifikasi (UU ITE). Tanda tangan tersertifikasi (PSrE) di luar cakupan.
-- Stempel perusahaan: gambar stempel KIS bergaya tinta basah (warna dan tekstur seperti stempel asli, sedikit miring) dipasang di PDF resmi yang sudah disetujui owner (pengajuan, slip gaji, surat). Stempel hanya muncul bersama cap persetujuan digital, tidak pernah di dokumen draf.
-
-### Penggajian dan slip gaji (keputusan owner, 20 November 2026)
-- Hanya keuangan yang membuat draf gaji per periode. Karyawan tidak bisa mengajukan gaji. Jenis pengajuan dana diatur per role.
-- Draf terisi otomatis: karyawan aktif, komponen gaji tetap, data absensi (hadir, alpa, terlambat, lembur disetujui), kasbon yang sudah dicairkan, komisi (setelah CRM ada), BPJS dan PPh 21 metode TER. BPJS dan PPh 21 terisi secara default tapi bisa dikosongkan atau dikoreksi per baris dan dimatikan di pengaturan perusahaan atau per karyawan.
-- Alur: keuangan mengajukan, owner menyetujui dengan persetujuan digital (periode terkunci, koreksi lewat revisi), keuangan menandai sudah dibayar dengan bukti, lalu klik "Kirim slip gaji".
-- Slip terkirim ke setiap karyawan sebagai notifikasi push, email berisi ringkasan dan lampiran PDF slip berkop (berpassword, default tanggal lahir), dan menu "Slip gaji saya" di PWA. Status kirim per karyawan dan tombol kirim ulang.
-- Data gaji hanya terlihat oleh keuangan, owner, dan karyawan pemilik slip. Semua aksi tercatat di audit_log.
+| Fitur | File |
+|---|---|
+| Absensi dan laporan harian | `docs/fitur/absensi.md` |
+| Pengajuan dana, expense, kas, pembelian (PRA, PR, RMBS, ADV, SETT) | `docs/fitur/expense-pembelian.md` |
+| Persetujuan digital, sidik jari, stempel, e-Meterai, rantai persetujuan | `docs/fitur/persetujuan-digital.md` |
+| Penggajian dan slip gaji | `docs/fitur/penggajian.md` |
+| Role, jabatan, pelimpahan tugas jabatan kosong | `docs/fitur/akun-keamanan.md` |
+| CRM, distribusi lead, penjualan | `docs/fitur/crm-penjualan.md` |
+| Daftar lengkap semua fitur | `docs/fitur/README.md` |
 
 ### Email domain
 | Alamat | Dipakai untuk |
@@ -444,13 +409,9 @@ Semua gambar yang diunggah ke website, portal, atau PWA dikompres di browser seb
 
 ---
 
-## 9. Integrasi Meta (ringkasan, detail di `docs/meta-integration.md`)
+## 9. Integrasi Meta
 
-1. **Pixel (browser)**: `PageView`, `ViewContent` (halaman proyek/unit), `Lead` (submit form), `Contact` (klik WhatsApp), `Schedule` (booking survei). Hanya dimuat setelah consent.
-2. **Conversions API (server)**: event yang sama dikirim dari server dengan `event_id` identik untuk deduplikasi. Sertakan `fbp`, `fbc` (dari cookie / `fbclid`), IP, user agent, `em`/`ph`/`external_id` yang di-hash SHA-256 setelah dinormalisasi.
-3. **Lead Ads webhook**: `/api/webhooks/meta/leadgen`. Verifikasi `hub.verify_token` (GET) dan `X-Hub-Signature-256` dengan App Secret (POST). Ambil detail lead via Graph API, simpan `meta_lead_id`, proses idempotent.
-4. **Conversion Leads (CRM ke Meta)**: setiap perubahan tahap pipeline dicatat ke tabel `meta_event_outbox`, lalu worker `/api/cron/meta-outbox` (dipicu `pg_cron` + `pg_net` dari Supabase, lihat bagian 10) mengirim ke dataset Meta dengan `action_source: "system_generated"`, `custom_data.event_source: "crm"`, `custom_data.lead_event_source: "KIS CRM"`, dan `user_data.lead_id` kalau ada (kalau tidak, `em`/`ph` ter-hash). `event_time` harus setelah waktu lead dibuat dan maksimal 7 hari ke belakang. Retry dengan exponential backoff, simpan respons, tampilkan status sinkron di admin.
-5. Versi Graph API, Pixel ID, dataset ID, token, dan `test_event_code` lewat env. Preview deployment selalu memakai `test_event_code`.
+Aturan Pixel, Conversions API, Lead Ads webhook, dan Conversion Leads ada di `docs/fitur/meta.md`.
 
 ---
 
@@ -465,9 +426,9 @@ Semua layanan memakai paket gratis: GitHub Free, Vercel Hobby, Supabase Free. Re
 |---|---|
 | GitHub Free private: tanpa branch protection, rulesets, dan GitHub Environments | Pengaman berlapis: aturan `deny` di `.claude/settings.json`, hook Husky `pre-push` menolak push ke `main`, merge hanya lewat `bash scripts/merge-pr.sh <nomor>` yang memeriksa semua check hijau lalu squash merge. Secret CI disimpan sebagai repository secret dengan awalan `PRODUCTION_` |
 | GitHub Free private: CodeQL dan dependency review butuh Advanced Security | Keamanan dependency lewat Dependabot alerts (gratis), `pnpm audit`, gitleaks, dan aturan typescript-eslint strict |
-| GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/roadmap.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
+| GitHub Free: 2.000 menit Actions per bulan | Anggaran menit di `docs/fitur/infrastruktur.md`. Workflow yang tidak relevan dilewati lewat filter `paths`. Uji flaky berjalan mingguan |
 | Vercel Hobby: cron 1x sehari | Jadwal dijalankan `pg_cron` + `pg_net` di Supabase yang memanggil `/api/cron/*` dengan header `CRON_SECRET`. Vercel Cron tidak dipakai |
-| Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/roadmap.md`, keputusan owner |
+| Vercel Hobby: ketentuan pemakaian non-komersial | Risiko terbuka, dicatat di `docs/fitur/infrastruktur.md`, keputusan owner |
 | Supabase Free: tanpa backup otomatis, project dijeda setelah 7 hari tanpa aktivitas | `keepalive.yml` ping API production setiap hari dan membuat issue kalau gagal. Backup terjadwal tidak dipakai (keputusan owner, Fase 2): data yang terhapus tidak bisa dikembalikan |
 | Supabase Free: database 500 MB, storage 1 GB | Kompresi gambar wajib (bagian 8), masa simpan data yang bisa diatur, pemantauan kuota |
 
@@ -531,53 +492,17 @@ Perangkat ini dipakai untuk beberapa proyek (prins, kelola, KIS) dengan akun yan
 
 ## 12. Widget customer service (Gemini)
 
-Asisten chat di website publik dan landing page. Tujuannya menjawab pertanyaan calon pembeli dengan cepat dan mengubah percakapan menjadi lead yang tercatat di CRM.
-
-**Keamanan dan biaya**
-- `GEMINI_API_KEY` hanya di server (route handler dengan `import "server-only"`). Tidak pernah ada di client, log, atau Sentry.
-- Rate limit per IP dan per sesi, batas panjang pesan, batas jumlah pesan per sesi, batas token output, dan batas biaya harian dengan alarm. Turnstile (invisible) sebelum pesan pertama.
-- Tahan prompt injection: instruksi sistem tidak bisa diubah dari input pengunjung, isi knowledge base diperlakukan sebagai data, asisten tidak pernah membocorkan instruksi sistem atau data internal (lead lain, harga internal, data karyawan).
-
-**Jawaban hanya dari data resmi**
-- Sumber jawaban: data proyek, tipe unit, ketersediaan unit, fasilitas, lokasi, promo aktif, dan FAQ dari database, ditambah knowledge base yang dikelola admin (dicari dengan pgvector).
-- Harga, promo, legalitas, spesifikasi, dan ketersediaan **tidak boleh dikarang**. Kalau datanya tidak ada, asisten bilang belum punya infonya dan menawarkan sambung ke marketing.
-- Tidak menjanjikan persetujuan KPR, tidak memberi nasihat hukum atau pajak.
-- Di luar topik properti KIS, asisten menolak dengan sopan dan mengarahkan kembali.
-
-**Kemampuan (tool calling)**
-`get_project_info`, `check_unit_availability`, `calculate_kpr` (memakai fungsi simulasi KPR yang sama dengan website), `create_lead` (nama dan nomor HP dengan persetujuan PDP, sumber `chat`, masuk round-robin CRM dan memicu event Lead ke Meta), `schedule_survey`, `handoff_to_human`.
-
-**Serah ke manusia**
-- Pada jam kerja: percakapan muncul di inbox chat portal CRM (Supabase Realtime), marketing bisa mengambil alih dan membalas langsung dari portal.
-- Di luar jam kerja atau saat tidak ada yang online: tawarkan lanjut via WhatsApp dengan ringkasan percakapan di pesan pembuka, atau tinggalkan nomor untuk dihubungi.
-- Kalau Gemini error, timeout, kuota atau batas biaya habis: Jaka menjawab "sedang tidak bisa membalas" dan menawarkan WhatsApp. Tidak pernah ada pesan error sistem (keputusan owner, 21 November 2026).
-- Implementasi tahap 1: route `/api/chat` (AI SDK v7, model dari env `GEMINI_MODEL`, default `gemini-3.5-flash`, tingkat berpikir `CHAT_THINKING`), widget hanya mengirim pesan terakhir dan server memuat riwayat dari `chat_messages`, batas token harian `CHAT_DAILY_TOKEN_LIMIT` lewat `chat_usage_daily`. Knowledge base pgvector, inbox handoff portal, dan statistik admin di tahap 2.
-
-**Gaya bahasa**
-- Nama asisten **Jaka** (keputusan owner, 21 November 2026). Gaya bicara seperti staf customer service sungguhan: hangat, luwes, tidak kaku. Tetap jujur sebagai asisten virtual kalau ditanya.
-- Persona: staf customer service KIS. Ramah, singkat, jelas. Aturan copywriting bagian 7 berlaku penuh untuk setiap jawaban.
-- Jawaban pendek (maksimal sekitar 3 kalimat kecuali pengunjung minta rincian), tanpa emoji, tanpa dash panjang. Output disaring di server sebelum dikirim sebagai pengaman terakhir.
-- Asisten tidak berpura-pura manusia. Kalau ditanya, jujur bahwa ini asisten virtual KIS.
-
-**UI**
-- Satu tombol melayang yang menggabungkan chat dan WhatsApp (tidak ada dua tombol yang bertumpuk). Di mobile terbuka sebagai layar penuh, di desktop sebagai panel dengan tombol layar penuh dan tombol WhatsApp di header.
-- Skrip widget dimuat setelah halaman siap (lazy), tidak boleh menurunkan skor Lighthouse.
-- Streaming jawaban, indikator mengetik, tombol saran pertanyaan singkat, aksesibel dengan keyboard dan screen reader.
-- Pemberitahuan singkat bahwa percakapan disimpan, dengan tautan kebijakan privasi.
-
-**Data dan admin**
-- Tabel `chat_sessions`, `chat_messages`, `cs_knowledge` (dengan embedding), `cs_settings` (jam kerja, pesan sambutan, saran pertanyaan, batas biaya). Ada masa simpan data yang bisa diatur.
-- Admin: kelola knowledge base (otomatis membuat embedding ulang saat diubah), lihat transkrip, tandai jawaban salah, daftar pertanyaan yang tidak terjawab, statistik (jumlah chat, lead dari chat, handoff, biaya).
-
-**Testing**
-- E2E memakai model tiruan (mock provider AI SDK) yang diaktifkan lewat env saat test, sehingga tidak memanggil Gemini dan hasilnya deterministik.
-- Evaluasi terpisah (`pnpm eval:cs`) dengan kumpulan pertanyaan acuan ke Gemini asli, dijalankan di workflow nightly. Lolos kalau: tidak ada harga atau promo karangan, tidak ada dash panjang dan emoji, handoff terpicu saat diminta, menolak pertanyaan di luar topik, tahan terhadap percobaan prompt injection.
+Aturan keamanan, sumber jawaban, kemampuan, serah ke manusia, gaya bahasa, UI, data, dan test Jaka ada di `docs/fitur/chat-jaka.md`. Kunci `GEMINI_API_KEY` hanya di server dan tidak pernah sampai ke client, log, atau Sentry.
 
 ---
 
 ## 13. Cara kerja
 
 - Tanpa MVP dan tanpa versi bertahap (keputusan owner, 23 November 2026): setiap modul (absensi, HR, CRM, penjualan, lapangan, keuangan, expense, pembelian, penggajian, izin, CMS, chat, integrasi Meta) dibangun lengkap setara Mekari dan Odoo untuk developer properti sebelum dianggap selesai. Fitur tidak boleh ditunda ke "versi berikutnya". Pekerjaan tetap dipecah menjadi PR kecil berurutan, tapi modul baru dianggap selesai saat seluruh cakupannya ada.
+- Katalog fitur di `docs/fitur/` adalah daftar kerja resmi. Sebelum mengerjakan sebuah fitur, baca file fiturnya. Setiap PR yang menyelesaikan butir checklist wajib mencentangnya di file fitur yang sama, di PR yang sama. Sebelum melaporkan todo ke owner, cocokkan dengan kode yang benar-benar ada.
+- Fitur yang tidak boleh atau belum bisa dipakai tidak tampil sama sekali (keputusan owner, 23 November 2026): tidak ada di menu, shortcut, atau pencarian, dan alamatnya menampilkan 404 di alamat yang sama. Tidak ada halaman terkunci, kosong, atau label "Segera".
+- Setiap platform (website, PWA, CMS) punya halaman 404 dan error sendiri. Tidak ada halaman bawaan Next.js atau Vercel.
+- Proyek ramping: file, halaman, kode, dan dependency yang tidak dipakai lagi dihapus.
 - Kerjakan per fase sesuai prompt yang diberikan. Satu fase bisa beberapa branch dan PR kecil. Commit kecil dengan pesan Conventional Commits berbahasa Inggris.
 - Mulai setiap fase dengan rencana singkat dan daftar file yang akan dibuat/diubah.
 - Tulis skenario E2E di awal fase (bersama rencana), bukan di akhir. Implementasi dianggap selesai saat semua skenario itu lolos.

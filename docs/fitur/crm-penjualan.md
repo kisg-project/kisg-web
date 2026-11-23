@@ -12,10 +12,10 @@ Setiap lead tercatat dan direspons cepat, sampai akad, serah terima, dan komisi.
 ## Cakupan
 Lead
 - [x] Lead masuk dari website, brosur, dan chat Jaka (upsert per nomor HP)
-- [ ] Distribusi hybrid, antrean, batas respons, pindah dan bagikan, pengaturan batas respons (PR #46)
-- [ ] Halaman CRM: tab Antrean, Lead saya, Semua lead, cari, filter tahap, tambah lead (PR #46)
-- [ ] Detail lead: telepon, WhatsApp, ubah tahap, catat aktivitas, riwayat (PR #46)
-- [ ] Notifikasi lead baru ke marketing atau manajer (PR #46)
+- [x] Distribusi hybrid, antrean, batas respons, pindah dan bagikan, pengaturan batas respons
+- [x] Halaman CRM: tab Antrean, Lead saya, Semua lead, cari, filter tahap, tambah lead
+- [x] Detail lead: telepon, WhatsApp, ubah tahap, catat aktivitas, riwayat
+- [x] Notifikasi lead baru ke marketing atau manajer
 - [ ] Kuota dan bobot per marketing, sakelar "menerima lead", libur atau cuti otomatis keluar dari giliran
 - [ ] Gabung lead duplikat dan riwayat penggabungan
 - [ ] Kanban tahap: seret di desktop, menu di HP, riwayat tahap

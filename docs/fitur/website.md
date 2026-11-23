@@ -24,6 +24,7 @@ Halaman
 - [x] Simulasi KPR dengan PDF berkop
 - [x] Brosur lewat form singkat
 - [x] Halaman verifikasi dokumen `/verifikasi/[kode]` (noindex)
+- [x] Halaman 404 dan error bergaya website (motif garis atap, tautan cepat, WhatsApp), `global-error` bergaya KIS
 - [ ] Siteplan interaktif: klik kavling untuk melihat tipe, status, dan harga (data dari [produk-kavling.md](produk-kavling.md))
 - [ ] Daftar unit tersedia per proyek dengan filter tipe dan harga
 - [ ] Halaman testimoni konsumen asli (hanya data asli)

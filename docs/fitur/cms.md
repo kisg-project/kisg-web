@@ -14,7 +14,8 @@ Tim konten mengelola semua isi website dan landing page tanpa coding. Perubahan 
 - [x] Ringkasan
 - [x] Berita: tulis bersampul, blok konten, terbitkan, ubah, hapus
 - [x] Lowongan: tambah, ubah, hapus, jenjang
-- [x] Gaya bergaya PWA (PR #44)
+- [x] Tampilan bergaya PWA
+- [x] Halaman 404 dan error bergaya aplikasi, di dalam shell CMS
 - [ ] Banner beranda (desktop dan HP, jadwal tayang, urutan)
 - [ ] Promo (periode, syarat, gambar)
 - [ ] Proyek dan tipe unit: deskripsi, galeri, fasilitas, lokasi sekitar, spesifikasi, legalitas

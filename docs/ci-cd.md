@@ -83,7 +83,7 @@ Variabel Meta, Brevo, Turnstile, dan Gemini ditambah di fase masing-masing.
 
 ## Anggaran menit Actions
 
-Lihat `docs/roadmap.md`. Pemakaian aktual dicatat di akhir setiap fase.
+Lihat `docs/fitur/infrastruktur.md`. Pemakaian aktual dicatat di akhir setiap fase.
 
 ## Domain dan DNS
 

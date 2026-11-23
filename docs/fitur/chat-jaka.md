@@ -34,7 +34,7 @@ UI
 - [x] Tool `get_project_info`, `check_unit_availability`, `calculate_kpr`, `create_lead`, `handoff_to_human` (tawaran WhatsApp)
 - [x] Jawaban aman saat Gemini gagal
 - [x] Tombol gabungan chat dan WhatsApp
-- [ ] Notifikasi lead baru dari chat ke marketing atau manajer (PR #46)
+- [x] Notifikasi lead baru dari chat ke marketing atau manajer
 - [ ] Tool `schedule_survey` yang membuat janji survei di CRM
 - [ ] Knowledge base pgvector dengan embedding otomatis saat diubah (`cs_knowledge`, model dari `GEMINI_EMBEDDING_MODEL`)
 - [ ] Inbox chat di portal CRM (Supabase Realtime): marketing mengambil alih dan membalas langsung di jam kerja

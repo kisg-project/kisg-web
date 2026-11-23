@@ -17,6 +17,8 @@ Tampilan dan navigasi
 - [x] Pita judul per modul, kartu KPI, maskot, Lottie memuat dan kosong
 - [x] Dialog `FormDialog` dan `ConfirmDialog` (lembar dari bawah di HP), toast custom
 - [x] Bisa dipasang (manifest, service worker, halaman offline)
+- [x] Fitur yang tidak boleh atau belum bisa dipakai tidak tampil di menu, shortcut, dan halaman Admin. Alamatnya menampilkan 404 di alamat yang sama
+- [x] Halaman 404 dan error bergaya aplikasi dengan maskot, di dalam shell portal
 - [ ] Pencarian global (karyawan, lead, unit, dokumen) dari header
 - [ ] Inbox persetujuan gabungan semua modul untuk setiap penyetuju
 

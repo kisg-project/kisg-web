@@ -37,7 +37,7 @@ Aturan kerja:
 | 13 | Penggajian | [penggajian.md](penggajian.md) | Belum |
 | 14 | Pra-proyek dan lahan | [pra-proyek.md](pra-proyek.md) | Belum |
 | 15 | Produk, kavling, price list | [produk-kavling.md](produk-kavling.md) | Belum |
-| 16 | CRM dan penjualan | [crm-penjualan.md](crm-penjualan.md) | Distribusi lead dalam proses |
+| 16 | CRM dan penjualan | [crm-penjualan.md](crm-penjualan.md) | Distribusi lead tayang |
 | 17 | Agen dan broker | [agen-broker.md](agen-broker.md) | Belum |
 | 18 | Marketing dan KPI | [marketing-kpi.md](marketing-kpi.md) | Belum |
 | 19 | Konstruksi dan lapangan | [konstruksi.md](konstruksi.md) | Belum |
@@ -54,7 +54,7 @@ Aturan kerja:
 
 Urutan mengikuti ketergantungan data. Fitur di urutan atas dipakai fitur di bawahnya.
 
-1. CRM dan penjualan: distribusi lead (PR #46), lalu sisa cakupan CRM.
+1. Role, jabatan, dan rantai persetujuan berjenjang (dipakai semua alur persetujuan), lalu sisa cakupan CRM.
 2. Produk, kavling, price list (dibutuhkan booking).
 3. Agen dan broker.
 4. HR dan karyawan, izin, cuti, lembur, penggajian.

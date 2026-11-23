@@ -20,7 +20,8 @@ Kehadiran sah dengan wajah dan lokasi, plus rencana dan hasil kerja harian setia
 - [x] Pengajuan absen di luar lokasi, persetujuan dengan sidik jari, notifikasi ke owner dan karyawan
 - [x] Rencana kerja dan hasil kerja dengan lampiran
 - [x] Titik absensi, jam kerja perusahaan, per titik, per karyawan, per role
-- [x] Rekap kehadiran owner, grafik kotak pastel, laporan harian lengkap
+- [x] Rekap kehadiran owner dan grafik kotak pastel
+- [ ] Pasang laporan lengkap berupa cincin persen dan petak per hari (`ReportTrendCard` sudah ada, belum dipasang di halaman mana pun)
 - [ ] Laporan bulanan per karyawan dan per tim (hadir, alpa, terlambat, pulang awal, lembur, pindah lokasi), ekspor PDF dan Excel
 - [ ] Kalender hari libur nasional dan cuti bersama yang memengaruhi hari kerja
 - [ ] Jadwal shift (untuk satpam, tim lapangan, marketing pameran)

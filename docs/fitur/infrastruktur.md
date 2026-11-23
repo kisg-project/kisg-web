@@ -14,6 +14,7 @@
 - [x] Deploy production otomatis setelah migrasi, wilayah `sin1`
 - [x] `scripts/merge-pr.sh`, hook Husky, cek akun
 - [x] Retry `supabase start` di CI
+- [x] Pembersihan kode, skrip, dan dependency yang tidak dipakai (23 November 2026)
 - [ ] Cari penyebab `e2e-weekly` yang gagal pada 22 November 2026 dan perbaiki
 - [ ] `preview.yml` dengan Lighthouse dan smoke test (preview otomatis Vercel sedang dimatikan untuk hemat kuota)
 - [ ] Sentry di production
