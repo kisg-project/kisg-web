@@ -100,7 +100,7 @@ set search_path = ''
 as $$
 declare
   v_current uuid := p_position;
-  v_seen uuid[] := '{}';
+  v_seen uuid[] := array[]::uuid[];
   v_parent uuid;
   v_delegate uuid;
 begin
@@ -151,7 +151,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  delete from private.role_inheritance;
+  delete from private.role_inheritance where true;
   insert into private.role_inheritance (user_id, role, position_id)
   select distinct r.user_id, pos.default_role, pos.id
   from public.positions pos
