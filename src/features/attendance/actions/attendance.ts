@@ -5,6 +5,8 @@ import { z } from "zod";
 import { safeNextPath } from "@/config/portal";
 import type { Json } from "@/lib/supabase/database.types";
 import { confirmSignature, signerUserAgent } from "@/features/approvals/server";
+import { approversOf, notify } from "@/features/notifications/server";
+import { formatDateWIB } from "@/lib/format";
 import {
   ActionError,
   adminActionClient,
@@ -82,6 +84,18 @@ export const requestExceptionAction = authActionClient
       p_reason: parsedInput.reason,
     });
     if (error) throw rpcError(error);
+    const [{ data: profile }, approvers] = await Promise.all([
+      ctx.supabase.from("profiles").select("full_name").eq("id", ctx.userId).maybeSingle(),
+      approversOf(ctx.userId, ["owner", "admin"]),
+    ]);
+    await notify(approvers, {
+      kind: "absen_luar_lokasi_diajukan",
+      title: `${profile?.full_name || "Karyawan"} mengajukan absen ${parsedInput.kind} di luar lokasi`,
+      body: parsedInput.reason,
+      href: "/portal/owner/absensi",
+      dedupeKey: `absen-luar:${data}:diajukan`,
+      email: true,
+    });
     return { id: data };
   });
 
@@ -194,5 +208,21 @@ export const decideExceptionAction = roleActionClient([
     }
     const parsed = z.object({ verify_code: z.string() }).safeParse(data);
     if (!parsed.success) throw new Error("Respons keputusan tidak dikenal.");
+    const { data: request } = await createSupabaseAdminClient()
+      .from("attendance_exceptions")
+      .select("user_id, kind, work_date")
+      .eq("id", parsedInput.id)
+      .maybeSingle();
+    if (request) {
+      const approved = parsedInput.decision === "disetujui";
+      await notify([request.user_id], {
+        kind: "absen_luar_lokasi_diputuskan",
+        title: `Absen ${request.kind} di luar lokasi ${approved ? "disetujui" : "ditolak"}`,
+        body: parsedInput.note ?? `Tanggal ${formatDateWIB(request.work_date)}.`,
+        href: "/portal/absensi",
+        dedupeKey: `absen-luar:${parsedInput.id}:diputuskan`,
+        email: true,
+      });
+    }
     return { verifyCode: parsed.data.verify_code };
   });

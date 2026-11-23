@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Page } from "@playwright/test";
 import { createPortalUser, type TestUser } from "../factories/users";
+import { waitForEmail } from "../fixtures/mailpit";
 import { adminClient } from "../fixtures/supabase";
 import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, storageStateFor, test } from "../fixtures/portal";
@@ -132,6 +133,22 @@ test.describe("Kehadiran owner", () => {
     await dialog.getByRole("button", { name: "Setujui" }).click();
     await expect(page.getByText("Pengajuan disetujui.")).toBeVisible();
     await expect(dialog).toBeHidden();
+    await expect
+      .poll(async () => {
+        const { data } = await adminClient()
+          .from("notifications")
+          .select("kind, title, href")
+          .eq("user_id", employee.id);
+        return data;
+      })
+      .toEqual([
+        {
+          kind: "absen_luar_lokasi_diputuskan",
+          title: "Absen masuk di luar lokasi disetujui",
+          href: "/portal/absensi",
+        },
+      ]);
+    await waitForEmail(employee.email, "Absen masuk di luar lokasi disetujui");
 
     const { data: decided } = await adminClient()
       .from("attendance_exceptions")

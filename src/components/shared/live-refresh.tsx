@@ -13,6 +13,7 @@ const TABLES = [
   "profiles",
   "user_roles",
   "approval_stamps",
+  "notifications",
 ] as const;
 
 const PAUSE_ATTRIBUTE = "data-tahan-langsung";

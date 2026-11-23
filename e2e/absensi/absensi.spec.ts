@@ -295,6 +295,30 @@ test.describe("Absensi karyawan", () => {
       nearest_location_id: location.id,
     });
     expect(requests?.[0]?.nearest_distance_m).toBeGreaterThan(1000);
+    const { data: request } = await adminClient()
+      .from("attendance_exceptions")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+    await expect
+      .poll(async () => {
+        const { data } = await adminClient()
+          .from("notifications")
+          .select("user_id, kind, href")
+          .eq("dedupe_key", `absen-luar:${request?.id ?? ""}:diajukan`);
+        return data ?? [];
+      })
+      .toContainEqual(
+        expect.objectContaining({
+          kind: "absen_luar_lokasi_diajukan",
+          href: "/portal/owner/absensi",
+        }),
+      );
+    const { data: notified } = await adminClient()
+      .from("notifications")
+      .select("user_id")
+      .eq("dedupe_key", `absen-luar:${request?.id ?? ""}:diajukan`);
+    expect(notified?.map((row) => row.user_id)).not.toContain(user.id);
 
     await page.getByRole("status").getByRole("link", { name: "Kembali ke absensi" }).click();
     const pendingSection = page.getByRole("region", { name: "Pengajuan di luar lokasi" });

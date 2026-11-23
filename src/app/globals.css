@@ -407,8 +407,7 @@
 
 @keyframes float-in {
   from {
-    opacity: 0;
-    translate: 0 0.75rem;
+    translate: 0 4rem;
   }
 }
 

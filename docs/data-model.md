@@ -249,8 +249,8 @@ Progres fisik unit = jumlah (`weight` x progres terakhir yang disetujui) per ite
 
 | Tabel | Kolom utama | Index dan constraint |
 |---|---|---|
-| `notifications` | `user_id`, `type`, `title`, `body`, `href`, `read_at` | index (`user_id`, `read_at`, `created_at desc`) |
-| `push_subscriptions` | `user_id`, `endpoint`, `p256dh`, `auth`, `user_agent`, `last_used_at` | unique `endpoint` |
+| `notifications` | `user_id`, `kind notification_kind`, `title`, `body`, `href` (hanya `/portal...`), `dedupe_key`, `read_at` | unique (`user_id`, `dedupe_key`), index (`user_id`, `created_at desc`), partial index belum dibaca. Ditulis server (service role), pemilik hanya membaca dan mengisi `read_at`. Disiarkan realtime |
+| `push_subscriptions` | `user_id`, `endpoint`, `p256dh`, `auth`, `user_agent`, `last_success_at` | unique `endpoint`. Disimpan lewat server action, pemilik membaca dan menghapus. Endpoint yang dibalas 404 atau 410 dihapus otomatis |
 | `audit_log` | `id bigint identity`, `table_name`, `row_id`, `action audit_action`, `actor_id`, `old_data jsonb`, `new_data jsonb`, `at` | index (`table_name`, `row_id`), (`actor_id`, `at`). Hanya insert lewat trigger |
 | `rate_limits` | `key` (misal `form:ip_hash`), `window_start`, `count` | PK (`key`, `window_start`), tabel unlogged, dibersihkan job retensi |
 | `pdp_requests` | `subject_phone`, `subject_email`, `kind pdp_request_kind`, `status`, `requested_at`, `completed_at`, `handled_by`, `result_path` | |
