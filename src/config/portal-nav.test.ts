@@ -40,9 +40,8 @@ describe("navigasi portal", () => {
     expect(new Set(labels).size).toBe(labels.length);
   });
 
-  it("fitur yang belum siap tidak masuk rel dan bottom bar", () => {
-    const rail = railItems(["owner"], "owner").map((item) => item.label);
-    expect(rail).not.toContain("Pengajuan");
-    expect(featuresFor(["owner"], "owner").map((item) => item.label)).toContain("Pengajuan");
+  it("fitur yang belum siap tidak tampil di mana pun", () => {
+    expect(railItems(["owner"], "owner").map((item) => item.label)).not.toContain("Pengajuan");
+    expect(featuresFor(["owner"], "owner").map((item) => item.label)).not.toContain("Pengajuan");
   });
 });

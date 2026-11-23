@@ -1,13 +1,11 @@
+import { notFound } from "next/navigation";
 import {
   CalendarCheckIn01Icon,
   Login03Icon,
   Logout03Icon,
   TaskDaily01Icon,
-  Wrench01Icon,
 } from "@hugeicons/core-free-icons";
-import { PageHeader } from "@/components/shared/page-header";
 import { StatCard } from "@/components/shared/stat-card";
-import { EmptyState } from "@/components/shared/state-message";
 import { mustAttend } from "@/config/attendance";
 import type { AppRole } from "@/config/roles";
 import { PORTAL_AREAS, ROLE_HOME } from "@/config/portal";
@@ -114,14 +112,7 @@ export async function ModulePlaceholder({ prefix }: { prefix: string }) {
   const area = PORTAL_AREAS.find((item) => item.prefix === prefix);
   if (!area) throw new Error(`Area portal tidak dikenal: ${prefix}`);
   const user = await requirePortalUser(area.roles);
-  if (ROLE_HOME[user.role] !== prefix) {
-    return (
-      <div className="grid gap-5">
-        <PageHeader title={area.label} />
-        <EmptyState icon={Wrench01Icon} title={`Modul ${area.label} sedang disiapkan`} />
-      </div>
-    );
-  }
+  if (ROLE_HOME[user.role] !== prefix) notFound();
   return (
     <div className="grid gap-5">
       <HomeIntro roles={user.roles} userId={user.id} label={area.label} />

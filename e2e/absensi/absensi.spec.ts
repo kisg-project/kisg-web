@@ -2,7 +2,7 @@ import { randomInt, randomUUID } from "node:crypto";
 import type { BrowserContext, Page } from "@playwright/test";
 import { createPortalUser, type TestUser } from "../factories/users";
 import { adminClient } from "../fixtures/supabase";
-import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
+import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, storageStateFor, test } from "../fixtures/portal";
 
 interface Point {
@@ -343,9 +343,10 @@ test.describe("Absensi karyawan", () => {
 test.describe("Absensi: akses", () => {
   test.use({ storageState: storageStateFor("owner") });
 
-  test("owner tidak wajib absensi", async ({ page }) => {
+  test("owner tidak wajib absensi", async ({ page, consoleErrors }) => {
     await page.goto("/portal/absensi");
-    await expect(page).toHaveURL("/portal/akses-ditolak");
+    await expect(page).toHaveURL("/portal/absensi");
+    await expectNotFound(page, consoleErrors);
   });
 });
 
@@ -465,7 +466,10 @@ test.describe("Titik absensi dan jam kerja (owner)", () => {
     const page = await context.newPage();
     for (const path of ["/portal/owner/titik-absensi", "/portal/owner/jam-kerja"]) {
       await page.goto(path);
-      await expect(page).toHaveURL("/portal/akses-ditolak");
+      await expect(page).toHaveURL(path);
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+      ).toBeVisible();
     }
     await context.close();
   });

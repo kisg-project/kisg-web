@@ -3,7 +3,7 @@ import type { Page } from "@playwright/test";
 import { createPortalUser, type TestUser } from "../factories/users";
 import { waitForEmail } from "../fixtures/mailpit";
 import { adminClient } from "../fixtures/supabase";
-import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
+import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, storageStateFor, test } from "../fixtures/portal";
 
 function todayWib(): string {
@@ -247,8 +247,9 @@ test.describe("Kehadiran owner", () => {
 test.describe("Kehadiran owner: akses", () => {
   test.use({ storageState: storageStateFor("marketing") });
 
-  test("karyawan biasa tidak bisa membuka rekap kehadiran", async ({ page }) => {
+  test("karyawan biasa tidak bisa membuka rekap kehadiran", async ({ page, consoleErrors }) => {
     await page.goto("/portal/owner/absensi");
-    await expect(page).toHaveURL("/portal/akses-ditolak");
+    await expect(page).toHaveURL("/portal/owner/absensi");
+    await expectNotFound(page, consoleErrors);
   });
 });
