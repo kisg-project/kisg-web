@@ -18,10 +18,69 @@ Semua pengeluaran perusahaan tercatat, disetujui, dan dialokasikan ke proyek, se
 - Tanpa payment gateway: pencairan dan pembayaran lewat transfer manual dengan unggah bukti.
 - Pindai nota memakai Gemini paket gratis.
 
+23 November 2026 (jenis dokumen pengajuan KIS)
+
+| Kode | Nama | Dipakai untuk | Contoh dokumen |
+|---|---|---|---|
+| PRA | Purchase Request Approval | Pengajuan pembelian barang atau jasa senilai Rp 1 juta ke atas | Dikirim owner |
+| PR | Payment Request | Pengajuan pembayaran di bawah Rp 1 juta | Dikirim owner |
+| RMBS | Reimbursement | Klaim biaya yang sudah dibayar karyawan dengan uang pribadi | Dikirim owner |
+| ADV | Advance Dana | Uang muka sebelum kegiatan | Rancangan best practice di bawah |
+| SETT | Settlement (LPJ Advance) | Pertanggungjawaban penggunaan ADV | Rancangan best practice di bawah |
+
+Batas Rp 1 juta antara PR dan PRA disimpan sebagai pengaturan, bukan angka di kode. Tata letak PRA, PR, dan RMBS mengikuti contoh dokumen owner setelah diterima.
+
+## Rancangan ADV (Advance Dana)
+Isi formulir
+- Nomor otomatis `ADV/KIS/2026/11/0001`, tanggal pengajuan.
+- Pemohon: nama, NIP, jabatan, departemen, atasan langsung (terisi dari data HR).
+- Proyek atau pusat biaya, tujuan kegiatan, periode kegiatan (mulai dan selesai), tanggal dana dibutuhkan.
+- Rincian rencana penggunaan per baris: kategori, uraian, jumlah, satuan, harga satuan, subtotal. Total dihitung otomatis.
+- Metode pencairan: transfer ke rekening pemohon (bawaan, dari data HR) atau tunai dari kas kecil.
+- Batas waktu SETT: otomatis 7 hari setelah kegiatan selesai (bisa diatur, maksimal 14 hari).
+- Lampiran pendukung: rincian kegiatan, undangan, penawaran harga.
+- Pernyataan pemohon: bersedia mempertanggungjawabkan sebelum batas waktu, dan bersedia dipotong gaji kalau tidak.
+
+Aturan
+- Plafon per jabatan dan per kategori.
+- Pemohon dengan ADV yang lewat batas waktu SETT tidak bisa membuat ADV baru. Jumlah ADV terbuka per orang dibatasi (bawaan 1, bisa diatur).
+- Persetujuan mengikuti matriks: atasan langsung, keuangan memeriksa, owner menyetujui dengan sidik jari.
+- Pencairan dengan bukti transfer, lalu status berubah menjadi "Menunggu LPJ".
+- Pengingat ke pemohon 2 hari sebelum batas waktu dan pada hari batas waktu. Setelah lewat, pengingat ke atasan dan keuangan.
+- ADV yang lewat 30 hari tanpa SETT bisa dijadikan kasbon potong gaji oleh keuangan, dengan persetujuan owner dan pemberitahuan ke pemohon.
+
+Status: draf, diajukan, diperiksa atasan, diperiksa keuangan, disetujui, dicairkan, menunggu LPJ, LPJ diajukan, selesai, lewat batas waktu, ditolak, dibatalkan.
+
+## Rancangan SETT (Settlement atau LPJ Advance)
+Isi formulir
+- Nomor otomatis `SETT/KIS/2026/11/0001`, referensi ADV (wajib, satu SETT untuk satu ADV).
+- Data pemohon, proyek, dan periode kegiatan terisi dari ADV.
+- Ringkasan: dana ADV diterima, total realisasi, selisih.
+- Rincian realisasi per baris: tanggal transaksi, kategori, uraian, toko atau vendor, jumlah, harga, subtotal, nomor nota, foto nota wajib. Pajak kalau ada.
+- Perbandingan dengan rencana ADV per baris. Selisih di atas 10% wajib diberi penjelasan.
+- Nota hilang: surat pernyataan pengganti nota, dibatasi nominalnya, dan wajib disetujui atasan.
+- Laporan kegiatan singkat dan foto kegiatan (wajib untuk kategori tertentu, misal pameran atau survei).
+
+Penyelesaian selisih
+- Realisasi kurang dari ADV: pemohon mengembalikan sisa dengan bukti transfer ke rekening perusahaan, dicek keuangan.
+- Realisasi lebih dari ADV: kekurangan dibayar perusahaan sebagai reimburse otomatis setelah disetujui.
+- Pas: langsung ditutup.
+
+Verifikasi dan persetujuan
+- Keuangan memeriksa per baris: diterima, ditolak, atau dikoreksi dengan catatan. Baris yang ditolak menjadi tanggungan pemohon.
+- Persetujuan: atasan langsung, keuangan, lalu owner kalau kekurangan yang harus dibayar perusahaan di atas batas yang diatur.
+- Setelah selesai: ADV ditutup, jurnal dan kas tercatat otomatis, PDF LPJ berkop dengan semua foto nota digabung dan cap persetujuan disimpan sebagai arsip.
+
+Status: draf, diajukan, diperiksa keuangan, dikembalikan untuk diperbaiki, menunggu pengembalian sisa, menunggu pembayaran kekurangan, selesai, ditolak.
+
 ## Cakupan
 Pengajuan
-- [ ] Reimburse dengan banyak baris per pengajuan
-- [ ] Uang muka (cash advance) dengan laporan realisasi: sisa dikembalikan, kekurangan diganti, uang muka yang belum dipertanggungjawabkan menahan pengajuan baru
+- [ ] PRA (Rp 1 juta ke atas) sesuai contoh dokumen owner, lanjut ke alur pembelian dan PO
+- [ ] PR (di bawah Rp 1 juta) sesuai contoh dokumen owner
+- [ ] RMBS sesuai contoh dokumen owner
+- [ ] ADV sesuai rancangan di atas
+- [ ] SETT sesuai rancangan di atas, termasuk pengembalian sisa dan pembayaran kekurangan
+- [ ] Banyak baris per pengajuan di semua jenis dokumen
 - [ ] Kasbon yang otomatis jadi potongan gaji (lihat [penggajian.md](penggajian.md))
 - [ ] Dana operasional dan pembelian kecil
 - [ ] Kategori dengan kebijakan per role: batas per transaksi dan per bulan, nota wajib di atas nominal tertentu, role yang boleh memakai
@@ -63,4 +122,6 @@ Semua rupiah `bigint`, semua aksi tercatat di `audit_log`, persetujuan memakai t
 Tabel baru (rencana): `expense_requests`, `expense_lines`, `expense_categories`, `expense_policies`, `cash_advances`, `advance_settlements`, `cash_accounts`, `cash_transactions`, `petty_cash_funds`, `budgets`, `suppliers`, `purchase_requests`, `purchase_orders`, `goods_receipts`, `supplier_bills`, `inventory_items`, `stock_moves`.
 
 ## Data dari owner
+- Contoh dokumen PRA, PR, dan RMBS yang dipakai sekarang.
+- Siapa penyetuju tiap jenis (misal PR cukup sampai keuangan atau tetap ke owner).
 - Kategori pengeluaran yang dipakai, batas nominal per role, apakah ada kas kecil di lokasi proyek (pemegang dan saldo), RAB per proyek dalam Excel, daftar supplier.
