@@ -19,7 +19,7 @@ export default async function NotificationsPage() {
         description={unread > 0 ? `${String(unread)} belum dibaca` : "Semua sudah dibaca"}
         actions={<MarkAllReadButton disabled={unread === 0} />}
       />
-      <div className="max-w-3xl min-w-0">
+      <div className="mx-auto w-full max-w-3xl min-w-0">
         {items.length > 0 ? (
           <NotificationList items={items} />
         ) : (
