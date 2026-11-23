@@ -138,3 +138,11 @@ export async function waitForKprReady(
     page.getByRole("group", { name: `Data KPR ${kind}` }).getByLabel("Harga rumah"),
   ).toBeEditable();
 }
+
+export async function expectNotFound(page: Page, consoleErrors: string[]) {
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
+  ).toBeVisible();
+  const others = consoleErrors.filter((message) => !message.includes("status of 404"));
+  consoleErrors.splice(0, consoleErrors.length, ...others);
+}

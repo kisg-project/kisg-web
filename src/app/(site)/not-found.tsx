@@ -15,7 +15,7 @@ export default function SiteNotFound() {
       actions={
         <>
           <Button asChild>
-            <Link href="/">Ke beranda</Link>
+            <Link href="/">Kembali ke beranda</Link>
           </Button>
           <Button asChild variant="outline">
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">

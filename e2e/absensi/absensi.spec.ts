@@ -2,7 +2,7 @@ import { randomInt, randomUUID } from "node:crypto";
 import type { BrowserContext, Page } from "@playwright/test";
 import { createPortalUser, type TestUser } from "../factories/users";
 import { adminClient } from "../fixtures/supabase";
-import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
+import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
 import { expect, loginViaForm, storageStateFor, test } from "../fixtures/portal";
 
 interface Point {
@@ -343,12 +343,10 @@ test.describe("Absensi karyawan", () => {
 test.describe("Absensi: akses", () => {
   test.use({ storageState: storageStateFor("owner") });
 
-  test("owner tidak wajib absensi", async ({ page }) => {
+  test("owner tidak wajib absensi", async ({ page, consoleErrors }) => {
     await page.goto("/portal/absensi");
     await expect(page).toHaveURL("/portal/absensi");
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
-    ).toBeVisible();
+    await expectNotFound(page, consoleErrors);
   });
 });
 

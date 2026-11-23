@@ -25,7 +25,7 @@ test("halaman yang tidak ada menampilkan 404 dan arahan ke beranda", async ({
   await expect(
     page.getByRole("navigation", { name: "Halaman lain" }).getByRole("link", { name: "Proyek" }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Ke beranda" }).click();
+  await page.getByRole("link", { name: "Kembali ke beranda" }).click();
   await expect(page).toHaveURL(/\/$/);
 
   expect(consoleErrors.every((message) => message.includes("404"))).toBe(true);

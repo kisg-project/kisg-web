@@ -1,7 +1,7 @@
 import { PORTAL_ROLES, ROLE_LABELS, type AppRole } from "../../src/config/roles";
 import { PORTAL_AREAS, portalAreasFor, ROLE_HOME } from "../../src/config/portal";
 import { bottomItems, railItems } from "../../src/config/portal-nav";
-import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
+import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
 import { expect, storageStateFor, test } from "../fixtures/portal";
 
 test.describe("Tanpa login", () => {
@@ -76,12 +76,13 @@ for (const role of PORTAL_ROLES) {
     }
 
     for (const area of denied) {
-      test(`${area.prefix} tersembunyi: 404 di alamat yang sama, tanpa menu`, async ({ page }) => {
+      test(`${area.prefix} tersembunyi: 404 di alamat yang sama, tanpa menu`, async ({
+        page,
+        consoleErrors,
+      }) => {
         await page.goto(area.prefix);
         await expect(page).toHaveURL(area.prefix);
-        await expect(
-          page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
-        ).toBeVisible();
+        await expectNotFound(page, consoleErrors);
         await expect(page.getByText("Kode 404")).toBeVisible();
         await expect(page.getByRole("link", { name: "Ke beranda" })).toBeVisible();
         await expect(

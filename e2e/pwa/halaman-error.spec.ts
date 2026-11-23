@@ -1,19 +1,21 @@
-import { expectNoA11yViolations, expectResponsive } from "../fixtures/test";
+import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
 import { expect, storageStateFor, test } from "../fixtures/portal";
 
 test.describe("Halaman error portal", () => {
   test.use({ storageState: storageStateFor("owner") });
 
-  test("alamat yang tidak ada memakai 404 bergaya portal di dalam shell", async ({ page }) => {
+  test("alamat yang tidak ada memakai 404 bergaya portal di dalam shell", async ({
+    page,
+    consoleErrors,
+  }) => {
     await page.goto("/portal/halaman-yang-tidak-ada");
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
-    ).toBeVisible();
+    await expectNotFound(page, consoleErrors);
     await expect(page.getByText("Kode 404")).toBeVisible();
     await expect(page.getByRole("link", { name: "Notifikasi", exact: false })).toBeVisible();
     await page.getByRole("link", { name: "Ke beranda" }).click();
     await expect(page).toHaveURL("/portal/owner");
     await page.goto("/portal/halaman-yang-tidak-ada");
+    await expectNotFound(page, consoleErrors);
     await expectNoA11yViolations(page);
     await expectResponsive(page, page.getByRole("main"));
   });
@@ -30,11 +32,9 @@ test.describe("Halaman error portal", () => {
 test.describe("Halaman error CMS", () => {
   test.use({ storageState: storageStateFor("cms") });
 
-  test("alamat yang tidak ada memakai 404 bergaya CMS", async ({ page }) => {
+  test("alamat yang tidak ada memakai 404 bergaya CMS", async ({ page, consoleErrors }) => {
     await page.goto("/cms/halaman-yang-tidak-ada");
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Halaman tidak ditemukan" }),
-    ).toBeVisible();
+    await expectNotFound(page, consoleErrors);
     await expect(page.getByRole("link", { name: "Ke ringkasan" })).toBeVisible();
     await expectNoA11yViolations(page);
   });
