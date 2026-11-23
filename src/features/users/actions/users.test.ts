@@ -85,7 +85,10 @@ vi.mock("@/lib/supabase/server", () => ({
     Promise.resolve({
       auth: { getClaims: () => Promise.resolve({ data: { claims: { sub: ACTOR } } }) },
       from,
-      rpc,
+      rpc: (name: string, args: Record<string, unknown>) =>
+        name === "my_inherited_duties"
+          ? Promise.resolve({ data: [], error: null })
+          : rpc(name, args),
     }),
 }));
 vi.mock("@/lib/supabase/admin", () => ({

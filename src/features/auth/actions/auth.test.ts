@@ -67,7 +67,8 @@ function from(table: string) {
 const hitRateLimit = vi.fn(() => Promise.resolve(state.allowed));
 
 vi.mock("@/lib/supabase/server", () => ({
-  createSupabaseServerClient: () => Promise.resolve({ auth, from }),
+  createSupabaseServerClient: () =>
+    Promise.resolve({ auth, from, rpc: () => Promise.resolve({ data: [], error: null }) }),
 }));
 vi.mock("@/lib/security/rate-limit", () => ({
   clientIp: () => Promise.resolve("203.0.113.9"),

@@ -4,7 +4,7 @@
 Setiap lead tercatat dan direspons cepat, sampai akad, serah terima, dan komisi.
 
 ## Keputusan owner
-- Marketing hanya melihat lead miliknya. Manajer melihat timnya dan antrean. Owner dan admin melihat semua.
+- Marketing hanya melihat lead miliknya. Manajer, supervisor, admin marketing, dan KPR officer melihat timnya dan antrean. Owner, Direktur, dan General Manager melihat semua (23 November 2026).
 - 22 dan 23 November 2026: distribusi lead hybrid. Lead baru dibagi bergiliran ke marketing yang sedang clock in dan berada di jam kerjanya. Kalau proyek punya marketing terdaftar (`project_assignments`), hanya mereka yang ikut giliran. Tanpa marketing bertugas, lead masuk antrean manajer. Lead yang belum direspons sampai batas respons (`crm_settings.sla_minutes`, bawaan 30 menit, diatur owner) kembali ke antrean lewat `crm_sla_sweep` (pg_cron tiap menit). Respons pertama tercatat otomatis saat pemilik mencatat aktivitas atau mengubah tahap. Pemindahan hanya lewat `reassign_lead` oleh manajer marketing atau Direktur Utama, tercatat di `lead_assignments`. Kuota dan bobot per marketing diputuskan owner (belum dibangun).
 - Konsumen dan pembayaran: 23 November 2026, tanpa payment gateway. Transfer manual, unggah bukti, dicek keuangan.
 - 23 November 2026: pesan WhatsApp lewat tautan `wa.me` dengan template. WAHA dipasang setelah ada VPS (lihat [integrasi-eksternal.md](integrasi-eksternal.md)).

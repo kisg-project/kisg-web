@@ -1,4 +1,4 @@
-import { PORTAL_ROLES, ROLE_LABELS, type AppRole } from "../../src/config/roles";
+import { ROLE_LABELS, type AppRole } from "../../src/config/roles";
 import { PORTAL_AREAS, portalAreasFor, ROLE_HOME } from "../../src/config/portal";
 import { bottomItems, railItems } from "../../src/config/portal-nav";
 import { expectNoA11yViolations, expectNotFound, expectResponsive } from "../fixtures/test";
@@ -18,8 +18,22 @@ test.describe("Tanpa login", () => {
   });
 });
 
-// Satu describe per role, memakai sesi dari global-setup.ts.
-for (const role of PORTAL_ROLES) {
+const ROLES_UNDER_TEST: readonly AppRole[] = [
+  "owner",
+  "admin",
+  "general_manager",
+  "marketing_manager",
+  "marketing_supervisor",
+  "marketing",
+  "kpr_officer",
+  "site_manager",
+  "site_supervisor",
+  "finance",
+  "finance_manager",
+  "hr_staff",
+];
+
+for (const role of ROLES_UNDER_TEST) {
   test.describe(`Role ${role}`, () => {
     test.use({ storageState: storageStateFor(role) });
 

@@ -40,7 +40,9 @@ describe("enum Postgres sama dengan src/config", () => {
   });
 
   it("role wajib absensi sama dengan private.must_attend", () => {
-    const match = /function private\.must_attend\(\)[\s\S]*?has_role\(([^)]*)\)/.exec(sql);
+    const match = [
+      ...sql.matchAll(/function private\.must_attend\(\)[\s\S]*?has_role\(([^)]*)\)/g),
+    ].at(-1);
     const roles = [...(match?.[1] ?? "").matchAll(/'([^']+)'/g)].map((value) => value[1]);
     expect(roles).toEqual([...ATTENDANCE_ROLES]);
   });

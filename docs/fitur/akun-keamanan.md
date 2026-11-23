@@ -13,7 +13,7 @@ Hanya karyawan undangan yang bisa masuk, dengan akun yang aman dan mudah dikelol
 - Undangan: owner mengisi nama, email, role. Email undangan (Brevo, dari `notifikasi@`) berisi tautan aktivasi sekali pakai yang kedaluwarsa. Aktivasi: password (minimal 10 karakter, huruf besar, kecil, angka, indikator kekuatan), foto profil, nomor HP.
 - Owner tampil sebagai "Direktur Utama" (label saja).
 
-- 23 November 2026: role dilengkapi sesuai praktik developer properti, dan persetujuan berjenjang naik otomatis kalau jabatan di tengah kosong (aturan di [persetujuan-digital.md](persetujuan-digital.md)). Daftar role di bawah adalah usulan yang menunggu konfirmasi owner.
+- 23 November 2026: role dilengkapi sesuai praktik developer properti, dan persetujuan berjenjang naik otomatis kalau jabatan di tengah kosong (aturan di [persetujuan-digital.md](persetujuan-digital.md)). Daftar role di bawah dipakai semua (owner, 23 November 2026: "udah kerjain aja"). Belum ada Direktur selain Direktur Utama, role Direktur disiapkan. Role eksternal (agen, konsumen, kontraktor) dibuat bersama portalnya.
 
 ## Struktur jabatan dan role
 Dua hal dipisah supaya fleksibel:
@@ -65,11 +65,12 @@ Role yang sudah ada dipetakan ke role baru: `marketing_manager` ke Manajer Marke
 - [x] Role `cms` terpisah dari portal
 - [x] Nonaktifkan akun mencabut sesi
 - [ ] Penonaktifan akun admin bootstrap (menunggu konfirmasi owner bahwa login owner sudah lancar)
-- [ ] Role lengkap per departemen sesuai tabel di atas (enum Postgres dan `src/config/roles.ts` sinkron), migrasi role lama
-- [ ] Jabatan, departemen, tingkat, dan atasan (struktur organisasi), rangkap jabatan, jabatan kosong
+- [x] Role lengkap per departemen (enum Postgres dan `src/config/roles.ts` sinkron), pemilih role dikelompokkan per departemen, beranda umum `/portal/beranda` untuk role yang modulnya belum ada
+- [x] Jabatan, departemen, tingkat, dan atasan (struktur organisasi standar KIS, 28 jabatan), rangkap jabatan, jabatan kosong, halaman Struktur organisasi untuk owner (pasang, lepas, pelimpahan)
 - [ ] Role kustom: hak akses per menu dan aksi diatur owner (seperti Odoo), di atas role bawaan
 - [ ] Undangan memilih role dan jabatan sekaligus
-- [ ] Pelimpahan tugas dan hak akses jabatan kosong ke jabatan terdekat di atasnya, pelimpahan khusus per jabatan, penanda di beranda dan Akun saya
+- [x] Pelimpahan tugas dan hak akses jabatan kosong ke jabatan terdekat di atasnya (`private.role_inheritance`, dipakai RLS, JWT, dan menu), pelimpahan khusus per jabatan, penanda di beranda
+- [ ] Penanda tugas limpahan di Akun saya
 - [ ] Antrean kerja ditujukan ke jabatan (bukan orang) di semua modul, berpindah otomatis saat jabatan terisi
 - [ ] Riwayat login dan perangkat aktif di Akun saya, keluar dari semua perangkat
 - [ ] Hapus dan ekspor data konsumen (UU PDP) di admin, tercatat di audit

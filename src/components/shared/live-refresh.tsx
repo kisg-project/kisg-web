@@ -18,6 +18,9 @@ const TABLES = [
   "lead_activities",
   "lead_assignments",
   "crm_settings",
+  "departments",
+  "positions",
+  "position_holders",
 ] as const;
 
 const PAUSE_ATTRIBUTE = "data-tahan-langsung";

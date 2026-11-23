@@ -49,7 +49,7 @@ export default async function CrmPage() {
   if (isHome) {
     return (
       <div className="tone-violet grid grid-cols-[minmax(0,1fr)] gap-5">
-        <HomeIntro roles={user.roles} userId={user.id} label="CRM" />
+        <HomeIntro roles={user.roles} duties={user.duties} userId={user.id} label="CRM" />
         {board ? (
           <section aria-labelledby="crm-lead" className="grid gap-3">
             <div className="flex flex-wrap items-center justify-between gap-2">

@@ -21,7 +21,7 @@ test.describe("Jam kerja per role", () => {
     await form.getByRole("button", { name: "Simpan" }).click();
     await expect(form.getByText("Pilih role.")).toBeVisible();
     await form.getByRole("combobox", { name: "Role" }).click();
-    await page.getByRole("option", { name: "Keuangan" }).click();
+    await page.getByRole("option", { name: "Keuangan", exact: true }).click();
     await form.getByLabel("Jam masuk").fill("08:30");
     await form.getByLabel("Jam pulang").fill("16:30");
     await expectNoA11yViolations(page);

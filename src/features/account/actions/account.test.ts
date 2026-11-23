@@ -80,6 +80,7 @@ vi.mock("@/lib/supabase/server", () => ({
         resetPasswordForEmail,
       },
       from: from(profileUpdates),
+      rpc: () => Promise.resolve({ data: [], error: null }),
     }),
 }));
 vi.mock("@/lib/supabase/admin", () => ({

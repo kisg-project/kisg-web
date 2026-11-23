@@ -4,9 +4,14 @@ import type { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type ServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
+export interface InheritedDuty {
+  role: AppRole;
+  positionTitle: string;
+}
+
 export interface AccountRoles {
-  /** Semua role akun aktif, role utama di depan. Kosong kalau akun nonaktif atau tanpa role. */
   roles: AppRole[];
+  duties: InheritedDuty[];
   profile: {
     email: string;
     fullName: string;
@@ -17,15 +22,11 @@ export interface AccountRoles {
   } | null;
 }
 
-/**
- * Role dan profil akun dibaca dari database (bukan JWT), supaya perubahan role atau penonaktifan
- * akun langsung berlaku. Dipakai sesi portal, server action, dan login.
- */
 export async function loadAccountRoles(
   supabase: ServerClient,
   userId: string,
 ): Promise<AccountRoles> {
-  const [roleResult, profileResult] = await Promise.all([
+  const [roleResult, profileResult, dutyResult] = await Promise.all([
     supabase.from("user_roles").select("role, is_primary").eq("user_id", userId),
     supabase
       .from("profiles")
@@ -34,17 +35,23 @@ export async function loadAccountRoles(
       )
       .eq("id", userId)
       .maybeSingle(),
+    supabase.rpc("my_inherited_duties"),
   ]);
   const profile = profileResult.data;
-  if (!profile?.is_active || profile.deleted_at) return { roles: [], profile: null };
+  if (!profile?.is_active || profile.deleted_at) return { roles: [], duties: [], profile: null };
   const rows = roleResult.data ?? [];
   const primary = rows.find((row) => row.is_primary)?.role;
-  const roles = orderRoles(
+  const own = orderRoles(
     rows.map((row) => row.role).filter(isAppRole),
     primary && isAppRole(primary) ? primary : undefined,
   );
+  const duties = (Array.isArray(dutyResult.data) ? dutyResult.data : [])
+    .filter((duty) => isAppRole(duty.role) && !own.includes(duty.role))
+    .map((duty) => ({ role: duty.role, positionTitle: duty.position_title }));
+  const inherited = [...new Set(duties.map((duty) => duty.role))];
   return {
-    roles,
+    roles: own.length > 0 ? [...own, ...inherited] : [],
+    duties,
     profile: {
       email: profile.email,
       fullName: profile.full_name,

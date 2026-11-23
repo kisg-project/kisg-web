@@ -1,6 +1,7 @@
 import {
   Agreement01Icon,
   Building03Icon,
+  HierarchyIcon,
   CalendarCheckIn01Icon,
   CalendarRemove01Icon,
   ClipboardCheckIcon,
@@ -26,7 +27,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement as AppIcon } from "@hugeicons/react";
 import { PORTAL_AREAS, ROLE_HOME } from "./portal";
-import type { AppRole } from "./roles";
+import { STAFF_ROLES, type AppRole } from "./roles";
 
 export type ShortcutTone = "green" | "violet" | "orange" | "blue" | "red" | "amber" | "gold";
 
@@ -36,6 +37,7 @@ export interface NavFeature {
   icon: AppIcon;
   tone: ShortcutTone;
   roles: readonly AppRole[];
+  excludes?: readonly AppRole[];
   ready: boolean;
   rail?: boolean;
   bottom?: boolean;
@@ -52,15 +54,21 @@ const rolesOf = (prefix: string) =>
   PORTAL_AREAS.find((area) => area.prefix === prefix)?.roles ?? [];
 const OWNER = rolesOf("/portal/owner");
 const ATTEND = rolesOf("/portal/absensi");
-const STAFF: readonly AppRole[] = [
+const STAFF: readonly AppRole[] = STAFF_ROLES.filter((role) => role !== "admin");
+const SALES: readonly AppRole[] = [
   "marketing_manager",
+  "marketing_supervisor",
   "marketing",
+  "marketing_admin",
+  "kpr_officer",
+];
+const SITE: readonly AppRole[] = [
+  "project_manager",
   "site_manager",
   "site_supervisor",
-  "finance",
+  "quantity_surveyor",
+  "qc_staff",
 ];
-const SALES: readonly AppRole[] = ["marketing_manager", "marketing"];
-const SITE: readonly AppRole[] = ["site_manager", "site_supervisor"];
 
 export const FEATURES: readonly NavFeature[] = [
   {
@@ -82,6 +90,15 @@ export const FEATURES: readonly NavFeature[] = [
     ready: true,
     rail: true,
     bottom: true,
+  },
+  {
+    href: "/portal/owner/struktur",
+    label: "Struktur organisasi",
+    icon: HierarchyIcon,
+    tone: "blue",
+    roles: OWNER,
+    ready: true,
+    rail: true,
   },
   {
     href: "/portal/owner/titik-absensi",
@@ -107,6 +124,7 @@ export const FEATURES: readonly NavFeature[] = [
     icon: CalendarCheckIn01Icon,
     tone: "green",
     roles: ATTEND,
+    excludes: ["owner"],
     ready: true,
     rail: true,
     bottom: true,
@@ -117,6 +135,7 @@ export const FEATURES: readonly NavFeature[] = [
     icon: TaskDaily01Icon,
     tone: "violet",
     roles: ATTEND,
+    excludes: ["owner"],
     ready: true,
   },
   {
@@ -125,6 +144,7 @@ export const FEATURES: readonly NavFeature[] = [
     icon: ClipboardCheckIcon,
     tone: "blue",
     roles: ATTEND,
+    excludes: ["owner"],
     ready: true,
   },
   {
@@ -296,7 +316,8 @@ export const FEATURES: readonly NavFeature[] = [
 ];
 
 const allowed = (feature: NavFeature, roles: readonly AppRole[]) =>
-  feature.roles.some((role) => roles.includes(role));
+  feature.roles.some((role) => roles.includes(role)) &&
+  !(feature.excludes ?? []).some((role) => roles.includes(role));
 
 export function featuresFor(roles: readonly AppRole[], primary: AppRole): NavFeature[] {
   const home = ROLE_HOME[primary];

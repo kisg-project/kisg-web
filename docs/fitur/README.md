@@ -27,7 +27,7 @@ Aturan kerja:
 | 3 | Integrasi Meta | [meta.md](meta.md) | Belum |
 | 4 | Chat Jaka | [chat-jaka.md](chat-jaka.md) | Tahap dasar tayang |
 | 5 | Panel CMS | [cms.md](cms.md) | Sebagian tayang |
-| 6 | Akun dan keamanan | [akun-keamanan.md](akun-keamanan.md) | Sebagian tayang |
+| 6 | Akun, role, dan jabatan | [akun-keamanan.md](akun-keamanan.md) | Sebagian tayang |
 | 7 | Platform PWA (navigasi, realtime, notifikasi, offline, ekspor) | [platform-pwa.md](platform-pwa.md) | Sebagian tayang |
 | 8 | Persetujuan digital, stempel, e-Meterai | [persetujuan-digital.md](persetujuan-digital.md) | Sebagian tayang |
 | 9 | Absensi dan laporan harian | [absensi.md](absensi.md) | Sebagian tayang |

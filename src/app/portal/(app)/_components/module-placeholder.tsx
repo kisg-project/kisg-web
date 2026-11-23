@@ -8,6 +8,7 @@ import {
 import { StatCard } from "@/components/shared/stat-card";
 import { mustAttend } from "@/config/attendance";
 import type { AppRole } from "@/config/roles";
+import type { InheritedDuty } from "@/lib/auth/account-roles";
 import { PORTAL_AREAS, ROLE_HOME } from "@/config/portal";
 import { getMyAttendance, getMyWorkReports } from "@/features/attendance";
 import { requirePortalUser } from "@/features/auth";
@@ -115,7 +116,7 @@ export async function ModulePlaceholder({ prefix }: { prefix: string }) {
   if (ROLE_HOME[user.role] !== prefix) notFound();
   return (
     <div className="grid gap-5">
-      <HomeIntro roles={user.roles} userId={user.id} label={area.label} />
+      <HomeIntro roles={user.roles} duties={user.duties} userId={user.id} label={area.label} />
       <ShortcutSection roles={user.roles} primary={user.role} label={`Modul ${area.label}`} />
     </div>
   );
@@ -123,16 +124,18 @@ export async function ModulePlaceholder({ prefix }: { prefix: string }) {
 
 export function HomeIntro({
   roles,
+  duties,
   userId,
   label,
 }: {
   roles: AppRole[];
+  duties: readonly InheritedDuty[];
   userId: string;
   label: string;
 }) {
   return (
     <>
-      <HomeHeader roles={roles} description={label} />
+      <HomeHeader roles={roles} duties={duties} description={label} />
       {mustAttend(roles) ? <AttendanceStats userId={userId} /> : null}
     </>
   );
