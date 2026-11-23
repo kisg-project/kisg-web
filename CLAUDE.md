@@ -314,8 +314,8 @@ Tulis seperti marketing properti senior yang ngobrol dengan calon pembeli: jelas
 - Pesan error memberi tahu apa yang salah dan apa yang harus dilakukan, dalam satu kalimat.
 
 **Dilarang**
-- Tanda pisah panjang (em dash `—` dan en dash `–`) sebagai pemisah kalimat. Pakai titik, koma, atau titik dua.
-- Emoji dan simbol dekoratif (✨ 🚀 🏡 ✅ dan sejenisnya) di UI dan konten.
+- Tanda pisah panjang (em dash `â€”` dan en dash `â€“`) sebagai pemisah kalimat. Pakai titik, koma, atau titik dua.
+- Emoji dan simbol dekoratif (âœ¨ ðŸš€ ðŸ¡ âœ… dan sejenisnya) di UI dan konten.
 - Ikon sparkles dan variannya.
 - Kalimat bergaya tutorial atau penjelasan panjang di UI. Pengecualian: definisi yang memang perlu (misal penjelasan singkat istilah KPR, SHM, PBG), kebijakan privasi, dan syarat ketentuan.
 - Frasa klise berikut dan variasinya:
@@ -324,10 +324,10 @@ Tulis seperti marketing properti senior yang ngobrol dengan calon pembeli: jelas
 - Pertanyaan retoris pembuka ("Mencari rumah impian?") dan tanda seru beruntun.
 
 **Contoh arah**
-- Kurang tepat: "Wujudkan hunian impian Anda bersama kami — nyaman, asri, dan strategis! ✨"
+- Kurang tepat: "Wujudkan hunian impian Anda bersama kami â€” nyaman, asri, dan strategis! âœ¨"
 - Lebih baik: "Rumah siap huni di Tambun Selatan. [x] menit ke Stasiun Tambun, [x] menit ke Gerbang Tol [nama]."
 
-Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip yang kamu buat di fase fondasi: grep `—`, `–`, emoji, ikon terlarang, dan daftar frasa di atas di `src/`, `supabase/seed.sql`, dan `content/`). Hasil harus bersih.
+Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip yang kamu buat di fase fondasi: grep `â€”`, `â€“`, emoji, ikon terlarang, dan daftar frasa di atas di `src/`, `supabase/seed.sql`, dan `content/`). Hasil harus bersih.
 
 ---
 
@@ -377,6 +377,19 @@ Sebelum menyelesaikan tugas yang berisi teks, jalankan `pnpm check:copy` (skrip 
 - Setiap perpindahan status tercatat (siapa, kapan, catatan) dan memicu notifikasi ke pihak berikutnya. Owner bisa melihat semua pengajuan di semua status dan rekap per bulan.
 - Setiap pengajuan punya dokumen PDF berkop KIS (logo, nama dan alamat perusahaan) sebagai arsip back office: nomor pengajuan, pengaju, rincian dan nominal, daftar lampiran, riwayat status, dan cap persetujuan digital dengan QR verifikasi. PDF bisa dilihat langsung di portal dan diunduh. Saat pengajuan selesai (dicairkan atau ditolak), PDF final disimpan di bucket privat sebagai arsip yang tidak berubah.
 - Pengaju tidak bisa memeriksa atau menyetujui pengajuannya sendiri. Kalau satu orang memegang role keuangan dan owner, tiap langkah tetap dicatat terpisah dengan cap masing-masing.
+
+### Expense dan pembelian setara Mekari dan Odoo (keputusan owner, 23 November 2026)
+Modul pengeluaran dibangun selengkap Mekari Expense dan modul Expense, Purchase, dan Accounting Odoo yang relevan untuk developer properti. Semua bagian di bawah termasuk rilis pertama, bukan tahap terpisah:
+- **Pengajuan**:
+  - **jenis pengajuan**: reimburse, uang muka (cash advance) dengan pertanggungjawaban realisasi, dan kasbon (otomatis jadi potongan gaji). Sisa uang muka dikembalikan, kekurangannya diganti, dan uang muka yang belum dipertanggungjawabkan menahan pengajuan baru;
+  - **isi pengajuan**: banyak baris per pengajuan, kategori dengan kebijakan per role (batas per transaksi dan per bulan, nota wajib di atas nominal tertentu), dan alokasi ke proyek atau kantor;
+  - **nota**: lampiran nota wajib sesuai kebijakan dan cek duplikat (hash file, nominal, tanggal);
+  - **persetujuan dan pencairan**: matriks persetujuan bisa diatur (bertingkat, per nominal, kategori, atau proyek, dengan delegasi saat penyetuju berhalangan). Bawaannya tetap alur di atas: semua lewat keuangan lalu owner. Pencairan per batch memakai rekening karyawan dan bukti transfer;
+  - **pendukung**: PDF arsip, notifikasi setiap langkah, pengingat uang muka yang belum dipertanggungjawabkan, draf offline di HP, dan laporan per proyek, kategori, dan karyawan, serta umur uang muka.
+- **Kas dan anggaran**: buku kas (kas masuk dan keluar, tercatat otomatis saat pencairan), kas kecil per lokasi dengan pemegang, saldo, isi ulang, dan rekonsiliasi, anggaran atau RAB per proyek dan kategori (impor dari Excel) dengan peringatan atau blokir saat melewati anggaran, dan pengeluaran rutin.
+- **Pembelian**: data supplier, permintaan barang, PO, penerimaan barang di lokasi dengan foto, tagihan supplier dengan pencocokan tiga arah (PO, penerimaan, tagihan), PPN dan PPh 23, pembayaran supplier, dan stok material per lokasi.
+- **Otomasi dan laporan**: pindai nota dengan Gemini (nominal, tanggal, toko terisi otomatis, karyawan tetap memeriksa), laporan anggaran dibanding realisasi, dan biaya per proyek dan per unit.
+- Semua angka rupiah `bigint`, semua aksi tercatat di `audit_log`, persetujuan memakai tanda tangan digital (sidik jari), dan ekspor PDF serta Excel mengikuti aturan bagian 6.
 
 ### Persetujuan digital (keputusan owner, 20 November 2026)
 - Tombol setujui (ACC) di semua alur persetujuan (pengajuan dana, izin, absen di luar lokasi, booking, laporan) adalah tanda tangan elektronik: penyetuju melihat ringkasan, lalu memasukkan password akunnya untuk mengonfirmasi. Password diperiksa di server dan dibatasi rate limit.
@@ -564,6 +577,7 @@ Asisten chat di website publik dan landing page. Tujuannya menjawab pertanyaan c
 
 ## 13. Cara kerja
 
+- Tanpa MVP dan tanpa versi bertahap (keputusan owner, 23 November 2026): setiap modul (absensi, HR, CRM, penjualan, lapangan, keuangan, expense, pembelian, penggajian, izin, CMS, chat, integrasi Meta) dibangun lengkap setara Mekari dan Odoo untuk developer properti sebelum dianggap selesai. Fitur tidak boleh ditunda ke "versi berikutnya". Pekerjaan tetap dipecah menjadi PR kecil berurutan, tapi modul baru dianggap selesai saat seluruh cakupannya ada.
 - Kerjakan per fase sesuai prompt yang diberikan. Satu fase bisa beberapa branch dan PR kecil. Commit kecil dengan pesan Conventional Commits berbahasa Inggris.
 - Mulai setiap fase dengan rencana singkat dan daftar file yang akan dibuat/diubah.
 - Tulis skenario E2E di awal fase (bersama rencana), bukan di akhir. Implementasi dianggap selesai saat semua skenario itu lolos.
