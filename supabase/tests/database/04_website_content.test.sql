@@ -1,9 +1,7 @@
--- Konten website dan lead (Fase 3a, migrasi 20261121000200 dan 20261121000300).
 begin;
 create extension if not exists pgtap with schema extensions;
 select plan(22);
 
--- Data uji -----------------------------------------------------------------
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-000000000101', 'owner-3a@kis.test'),
   ('00000000-0000-4000-8000-000000000102', 'manajer-3a@kis.test'),
@@ -24,7 +22,6 @@ insert into public.team_members (team_id, user_id) values
   ('10000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000000103'),
   ('10000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000000104');
 
--- Lead lewat fungsi (dijalankan sebagai pemilik database, setara service role) ---
 select is(
   (select is_new from public.upsert_lead('Budi', '0812-3456-7890', 'budi@contoh.id',
     '5a7e0000-0000-4000-8000-000000000001', null, 'website', 'form minat', 'Minta info', 'v1')),
@@ -52,13 +49,11 @@ select throws_ok(
   '22023', null, 'tanpa persetujuan PDP ditolak'
 );
 
--- Pemilik lead untuk uji akses
 select public.upsert_lead('Citra', '081211112222', null, null, null, 'website', null, null, 'v1');
 select public.upsert_lead('Dodi', '081233334444', null, null, null, 'website', null, null, 'v1');
 update public.leads set owner_id = '00000000-0000-4000-8000-000000000103' where full_name = 'Citra';
 update public.leads set owner_id = '00000000-0000-4000-8000-000000000104' where full_name = 'Dodi';
 
--- Pengunjung (anon) ----------------------------------------------------------
 set local role anon;
 select set_config('request.jwt.claims', '{"role": "anon"}', true);
 select is((select count(*)::int from public.project_media), 10, 'anon melihat galeri proyek terbit');
@@ -79,26 +74,22 @@ select throws_ok(
 );
 reset role;
 
--- Marketing A: hanya lead miliknya ----------------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000103", "role": "authenticated"}', true);
 select is((select count(*)::int from public.leads), 1, 'marketing hanya melihat lead miliknya');
 select is((select count(*)::int from public.posts), 11, 'staf melihat berita draft');
 reset role;
 
--- Manajer tim A: lead timnya ----------------------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000102", "role": "authenticated"}', true);
-select is((select count(*)::int from public.leads), 1, 'manajer melihat lead anggota timnya saja');
+select is((select count(*)::int from public.leads), 2, 'manajer melihat lead timnya dan antrean, bukan lead tim lain');
 reset role;
 
--- Pengawas lapangan: tidak melihat lead -----------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000105", "role": "authenticated"}', true);
 select is((select count(*)::int from public.leads), 0, 'pengawas lapangan tidak melihat lead');
 reset role;
 
--- Owner: semua lead, dan bisa menulis konten ------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-4000-8000-000000000101", "role": "authenticated"}', true);
 select is((select count(*)::int from public.leads), 3, 'owner melihat semua lead');

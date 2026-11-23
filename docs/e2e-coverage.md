@@ -198,17 +198,20 @@ Kamera palsu dari canvas lewat `addInitScript` (semua browser), GPS lewat `conte
 
 | Skenario | Profil | Fase | Status |
 |---|---|---|---|
-| Lead dari website muncul di CRM marketing yang mendapat giliran, notifikasi in-app muncul | D, MC | 6 | Belum |
-| Round-robin: 3 lead berurutan terbagi ke 3 marketing | D | 6 | Belum |
+| Lead baru dibagi ke marketing proyek yang sedang bertugas, notifikasi lonceng dan email terkirim (`crm/crm.spec.ts`) | D | 6 | Ditulis |
+| Tanpa marketing bertugas: lead masuk antrean, tampil di tab Antrean, dibagikan owner, riwayat mencatat pemindahan | D | 6 | Ditulis |
+| Marketing mencatat aktivitas dan mengubah tahap (validasi alasan batal), respons pertama tercatat dan batas respons berhenti | D | 6 | Ditulis |
+| Owner mengatur batas respons (validasi minimal 5 menit) | D | 6 | Ditulis |
+| Round-robin bergiliran, pembatasan per proyek, antrean tanpa marketing (pgTAP `15_crm_distribution`) | SQL | 6 | Ditulis |
 | Nomor HP sama dengan format berbeda (`0896...`, `+62896...`, `62896...`) digabung jadi satu lead | D | 6 | Belum |
 | Drag kartu kanban mengubah tahap, riwayat tahap tercatat, baris outbox Conversion Leads terbentuk | D | 6 | Belum |
 | Kanban versi mobile (pindah tahap lewat menu, bukan drag) | MC, MS | 6 | Belum |
-| Marketing A tidak bisa melihat atau membuka lead marketing B (URL langsung juga). Manager melihat lead timnya | D | 6 | Belum |
+| Marketing A tidak bisa melihat atau membuka lead marketing B (URL langsung juga). Manager melihat lead timnya dan antrean (E2E dan pgTAP) | D | 6 | Ditulis |
 | Dua user membooking unit yang sama bersamaan (dua context paralel): satu berhasil, satu mendapat pesan jelas | D | 6 | Belum |
 | Hold unit kedaluwarsa kembali tersedia (fungsi expiry dipanggil di test) | D | 6 | Belum |
 | Tombol Chat WA membuka `wa.me` yang benar dan aktivitas tercatat | D, MC | 6 | Belum |
 | Dokumen konsumen: unggah ke bucket privat, dibuka lewat signed URL, marketing lain tidak bisa membuka | D | 6 | Belum |
-| SLA: lead tanpa respons melewati batas memicu eskalasi ke manager | D | 6 | Belum |
+| SLA: lead tanpa respons melewati batas kembali ke antrean dan manajer diberi tahu | D | 6 | Ditulis |
 | Laporan CRM menampilkan angka sesuai data seed (funnel, sumber, konversi, CPL dari biaya iklan) | D | 6 | Belum |
 | Finance melihat daftar booking dan laporan penjualan, tetapi tidak bisa mengubah lead, tahap, atau unit (UI dan server action) | D | 6 | Belum |
 

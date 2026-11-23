@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { brochureFor } from "@/config/brochures";
 import { PRIVACY_POLICY_VERSION } from "@/config/legal";
+import { notifyLeadEntry } from "@/features/crm/server";
 import { ActionError, actionClient } from "@/lib/safe-action";
 import { clientIp, hashKey, hitRateLimit } from "@/lib/security/rate-limit";
 import { verifyTurnstile } from "@/lib/security/turnstile";
@@ -61,12 +62,10 @@ export const submitLeadAction = actionClient
     const ip = await clientIp();
     const ipHash = hashKey(ip);
     const base = { formKind: input.formKind, pagePath: input.pagePath, ipHash };
-    // Brosur langsung bisa diunduh setelah form diterima (keputusan owner, 22 November 2026).
     const brochureUrl = input.formKind === "brosur" ? brochureFor(input.projectSlug) : null;
 
     if (input.website) {
       await recordSubmission({ ...base, status: "ditolak_honeypot" });
-      // Jawaban sama dengan sukses supaya bot tidak tahu ditolak.
       return { ok: true as const, brochureUrl };
     }
 
@@ -105,8 +104,6 @@ export const submitLeadAction = actionClient
       .filter(Boolean)
       .join(" ");
 
-    // Tipe hasil `supabase gen types` menandai semua argumen fungsi wajib string, padahal SQL
-    // upsert_lead menerima null untuk email, proyek, tipe unit, dan catatan. Null dikirim apa adanya.
     const args = {
       p_full_name: input.fullName,
       p_phone: phone,
@@ -121,6 +118,7 @@ export const submitLeadAction = actionClient
     const { data: rows, error } = await admin.rpc("upsert_lead", args);
     const lead = rows?.[0];
     if (error || !lead) throw new Error(`Lead gagal disimpan: ${error?.message ?? "tanpa data"}`);
+    if (lead.is_new) await notifyLeadEntry(lead.lead_id);
 
     const tracking = input.tracking;
     if (tracking && Object.values(tracking).some(Boolean)) {
