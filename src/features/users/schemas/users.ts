@@ -5,7 +5,6 @@ const role = z.enum(INVITABLE_ROLES as [InvitableRole, ...InvitableRole[]], {
   error: "Pilih role.",
 });
 
-/** Multi role: minimal satu role, dan role utama harus salah satu role yang dipilih. */
 const rolesFields = {
   roles: z
     .array(role, { error: "Pilih minimal satu role." })
@@ -48,4 +47,3 @@ export const setUserActiveSchema = z.object({ userId: z.uuid(), active: z.boolea
 export const pendingInviteSchema = z.object({ userId: z.uuid() });
 
 export type InviteUserInput = z.input<typeof inviteUserSchema>;
-export type SetUserRolesInput = z.input<typeof setUserRolesSchema>;
