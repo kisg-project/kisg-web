@@ -13,14 +13,38 @@ Setiap persetujuan di semua modul sah, tercatat permanen, dan bisa diverifikasi 
 - Ini tanda tangan elektronik tidak tersertifikasi (UU ITE). Tanda tangan tersertifikasi (PSrE) di luar cakupan.
 - 23 November 2026: e-Meterai dibangun dengan dua jalur, unggah manual dan API distributor (lihat di bawah). Keputusan distributor menunggu owner.
 
+- 23 November 2026: persetujuan berjenjang mengikuti struktur jabatan. Kalau jabatan di tengah rantai belum terisi, dokumen langsung naik ke jabatan di atasnya. Persetujuan tidak boleh berhenti di jabatan yang kosong.
+
+## Aturan rantai persetujuan
+Setiap jenis dokumen punya daftar langkah, misalnya PRA: atasan langsung, manajer departemen, keuangan (verifikasi), Direktur Utama. Saat dokumen diajukan dan setiap kali satu langkah selesai, sistem mencari penyetuju langkah berikutnya:
+
+1. Cari pemegang aktif jabatan itu di departemen atau proyek pengaju.
+2. Langkah dilewati otomatis kalau:
+   - jabatannya kosong;
+   - pemegangnya nonaktif;
+   - pemegangnya adalah pengaju sendiri;
+   - pemegangnya sudah menandatangani langkah sebelumnya untuk dokumen yang sama.
+3. Kalau pemegang sedang cuti atau izin dan punya delegasi, dokumen ke delegasinya. Tanpa delegasi, langkah naik ke atasannya.
+4. Kalau semua langkah di atasnya juga kosong, dokumen berakhir di Direktur Utama, yang selalu ada.
+5. Setiap langkah yang dilewati tercatat di riwayat dan di PDF, misalnya "Manajer Marketing dilewati: jabatan belum terisi".
+6. Kalau penyetuju tidak bertindak dalam batas waktu per jenis dokumen, sistem mengirim pengingat. Setelah batas kedua, dokumen naik ke atasannya (eskalasi), juga tercatat.
+7. Saat jabatan yang tadinya kosong terisi, dokumen yang sudah melewati jabatan itu tidak ditarik kembali. Aturan baru hanya berlaku untuk langkah yang belum berjalan.
+8. Pengaju tidak pernah menyetujui dokumennya sendiri, dan setiap tanda tangan tetap memakai sidik jari.
+
+Aturan ini berlaku untuk semua alur persetujuan: pengajuan dana (PRA, PR, RMBS, ADV, SETT), izin, cuti, lembur, absen di luar lokasi, booking dan diskon, Analisa Konsumen, gaji, kontrak, SPK, opname, PO, dan dokumen lain.
+
 ## Cakupan
 Persetujuan
+- [ ] Rantai persetujuan per jenis dokumen yang diatur owner, dengan langkah jabatan dan langkah fungsi (keuangan, HR)
+- [ ] Lewati otomatis jabatan kosong, nonaktif, atau pengaju sendiri, naik ke atasan, berakhir di Direktur Utama
+- [ ] Delegasi saat cuti dan eskalasi saat lewat batas waktu
+- [ ] Riwayat langkah yang dilewati di halaman dokumen dan PDF
 - [x] Tabel `approval_stamps` tanpa policy tulis, trigger menolak update dan delete
 - [x] Fungsi keputusan hanya dari server setelah verifikasi
 - [x] Halaman publik `/verifikasi/[kode]` (noindex) yang menghitung ulang hash
 - [x] Sidik jari WebAuthn wajib, reset oleh Direktur Utama, dialog arahan pendaftaran
 - [x] Cap KIS hanya untuk persetujuan atasan
-- [ ] Mesin persetujuan generik untuk semua jenis dokumen: definisi langkah per jenis, matriks per nominal, kategori, atau proyek, delegasi saat penyetuju berhalangan, eskalasi kalau terlalu lama
+- [ ] Matriks per nominal, kategori, atau proyek di atas rantai jabatan (misal PR cukup sampai keuangan)
 - [ ] QR lintas perangkat (setujui dari HP terdaftar saat bekerja di laptop)
 - [ ] Stempel tinta basah di PDF resmi yang disetujui
 - [ ] Snapshot versi per tanda tangan (JSON dan hash), PDF hanya versi final

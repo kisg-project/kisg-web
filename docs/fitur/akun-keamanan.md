@@ -13,6 +13,37 @@ Hanya karyawan undangan yang bisa masuk, dengan akun yang aman dan mudah dikelol
 - Undangan: owner mengisi nama, email, role. Email undangan (Brevo, dari `notifikasi@`) berisi tautan aktivasi sekali pakai yang kedaluwarsa. Aktivasi: password (minimal 10 karakter, huruf besar, kecil, angka, indikator kekuatan), foto profil, nomor HP.
 - Owner tampil sebagai "Direktur Utama" (label saja).
 
+- 23 November 2026: role dilengkapi sesuai praktik developer properti, dan persetujuan berjenjang naik otomatis kalau jabatan di tengah kosong (aturan di [persetujuan-digital.md](persetujuan-digital.md)). Daftar role di bawah adalah usulan yang menunggu konfirmasi owner.
+
+## Struktur jabatan dan role
+Dua hal dipisah supaya fleksibel:
+- **Jabatan** (struktur organisasi, untuk rantai persetujuan): setiap jabatan punya tingkat, departemen, dan atasan. Satu orang bisa memegang beberapa jabatan (rangkap), dan satu jabatan bisa kosong.
+- **Role** (hak akses menu dan aksi): menentukan modul apa yang bisa dibuka dan aksi apa yang bisa dilakukan. Role bawaan bisa ditambah role kustom oleh owner.
+
+Tingkat jabatan
+1. Direktur Utama
+2. Direktur (misal Direktur Operasional, Direktur Keuangan)
+3. General Manager
+4. Manajer departemen
+5. Supervisor atau koordinator
+6. Staf
+
+Usulan role per departemen
+| Departemen | Role |
+|---|---|
+| Direksi | Direktur Utama (`owner`), Direktur, General Manager |
+| Marketing dan penjualan | Manajer Marketing, Supervisor Marketing (team leader), Marketing (sales), Admin Marketing, KPR Officer (relasi bank dan berkas KPR) |
+| Keuangan dan akuntansi | Manajer Keuangan, Staf Akuntansi, Kasir (kas kecil), Staf Penagihan, Staf Pajak |
+| Pembelian dan gudang | Staf Pembelian, Staf Gudang atau Logistik |
+| Teknik dan konstruksi | Manajer Proyek, Site Manager, Pengawas Lapangan (site supervisor), Quantity Surveyor (RAB dan opname), Drafter atau Arsitek, QC |
+| Legal dan perizinan | Manajer Legal, Staf Legal dan Perizinan |
+| HR dan umum | Manajer HR, Staf HR, Staf GA (aset, kendaraan, kantor) |
+| Layanan konsumen dan estate | Customer Service atau After-sales, Estate Manager |
+| Sistem | Admin sistem, CMS (akun khusus panel CMS), Auditor internal (hanya baca) |
+| Eksternal (portal sendiri) | Agen atau Broker, Konsumen, Kontraktor atau Mandor (opname dan progres) |
+
+Role yang sudah ada dipetakan ke role baru: `marketing_manager` ke Manajer Marketing, `marketing` ke Marketing, `site_manager` ke Site Manager, `site_supervisor` ke Pengawas Lapangan, `finance` ke Manajer Keuangan atau Staf Akuntansi (dipilih per orang), `cms` tetap, `admin` menjadi Admin sistem.
+
 ## Cakupan
 - [x] Login email dan password dengan rate limit dan penguncian
 - [x] Undangan lewat email, kirim ulang, batalkan, tautan cadangan untuk disalin
@@ -23,7 +54,10 @@ Hanya karyawan undangan yang bisa masuk, dengan akun yang aman dan mudah dikelol
 - [x] Role `cms` terpisah dari portal
 - [x] Nonaktifkan akun mencabut sesi
 - [ ] Penonaktifan akun admin bootstrap (menunggu konfirmasi owner bahwa login owner sudah lancar)
-- [ ] Role kustom: hak akses per menu dan aksi diatur owner (seperti Odoo), di atas role dasar
+- [ ] Role lengkap per departemen sesuai tabel di atas (enum Postgres dan `src/config/roles.ts` sinkron), migrasi role lama
+- [ ] Jabatan, departemen, tingkat, dan atasan (struktur organisasi), rangkap jabatan, jabatan kosong
+- [ ] Role kustom: hak akses per menu dan aksi diatur owner (seperti Odoo), di atas role bawaan
+- [ ] Undangan memilih role dan jabatan sekaligus
 - [ ] Riwayat login dan perangkat aktif di Akun saya, keluar dari semua perangkat
 - [ ] Hapus dan ekspor data konsumen (UU PDP) di admin, tercatat di audit
 - [ ] Halaman audit log untuk owner: siapa mengubah apa, kapan, dengan filter
